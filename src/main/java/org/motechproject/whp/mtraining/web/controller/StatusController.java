@@ -1,4 +1,4 @@
-package org.motechproject.whp.mtraining.web;
+package org.motechproject.whp.mtraining.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
