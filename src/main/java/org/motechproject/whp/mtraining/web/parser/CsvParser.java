@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.web.parser;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.bean.CsvToBean;
 import au.com.bytecode.opencsv.bean.HeaderColumnNameTranslateMappingStrategy;
+import org.springframework.stereotype.Component;
 
 import java.io.Reader;
 import java.lang.reflect.Field;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 
+@Component
 public class CsvParser {
 
     public <T> List<T> parse(Reader reader, Class<T> type) {
