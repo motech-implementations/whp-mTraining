@@ -13,7 +13,7 @@ public class WHPmTrainingBundleIT extends BaseOsgiIT {
     PollingHttpClient httpClient = new PollingHttpClient(new DefaultHttpClient(), 60);
 
     public void testThatStatusUrlIsAccessible() throws IOException, InterruptedException {
-        HttpResponse httpResponse = httpClient.get(String.format("http://localhost:%s/whp-mtraining/status", TestContext.getJettyPort()));
+        HttpResponse httpResponse = httpClient.get(String.format("http://localhost:%s/mtraining/api/status", TestContext.getJettyPort()));
         assertEquals(200, httpResponse.getStatusLine().getStatusCode());
     }
 

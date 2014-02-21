@@ -1,1 +1,26 @@
-<div ng-view></div>
+<div id="inner-center" class="inner-center ui-layout-center ui-layout-pane ui-layout-pane-center" ng-app="mtraining">
+    <div class="col-lg-7 well2 margin-before">
+        <div class="box-header">{{msg('mtraining.admin')}}</div>
+        <div class="box-content">
+            <h4 class="settings-section">{{msg('mtraining.upload.course')}}</h4>
+
+            <form class="form-inline inside" id="settingsFileForm" action="../mtraining/api/course/upload" method="post" enctype="multipart/form-data">
+                <fieldset>
+                    <div class="form-group fileupload fileupload-new" data-provides="fileupload">
+                        <label class="control-label">{{msg('mtraining.fileChosen')}}</label>
+
+                        <div class="form-control input-auto uneditable-input input-large fileupload-exists"><i class="icon-file"></i>&nbsp;<span class="fileupload-preview"></span></div>
+                            <span class="btn btn-default btn-file">
+                                <span class="fileupload-new">{{msg('mtraining.button.selectFile')}}</span>
+                                <span class="fileupload-exists">{{msg('mtraining.button.changeFile')}}</span>
+                                <input type="file" id="settingsFile" name="settingsFile" class="input-file"/>
+                            </span>
+                        <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload"><i class="icon-trash icon-white"></i>&nbsp;{{msg('admin.button.remove')}}</a>
+                        <span class="offset-1 btn btn-default" ng-click="uploadSettings()">{{msg('mtraining.button.submit')}}</span>
+                    </div>
+                </fieldset>
+            </form>
+            <p id="settingsMsg" class="inside"></p>
+        </div>
+    </div>
+</div>

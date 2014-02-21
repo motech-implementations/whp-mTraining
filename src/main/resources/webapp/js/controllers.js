@@ -1,6 +1,7 @@
-/* put your angular controllers here */
+(function () {
+    var mtrainingModule = angular.module("mtraining");
 
-function YourController($scope, YourObject) {
-
-    $scope.yourObjects = YourObject.query();
-}
+    mtrainingModule.controller("mTrainingController", function ($scope) {
+        $scope.message = "WHP M-Training Bundle";
+    });
+}());

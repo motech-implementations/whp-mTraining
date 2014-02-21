@@ -1,11 +1,7 @@
-'use strict';
+(function () {
 
-/* put your routes here */
+    'use strict';
 
-angular.module('whp-mtraining', ['motech-dashboard', 'YourModuleServices', 'ngCookies', 'bootstrap'])
-    .config(['$routeProvider', function ($routeProvider) {
+    angular.module('mtraining', ['motech-dashboard']);
 
-        $routeProvider
-            .when('/welcome', { templateUrl: '../whp-mtraining/resources/partials/welcome.html', controller: YourController })
-            .otherwise({redirectTo: '/welcome'});
-    }]);
+}());
