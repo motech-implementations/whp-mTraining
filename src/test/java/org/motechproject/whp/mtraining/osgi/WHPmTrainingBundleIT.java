@@ -15,7 +15,9 @@ import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
-import org.motechproject.whp.mtraining.web.domain.ErrorCode;
+import org.motechproject.whp.mtraining.web.domain.ErrorResponse;
+import org.motechproject.whp.mtraining.web.domain.MotechResponse;
+import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,16 +41,16 @@ public class WHPmTrainingBundleIT extends BaseOsgiIT {
 
 
     public void testThatBookmarkUrlIsAvailableWhenProviderIsKnown() throws IOException, InterruptedException {
-        CustomHttpResponse responseForUnknownUser = httpClient.get(String.format("http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s&sessionId=s001",
+        CustomHttpResponse responseForUnknownUser = httpClient.get(String.format("http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s",
                 TestContext.getJettyPort(), 9988776655L, "un1qId"), new CustomHttpResponseHandler());
         assertEquals(HttpStatus.SC_OK, responseForUnknownUser.getStatusCode());
 
-        BookmarkResponse bookmarkForUnknownUser = responseToJson(responseForUnknownUser.getContent());
+        ErrorResponse bookmarkForUnknownUser = (ErrorResponse) responseToJson(responseForUnknownUser.getContent(), ErrorResponse.class);
 
         assertEquals(new Long(9988776655l), bookmarkForUnknownUser.getCallerId());
         assertEquals("un1qId", bookmarkForUnknownUser.getUniqueId());
-        assertEquals("s001", bookmarkForUnknownUser.getSessionId());
-        assertEquals(ErrorCode.UNKNOWN.name(), bookmarkForUnknownUser.getErrorCode());
+        assertNotNull(bookmarkForUnknownUser.getSessionId());
+        assertEquals(ResponseStatus.UNKNOWN_PROVIDER.getCode(), bookmarkForUnknownUser.getResponseStatusCode());
 
 
         Long callerId = 102l;
@@ -60,22 +62,22 @@ public class WHPmTrainingBundleIT extends BaseOsgiIT {
                 httpClient.get(url, new CustomHttpResponseHandler());
         assertEquals(HttpStatus.SC_OK, responseForKnownUser.getStatusCode());
 
-        BookmarkResponse bookmarkForKnownUser = responseToJson(responseForKnownUser.getContent());
+        BookmarkResponse bookmarkForKnownUser = (BookmarkResponse) responseToJson(responseForKnownUser.getContent(), BookmarkResponse.class);
 
+        assertEquals(ResponseStatus.OK.getCode(), bookmarkForKnownUser.getResponseStatusCode());
         assertEquals(callerId, bookmarkForKnownUser.getCallerId());
         assertEquals("un1qId", bookmarkForKnownUser.getUniqueId());
         assertEquals("s001", bookmarkForKnownUser.getSessionId());
-        assertEquals("state", bookmarkForKnownUser.getState());
-        assertEquals("block", bookmarkForKnownUser.getBlock());
-        assertEquals("district", bookmarkForKnownUser.getDistrict());
-        assertNull(bookmarkForKnownUser.getErrorCode());
+        assertEquals("state", bookmarkForKnownUser.getLocation().getState());
+        assertEquals("block", bookmarkForKnownUser.getLocation().getBlock());
+        assertEquals("district", bookmarkForKnownUser.getLocation().getDistrict());
     }
 
     private void addProvider(Long callerId) {
         ProviderService providerService = (ProviderService) getApplicationContext().getBean("providerService");
 
         Provider provider = new Provider(callerId);
-        provider.setLocation(new Location("vill", "post", "block", "district", "state", 561900));
+        provider.setLocation(new Location("block", "district", "state"));
         Long providerId = providerService.add(provider);
         markForDeletion(providerId);
     }
@@ -84,7 +86,6 @@ public class WHPmTrainingBundleIT extends BaseOsgiIT {
     protected List<String> getImports() {
         List<String> imports = new ArrayList<>();
         imports.add("org.apache.http.util");
-        imports.add("org.motechproject.whp.mtraining.web.domain");
         return imports;
     }
 
@@ -93,12 +94,12 @@ public class WHPmTrainingBundleIT extends BaseOsgiIT {
         return new String[]{"test-blueprint.xml"};
     }
 
-    private BookmarkResponse responseToJson(String response) throws IOException {
+    private MotechResponse responseToJson(String response, Class<? extends MotechResponse> responseType) throws IOException {
         System.out.println(response);
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getJsonFactory();
         JsonParser parser = factory.createJsonParser(response);
-        return mapper.readValue(parser, BookmarkResponse.class);
+        return mapper.readValue(parser, responseType);
     }
 
     private void markForDeletion(Long id) {

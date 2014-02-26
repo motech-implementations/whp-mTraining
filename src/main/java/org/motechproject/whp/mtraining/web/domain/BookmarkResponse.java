@@ -2,16 +2,14 @@ package org.motechproject.whp.mtraining.web.domain;
 
 import org.motechproject.whp.mtraining.domain.Location;
 
-public class BookmarkResponse {
+public class BookmarkResponse implements MotechResponse {
 
-    private ErrorCode errorCode;
     private String sessionId;
     private String uniqueId;
     private Long callerId;
-
-    private String state;
-    private String block;
-    private String district;
+    private String responseStatusMessage;
+    private int responseStatusCode;
+    private Location location;
 
     //For tests
     public BookmarkResponse() {
@@ -21,15 +19,10 @@ public class BookmarkResponse {
         this.callerId = callerId;
         this.sessionId = sessionId;
         this.uniqueId = uniqueId;
+        this.responseStatusCode = ResponseStatus.OK.getCode();
+        this.responseStatusMessage = ResponseStatus.OK.getMessage();
     }
 
-    public String getErrorCode() {
-        return errorCode == null ? null : errorCode.name();
-    }
-
-    public void setErrorCode(ErrorCode errorCode) {
-        this.errorCode = errorCode;
-    }
 
     public String getSessionId() {
         return sessionId;
@@ -39,34 +32,27 @@ public class BookmarkResponse {
         return callerId;
     }
 
-
-    public boolean hasError() {
-        return errorCode != null;
-    }
-
     public String getUniqueId() {
         return uniqueId;
     }
 
-    public String getState() {
-        return state;
+    @Override
+    public int getResponseStatusCode() {
+        return responseStatusCode;
     }
 
-
-    public String getBlock() {
-        return block;
+    @Override
+    public String getResponseStatusMessage() {
+        return responseStatusMessage;
     }
 
-    public String getDistrict() {
-        return district;
+    public Location getLocation() {
+        return location;
     }
-
 
     public void setLocation(Location location) {
-        if (location != null) {
-            this.state = location.getState();
-            this.block = location.getBlock();
-            this.district = location.getDistrict();
-        }
+        this.location = location;
     }
+
+
 }

@@ -1,5 +1,7 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
@@ -19,15 +21,19 @@ public class CallLog {
     private String uniqueId;
     @Persistent(column = "session_id")
     private String sessionId;
-    @Persistent(column = "error_code")
-    private String errorCode;
+    @Persistent(column = "response_code")
+    private int responseCode;
+
+    @Persistent(column = "response_message")
+    private String responseMessage;
 
 
-    public CallLog(Long callerId, String uniqueId, String sessionId, String errorCode) {
+    public CallLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatusCode) {
         this.callerId = callerId;
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
-        this.errorCode = errorCode;
+        this.responseCode = responseStatusCode.getCode();
+        this.responseMessage = responseStatusCode.getMessage();
     }
 
     public Long getCallerId() {
@@ -54,12 +60,19 @@ public class CallLog {
         this.sessionId = sessionId;
     }
 
-    public String getErrorCode() {
-        return errorCode;
+    public int getResponseCode() {
+        return responseCode;
     }
 
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
     }
 
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
+    }
 }

@@ -33,7 +33,7 @@ public class ProvidersIT {
         assertThat(providers.getByCallerId(callerId), IsNull.nullValue());
 
         Provider provider = new Provider(callerId);
-        Location bihar = new Location("Bihar", 345678);
+        Location bihar = new Location("Bihar");
         provider.setLocation(bihar);
 
         providers.save(provider);

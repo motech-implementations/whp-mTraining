@@ -2,15 +2,14 @@ package org.motechproject.whp.mtraining.web;
 
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.Is;
-import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.motechproject.whp.mtraining.domain.CallLog;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.CallLogs;
 import org.motechproject.whp.mtraining.repository.Providers;
-import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
-import org.motechproject.whp.mtraining.web.domain.ErrorCode;
+import org.motechproject.whp.mtraining.web.domain.MotechResponse;
+import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -41,8 +40,8 @@ public class BookmarkControllerTest {
 
         when(providers.getByCallerId(callerId)).thenReturn(null);
 
-        BookmarkResponse bookmarkResponse = bookmarkController.getBookmark(callerId, "uuid", null);
-        assertThat(bookmarkResponse.getErrorCode(), is(ErrorCode.UNKNOWN.name()));
+        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
+        assertThat(response.getResponseStatusCode(), is(ResponseStatus.UNKNOWN_PROVIDER.getCode()));
 
         verify(providers).getByCallerId(callerId);
         verify(callLogs).record(any(CallLog.class));
@@ -56,9 +55,9 @@ public class BookmarkControllerTest {
         Provider provider = new Provider(callerId);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
-        BookmarkResponse bookmarkResponse = bookmarkController.getBookmark(callerId, "uuid", null);
+        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
+        assertThat(response.getResponseStatusCode(), is(ResponseStatus.OK.getCode()));
 
-        assertThat(bookmarkResponse.getErrorCode(), IsNull.nullValue());
         verify(providers).getByCallerId(callerId);
         verify(callLogs).record(any(CallLog.class));
     }
@@ -70,7 +69,7 @@ public class BookmarkControllerTest {
 
         when(sessions.create()).thenReturn("7868jhgjg");
 
-        BookmarkResponse bookmark = bookmarkController.getBookmark(callerId, uniqueId, null);
+        MotechResponse bookmark = bookmarkController.getBookmark(callerId, uniqueId, null);
 
         assertThat(StringUtils.isBlank(bookmark.getSessionId()), Is.is(false));
         verify(sessions).create();

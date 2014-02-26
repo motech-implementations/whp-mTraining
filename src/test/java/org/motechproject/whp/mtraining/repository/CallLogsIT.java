@@ -4,8 +4,8 @@ import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.whp.mtraining.domain.Bookmark;
 import org.motechproject.whp.mtraining.domain.CallLog;
+import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -30,8 +30,7 @@ public class CallLogsIT {
     public void shouldAddCallLogRecord() {
         List<CallLog> all = callLogs.all();
         assertThat(all.size(), Is.is(0));
-        Bookmark bookmark = new Bookmark();
-        callLogs.record(new CallLog(1234567L, "UNQ1", "session01", null));
+        callLogs.record(new CallLog(1234567L, "UNQ1", "session01", ResponseStatus.OK));
 
         List<CallLog> savedCallLogs = callLogs.all();
         assertThat(savedCallLogs.size(), Is.is(1));
