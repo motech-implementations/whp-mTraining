@@ -1,26 +1,33 @@
-<div id="inner-center" class="inner-center ui-layout-center ui-layout-pane ui-layout-pane-center" ng-app="mtraining">
-    <div class="col-lg-7 well2 margin-before">
-        <div class="box-header">{{msg('mtraining.admin')}}</div>
-        <div class="box-content">
-            <h4 class="settings-section">{{msg('mtraining.upload.course')}}</h4>
-
-            <form class="form-inline inside" id="settingsFileForm" action="../mtraining/api/course/upload" method="post" enctype="multipart/form-data">
-                <fieldset>
-                    <div class="form-group fileupload fileupload-new" data-provides="fileupload">
-                        <label class="control-label">{{msg('mtraining.fileChosen')}}</label>
-
-                        <div class="form-control input-auto uneditable-input input-large fileupload-exists"><i class="icon-file"></i>&nbsp;<span class="fileupload-preview"></span></div>
-                            <span class="btn btn-default btn-file">
-                                <span class="fileupload-new">{{msg('mtraining.button.selectFile')}}</span>
-                                <span class="fileupload-exists">{{msg('mtraining.button.changeFile')}}</span>
-                                <input type="file" id="settingsFile" name="settingsFile" class="input-file"/>
-                            </span>
-                        <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload"><i class="icon-trash icon-white"></i>&nbsp;{{msg('admin.button.remove')}}</a>
-                        <span class="offset-1 btn btn-default" ng-click="uploadSettings()">{{msg('mtraining.button.submit')}}</span>
-                    </div>
-                </fieldset>
-            </form>
-            <p id="settingsMsg" class="inside"></p>
+<main role="main">
+    <div ng-controller="fileUploadController" class="container">
+        <div ng-show="errors.length==0">
+            <ul class="alert alert-success"> csv file uploaded successfully</ul>
         </div>
+        <form role="form" class="form form-inline">
+            <div class="field">
+                <input class="btn" type="file" file-model="multipartFile"/>
+                </div>
+            <div class="field">
+            <button class="button" ng-click="uploadFile()">Upload File</button>
+                </div>
+        </form>
+        <div ng-show="errors.length">
+            <ul class="alert alert-danger"> You have errors in your csv</ul>
+            <table class="table table-hover" ng-repeat="error in errors">
+                <tr>
+                    <th class="col-lg-3">nodeName</th>
+                    <th class="col-lg-3">nodeType</th>
+                    <th class="col-lg-6">reason</th>
+                </tr>
+                <tr>
+                    <td class="col-lg-3">{{error.nodeName}}</td>
+                    <td class="col-lg-3">{{error.nodeType}}</td>
+                    <td class="col-lg-6">{{error.message}}</td>
+                </tr>
+
+            </table>
+        </div>
+
+
     </div>
-</div>
+</main>

@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +15,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -54,7 +54,7 @@ public class CourseImportControllerTest {
 
         List<ErrorModel> courseErrors = courseImportController.importCourseStructure(mock(CommonsMultipartFile.class));
 
-        assertThat(courseErrors.size(), Is.is(1));
+        assertThat(courseErrors.size(),is(1));
 
         verify(csvParser).parse(any(MultipartFile.class), any(Class.class));
         verify(courseStructureService).parseToCourseStructure(courseList);

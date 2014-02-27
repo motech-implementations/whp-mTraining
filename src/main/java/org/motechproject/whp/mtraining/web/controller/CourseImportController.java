@@ -30,7 +30,6 @@ public class CourseImportController {
     @ResponseBody
     public List<ErrorModel> importCourseStructure(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) throws Exception {
         List<CourseStructureCsvRequest> courseStructureCsvRequests = csvParser.parse(multipartFile, CourseStructureCsvRequest.class);
-        List<ErrorModel> errorModels = courseStructureService.parseToCourseStructure(courseStructureCsvRequests);
-        return errorModels;
+        return courseStructureService.parseToCourseStructure(courseStructureCsvRequests);
     }
 }
