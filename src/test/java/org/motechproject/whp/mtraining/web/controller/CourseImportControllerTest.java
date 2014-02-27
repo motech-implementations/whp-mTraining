@@ -1,48 +1,63 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.apache.commons.io.IOUtils;
+import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.whp.mtraining.web.model.ErrorModel;
 import org.motechproject.whp.mtraining.web.parser.CsvParser;
 import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
-import org.motechproject.whp.mtraining.web.request.CsvImportRequest;
+import org.motechproject.whp.mtraining.web.service.CourseStructureService;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class CourseImportControllerTest {
 
+    @Mock
     private CourseImportController courseImportController;
 
     @Mock
     private CsvParser csvParser;
 
+    @Mock
+    private CourseStructureService courseStructureService;
+
     @Before
     public void setUp() {
-        courseImportController = new CourseImportController(csvParser);
+        courseImportController = new CourseImportController(csvParser, courseStructureService);
     }
 
     @Test
-    public void shouldParseAGivenCsvFile() throws Exception {
-        String csvContent = "csvContent";
-        CsvImportRequest request = mock(CsvImportRequest.class);
-        when(request.getStringContent()).thenReturn(csvContent);
+    public void shouldReturnErrorWhenCourseStructureIsInvalid() throws Exception {
 
-        courseImportController.importCourseStructure(request);
+        List<CourseStructureCsvRequest> courseList = new ArrayList<>();
 
-        ArgumentCaptor<StringReader> captor = ArgumentCaptor.forClass(StringReader.class);
-        verify(csvParser).parse(captor.capture(), eq(CourseStructureCsvRequest.class));
-        StringReader actualReader = captor.getValue();
-        assertEquals(csvContent, IOUtils.toString(actualReader));
+        CourseStructureCsvRequest courseRequestWithoutParentName = new CourseStructureCsvRequest("nodeName", "nodeType", "status", null, "description", "fileName");
+        courseList.add(courseRequestWithoutParentName);
+
+        when(csvParser.parse(any(MultipartFile.class), any(Class.class))).thenReturn(courseList);
+
+        ArrayList<ErrorModel> errorModels = new ArrayList<>();
+        errorModels.add(new ErrorModel("nodeName", "nodeType", "some message"));
+
+        when(courseStructureService.parseToCourseStructure(courseList)).thenReturn(errorModels);
+
+        List<ErrorModel> courseErrors = courseImportController.importCourseStructure(mock(CommonsMultipartFile.class));
+
+        assertThat(courseErrors.size(), Is.is(1));
+
+        verify(csvParser).parse(any(MultipartFile.class), any(Class.class));
+        verify(courseStructureService).parseToCourseStructure(courseList);
     }
+
 }

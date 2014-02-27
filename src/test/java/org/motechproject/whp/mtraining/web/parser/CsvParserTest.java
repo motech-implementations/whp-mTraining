@@ -22,4 +22,15 @@ public class CsvParserTest {
         assertEquals(1, actualCourseCsvContent.size());
         assertEquals(expectedCsvRequest, actualCourseCsvContent.get(0));
     }
+
+    @Test
+    public void shouldParseGivenCsvContentReaderToGivenBeanTypeWithFileNameAsNullWhenNodeTypeNotMessage() {
+        String csvContent = "nodeName,nodeTypeName,status,parentNode,description,fileName\n" +
+                "Basic TB Symptoms,Message,Active,Chapter TB Symptoms,Message Description";
+
+        List<CourseStructureCsvRequest> actualCourseCsvContent = csvParser.parse(new StringReader(csvContent), CourseStructureCsvRequest.class);
+
+        assertEquals(1, actualCourseCsvContent.size());
+        assertEquals(null,actualCourseCsvContent.get(0).getFileName());
+    }
 }

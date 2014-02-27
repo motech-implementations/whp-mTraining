@@ -23,6 +23,30 @@ public class CourseStructureCsvRequest {
         this.fileName = fileName;
     }
 
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public String getNodeType() {
+        return nodeType;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getParentNode() {
+        return parentNode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }
