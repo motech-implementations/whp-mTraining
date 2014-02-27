@@ -16,9 +16,14 @@ public class CourseStructureService {
         parentNamesMap = new HashSet<>();
         Map<String, BaseModel> courseMap = new HashMap<String, BaseModel>();
         parentNamesMap = new HashSet<String>();
+        if (!courseStructureObjects.get(0).getNodeType().equalsIgnoreCase("Course")) {
+            errors.add(new ErrorModel(courseStructureObjects.get(0).getNodeName(), courseStructureObjects.get(0).getNodeType(), "Could not find the course name in the CSV. Please add the course details to CSV and try importing again."));
+            return errors;
+        }
         for (CourseStructureCsvRequest courseStructureObject : courseStructureObjects) {
-            if(courseStructureObject.getParentNode()!=null)
+            if (courseStructureObject.getParentNode() != null) {
                 parentNamesMap.add(courseStructureObject.getParentNode());
+            }
         }
         for (CourseStructureCsvRequest courseStructureObject : courseStructureObjects) {
             if(courseStructureObject.getNodeType().equalsIgnoreCase("course") && courseStructureObjects.indexOf(courseStructureObject)!=0 ){
@@ -91,7 +96,7 @@ public class CourseStructureService {
 
     private boolean nodeNameExists(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap) {
         if (courseMap.containsKey(courseStructureObject.getNodeName())) {
-            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "There are 2 or more nodes with the same name: "+courseStructureObject.getNodeName()));
+            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "There are 2 or more nodes with the same name: "+courseStructureObject.getNodeName()+ ". Please ensure the nodes are named differently and try importing again."));
             return true;
         }
         return false;
@@ -110,7 +115,7 @@ public class CourseStructureService {
         String actualClassName = baseModel.getClass().getName();
         String expectedClassName = NodeMapper.parentNameToChildCLassMap.get(courseStructureObject.getNodeType().toLowerCase());
         if(!expectedClassName.equalsIgnoreCase(actualClassName)) {
-            errors.add(new ErrorModel(courseStructureObject.getNodeName(),courseStructureObject.getNodeType(),"Please check the parent node name for type and try importing again."));
+            errors.add(new ErrorModel(courseStructureObject.getNodeName(),courseStructureObject.getNodeType(),"The parent node specified is of not of valid type. Please check the parent node name and try importing again."));
             return true;
         }
         return false;
@@ -118,7 +123,7 @@ public class CourseStructureService {
     private boolean hasInvalidParentName(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap) {
         BaseModel parent = courseMap.get(courseStructureObject.getParentNode());
         if(parent==null) {
-            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "Please check the parent node name for spelling and try importing again."));
+            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "Could not find the parent node specified in the CSV. Please check the parent node name for spelling and try importing again."));
             return true;
         }
         return false;
@@ -126,7 +131,7 @@ public class CourseStructureService {
 
     private boolean hasInvalidFilenameForMessage(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors) {
         if (courseStructureObject.getFileName() == null) {
-            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "message should have file name"));
+            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "A message should have the name of the audio file. Please add the filename to CSV and try importing it again."));
             return true;
         }
         return false;
