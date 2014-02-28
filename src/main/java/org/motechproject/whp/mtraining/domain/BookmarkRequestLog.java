@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.joda.time.DateTime;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -27,6 +28,9 @@ public class BookmarkRequestLog {
     @Persistent(column = "response_message")
     private String responseMessage;
 
+    @Persistent(column = "created_on")
+    private DateTime createdOn;
+
 
     public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatusCode) {
         this.callerId = callerId;
@@ -34,6 +38,7 @@ public class BookmarkRequestLog {
         this.sessionId = sessionId;
         this.responseCode = responseStatusCode.getCode();
         this.responseMessage = responseStatusCode.getMessage();
+        this.createdOn = DateTime.now();
     }
 
     public Long getCallerId() {
@@ -74,5 +79,13 @@ public class BookmarkRequestLog {
 
     public void setResponseMessage(String responseMessage) {
         this.responseMessage = responseMessage;
+    }
+
+    public DateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(DateTime createdOn) {
+        this.createdOn = createdOn;
     }
 }
