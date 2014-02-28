@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 public enum ResponseStatus {
-    OK(200, "OK"), UNKNOWN_PROVIDER(401, "Provider Number not recognised");
+    OK(800, "OK"), UNKNOWN_PROVIDER(901, "Provider Number not recognised");
     private final int code;
     private final String message;
 
