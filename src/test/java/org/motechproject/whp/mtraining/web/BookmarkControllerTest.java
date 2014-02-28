@@ -4,9 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.whp.mtraining.domain.CallLog;
+import org.motechproject.whp.mtraining.domain.BookmarkRequestLog;
 import org.motechproject.whp.mtraining.domain.Provider;
-import org.motechproject.whp.mtraining.repository.CallLogs;
+import org.motechproject.whp.mtraining.repository.BookmarkRequestLogs;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
@@ -24,13 +24,13 @@ public class BookmarkControllerTest {
     private Providers providers;
     private BookmarkController bookmarkController;
     private Sessions sessions;
-    private CallLogs callLogs;
+    private BookmarkRequestLogs callLogs;
 
     @Before
     public void before() {
         providers = mock(Providers.class);
         sessions = mock(Sessions.class);
-        callLogs = mock(CallLogs.class);
+        callLogs = mock(BookmarkRequestLogs.class);
         bookmarkController = new BookmarkController(providers, sessions, callLogs);
     }
 
@@ -44,7 +44,7 @@ public class BookmarkControllerTest {
         assertThat(response.getResponseStatusCode(), is(ResponseStatus.UNKNOWN_PROVIDER.getCode()));
 
         verify(providers).getByCallerId(callerId);
-        verify(callLogs).record(any(CallLog.class));
+        verify(callLogs).record(any(BookmarkRequestLog.class));
     }
 
 
@@ -59,7 +59,7 @@ public class BookmarkControllerTest {
         assertThat(response.getResponseStatusCode(), is(ResponseStatus.OK.getCode()));
 
         verify(providers).getByCallerId(callerId);
-        verify(callLogs).record(any(CallLog.class));
+        verify(callLogs).record(any(BookmarkRequestLog.class));
     }
 
     @Test
@@ -73,7 +73,19 @@ public class BookmarkControllerTest {
 
         assertThat(StringUtils.isBlank(bookmark.getSessionId()), Is.is(false));
         verify(sessions).create();
-        verify(callLogs).record(any(CallLog.class));
+        verify(callLogs).record(any(BookmarkRequestLog.class));
+    }
+
+    @Test
+    public void shouldMarkErrorIfCallerIdIsMissing() {
+        MotechResponse response = bookmarkController.getBookmark(null, "uni", "ssn001");
+        assertThat(response.getResponseStatusCode(), Is.is(ResponseStatus.MISSING_CALLER_ID.getCode()));
+    }
+
+    @Test
+    public void shouldMarkErrorIfUniqueIdIsMissing() {
+        MotechResponse response = bookmarkController.getBookmark(123l, "", "ssn001");
+        assertThat(response.getResponseStatusCode(), Is.is(ResponseStatus.MISSING_UNIQUE_ID.getCode()));
     }
 
 }

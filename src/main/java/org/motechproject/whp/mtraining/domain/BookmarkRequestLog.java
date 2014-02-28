@@ -9,7 +9,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable(table = "call_log", identityType = IdentityType.APPLICATION)
-public class CallLog {
+public class BookmarkRequestLog {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
     @PrimaryKey
@@ -28,7 +28,7 @@ public class CallLog {
     private String responseMessage;
 
 
-    public CallLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatusCode) {
+    public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatusCode) {
         this.callerId = callerId;
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
