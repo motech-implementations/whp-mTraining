@@ -3,6 +3,8 @@ package org.motechproject.whp.mtraining.web.request;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 public class CourseStructureCsvRequest {
     private String nodeName;
     private String nodeType;
@@ -79,5 +81,21 @@ public class CourseStructureCsvRequest {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public boolean isCourse() {
+        return "Course".equalsIgnoreCase(nodeType);
+    }
+
+    public boolean hasParent() {
+        return isNotBlank(parentNode);
+    }
+
+    public boolean isMessage() {
+        return "Message".equalsIgnoreCase(nodeType);
+    }
+
+    public boolean hasFileName() {
+        return isNotBlank(fileName);
     }
 }

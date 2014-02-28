@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -18,12 +17,6 @@ import static java.util.Arrays.asList;
 
 @Component
 public class CsvParser {
-
-    public <T> List<T> parse(Reader reader, Class<T> type) {
-        HeaderColumnNameTranslateMappingStrategy<T> columnNameMappingStrategy = getColumnMappingStrategy(type);
-        CsvToBean<T> csvToBean = new CsvToBean<>();
-        return csvToBean.parse(columnNameMappingStrategy, new CSVReader(reader));
-    }
 
     public <T> List<T> parse(MultipartFile multipartFile, Class<T> type) throws IOException {
         StringReader reader = new StringReader(new String(multipartFile.getBytes()));

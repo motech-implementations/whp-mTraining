@@ -57,6 +57,20 @@ public class CourseStructureServiceTest {
     }
 
     @Test
+    public void shouldReturnErrorWhenNodeDoesNotHaveName() {
+        courseStructureCsvs.add(new CourseStructureCsvRequest("", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
+        courseStructureCsvs.add(new CourseStructureCsvRequest(null, "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
+        courseStructureCsvs.add(new CourseStructureCsvRequest("   ", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
+
+        List<ErrorModel> errors = courseStructureService.parseToCourseStructure(courseStructureCsvs);
+
+        assertEquals(3, errors.size());
+        assertEquals("Name not specified.", errors.get(0).getMessage());
+        assertEquals("Name not specified.", errors.get(1).getMessage());
+        assertEquals("Name not specified.", errors.get(2).getMessage());
+    }
+
+    @Test
     public void shouldReturnErrorWhenParentNodeIsAbsent() {
         courseStructureCsvs.add(new CourseStructureCsvRequest("Message TB Symptoms New", "Message", "Active", null, "Message Description", null));
         errors = courseStructureService.parseToCourseStructure(courseStructureCsvs);
@@ -91,10 +105,23 @@ public class CourseStructureServiceTest {
 
     @Test
     public void shouldAddErrorWhenNonMessageNodeDoesNotHaveChild() throws Exception {
-        courseStructureCsvs.add(new CourseStructureCsvRequest("Chapter TB Symptoms Version 2", "Chapter", "Active", null, "Module TB Symptoms", null));
+        courseStructureCsvs.add(new CourseStructureCsvRequest("Module TB Symptoms2", "Module", "Active", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseStructureCsvRequest("Chapter TB Symptoms2", "Chapter", "Active", "Module TB Symptoms2", "Message Description", null));
         errors = courseStructureService.parseToCourseStructure(courseStructureCsvs);
         assertEquals(1, errors.size());
         assertEquals("A chapter should have at least one message under it. Please check if the parent node name is correctly specified for modules in the CSV and try importing it again.", errors.get(0).getMessage());
+    }
+
+
+    @Test
+    public void shouldReturnErrorForChildStateIfParentIsInvalid() throws Exception {
+        courseStructureCsvs.add(new CourseStructureCsvRequest("Module TB Symptoms2", "Module", "Active", "Basic TB Symptoms1-parent", "Message Description", null));
+        courseStructureCsvs.add(new CourseStructureCsvRequest("Chapter TB Symptoms Version 2", "Chapter", "Active", "Module TB Symptoms2", "description Module TB Symptoms2", null));
+        courseStructureCsvs.add(new CourseStructureCsvRequest("Message TB Symptoms Version 2", "Message", "Active", "Chapter TB Symptoms Version 2", "Message Description", ""));
+        errors = courseStructureService.parseToCourseStructure(courseStructureCsvs);
+        assertEquals(2, errors.size());
+        assertEquals("Could not find the parent node specified in the CSV. Please check the parent node name for spelling and try importing again.", errors.get(0).getMessage());
+        assertEquals("A message should have the name of the audio file. Please add the filename to CSV and try importing it again.", errors.get(1).getMessage());
     }
 }
 

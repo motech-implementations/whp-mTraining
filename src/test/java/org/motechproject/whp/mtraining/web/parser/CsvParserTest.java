@@ -2,35 +2,38 @@ package org.motechproject.whp.mtraining.web.parser;
 
 import org.junit.Test;
 import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
+import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.StringReader;
+import java.io.*;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
 public class CsvParserTest {
     private CsvParser csvParser = new CsvParser();
+    private MockMultipartFile mockMultipartFile;
 
     @Test
-    public void shouldParseGivenCsvContentReaderToGivenBeanType() {
-        String csvContent = "nodeName,nodeType,status,parentNode,description,fileName\n" +
-                "Basic TB Symptoms,Message,Active,Chapter TB Symptoms,Message Description,Audio_TB_Basic_Symptoms.filetype";
-        CourseStructureCsvRequest expectedCsvRequest = new CourseStructureCsvRequest("Basic TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "Audio_TB_Basic_Symptoms.filetype");
+    public void shouldParseGivenCsvFileToGivenBeanType() throws IOException {
+        String resourceName = "file.csv";
+        File file = new File("./src/test/resources/file.csv");
+        InputStream inputStream = new FileInputStream(file);
+        mockMultipartFile = new MockMultipartFile(resourceName, resourceName, "", inputStream);
 
-        List<CourseStructureCsvRequest> actualCourseCsvContent = csvParser.parse(new StringReader(csvContent), CourseStructureCsvRequest.class);
+        List<CourseStructureCsvRequest> actualCourseCsvContent = csvParser.parse(mockMultipartFile, CourseStructureCsvRequest.class);
 
-        assertEquals(1, actualCourseCsvContent.size());
-        assertEquals(expectedCsvRequest, actualCourseCsvContent.get(0));
+        assertEquals(4, actualCourseCsvContent.size());
     }
 
     @Test
-    public void shouldParseGivenCsvContentReaderToGivenBeanTypeWithFileNameAsNullWhenNodeTypeNotMessage() {
-        String csvContent = "nodeName,nodeTypeName,status,parentNode,description,fileName\n" +
-                "Basic TB Symptoms,Message,Active,Chapter TB Symptoms,Message Description";
+    public void shouldParseGivenCsvFileToGivenBeanTypeIgnoringExtraColumnOfCsv() throws IOException {
+        String resourceName = "fileWithoutHeading.csv";
+        File file = new File("./src/test/resources/fileWithoutHeading.csv");
+        InputStream inputStream = new FileInputStream(file);
+        mockMultipartFile = new MockMultipartFile(resourceName, resourceName, "", inputStream);
 
-        List<CourseStructureCsvRequest> actualCourseCsvContent = csvParser.parse(new StringReader(csvContent), CourseStructureCsvRequest.class);
+        List<CourseStructureCsvRequest> actualCourseCsvContent = csvParser.parse(mockMultipartFile, CourseStructureCsvRequest.class);
 
-        assertEquals(1, actualCourseCsvContent.size());
-        assertEquals(null,actualCourseCsvContent.get(0).getFileName());
+        assertEquals(4, actualCourseCsvContent.size());
     }
 }

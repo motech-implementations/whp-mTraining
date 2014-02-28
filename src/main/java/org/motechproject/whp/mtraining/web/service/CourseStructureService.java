@@ -6,37 +6,36 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 @Service
 public class CourseStructureService {
-    private List<ErrorModel> errors;
-    private Set<String> parentNamesMap;
 
     public List<ErrorModel> parseToCourseStructure(List<CourseStructureCsvRequest> courseStructureObjects) {
-        errors = new ArrayList<>();
-        parentNamesMap = new HashSet<>();
-        Map<String, BaseModel> courseMap = new HashMap<String, BaseModel>();
-        parentNamesMap = new HashSet<String>();
-        if (!courseStructureObjects.get(0).getNodeType().equalsIgnoreCase("Course")) {
-            errors.add(new ErrorModel(courseStructureObjects.get(0).getNodeName(), courseStructureObjects.get(0).getNodeType(), "Could not find the course name in the CSV. Please add the course details to CSV and try importing again."));
+        List<ErrorModel> errors = new ArrayList<>();
+        Set<String> parents = new HashSet<>();
+        Map<String, BaseModel> courseMap = new HashMap<>();
+        if (!courseStructureObjects.get(0).isCourse()) {
+            errors.add(new ErrorModel("Could not find the course name in the CSV. Please add the course details to CSV and try importing again."));
             return errors;
         }
         for (CourseStructureCsvRequest courseStructureObject : courseStructureObjects) {
-            if (courseStructureObject.getParentNode() != null) {
-                parentNamesMap.add(courseStructureObject.getParentNode());
+            if (courseStructureObject.hasParent()) {
+                parents.add(courseStructureObject.getParentNode());
             }
         }
         for (CourseStructureCsvRequest courseStructureObject : courseStructureObjects) {
-            if(courseStructureObject.getNodeType().equalsIgnoreCase("course") && courseStructureObjects.indexOf(courseStructureObject)!=0 ){
-                errors.add(new ErrorModel(courseStructureObject.getNodeName(),courseStructureObject.getNodeType(),"There are multiple course nodes in the CSV. Please ensure there is only course node in the CSV and try importing again."));
+            if (courseStructureObject.isCourse() && courseStructureObjects.indexOf(courseStructureObject) != 0) {
+                errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "There are multiple course nodes in the CSV. Please ensure there is only course node in the CSV and try importing again."));
                 return errors;
             }
-            if (isValid(courseStructureObject, errors, courseMap,parentNamesMap))
-                addToCourseStructure(courseStructureObject, courseMap, errors);
+            if (isValid(courseStructureObject, errors, courseMap, parents))
+                addToCourseStructure(courseStructureObject, courseMap);
         }
         return errors;
     }
 
-    public void addToCourseStructure(CourseStructureCsvRequest courseStructureObject, Map<String, BaseModel> courseMap, List<ErrorModel> errors) {
+    public void addToCourseStructure(CourseStructureCsvRequest courseStructureObject, Map<String, BaseModel> courseMap) {
         String baseModelType = courseStructureObject.getNodeType();
         BaseModel baseModel = null;
         switch (baseModelType.toLowerCase()) {
@@ -52,8 +51,6 @@ public class CourseStructureService {
             case "message":
                 baseModel = new Message(courseStructureObject.getNodeName(), courseStructureObject.getDescription(), courseStructureObject.getStatus(), courseStructureObject.getFileName());
                 break;
-            default:
-                //errors.put()
         }
         if (baseModel != null) {
             courseMap.put(courseStructureObject.getNodeName(), baseModel);
@@ -63,47 +60,54 @@ public class CourseStructureService {
 
     private boolean isValid(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap, Set<String> parentNamesMap) {
 
-        if(!courseStructureObject.getNodeType().equalsIgnoreCase("message")&& hasNoChild(courseStructureObject,parentNamesMap,errors))
-            return false;
-        if (nodeNameExists(courseStructureObject, errors, courseMap)) {
+        if (isNodeNameEmpty(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errors) || isNodeNameADuplicate(courseStructureObject, errors, courseMap)) {
             return false;
         }
-        if (!courseStructureObject.getNodeType().equalsIgnoreCase("course")) {
+        if (!courseStructureObject.isCourse()) {
             if (hasNoParent(courseStructureObject, errors, courseMap)) {
                 return false;
             }
-            if (hasInvalidParentName(courseStructureObject, errors, courseMap)) {
-                return false;
-            }
-            if (hasInvalidParentType(courseStructureObject, errors, courseMap)) {
+            if (hasInvalidParentName(courseStructureObject, errors, courseMap) || hasInvalidParentType(courseStructureObject, errors, courseMap)) {
                 return false;
             }
         }
-        if (courseStructureObject.getNodeType().equalsIgnoreCase("message") && hasInvalidFilenameForMessage(courseStructureObject, errors)) {
+        if (!courseStructureObject.isMessage() && hasNoChild(courseStructureObject, parentNamesMap, errors)) {
+            return false;
+        }
+        if (courseStructureObject.isMessage() && !courseStructureObject.hasFileName()) {
+            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "A message should have the name of the audio file. Please add the filename to CSV and try importing it again."));
             return false;
         }
         return true;
     }
 
-    private boolean hasNoChild(CourseStructureCsvRequest courseStructureObject, Set<String> parentNamesMap, List<ErrorModel> errors) {
-        if(!parentNamesMap.contains(courseStructureObject.getNodeName())) {
-            String errorMessage = "A " + courseStructureObject.getNodeType().toLowerCase() + " should have at least one " + NodeMapper.childToParentNameMap.get(courseStructureObject.getNodeType().toLowerCase()) + " under it. Please check if the parent node name is correctly specified for modules in the CSV and try importing it again.";
-            errors.add(new ErrorModel(courseStructureObject.getNodeName(),courseStructureObject.getNodeType(), errorMessage));
+    private boolean isNodeNameEmpty(String nodeName, String nodeType, List<ErrorModel> errors) {
+        if (isBlank(nodeName)) {
+            errors.add(new ErrorModel(nodeName, nodeType, "Name not specified."));
             return true;
         }
         return false;
     }
 
-    private boolean nodeNameExists(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap) {
+    private boolean hasNoChild(CourseStructureCsvRequest courseStructureObject, Set<String> parentNamesMap, List<ErrorModel> errors) {
+        if (!parentNamesMap.contains(courseStructureObject.getNodeName())) {
+            String errorMessage = "A " + courseStructureObject.getNodeType().toLowerCase() + " should have at least one " + NodeMapper.childToParentNameMap.get(courseStructureObject.getNodeType().toLowerCase()) + " under it. Please check if the parent node name is correctly specified for modules in the CSV and try importing it again.";
+            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isNodeNameADuplicate(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap) {
         if (courseMap.containsKey(courseStructureObject.getNodeName())) {
-            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "There are 2 or more nodes with the same name: "+courseStructureObject.getNodeName()+ ". Please ensure the nodes are named differently and try importing again."));
+            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "There are 2 or more nodes with the same name: " + courseStructureObject.getNodeName() + ". Please ensure the nodes are named differently and try importing again."));
             return true;
         }
         return false;
     }
 
     private boolean hasNoParent(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap) {
-        if (courseStructureObject.getParentNode() == null) {
+        if (!courseStructureObject.hasParent()) {
             errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "All nodes other than course should have a parent node. Please ensure a parent node is specified and try importing again."));
             return true;
         }
@@ -112,29 +116,34 @@ public class CourseStructureService {
 
     private boolean hasInvalidParentType(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap) {
         BaseModel baseModel = courseMap.get(courseStructureObject.getParentNode());
+        if (baseModel == null)
+            return false;
         String actualClassName = baseModel.getClass().getName();
         String expectedClassName = NodeMapper.parentNameToChildCLassMap.get(courseStructureObject.getNodeType().toLowerCase());
-        if(!expectedClassName.equalsIgnoreCase(actualClassName)) {
-            errors.add(new ErrorModel(courseStructureObject.getNodeName(),courseStructureObject.getNodeType(),"The parent node specified is of not of valid type. Please check the parent node name and try importing again."));
+        if (!expectedClassName.equalsIgnoreCase(actualClassName)) {
+            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "The parent node specified is of not of valid type. Please check the parent node name and try importing again."));
             return true;
         }
         return false;
     }
+
     private boolean hasInvalidParentName(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap) {
-        BaseModel parent = courseMap.get(courseStructureObject.getParentNode());
-        if(parent==null) {
+        if (getErrorModelForANode(courseStructureObject.getParentNode(), errors) == null && !courseMap.containsKey(courseStructureObject.getParentNode())) {
             errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "Could not find the parent node specified in the CSV. Please check the parent node name for spelling and try importing again."));
             return true;
         }
         return false;
     }
 
-    private boolean hasInvalidFilenameForMessage(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors) {
-        if (courseStructureObject.getFileName() == null) {
-            errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "A message should have the name of the audio file. Please add the filename to CSV and try importing it again."));
-            return true;
+    private ErrorModel getErrorModelForANode(String nodeName, List<ErrorModel> errors) {
+        for (ErrorModel error : errors) {
+            if (error.getNodeName().equalsIgnoreCase(nodeName))
+                return error;
+
         }
-        return false;
+        return null;
     }
+
+
 }
 
