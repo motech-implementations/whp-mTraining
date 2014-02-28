@@ -8,7 +8,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-@PersistenceCapable(table = "call_log", identityType = IdentityType.APPLICATION)
+@PersistenceCapable(table = "bookmark_request_log", identityType = IdentityType.APPLICATION)
 public class BookmarkRequestLog {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
