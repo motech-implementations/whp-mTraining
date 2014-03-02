@@ -60,4 +60,12 @@ public class CourseImportControllerTest {
         verify(courseStructureService).parseToCourseStructure(courseList);
     }
 
+    @Test
+    public void shouldReturnErrorResultWhenExceptionThrownParsingCsv() throws Exception {
+
+        when(csvParser.parse(any(MultipartFile.class), any(Class.class))).thenThrow(new RuntimeException("All the headers are not present"));
+        List<ErrorModel> errorModels = courseImportController.importCourseStructure(mock(CommonsMultipartFile.class));
+        assertThat(errorModels.size(),is(1));
+    }
+
 }

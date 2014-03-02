@@ -9,9 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
@@ -22,7 +20,19 @@ public class CsvParser {
         StringReader reader = new StringReader(new String(multipartFile.getBytes()));
         HeaderColumnNameTranslateMappingStrategy<T> columnNameMappingStrategy = getColumnMappingStrategy(type);
         CsvToBean<T> csvToBean = new CsvToBean<>();
+        Set<String> columnNames = columnNameMappingStrategy.getColumnMapping().keySet();
+        throwExceptionForMissingRequiredHeaders(new StringReader(new String(multipartFile.getBytes())), columnNames);
         return csvToBean.parse(columnNameMappingStrategy, new CSVReader(reader));
+    }
+
+    private void throwExceptionForMissingRequiredHeaders(StringReader reader, Set<String> columnNames) throws IOException {
+        CSVReader csvReader = new CSVReader(reader);
+        List<String> headings = Arrays.asList(csvReader.readNext());
+        headings = convertElementsOfArrayToLowerCase(headings);
+        for (String columnName : columnNames) {
+            if (!headings.contains(columnName.toLowerCase()))
+                throw new RuntimeException("All the headers are not present");
+        }
     }
 
     private <T> HeaderColumnNameTranslateMappingStrategy<T> getColumnMappingStrategy(Class<T> type) {
@@ -30,6 +40,14 @@ public class CsvParser {
         columnNameMappingStrategy.setType(type);
         columnNameMappingStrategy.setColumnMapping(getColumnMapping(type));
         return columnNameMappingStrategy;
+    }
+
+    private List<String> convertElementsOfArrayToLowerCase(List<String> headings) {
+        List<String> headingsWithSmallCase = new ArrayList<>();
+        for (String heading : headings) {
+            headingsWithSmallCase.add(heading.toLowerCase());
+        }
+        return headingsWithSmallCase;
     }
 
     private Map<String, String> getColumnMapping(Class type) {

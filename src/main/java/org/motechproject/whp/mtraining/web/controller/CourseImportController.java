@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -29,7 +31,11 @@ public class CourseImportController {
     @RequestMapping(value = "/course-structure/import", method = RequestMethod.POST)
     @ResponseBody
     public List<ErrorModel> importCourseStructure(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) throws Exception {
-        List<CourseStructureCsvRequest> courseStructureCsvRequests = csvParser.parse(multipartFile, CourseStructureCsvRequest.class);
-        return courseStructureService.parseToCourseStructure(courseStructureCsvRequests);
+        try {
+            List<CourseStructureCsvRequest> courseStructureCsvRequests = csvParser.parse(multipartFile, CourseStructureCsvRequest.class);
+            return courseStructureService.parseToCourseStructure(courseStructureCsvRequests);
+        } catch (RuntimeException ex) {
+            return new ArrayList<>(Arrays.asList(new ErrorModel(ex.getMessage())));
+        }
     }
 }
