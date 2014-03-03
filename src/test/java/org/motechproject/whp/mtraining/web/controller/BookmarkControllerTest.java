@@ -1,4 +1,4 @@
-package org.motechproject.whp.mtraining.web;
+package org.motechproject.whp.mtraining.web.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.Is;
@@ -8,6 +8,8 @@ import org.motechproject.whp.mtraining.domain.BookmarkRequestLog;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.BookmarkRequestLogs;
 import org.motechproject.whp.mtraining.repository.Providers;
+import org.motechproject.whp.mtraining.web.Sessions;
+import org.motechproject.whp.mtraining.web.controller.BookmarkController;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 

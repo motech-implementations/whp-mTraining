@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.web.controller;
 import org.motechproject.whp.mtraining.web.model.ErrorModel;
 import org.motechproject.whp.mtraining.web.parser.CsvParser;
 import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
-import org.motechproject.whp.mtraining.web.service.CourseStructureService;
+import org.motechproject.whp.mtraining.service.impl.CourseImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ import java.util.List;
 public class CourseImportController {
 
     private CsvParser csvParser;
-    private CourseStructureService courseStructureService;
+    private CourseImportService courseService;
     private static final Logger LOG = LoggerFactory.getLogger(CourseImportController.class);
 
     @Autowired
-    public CourseImportController(CsvParser csvParser, CourseStructureService courseStructureService) {
+    public CourseImportController(CsvParser csvParser, CourseImportService courseService) {
         this.csvParser = csvParser;
-        this.courseStructureService = courseStructureService;
+        this.courseService = courseService;
     }
 
     @RequestMapping(value = "/course-structure/import", method = RequestMethod.POST)
@@ -36,7 +36,7 @@ public class CourseImportController {
     public List<ErrorModel> importCourseStructure(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) throws Exception {
         try {
             List<CourseStructureCsvRequest> courseStructureCsvRequests = csvParser.parse(multipartFile, CourseStructureCsvRequest.class);
-            return courseStructureService.parseToCourseStructure(courseStructureCsvRequests);
+            return courseService.parse(courseStructureCsvRequests);
         } catch (RuntimeException ex) {
             LOG.error(ex.getMessage());
             return new ArrayList<>(Arrays.asList(new ErrorModel(ex.getMessage())));

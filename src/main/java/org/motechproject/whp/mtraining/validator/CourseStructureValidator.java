@@ -1,35 +1,47 @@
-package org.motechproject.whp.mtraining.web.service;
+package org.motechproject.whp.mtraining.validator;
 
-import org.motechproject.whp.mtraining.web.model.*;
+import org.motechproject.whp.mtraining.web.model.BaseModel;
+import org.motechproject.whp.mtraining.web.model.Chapter;
+import org.motechproject.whp.mtraining.web.model.Course;
+import org.motechproject.whp.mtraining.web.model.ErrorModel;
+import org.motechproject.whp.mtraining.web.model.Message;
+import org.motechproject.whp.mtraining.web.model.Module;
+import org.motechproject.whp.mtraining.web.model.NodeMapper;
 import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-@Service
-public class CourseStructureService {
-    private static final Logger LOG = LoggerFactory.getLogger(CourseStructureService.class);
-    public List<ErrorModel> parseToCourseStructure(List<CourseStructureCsvRequest> courseStructureObjects) {
+@Component
+public class CourseStructureValidator {
+    private static final Logger LOG = LoggerFactory.getLogger(CourseStructureValidator.class);
+
+    public List<ErrorModel> validate(List<CourseStructureCsvRequest> requests) {
         List<ErrorModel> errors = new ArrayList<>();
         Set<String> parents = new HashSet<>();
         Map<String, BaseModel> courseMap = new HashMap<>();
-        if (!courseStructureObjects.get(0).isCourse()) {
+        if (!requests.get(0).isCourse()) {
             String errorMessage = "Could not find the course name in the CSV. Please add the course details to CSV and try importing again.";
             LOG.error(errorMessage);
             errors.add(new ErrorModel(errorMessage));
             return errors;
         }
-        for (CourseStructureCsvRequest courseStructureObject : courseStructureObjects) {
+        for (CourseStructureCsvRequest courseStructureObject : requests) {
             if (courseStructureObject.hasParent()) {
                 parents.add(courseStructureObject.getParentNode());
             }
         }
-        for (CourseStructureCsvRequest courseStructureObject : courseStructureObjects) {
-            if (courseStructureObject.isCourse() && courseStructureObjects.indexOf(courseStructureObject) != 0) {
+        for (CourseStructureCsvRequest courseStructureObject : requests) {
+            if (courseStructureObject.isCourse() && requests.indexOf(courseStructureObject) != 0) {
                 String errorMessage = "There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.";
                 LOG.error(errorMessage);
                 errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));

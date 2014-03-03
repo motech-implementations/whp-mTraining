@@ -8,7 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.whp.mtraining.web.model.ErrorModel;
 import org.motechproject.whp.mtraining.web.parser.CsvParser;
 import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
-import org.motechproject.whp.mtraining.web.service.CourseStructureService;
+import org.motechproject.whp.mtraining.service.impl.CourseImportService;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -30,11 +30,11 @@ public class CourseImportControllerTest {
     private CsvParser csvParser;
 
     @Mock
-    private CourseStructureService courseStructureService;
+    private CourseImportService courseService;
 
     @Before
     public void setUp() {
-        courseImportController = new CourseImportController(csvParser, courseStructureService);
+        courseImportController = new CourseImportController(csvParser, courseService);
     }
 
     @Test
@@ -50,14 +50,14 @@ public class CourseImportControllerTest {
         ArrayList<ErrorModel> errorModels = new ArrayList<>();
         errorModels.add(new ErrorModel("nodeName", "nodeType", "some message"));
 
-        when(courseStructureService.parseToCourseStructure(courseList)).thenReturn(errorModels);
+        when(courseService.parse(courseList)).thenReturn(errorModels);
 
         List<ErrorModel> courseErrors = courseImportController.importCourseStructure(mock(CommonsMultipartFile.class));
 
         assertThat(courseErrors.size(),is(1));
 
         verify(csvParser).parse(any(MultipartFile.class), any(Class.class));
-        verify(courseStructureService).parseToCourseStructure(courseList);
+        verify(courseService).parse(courseList);
     }
 
     @Test

@@ -1,10 +1,11 @@
-package org.motechproject.whp.mtraining.web;
+package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.whp.mtraining.domain.BookmarkRequestLog;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.BookmarkRequestLogs;
 import org.motechproject.whp.mtraining.repository.Providers;
+import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.ErrorResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
