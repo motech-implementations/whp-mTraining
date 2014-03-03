@@ -442,6 +442,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.datanucleus</groupId>
+                        <artifactId>datanucleus-core</artifactId>
+                        <version>3.2.12</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
