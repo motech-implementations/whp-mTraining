@@ -4,6 +4,8 @@ import org.motechproject.whp.mtraining.web.model.ErrorModel;
 import org.motechproject.whp.mtraining.web.parser.CsvParser;
 import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
 import org.motechproject.whp.mtraining.web.service.CourseStructureService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ public class CourseImportController {
 
     private CsvParser csvParser;
     private CourseStructureService courseStructureService;
+    private static final Logger LOG = LoggerFactory.getLogger(CourseImportController.class);
 
     @Autowired
     public CourseImportController(CsvParser csvParser, CourseStructureService courseStructureService) {
@@ -35,6 +38,7 @@ public class CourseImportController {
             List<CourseStructureCsvRequest> courseStructureCsvRequests = csvParser.parse(multipartFile, CourseStructureCsvRequest.class);
             return courseStructureService.parseToCourseStructure(courseStructureCsvRequests);
         } catch (RuntimeException ex) {
+            LOG.error(ex.getMessage());
             return new ArrayList<>(Arrays.asList(new ErrorModel(ex.getMessage())));
         }
     }

@@ -1,33 +1,48 @@
-<main role="main">
-    <div ng-controller="fileUploadController" class="container">
+<br/>
+<br/>
+<div ng-controller="fileUploadController" class="table col-lg-10 main-content">
+    <main role="main">
+        <div class="box-header">Upload CSV</div>
+        <div class="box-content gutter-border">
+            <div class="row">
+                <form role="form" class="form-inline">
+                    <br/>
+                    <div class="form-group col-xs-offset-1 col-lg-5">
+                        <input class="btn btn-default btn-file col-lg-11" type="file" file-model="multipartFile"/>
+                    </div>
+                    <div class="form-group">
+                        <span class="form-control btn btn-default" ng-click="uploadFile()">
+                            Upload File
+                        </span>
+                    </div>
+                </form>
+            </div>
+            <br/>
+        </div>
+        <br/>
+        <br/>
+
+    <div>
         <div ng-show="errors.length==0">
             <ul class="alert alert-success"> csv file uploaded successfully</ul>
         </div>
-        <form role="form" class="form form-inline">
-            <div class="field">
-                <input class="btn" type="file" file-model="multipartFile"/>
-                </div>
-            <div class="field">
-            <button class="button" ng-click="uploadFile()">Upload File</button>
-                </div>
-        </form>
+
         <div ng-show="errors.length">
             <ul class="alert alert-danger"> You have errors in your csv</ul>
-            <table class="table table-hover" ng-repeat="error in errors">
+            <table class="table table-hover table-bordered" ng-repeat="error in errors">
                 <tr>
-                    <th class="col-lg-3">nodeName</th>
-                    <th class="col-lg-3">nodeType</th>
+                    <th class="col-lg-2">nodeName</th>
+                    <th class="col-lg-2">nodeType</th>
                     <th class="col-lg-6">reason</th>
                 </tr>
                 <tr>
-                    <td class="col-lg-3">{{error.nodeName}}</td>
-                    <td class="col-lg-3">{{error.nodeType}}</td>
+                    <td class="col-lg-2">{{error.nodeName}}</td>
+                    <td class="col-lg-2">{{error.nodeType}}</td>
                     <td class="col-lg-6">{{error.message}}</td>
                 </tr>
-
             </table>
         </div>
-
-
     </div>
-</main>
+    </main>
+</div>
+

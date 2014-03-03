@@ -31,6 +31,7 @@ public class CourseStructureServiceTest {
     public void shouldHaveNoErrorForValidStructure() {
         errors = courseStructureService.parseToCourseStructure(courseStructureCsvs);
         assertThat(errors.size(), is(0));
+
     }
     @Test
     public void shouldHaveErrorWhenNoCourseIsProvided() {
