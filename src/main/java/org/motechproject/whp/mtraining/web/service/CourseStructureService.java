@@ -30,7 +30,7 @@ public class CourseStructureService {
         }
         for (CourseStructureCsvRequest courseStructureObject : courseStructureObjects) {
             if (courseStructureObject.isCourse() && courseStructureObjects.indexOf(courseStructureObject) != 0) {
-                String errorMessage = "There are multiple course nodes in the CSV. Please ensure there is only course node in the CSV and try importing again.";
+                String errorMessage = "There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.";
                 LOG.error(errorMessage);
                 errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));
                 return errors;
@@ -93,9 +93,9 @@ public class CourseStructureService {
 
     private boolean isNodeNameEmpty(String nodeName, String nodeType, List<ErrorModel> errors) {
         if (isBlank(nodeName)) {
-            String errorMessage = " Name not specified.";
+            String errorMessage = "Name not specified. Please specify the node name and try importing again.";
             LOG.error(errorMessage);
-            errors.add(new ErrorModel("Name not specified."));
+            errors.add(new ErrorModel(errorMessage));
             return true;
         }
         return false;

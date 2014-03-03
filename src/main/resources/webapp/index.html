@@ -24,18 +24,19 @@
 
     <div>
         <div ng-show="errors.length==0">
-            <ul class="alert alert-success"> csv file uploaded successfully</ul>
+            <ul class="alert alert-success"> CSV file uploaded successfully.</ul>
         </div>
 
         <div ng-show="errors.length">
-            <ul class="alert alert-danger"> You have errors in your csv</ul>
-            <table class="table table-hover table-bordered" ng-repeat="error in errors">
+            <ul class="alert alert-danger"> Could not import the CSV due to errors. Please fix the errors given below and try importing again.</ul>
+
+            <table class="table table-hover table-bordered" >
                 <tr>
                     <th class="col-lg-2">nodeName</th>
                     <th class="col-lg-2">nodeType</th>
                     <th class="col-lg-6">reason</th>
                 </tr>
-                <tr>
+                <tr ng-repeat="error in errors">
                     <td class="col-lg-2">{{error.nodeName}}</td>
                     <td class="col-lg-2">{{error.nodeType}}</td>
                     <td class="col-lg-6">{{error.message}}</td>

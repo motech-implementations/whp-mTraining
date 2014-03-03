@@ -46,7 +46,7 @@ public class CourseStructureServiceTest {
         courseStructureCsvs.add(new CourseStructureCsvRequest("Basic Malaria Symptoms", "Course", "Active", null, "Message Description", null));
         errors = courseStructureService.parseToCourseStructure(courseStructureCsvs);
         assertThat(errors.size(), is(1));
-        assertEquals("There are multiple course nodes in the CSV. Please ensure there is only course node in the CSV and try importing again.", errors.get(0).getMessage());
+        assertEquals("There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.", errors.get(0).getMessage());
     }
 
     @Test
@@ -66,9 +66,9 @@ public class CourseStructureServiceTest {
         List<ErrorModel> errors = courseStructureService.parseToCourseStructure(courseStructureCsvs);
 
         assertEquals(3, errors.size());
-        assertEquals("Name not specified.", errors.get(0).getMessage());
-        assertEquals("Name not specified.", errors.get(1).getMessage());
-        assertEquals("Name not specified.", errors.get(2).getMessage());
+        assertEquals("Name not specified. Please specify the node name and try importing again.", errors.get(0).getMessage());
+        assertEquals("Name not specified. Please specify the node name and try importing again.", errors.get(1).getMessage());
+        assertEquals("Name not specified. Please specify the node name and try importing again.", errors.get(2).getMessage());
     }
 
     @Test

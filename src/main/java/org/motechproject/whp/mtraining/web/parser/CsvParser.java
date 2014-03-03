@@ -31,7 +31,7 @@ public class CsvParser {
         headings = convertElementsOfArrayToLowerCase(headings);
         for (String columnName : columnNames) {
             if (!headings.contains(columnName.toLowerCase()))
-                throw new RuntimeException("All the headers are not present");
+                throw new RuntimeException("The column:"+columnName+" is missing in the CSV. Please add this column and try importing again.");
         }
     }
 
