@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.validator;
 import org.junit.Before;
 import org.junit.Test;
 import org.motechproject.whp.mtraining.web.model.ErrorModel;
-import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.motechproject.whp.mtraining.web.parser;
+package org.motechproject.whp.mtraining.csv.parser;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.bean.CsvToBean;

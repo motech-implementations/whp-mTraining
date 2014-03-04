@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.web.model.ErrorModel;
-import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
 
 import java.util.List;
 

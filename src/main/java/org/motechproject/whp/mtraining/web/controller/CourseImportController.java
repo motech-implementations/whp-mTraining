@@ -1,8 +1,8 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.whp.mtraining.web.model.ErrorModel;
-import org.motechproject.whp.mtraining.web.parser.CsvParser;
-import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.parser.CsvParser;
+import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
 import org.motechproject.whp.mtraining.service.impl.CourseImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

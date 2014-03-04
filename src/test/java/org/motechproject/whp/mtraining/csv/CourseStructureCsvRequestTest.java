@@ -1,7 +1,8 @@
-package org.motechproject.whp.mtraining.web.request;
+package org.motechproject.whp.mtraining.csv;
 
 import org.hamcrest.core.Is;
 import org.junit.Test;
+import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
 
 import static org.junit.Assert.assertThat;
 

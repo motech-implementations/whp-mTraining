@@ -2,7 +2,7 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.web.model.*;
-import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

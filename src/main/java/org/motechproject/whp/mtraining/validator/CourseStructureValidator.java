@@ -7,7 +7,7 @@ import org.motechproject.whp.mtraining.web.model.ErrorModel;
 import org.motechproject.whp.mtraining.web.model.Message;
 import org.motechproject.whp.mtraining.web.model.Module;
 import org.motechproject.whp.mtraining.web.model.NodeMapper;
-import org.motechproject.whp.mtraining.web.request.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
