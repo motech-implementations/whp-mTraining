@@ -12,4 +12,6 @@
 
     <osgi:service interface="org.motechproject.whp.mtraining.service.ProviderService" ref="providerService"/>
 
+    <osgi:reference interface="org.motechproject.email.service.EmailSenderService" id="emailSenderService"/>
+
 </beans>

@@ -1,8 +1,11 @@
 package org.motechproject.whp.mtraining.ivr;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class CoursePublisher {
 
-    public void publish(String courseId) {
-
+    public PublishingResult publish(String courseId) {
+        return PublishingResult.SUCCESS;
     }
 }
