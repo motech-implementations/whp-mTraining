@@ -1,6 +1,6 @@
 package org.motechproject.whp.mtraining.service.impl;
 
-import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
+import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.web.model.*;
 import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
 import org.slf4j.Logger;

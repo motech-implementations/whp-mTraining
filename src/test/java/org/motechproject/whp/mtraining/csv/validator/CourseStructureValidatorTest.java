@@ -1,7 +1,8 @@
-package org.motechproject.whp.mtraining.validator;
+package org.motechproject.whp.mtraining.csv.validator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.web.model.ErrorModel;
 import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
 

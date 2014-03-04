@@ -1,4 +1,4 @@
-package org.motechproject.whp.mtraining.validator;
+package org.motechproject.whp.mtraining.csv.validator;
 
 import org.motechproject.whp.mtraining.web.model.BaseModel;
 import org.motechproject.whp.mtraining.web.model.Chapter;
@@ -25,14 +25,16 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 public class CourseStructureValidator {
     private static final Logger LOG = LoggerFactory.getLogger(CourseStructureValidator.class);
 
+    private static final String COURSE_NAME_NOT_FOUND = "Could not find the course name in the CSV. Please add the course details to CSV and try importing again.";
+    private static final String MULTIPLE_COURSE_NODES_IN_CSV = "There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.";
+
     public List<ErrorModel> validate(List<CourseStructureCsvRequest> requests) {
         List<ErrorModel> errors = new ArrayList<>();
         Set<String> parents = new HashSet<>();
         Map<String, BaseModel> courseMap = new HashMap<>();
         if (!requests.get(0).isCourse()) {
-            String errorMessage = "Could not find the course name in the CSV. Please add the course details to CSV and try importing again.";
-            LOG.error(errorMessage);
-            errors.add(new ErrorModel(errorMessage));
+            LOG.error(COURSE_NAME_NOT_FOUND);
+            errors.add(new ErrorModel(COURSE_NAME_NOT_FOUND));
             return errors;
         }
         for (CourseStructureCsvRequest courseStructureObject : requests) {
@@ -42,9 +44,8 @@ public class CourseStructureValidator {
         }
         for (CourseStructureCsvRequest courseStructureObject : requests) {
             if (courseStructureObject.isCourse() && requests.indexOf(courseStructureObject) != 0) {
-                String errorMessage = "There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.";
-                LOG.error(errorMessage);
-                errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));
+                LOG.error(MULTIPLE_COURSE_NODES_IN_CSV);
+                errors.add(new ErrorModel(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), MULTIPLE_COURSE_NODES_IN_CSV));
                 return errors;
             }
             if (isValid(courseStructureObject, errors, courseMap, parents))
@@ -80,7 +81,7 @@ public class CourseStructureValidator {
 
     private boolean isValid(CourseStructureCsvRequest courseStructureObject, List<ErrorModel> errors, Map<String, BaseModel> courseMap, Set<String> parentNamesMap) {
 
-        if (isNodeNameEmpty(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errors) || isNodeNameADuplicate(courseStructureObject, errors, courseMap)) {
+        if (isNodeNameEmpty(courseStructureObject.getNodeName(), errors) || isNodeNameADuplicate(courseStructureObject, errors, courseMap)) {
             return false;
         }
         if (!courseStructureObject.isCourse()) {
@@ -103,7 +104,7 @@ public class CourseStructureValidator {
         return true;
     }
 
-    private boolean isNodeNameEmpty(String nodeName, String nodeType, List<ErrorModel> errors) {
+    private boolean isNodeNameEmpty(String nodeName, List<ErrorModel> errors) {
         if (isBlank(nodeName)) {
             String errorMessage = "Name not specified. Please specify the node name and try importing again.";
             LOG.error(errorMessage);
