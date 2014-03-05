@@ -9,16 +9,14 @@ import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.BookmarkRequestLogs;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
-import org.motechproject.whp.mtraining.web.controller.BookmarkController;
+import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class BookmarkControllerTest {
 
@@ -54,7 +52,7 @@ public class BookmarkControllerTest {
     public void shouldMarkCallerAsIdentifiedIfCallerIdRegistered() {
         long callerId = 76465464L;
 
-        Provider provider = new Provider(callerId);
+        Provider provider = new Provider(callerId, null, ActivationStatus.ACTIVE_RHP);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
@@ -90,4 +88,16 @@ public class BookmarkControllerTest {
         assertThat(response.getResponseStatusCode(), Is.is(ResponseStatus.MISSING_UNIQUE_ID.getCode()));
     }
 
+    @Test
+    public void shouldMarkErrorIfProviderIsNotValid() {
+        long callerId = 76465464L;
+        Provider provider = new Provider(callerId, null, ActivationStatus.ELIMINATED_RHP);
+        when(providers.getByCallerId(callerId)).thenReturn(provider);
+
+        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
+
+        assertThat(response.getResponseStatusCode(), is(ResponseStatus.NOT_WORKING_PROVIDER.getCode()));
+        verify(providers).getByCallerId(callerId);
+        verify(callLogs).record(any(BookmarkRequestLog.class));
+    }
 }

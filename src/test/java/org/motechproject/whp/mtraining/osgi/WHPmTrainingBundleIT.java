@@ -14,14 +14,14 @@ import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
 import org.motechproject.whp.mtraining.service.ProviderService;
-import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
-import org.motechproject.whp.mtraining.web.domain.ErrorResponse;
-import org.motechproject.whp.mtraining.web.domain.MotechResponse;
-import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.motechproject.whp.mtraining.web.domain.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ACTIVE_RHP;
+import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ELIMINATED_RHP;
 
 public class WHPmTrainingBundleIT extends BaseOsgiIT {
 
@@ -54,7 +54,7 @@ public class WHPmTrainingBundleIT extends BaseOsgiIT {
 
 
         Long callerId = 102l;
-        addProvider(callerId);
+        addProvider(callerId, ACTIVE_RHP);
 
         String url = String.format("http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s&sessionId=s001",
                 TestContext.getJettyPort(), callerId, "un1qId");
@@ -73,11 +73,22 @@ public class WHPmTrainingBundleIT extends BaseOsgiIT {
         assertEquals("district", bookmarkForKnownUser.getLocation().getDistrict());
     }
 
-    private void addProvider(Long callerId) {
-        ProviderService providerService = (ProviderService) getApplicationContext().getBean("providerService");
+    public void testThatResponseIs902WhenTheActivationStatusOfProviderIsInvalid() throws IOException, InterruptedException {
+        Long callerId = 102l;
+        addProvider(callerId, ELIMINATED_RHP);
 
-        Provider provider = new Provider(callerId);
-        provider.setLocation(new Location("block", "district", "state"));
+        CustomHttpResponse responseForNotWorkingProvider = httpClient.get(String.format("http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s",
+                TestContext.getJettyPort(), callerId, "un1qId"), new CustomHttpResponseHandler());
+        ErrorResponse bookmarkForNotWorkingProvider = (ErrorResponse) responseToJson(responseForNotWorkingProvider.getContent(), ErrorResponse.class);
+
+        assertEquals(HttpStatus.SC_OK, responseForNotWorkingProvider.getStatusCode());
+        assertEquals(ResponseStatus.NOT_WORKING_PROVIDER.getCode(), bookmarkForNotWorkingProvider.getResponseStatusCode());
+
+    }
+
+    private void addProvider(Long callerId, ActivationStatus activationStatus) {
+        ProviderService providerService = (ProviderService) getApplicationContext().getBean("providerService");
+        Provider provider = new Provider(callerId, new Location("block", "district", "state"), activationStatus);
         Long providerId = providerService.add(provider);
         markForDeletion(providerId);
     }
@@ -86,6 +97,7 @@ public class WHPmTrainingBundleIT extends BaseOsgiIT {
     protected List<String> getImports() {
         List<String> imports = new ArrayList<>();
         imports.add("org.apache.http.util");
+        imports.add("org.motechproject.whp.mtraining.web.domain");
         return imports;
     }
 

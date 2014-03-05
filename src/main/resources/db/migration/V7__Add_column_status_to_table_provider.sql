@@ -1,0 +1,1 @@
+ALTER TABLE mtraining.provider ADD COLUMN activation_status varchar(25) ;

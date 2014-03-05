@@ -1,6 +1,8 @@
 package org.motechproject.whp.mtraining.domain;
 
 
+import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
+
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -21,12 +23,13 @@ public class Provider {
     @Column(name = "location_id")
     private Location location;
 
-    public Provider(Long callerId) {
-        this.callerId = callerId;
-    }
+    @Column(name="activation_status")
+    private String activationStatus;
 
-    public void setLocation(Location location) {
+    public Provider(Long callerId, Location location, ActivationStatus activationStatus) {
+        this.callerId = callerId;
         this.location = location;
+        this.activationStatus = activationStatus.getStatus();
     }
 
     public Long getCallerId() {
@@ -37,15 +40,11 @@ public class Provider {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setCallerId(Long callerId) {
-        this.callerId = callerId;
-    }
-
     public Location getLocation() {
         return location;
+    }
+
+    public String getActivationStatus() {
+        return activationStatus;
     }
 }

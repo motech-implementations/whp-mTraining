@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.hamcrest.core.Is;
 import org.junit.Test;
+import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.service.ProviderService;
@@ -17,19 +18,16 @@ public class ProviderServiceImplTest {
     public void shouldAddProvider() {
         Providers providers = mock(Providers.class);
         ProviderService providerService = new ProviderServiceImpl(providers);
-        Provider provider = new Provider(654654l);
-
-        Provider persistedProvider = new Provider(654654l);
-        persistedProvider.setId(100l);
+        Provider provider = new Provider(654654l, null, ActivationStatus.ACTIVE_RHP);
+        Provider persistedProvider = mock(Provider.class);
         when(providers.save(provider)).thenReturn(persistedProvider);
+        when(persistedProvider.getId()).thenReturn(100l);
 
         Long id = providerService.add(provider);
 
         assertThat(id, Is.is(100l));
-
         verify(providers).save(provider);
     }
-
 
     @Test
     public void shouldDeleteProvider() {
@@ -40,5 +38,4 @@ public class ProviderServiceImplTest {
 
         verify(providers).delete(100l);
     }
-
 }

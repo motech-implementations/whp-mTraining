@@ -5,6 +5,7 @@ import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,10 @@ public class ProvidersIT {
 
     @Test
     public void shouldAddAndRetrieveAProvider() {
-
         long callerId = 7657667L;
-
         assertThat(providers.getByCallerId(callerId), IsNull.nullValue());
-
-        Provider provider = new Provider(callerId);
         Location bihar = new Location("Bihar");
-        provider.setLocation(bihar);
+        Provider provider = new Provider(callerId, bihar, ActivationStatus.ACTIVE_RHP);
 
         providers.save(provider);
 
@@ -42,6 +39,4 @@ public class ProvidersIT {
         assertThat(savedProvider, IsNull.notNullValue());
         assertThat(savedProvider.getCallerId(), Is.is(callerId));
     }
-
-
 }

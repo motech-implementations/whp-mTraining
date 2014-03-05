@@ -4,7 +4,8 @@ public enum ResponseStatus {
     OK(800, "OK"),
     UNKNOWN_PROVIDER(901, "Provider Number not recognised"),
     MISSING_CALLER_ID(902, "Missing Caller Id"),
-    MISSING_UNIQUE_ID(903, "Missing Unique Id");
+    MISSING_UNIQUE_ID(903, "Missing Unique Id"),
+    NOT_WORKING_PROVIDER(902, "Not a working provider");
 
     private final int code;
     private final String message;
