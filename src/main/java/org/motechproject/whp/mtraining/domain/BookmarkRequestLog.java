@@ -3,11 +3,9 @@ package org.motechproject.whp.mtraining.domain;
 import org.joda.time.DateTime;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.*;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @PersistenceCapable(table = "bookmark_request_log", identityType = IdentityType.APPLICATION)
 public class BookmarkRequestLog {
@@ -29,6 +27,7 @@ public class BookmarkRequestLog {
     private String responseMessage;
 
     @Persistent(column = "created_on")
+    @Temporal(TemporalType.TIMESTAMP)
     private DateTime createdOn;
 
 
