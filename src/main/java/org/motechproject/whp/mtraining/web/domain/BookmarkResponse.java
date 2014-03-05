@@ -11,6 +11,11 @@ public class BookmarkResponse implements MotechResponse {
     private String responseStatusMessage;
     private int responseStatusCode;
 
+    //For JSON parsing
+    public BookmarkResponse(){
+
+    }
+
     public BookmarkResponse(Long callerId, String sessionId, String uniqueId, Location location) {
         this.callerId = callerId;
         this.sessionId = sessionId;
