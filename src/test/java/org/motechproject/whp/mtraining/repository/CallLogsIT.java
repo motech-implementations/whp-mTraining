@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.repository;
 
 import org.hamcrest.core.Is;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,4 +40,9 @@ public class CallLogsIT {
         assertThat(bookmarkRequestLog.getSessionId(), Is.is("session01"));
         assertThat(bookmarkRequestLog.getUniqueId(), Is.is("UNQ1"));
     }
+    @After
+    public void After() {
+        callLogs.deleteAll();
+    }
+
 }

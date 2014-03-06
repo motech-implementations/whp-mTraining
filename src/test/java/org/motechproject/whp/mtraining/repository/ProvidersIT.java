@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.repository;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,5 +39,10 @@ public class ProvidersIT {
         Provider savedProvider = providers.getByCallerId(callerId);
         assertThat(savedProvider, IsNull.notNullValue());
         assertThat(savedProvider.getCallerId(), Is.is(callerId));
+    }
+
+    @After
+    public void after(){
+        providers.deleteAll();
     }
 }
