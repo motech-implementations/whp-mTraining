@@ -13,7 +13,6 @@ public class BookmarkRequestLog {
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
     @PrimaryKey
     private Long id;
-
     @Persistent(column = "caller_id")
     private Long callerId;
     @Persistent(column = "unique_id")
@@ -22,14 +21,11 @@ public class BookmarkRequestLog {
     private String sessionId;
     @Persistent(column = "response_code")
     private int responseCode;
-
     @Persistent(column = "response_message")
     private String responseMessage;
-
     @Persistent(column = "created_on")
     @Temporal(TemporalType.TIMESTAMP)
     private DateTime createdOn;
-
 
     public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatusCode) {
         this.callerId = callerId;
@@ -44,47 +40,23 @@ public class BookmarkRequestLog {
         return callerId;
     }
 
-    public void setCallerId(Long callerId) {
-        this.callerId = callerId;
-    }
-
     public String getUniqueId() {
         return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
     }
 
     public String getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
     public int getResponseCode() {
         return responseCode;
-    }
-
-    public void setResponseCode(int responseCode) {
-        this.responseCode = responseCode;
     }
 
     public String getResponseMessage() {
         return responseMessage;
     }
 
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
-    }
-
     public DateTime getCreatedOn() {
         return createdOn;
-    }
-
-    public void setCreatedOn(DateTime createdOn) {
-        this.createdOn = createdOn;
     }
 }
