@@ -52,6 +52,17 @@
             <artifactId>motech-platform-osgi-web-util</artifactId>
             <version>${motech.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>platform-mtraining</artifactId>
+            <version>0.22.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
+            <version>1.9.7-r027</version>
+        </dependency>
+
 
         <!--AspectJ AOP dependencies -->
 
@@ -241,12 +252,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>com.springsource.org.mockito</artifactId>
             <version>1.8.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
-            <version>1.9.7-r024</version>
             <scope>test</scope>
         </dependency>
         <dependency>

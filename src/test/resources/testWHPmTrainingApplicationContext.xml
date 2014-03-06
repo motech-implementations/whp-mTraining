@@ -29,4 +29,13 @@
         <property name="persistenceManagerFactory" ref="persistenceManagerFactoryBean"/>
     </bean>
 
+    <bean id="testSettingsFacacde" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
+        <property name="moduleName" value="whp-mtraining"/>
+        <property name="configFiles">
+            <list>
+                <value>classpath:test-mtraining.properties</value>
+            </list>
+        </property>
+    </bean>
+
 </beans>

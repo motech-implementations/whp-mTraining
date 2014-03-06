@@ -14,4 +14,6 @@
 
     <osgi:reference interface="org.motechproject.email.service.EmailSenderService" id="emailSenderService"/>
 
+    <osgi:reference interface="org.motechproject.mtraining.service.CourseService" id="courseService"/>
+
 </beans>
