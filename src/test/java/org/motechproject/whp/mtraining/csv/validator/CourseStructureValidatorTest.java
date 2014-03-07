@@ -2,9 +2,7 @@ package org.motechproject.whp.mtraining.csv.validator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
-import org.motechproject.whp.mtraining.web.model.ErrorModel;
-import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +14,7 @@ import static org.junit.Assert.assertThat;
 public class CourseStructureValidatorTest {
     CourseStructureValidator courseStructureValidator;
     List<CourseStructureCsvRequest> courseStructureCsvs;
-    List<ErrorModel> errors;
+    List<CourseImportError> errors;
 
     @Before
     public void setUp() throws Exception {
@@ -54,7 +52,7 @@ public class CourseStructureValidatorTest {
     public void shouldReturnErrorWhenNodeWithSameNameExists() {
         courseStructureCsvs.add(new CourseStructureCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
         errors = courseStructureValidator.validate(courseStructureCsvs);
-        assertEquals(1, errors.size());
+        assertEquals(2, errors.size());
         assertEquals("There are 2 or more nodes with the same name: Message TB Symptoms. Please ensure the nodes are named differently and try importing again.", errors.get(0).getMessage());
     }
 
@@ -64,7 +62,7 @@ public class CourseStructureValidatorTest {
         courseStructureCsvs.add(new CourseStructureCsvRequest(null, "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
         courseStructureCsvs.add(new CourseStructureCsvRequest("   ", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
 
-        List<ErrorModel> errors = courseStructureValidator.validate(courseStructureCsvs);
+        List<CourseImportError> errors = courseStructureValidator.validate(courseStructureCsvs);
 
         assertEquals(3, errors.size());
         assertEquals("Name not specified. Please specify the node name and try importing again.", errors.get(0).getMessage());

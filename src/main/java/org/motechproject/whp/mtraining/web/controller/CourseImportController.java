@@ -1,8 +1,10 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.motechproject.whp.mtraining.web.model.ErrorModel;
+import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
-import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.response.CourseImportResponse;
+import org.motechproject.whp.mtraining.csv.validator.CourseImportError;
+import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.service.impl.CourseImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,32 +16,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 @Controller
 public class CourseImportController {
-
-    private CsvParser csvParser;
-    private CourseImportService courseService;
     private static final Logger LOG = LoggerFactory.getLogger(CourseImportController.class);
 
+    private CsvParser csvParser;
+    private CourseImportService courseImportService;
+    private CourseStructureValidator courseStructureValidator;
+
     @Autowired
-    public CourseImportController(CsvParser csvParser, CourseImportService courseService) {
+    public CourseImportController(CsvParser csvParser, CourseStructureValidator courseStructureValidator, CourseImportService courseImportService) {
         this.csvParser = csvParser;
-        this.courseService = courseService;
+        this.courseStructureValidator = courseStructureValidator;
+        this.courseImportService = courseImportService;
     }
 
     @RequestMapping(value = "/course-structure/import", method = RequestMethod.POST)
     @ResponseBody
-    public List<ErrorModel> importCourseStructure(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) throws Exception {
+    public CourseImportResponse importCourseStructure(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) {
         try {
             List<CourseStructureCsvRequest> courseStructureCsvRequests = csvParser.parse(multipartFile, CourseStructureCsvRequest.class);
-            return courseService.parse(courseStructureCsvRequests);
-        } catch (RuntimeException ex) {
+            List<CourseImportError> errors = courseStructureValidator.validate(courseStructureCsvRequests);
+            if (!errors.isEmpty()) {
+                return CourseImportResponse.failure(errors);
+            }
+            courseImportService.importCourse(courseStructureCsvRequests);
+            return CourseImportResponse.success();
+        } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            return new ArrayList<>(Arrays.asList(new ErrorModel(ex.getMessage())));
+            return CourseImportResponse.failure(asList(new CourseImportError(ex.getMessage())));
         }
     }
 }

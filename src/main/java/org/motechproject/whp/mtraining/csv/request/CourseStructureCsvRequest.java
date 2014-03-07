@@ -1,7 +1,4 @@
-package org.motechproject.whp.mtraining.csv;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+package org.motechproject.whp.mtraining.csv.request;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -73,18 +70,8 @@ public class CourseStructureCsvRequest {
         this.fileName = fileName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
     public boolean isCourse() {
-        return "Course".equalsIgnoreCase(nodeType);
+        return NodeType.isCourse(nodeType);
     }
 
     public boolean hasParent() {
@@ -92,10 +79,20 @@ public class CourseStructureCsvRequest {
     }
 
     public boolean isMessage() {
-        return "Message".equalsIgnoreCase(nodeType);
+        return NodeType.isMessage(nodeType);
     }
 
     public boolean hasFileName() {
         return isNotBlank(fileName);
+    }
+
+    public boolean hasValidParentType(String parentNodeType) {
+        NodeType nodeType = NodeType.from(this.nodeType);
+        return nodeType.hasValidParentType(parentNodeType);
+    }
+
+    public String getChildNodeType() {
+        NodeType childNodeType = NodeType.getChildNodeType(nodeType);
+        return childNodeType != null ? childNodeType.name() : "";
     }
 }

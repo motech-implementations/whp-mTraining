@@ -1,8 +1,7 @@
 package org.motechproject.whp.mtraining.csv.parser;
 
 import org.junit.Test;
-import org.motechproject.whp.mtraining.csv.parser.CsvParser;
-import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;

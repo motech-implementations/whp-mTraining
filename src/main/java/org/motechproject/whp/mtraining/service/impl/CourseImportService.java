@@ -1,28 +1,14 @@
 package org.motechproject.whp.mtraining.service.impl;
 
-import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
-import org.motechproject.whp.mtraining.web.model.*;
-import org.motechproject.whp.mtraining.csv.CourseStructureCsvRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 public class CourseImportService {
-    private static final Logger LOG = LoggerFactory.getLogger(CourseImportService.class);
 
-    private CourseStructureValidator courseStructureValidator;
-
-    @Autowired
-    public CourseImportService(CourseStructureValidator courseStructureValidator) {
-        this.courseStructureValidator = courseStructureValidator;
-    }
-
-    public List<ErrorModel> parse(List<CourseStructureCsvRequest> requests) {
-        return courseStructureValidator.validate(requests);
+    public void importCourse(List<CourseStructureCsvRequest> requests) {
     }
 }
 
