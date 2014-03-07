@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.ivr;
 public class IVRResponse {
     private String response;
     private boolean isNetworkFailure;
-    private boolean validationFailure;
+    private boolean isValidationFailure;
 
     public IVRResponse(String response) {
         this.response = response;
@@ -18,10 +18,14 @@ public class IVRResponse {
     }
 
     public boolean isValidationFailure() {
-        return validationFailure;
+        return isValidationFailure;
     }
 
     public void markValidationFailure() {
-        this.validationFailure = true;
+        this.isValidationFailure = true;
+    }
+
+    public boolean isSuccess() {
+        return !isNetworkFailure && !isValidationFailure;
     }
 }

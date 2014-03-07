@@ -34,7 +34,7 @@ public class ProvidersIT {
         Location bihar = new Location("Bihar");
         Provider provider = new Provider(callerId, bihar, ActivationStatus.ACTIVE_RHP);
 
-        providers.save(provider);
+        providers.add(provider);
 
         Provider savedProvider = providers.getByCallerId(callerId);
         assertThat(savedProvider, IsNull.notNullValue());

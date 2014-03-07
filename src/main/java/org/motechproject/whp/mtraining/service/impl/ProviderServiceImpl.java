@@ -18,7 +18,7 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public Long add(Provider provider) {
-        Provider savedProvider = providers.save(provider);
+        Provider savedProvider = providers.add(provider);
         return savedProvider.getId();
     }
 

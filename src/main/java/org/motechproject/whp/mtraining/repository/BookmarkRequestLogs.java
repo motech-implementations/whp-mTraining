@@ -9,7 +9,7 @@ public class BookmarkRequestLogs extends RepositorySupport<BookmarkRequestLog> {
 
     @Transactional
     public void record(BookmarkRequestLog bookmarkRequestLog) {
-        save(bookmarkRequestLog);
+        add(bookmarkRequestLog);
     }
 
     @Override

@@ -113,6 +113,7 @@ public class WHPmTrainingBundleIT extends AuthenticationAwareIT {
     protected List<String> getImports() {
         List<String> imports = new ArrayList<>();
         imports.add("org.apache.http.util");
+        imports.add("org.motechproject.whp.mtraining.domain");
         imports.add("org.motechproject.whp.mtraining.web.domain");
         return imports;
     }

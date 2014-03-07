@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.repository;
 
-import org.motechproject.whp.mtraining.domain.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ abstract public class RepositorySupport<T> {
     }
 
     @Transactional
-    public T save(T persistenceCapable) {
+    public T add(T persistenceCapable) {
         PersistenceManager persistenceManager = persistenceManagerFactory.getPersistenceManager();
         T persistent = persistenceManager.makePersistent(persistenceCapable);
         return persistenceManager.detachCopy(persistent);
@@ -60,8 +59,8 @@ abstract public class RepositorySupport<T> {
         query.setFilter(String.format("%s == filter", fieldName));
         query.declareParameters(String.format("%s filter", fieldType.getName()));
         query.setUnique(true);
-        Provider result = (Provider) query.execute(filterValue);
-        return (T) persistenceManager.detachCopy(result);
+        T result = (T) query.execute(filterValue);
+        return persistenceManager.detachCopy(result);
     }
 
 

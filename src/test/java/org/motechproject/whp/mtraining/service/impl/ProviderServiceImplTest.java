@@ -20,13 +20,13 @@ public class ProviderServiceImplTest {
         ProviderService providerService = new ProviderServiceImpl(providers);
         Provider provider = new Provider(654654l, null, ActivationStatus.ACTIVE_RHP);
         Provider persistedProvider = mock(Provider.class);
-        when(providers.save(provider)).thenReturn(persistedProvider);
+        when(providers.add(provider)).thenReturn(persistedProvider);
         when(persistedProvider.getId()).thenReturn(100l);
 
         Long id = providerService.add(provider);
 
         assertThat(id, Is.is(100l));
-        verify(providers).save(provider);
+        verify(providers).add(provider);
     }
 
     @Test
