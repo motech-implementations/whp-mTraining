@@ -22,22 +22,22 @@ public class IVRGateway {
     public static final String IVR_URL = "ivr.url";
     private SettingsFacade settingsFacade;
     private WebClient webClient;
-    private IVRResponseHandler ivrResponseHandler;
+    private IVRResponseParser ivrResponseParser;
 
     @Autowired
-    public IVRGateway(SettingsFacade settingsFacade, WebClient webClient, IVRResponseHandler ivrResponseHandler) {
+    public IVRGateway(SettingsFacade settingsFacade, WebClient webClient, IVRResponseParser ivrResponseParser) {
         this.settingsFacade = settingsFacade;
         this.webClient = webClient;
-        this.ivrResponseHandler = ivrResponseHandler;
+        this.ivrResponseParser = ivrResponseParser;
     }
 
     public IVRResponse postCourse(CourseDto course) {
         try {
             HttpResponse response = webClient.post(getIVRUrl(), toJson(course));
-            return ivrResponseHandler.handle(response);
+            return ivrResponseParser.parse(response);
         } catch (IOException ex) {
             LOGGER.error(ex.getMessage(), ex);
-            IVRResponse ivrResponse = new IVRResponse(ex.getMessage());
+            IVRResponse ivrResponse = new IVRResponse();
             ivrResponse.markNetworkFailure();
             return ivrResponse;
         }

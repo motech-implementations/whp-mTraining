@@ -32,7 +32,9 @@ public class CoursePublisherTest {
         when(courseService.getCourse(new ContentIdentifierDto(courseId, courseVersion))).thenReturn(course);
 
         IVRGateway ivrGateway = mock(IVRGateway.class);
-        when(ivrGateway.postCourse(any(CourseDto.class))).thenReturn(new IVRResponse("success"));
+        IVRResponse ivrResponse = new IVRResponse();
+        ivrResponse.markSuccess();
+        when(ivrGateway.postCourse(any(CourseDto.class))).thenReturn(ivrResponse);
 
         CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courses);
         coursePublisher.publish(courseId, 2);

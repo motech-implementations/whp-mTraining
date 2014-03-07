@@ -35,7 +35,7 @@ public class IVRGatewayIT {
     @Autowired
     private SettingsFacade settingsFacade;
 
-    IVRResponseHandler ivrResponseHandler = new IVRResponseHandler();
+    IVRResponseParser ivrResponseHandler = new IVRResponseParser();
 
     @Before
     public void before() {
@@ -46,6 +46,7 @@ public class IVRGatewayIT {
 
     @Test
     public void shouldPostCourseJSONToIVR() throws IOException {
+
         List<ModuleDto> modules = new ArrayList<>();
         CourseDto course = new CourseDto("CS001", "Description", 1, modules);
 

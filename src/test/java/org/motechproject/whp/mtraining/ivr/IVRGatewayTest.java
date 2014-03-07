@@ -23,7 +23,7 @@ public class IVRGatewayTest {
         SettingsFacade settingsFacade = mock(SettingsFacade.class);
 
         WebClient webClient = mock(WebClient.class);
-        IVRResponseHandler ivrResponseHandler = mock(IVRResponseHandler.class);
+        IVRResponseParser ivrResponseHandler = mock(IVRResponseParser.class);
 
         when(webClient.post(anyString(), anyString())).thenThrow(new IOException("IO exception thrown in tests"));
 
@@ -37,7 +37,7 @@ public class IVRGatewayTest {
 
     @Test
     public void shouldDelegateToResponseHandlerForNonExceptionalCases() throws IOException {
-        IVRResponseHandler ivrResponseHandler = mock(IVRResponseHandler.class);
+        IVRResponseParser ivrResponseHandler = mock(IVRResponseParser.class);
 
         WebClient webClient = mock(WebClient.class);
 
@@ -46,7 +46,7 @@ public class IVRGatewayTest {
 
         when(webClient.post(anyString(), anyString())).thenReturn(httpResponse);
 
-        when(ivrResponseHandler.handle(httpResponse)).thenReturn(new IVRResponse("response"));
+        when(ivrResponseHandler.parse(httpResponse)).thenReturn(new IVRResponse());
 
         IVRGateway ivrGateway = new IVRGateway(mock(SettingsFacade.class), webClient, ivrResponseHandler);
 
@@ -54,7 +54,7 @@ public class IVRGatewayTest {
 
         ivrGateway.postCourse(someCourse);
 
-        verify(ivrResponseHandler).handle(httpResponse);
+        verify(ivrResponseHandler).parse(httpResponse);
     }
 
 }

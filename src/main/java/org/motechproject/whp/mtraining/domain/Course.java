@@ -60,4 +60,5 @@ public class Course {
         result = 31 * result + (publisAttemptedOn != null ? publisAttemptedOn.hashCode() : 0);
         return result;
     }
+
 }

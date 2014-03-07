@@ -1,12 +1,22 @@
 package org.motechproject.whp.mtraining.ivr;
 
-public class IVRResponse {
-    private String response;
-    private boolean isNetworkFailure;
-    private boolean isValidationFailure;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    public IVRResponse(String response) {
-        this.response = response;
+import static org.apache.commons.lang.StringUtils.isBlank;
+
+public class IVRResponse {
+
+    public static final String COMMA = ",";
+    private boolean success = false;
+    private boolean isNetworkFailure = false;
+
+    private Map<String, String> errors = new HashMap<>();
+
+    public IVRResponse() {
     }
 
     public void markNetworkFailure() {
@@ -17,15 +27,35 @@ public class IVRResponse {
         return isNetworkFailure;
     }
 
-    public boolean isValidationFailure() {
-        return isValidationFailure;
-    }
-
-    public void markValidationFailure() {
-        this.isValidationFailure = true;
+    public void setErrors(Map<String, String> errors) {
+        this.errors = errors;
     }
 
     public boolean isSuccess() {
-        return !isNetworkFailure && !isValidationFailure;
+        return success;
+    }
+
+    public List<String> getMissingFiles() {
+        List<String> missingFiles = new ArrayList<>();
+        if (errors.isEmpty()) {
+            return missingFiles;
+        }
+
+        String commaLimitedMissingFilesString = errors.get("missingFiles");
+        if (isBlank(commaLimitedMissingFilesString)) {
+            return missingFiles;
+        }
+
+        List<String> fileNames = Arrays.asList(commaLimitedMissingFilesString.split(COMMA));
+        missingFiles.addAll(fileNames);
+        return missingFiles;
+    }
+
+    public Boolean hasValidationErrors() {
+        return !errors.isEmpty();
+    }
+
+    public void markSuccess() {
+        this.success = true;
     }
 }

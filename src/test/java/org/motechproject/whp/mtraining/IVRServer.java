@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class IVRServer {
 
-    public static final String OK = "<status>success</status>";
+    public static final String DEFAULT_RESPONSE = "{\"success\":true}";
     private final Server server;
 
     private Map<String, RequestInfo> requests = new HashMap<>();
@@ -67,7 +67,7 @@ public class IVRServer {
             protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
                 requests.put(request.getContextPath(), collectRequestInfo(request));
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write(OK);
+                response.getWriter().write(DEFAULT_RESPONSE);
                 Request baseRequest = (Request) request;
                 baseRequest.setHandled(true);
             }
@@ -99,5 +99,6 @@ public class IVRServer {
             }
         };
     }
+
 
 }
