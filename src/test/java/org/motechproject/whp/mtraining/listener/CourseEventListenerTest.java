@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.whp.mtraining.CourseAdmin;
 import org.motechproject.whp.mtraining.ivr.CoursePublisher;
-import org.motechproject.whp.mtraining.ivr.PublishingResult;
+import org.motechproject.whp.mtraining.ivr.IVRResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class CourseEventListenerTest {
         eventData.put(CONTENT_ID, cs001);
         eventData.put(VERSION, 3);
 
-        given(coursePublisher.publish(cs001, 3)).willReturn(PublishingResult.SUCCESS);
+        given(coursePublisher.publish(cs001, 3)).willReturn(new IVRResponse(true));
 
         courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
 
@@ -51,7 +51,7 @@ public class CourseEventListenerTest {
     @Test
     public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() {
 
-        given(coursePublisher.publish(cs001, 3)).willReturn(PublishingResult.SUCCESS);
+        given(coursePublisher.publish(cs001, 3)).willReturn(new IVRResponse(true));
 
         Map<String, Object> eventData = new HashMap<>();
         eventData.put(CONTENT_ID, cs001);
@@ -60,6 +60,26 @@ public class CourseEventListenerTest {
         courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
 
         verify(courseAdmin).notifyCoursePublished(cs001.toString());
+
+    }
+
+    @Test
+    public void shouldNotifyCourseAdminOfFailureIfThereAreValidationErrorsInResponse() {
+
+        IVRResponse ivrResponse = new IVRResponse(false);
+        HashMap<String, String> errors = new HashMap<>();
+        errors.put("missingFiles", "hello.wav");
+        ivrResponse.setErrors(errors);
+
+        given(coursePublisher.publish(cs001, 3)).willReturn(ivrResponse);
+
+        Map<String, Object> eventData = new HashMap<>();
+        eventData.put(CONTENT_ID, cs001);
+        eventData.put(VERSION, 3);
+
+        courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
+
+        verify(courseAdmin).notifyValidationFailures(cs001.toString(), ivrResponse);
 
     }
 

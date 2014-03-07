@@ -10,13 +10,17 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class IVRResponse {
 
-    public static final String COMMA = ",";
+    public static final String MISSING_FILES_DELIMITER = ",";
     private boolean success = false;
     private boolean isNetworkFailure = false;
 
     private Map<String, String> errors = new HashMap<>();
 
     public IVRResponse() {
+    }
+
+    public IVRResponse(boolean isSuccess) {
+        this.success = isSuccess;
     }
 
     public void markNetworkFailure() {
@@ -46,7 +50,7 @@ public class IVRResponse {
             return missingFiles;
         }
 
-        List<String> fileNames = Arrays.asList(commaLimitedMissingFilesString.split(COMMA));
+        List<String> fileNames = Arrays.asList(commaLimitedMissingFilesString.split(MISSING_FILES_DELIMITER));
         missingFiles.addAll(fileNames);
         return missingFiles;
     }
@@ -57,5 +61,9 @@ public class IVRResponse {
 
     public void markSuccess() {
         this.success = true;
+    }
+
+    public Map<String, String> getErrors() {
+        return errors;
     }
 }

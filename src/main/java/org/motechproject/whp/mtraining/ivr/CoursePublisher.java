@@ -24,10 +24,10 @@ public class CoursePublisher {
         this.courses = courses;
     }
 
-    public PublishingResult publish(UUID courseId, Integer version) {
+    public IVRResponse publish(UUID courseId, Integer version) {
         CourseDto course = courseService.getCourse(new ContentIdentifierDto(courseId, version));
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
         courses.add(new Course(courseId,version,ivrResponse.isSuccess()));
-        return PublishingResult.SUCCESS;
+        return ivrResponse;
     }
 }
