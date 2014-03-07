@@ -23,11 +23,11 @@
         <br/>
 
     <div>
-        <div ng-show="response.status==SUCCESS">
+        <div ng-show="response.status=='SUCCESS'">
             <ul class="alert alert-success">{{response.message}}</ul>
         </div>
 
-        <div ng-show="response.status==FAILURE">
+        <div ng-show="response.status=='FAILURE'">
             <ul class="alert alert-danger">{{response.message}}</ul>
 
             <table class="table table-hover table-bordered" >

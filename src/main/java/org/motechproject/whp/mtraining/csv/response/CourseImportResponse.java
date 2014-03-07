@@ -35,6 +35,10 @@ public class CourseImportResponse {
         return FAILURE_RESPONSE_STATUS.equals(status);
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public String getMessage() {
         return message;
     }
