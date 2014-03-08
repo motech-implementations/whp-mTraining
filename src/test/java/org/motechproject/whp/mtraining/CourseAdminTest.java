@@ -63,5 +63,22 @@ public class CourseAdminTest {
         verify(emailSenderService).send(mail);
     }
 
+    @Test
+    public void shouldSendNetworkFailureEmail() {
+        Properties properties = new Properties();
+        properties.put("course.admin.email.from", "motech@email.com");
+        properties.put("course.admin.email.to", "admin@email.com");
+        properties.put("course.admin.email.subject.network.failure", "Course Publish Failed");
+        properties.put("course.admin.email.network.failure.message.format", "Course %s publish failed");
+        when(settingsFacade.getProperties("mtraining.properties")).thenReturn(properties);
+
+
+        CourseAdmin courseAdmin = new CourseAdmin(emailSenderService, settingsFacade);
+        courseAdmin.notifyNetworkFailure("CS001");
+
+        Mail mail = new Mail("motech@email.com", "admin@email.com", "Course Publish Failed", "Course CS001 publish failed");
+        verify(emailSenderService).send(mail);
+    }
+
 
 }

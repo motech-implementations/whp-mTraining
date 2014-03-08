@@ -43,6 +43,12 @@ public class CourseAdmin {
         }
     }
 
+    public void notifyNetworkFailure(String courseId) {
+        String subject = properties.getProperty("course.admin.email.subject.network.failure");
+        String messageFormat = properties.getProperty("course.admin.email.network.failure.message.format");
+        emailSenderService.send(new Mail(fromAddress(), toAddress(), subject, format(messageFormat, courseId)));
+    }
+
     private String toAddress() {
         return properties.getProperty("course.admin.email.to");
     }

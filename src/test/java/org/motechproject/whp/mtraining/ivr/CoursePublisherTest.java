@@ -18,6 +18,7 @@ import java.util.UUID;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -75,6 +76,7 @@ public class CoursePublisherTest {
         CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
         coursePublisher.publish(cs001, 2);
 
+        verify(ivrGateway).postCourse(courseDTO);
         verify(courseAdmin).notifyCoursePublished(cs001.toString());
     }
 
@@ -94,9 +96,26 @@ public class CoursePublisherTest {
         CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
         coursePublisher.publish(cs001, 2);
 
-
+        verify(ivrGateway).postCourse(courseDTO);
         verify(courseAdmin).notifyValidationFailures(cs001.toString(), ivrResponse);
 
+    }
+
+    @Test
+    public void shouldRetryPublishingInCaseOfNetworkFailure() {
+        IVRResponse ivrResponse = new IVRResponse(false);
+        ivrResponse.markNetworkFailure();
+
+        CourseDto courseDTO = new CourseDto();
+        when(courseService.getCourse(new ContentIdentifierDto(cs001, 2))).thenReturn(courseDTO);
+
+        given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
+
+        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
+        coursePublisher.publish(cs001, 2);
+
+        verify(ivrGateway, times(CoursePublisher.MAX_ATTEMPTS)).postCourse(courseDTO);
+        verify(courseAdmin, times(CoursePublisher.MAX_ATTEMPTS)).notifyNetworkFailure(cs001.toString());
     }
 
 
