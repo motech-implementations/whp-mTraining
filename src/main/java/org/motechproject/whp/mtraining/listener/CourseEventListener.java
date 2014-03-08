@@ -5,7 +5,6 @@ import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mtraining.constants.MTrainingEventConstants;
 import org.motechproject.whp.mtraining.CourseAdmin;
 import org.motechproject.whp.mtraining.ivr.CoursePublisher;
-import org.motechproject.whp.mtraining.ivr.IVRResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,13 +29,7 @@ public class CourseEventListener {
         Map<String, Object> eventData = event.getParameters();
         UUID courseId = (UUID) eventData.get(MTrainingEventConstants.CONTENT_ID);
         Integer version = (Integer) eventData.get(MTrainingEventConstants.VERSION);
-        IVRResponse ivrResponse = coursePublisher.publish(courseId, version);
-        if (ivrResponse.isSuccess()) {
-            courseAdmin.notifyCoursePublished(courseId.toString());
-        }
-        if (ivrResponse.hasValidationErrors()) {
-            courseAdmin.notifyValidationFailures(courseId.toString(), ivrResponse);
-        }
+        coursePublisher.publish(courseId, version);
     }
 
 }

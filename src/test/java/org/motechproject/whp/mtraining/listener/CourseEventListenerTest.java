@@ -48,40 +48,6 @@ public class CourseEventListenerTest {
         verify(coursePublisher).publish(cs001, 3);
     }
 
-    @Test
-    public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() {
-
-        given(coursePublisher.publish(cs001, 3)).willReturn(new IVRResponse(true));
-
-        Map<String, Object> eventData = new HashMap<>();
-        eventData.put(CONTENT_ID, cs001);
-        eventData.put(VERSION, 3);
-
-        courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
-
-        verify(courseAdmin).notifyCoursePublished(cs001.toString());
-
-    }
-
-    @Test
-    public void shouldNotifyCourseAdminOfFailureIfThereAreValidationErrorsInResponse() {
-
-        IVRResponse ivrResponse = new IVRResponse(false);
-        HashMap<String, String> errors = new HashMap<>();
-        errors.put("missingFiles", "hello.wav");
-        ivrResponse.setErrors(errors);
-
-        given(coursePublisher.publish(cs001, 3)).willReturn(ivrResponse);
-
-        Map<String, Object> eventData = new HashMap<>();
-        eventData.put(CONTENT_ID, cs001);
-        eventData.put(VERSION, 3);
-
-        courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
-
-        verify(courseAdmin).notifyValidationFailures(cs001.toString(), ivrResponse);
-
-    }
 
 
 }
