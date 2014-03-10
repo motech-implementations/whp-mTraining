@@ -50,6 +50,7 @@ public class CourseStructureValidator {
         if (isNodeNameEmpty(request.getNodeName(), errors) || isNodeNameADuplicate(request, errors, requests)) {
             return;
         }
+        validateStatus(request, errors);
         if (!request.isCourse()) {
             if (hasNoParent(request, errors)) {
                 return;
@@ -66,6 +67,12 @@ public class CourseStructureValidator {
             LOG.error(errorMessage);
             errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), errorMessage));
         }
+    }
+
+    private void validateStatus(CourseStructureCsvRequest request, List<CourseImportError> errors) {
+        if (request.isValidStatus())
+            return;
+        errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), "Invalid status. Status should be either ACTIVE OR INACTIVE or blank."));
     }
 
     private boolean isNodeNameEmpty(String nodeName, List<CourseImportError> errors) {

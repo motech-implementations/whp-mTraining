@@ -3,7 +3,9 @@ package org.motechproject.whp.mtraining.csv.request;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class CourseStructureCsvRequestTest {
 
@@ -46,5 +48,17 @@ public class CourseStructureCsvRequestTest {
     public void testThatNodeHasAParentNode() throws Exception {
         CourseStructureCsvRequest course = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "Active", "parentNode", "Message Description", null);
         assertThat(course.hasParent(), Is.is(true));
+    }
+
+    @Test
+    public void testThatNodeHasValidStatus(){
+        CourseStructureCsvRequest courseWithActiveStatus = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "Active", "parentNode", "Message Description", null);
+        assertTrue(courseWithActiveStatus.isValidStatus());
+
+        CourseStructureCsvRequest courseWithInActiveStatus = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "inActive", "parentNode", "Message Description", null);
+        assertTrue(courseWithInActiveStatus.isValidStatus());
+
+        CourseStructureCsvRequest courseWithWrongStatus = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "status", "parentNode", "Message Description", null);
+        assertFalse(courseWithWrongStatus.isValidStatus());
     }
 }

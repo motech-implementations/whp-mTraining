@@ -123,5 +123,12 @@ public class CourseStructureValidatorTest {
         assertEquals("Could not find the parent node specified in the CSV. Please check the parent node name for spelling and try importing again.", errors.get(0).getMessage());
         assertEquals("A message should have the name of the audio file. Please add the filename to CSV and try importing it again.", errors.get(1).getMessage());
     }
+
+    @Test
+    public void shouldReturnErrorForNodeHavingInvalidStatus(){
+        courseStructureCsvs.add(new CourseStructureCsvRequest("Message TB Symptoms 1", "Message", "status_invalid", "Chapter TB Symptoms", "Message Description", "FileName"));
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+        assertEquals(1, errors.size());
+    }
 }
 

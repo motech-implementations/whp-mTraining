@@ -95,4 +95,8 @@ public class CourseStructureCsvRequest {
         NodeType childNodeType = NodeType.getChildNodeType(nodeType);
         return childNodeType != null ? childNodeType.name() : "";
     }
+
+    public boolean isValidStatus() {
+        return status.equalsIgnoreCase("active") || status.equalsIgnoreCase("inactive");
+    }
 }
