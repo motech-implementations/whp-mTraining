@@ -3,14 +3,17 @@ package org.motechproject.whp.mtraining.osgi;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.motechproject.security.model.PermissionDto;
 import org.motechproject.security.model.RoleDto;
 import org.motechproject.security.service.MotechPermissionService;
 import org.motechproject.security.service.MotechRoleService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.testing.osgi.BaseOsgiIT;
+import org.motechproject.testing.utils.PollingHttpClient;
 import org.osgi.framework.ServiceReference;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -20,13 +23,14 @@ public class AuthenticationAwareIT extends BaseOsgiIT {
     private static final String PERMISSION_NAME = "test-permission";
     private static final String ROLE_NAME = "test-role";
     private static final String SECURITY_ADMIN = "Security Admin";
-    private static final String USER_NAME = "test-username";
-    private static final String USER_PASSWORD = "test-password";
-    private static final String USER_EMAIL = "test@email.com";
+    private static final String USER_NAME = "whp";
+    private static final String USER_PASSWORD = "whp";
+    private static final String USER_EMAIL = "whp-test@email.com";
     private static final String USER_EXTERNAL_ID = "test-externalId";
     private static final Locale USER_LOCALE = Locale.ENGLISH;
     private static final String BUNDLE_NAME = "bundle";
 
+    protected PollingHttpClient httpClient = new PollingHttpClient(new DefaultHttpClient(), 10);
 
     protected HttpUriRequest getHttpRequestWithAuthHeaders(String url) {
         HttpGet httpGet = new HttpGet(url);
@@ -36,7 +40,7 @@ public class AuthenticationAwareIT extends BaseOsgiIT {
 
 
     @Override
-    public void onSetUp() throws InterruptedException {
+    public void onSetUp() throws InterruptedException, IOException {
         MotechPermissionService permissions = getService(MotechPermissionService.class);
         MotechRoleService roles = getService(MotechRoleService.class);
         MotechUserService users = getService(MotechUserService.class);

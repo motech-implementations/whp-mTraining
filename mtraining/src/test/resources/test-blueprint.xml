@@ -9,4 +9,6 @@
 
     <osgi:reference interface="org.motechproject.whp.mtraining.service.ProviderService" id="providerService"/>
 
+    <osgi:reference interface="org.motechproject.mtraining.service.CourseService" id="courseService"/>
+
 </beans>

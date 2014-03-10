@@ -7,6 +7,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
 import org.motechproject.whp.mtraining.domain.Location;
@@ -43,9 +44,11 @@ public class WHPmTrainingBundleIT extends AuthenticationAwareIT {
         assertEquals(200, httpResponse.getStatusLine().getStatusCode());
     }
 
-    public void testThatProviderServiceIsAvailable() {
+    public void testThatImportedServicesAreAvailable() {
         ProviderService providerService = (ProviderService) getApplicationContext().getBean("providerService");
         assertNotNull(providerService);
+        CourseService courseService = (CourseService) getApplicationContext().getBean("courseService");
+        assertNotNull(courseService);
     }
 
 
@@ -125,7 +128,6 @@ public class WHPmTrainingBundleIT extends AuthenticationAwareIT {
 
     @Override
     public void onTearDown() throws InterruptedException {
-        super.onSetUp();
         ProviderService providerService = (ProviderService) getApplicationContext().getBean("providerService");
         for (Long providerId : providersToBeDeleted) {
             providerService.delete(providerId);

@@ -18,8 +18,9 @@ public class IVRResponseParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(IVRResponseParser.class);
 
     public IVRResponse parse(HttpResponse httpResponse) {
+        String ivrResponseAsString = "not parsed yet";
         try {
-            String ivrResponseAsString = EntityUtils.toString(httpResponse.getEntity());
+            ivrResponseAsString = EntityUtils.toString(httpResponse.getEntity());
             LOGGER.info(String.format("Attempting to parse IVR response %s", ivrResponseAsString));
             ObjectMapper objectMapper = new ObjectMapper();
             JsonFactory jsonFactory = objectMapper.getJsonFactory();
@@ -30,6 +31,7 @@ public class IVRResponseParser {
             }
             return response;
         } catch (IOException e) {
+            LOGGER.error(String.format("Response returned %s", ivrResponseAsString));
             throw new MTrainingException("Could not parse httpResponse", e);
         }
     }

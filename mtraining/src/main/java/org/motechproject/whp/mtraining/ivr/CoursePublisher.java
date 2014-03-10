@@ -10,6 +10,7 @@ import org.motechproject.whp.mtraining.repository.Courses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -44,6 +45,14 @@ public class CoursePublisher {
         CourseDto course = courseService.getCourse(new ContentIdentifierDto(courseId, version));
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
         courses.add(new Course(courseId, version, ivrResponse.isSuccess()));
+        try {
+            notifyCourseAdmin(courseId, version, ivrResponse);
+        } catch (MailSendException ex) {
+            LOGGER.error("Could not send mail", ex);
+        }
+    }
+
+    private void notifyCourseAdmin(UUID courseId, Integer version, IVRResponse ivrResponse) {
         if (ivrResponse.isSuccess()) {
             LOGGER.info(String.format("Attempt %d [%s] - Course published to IVR for courseId %s , version %s ", numberOfAttempts, DateTime.now(), courseId, version));
             courseAdmin.notifyCoursePublished(courseId.toString());
