@@ -14,9 +14,11 @@ import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,9 +28,12 @@ public class CourseImportServiceTest {
     @Mock
     private CourseService courseService;
 
+    private TestCourseUpdater testCourseUpdater;
+
     @Before
     public void setUp() throws Exception {
-        courseImportService = new CourseImportService(courseService);
+        testCourseUpdater = new TestCourseUpdater(courseService, mock(ModuleUpdater.class));
+        courseImportService = new CourseImportService(courseService, testCourseUpdater);
     }
 
     @Test
@@ -42,8 +47,11 @@ public class CourseImportServiceTest {
                 new CourseStructureCsvRequest("message1", "message", "active", "chapter1", "message1 description", "filename1"),
                 new CourseStructureCsvRequest("message2", "message", "active", "chapter1", "message2 description", "filename2"),
                 new CourseStructureCsvRequest("message3", "message", "active", "chapter2", "message3 description", "filename3"),
-                new CourseStructureCsvRequest("message4", "message", "active", "chapter2", "message4 description", "filename4")
+                new CourseStructureCsvRequest("message4", "message", "active", "chapter2", "message4 description", "filename4"),
+                new CourseStructureCsvRequest("message5", "message", "inactive", "chapter2", "message5 description", "filename4")
         );
+        UUID module1Id = UUID.randomUUID();
+        testCourseUpdater.setContentId(module1Id);
 
         courseImportService.importCourse(requests);
 
@@ -52,7 +60,7 @@ public class CourseImportServiceTest {
         CourseDto savedCourseDto = courseDtoCaptor.getValue();
 
         assertCourseDetails(savedCourseDto);
-        assertModuleDetails(savedCourseDto.getModules());
+        assertModuleDetails(savedCourseDto.getModules(), module1Id);
     }
 
     private void assertCourseDetails(CourseDto savedCourseDto) {
@@ -60,8 +68,9 @@ public class CourseImportServiceTest {
         assertEquals("course description", savedCourseDto.getDescription());
     }
 
-    private void assertModuleDetails(List<ModuleDto> modules) {
+    private void assertModuleDetails(List<ModuleDto> modules, UUID module1Id) {
         assertEquals(2, modules.size());
+        assertEquals(module1Id, modules.get(0).getModuleIdentifier().getContentId());
         assertEquals("module1", modules.get(0).getName());
         assertEquals("module1 description", modules.get(0).getDescription());
         assertEquals("module2", modules.get(1).getName());
@@ -84,16 +93,37 @@ public class CourseImportServiceTest {
 
     private void assertMessageDto(List<MessageDto> chapter1Messages, List<MessageDto> chapter2Messages) {
         assertEquals(2, chapter1Messages.size());
-        assertMessageDetailss(chapter1Messages.get(0), "message1", "message1 description", "filename1");
-        assertMessageDetailss(chapter1Messages.get(1), "message2", "message2 description", "filename2");
-        assertEquals(2, chapter2Messages.size());
-        assertMessageDetailss(chapter2Messages.get(0), "message3", "message3 description", "filename3");
-        assertMessageDetailss(chapter2Messages.get(1), "message4", "message4 description", "filename4");
+        assertMessageDetailss(chapter1Messages.get(0), "message1", "message1 description", "filename1", true);
+        assertMessageDetailss(chapter1Messages.get(1), "message2", "message2 description", "filename2", true);
+        assertEquals(3, chapter2Messages.size());
+        assertMessageDetailss(chapter2Messages.get(0), "message3", "message3 description", "filename3", true);
+        assertMessageDetailss(chapter2Messages.get(1), "message4", "message4 description", "filename4", true);
+        assertMessageDetailss(chapter2Messages.get(2), "message5", "message5 description", "filename4", false);
     }
 
-    private void assertMessageDetailss(MessageDto messageDto, String expectedName, String expectedDescription, String expectedFileName) {
+    private void assertMessageDetailss(MessageDto messageDto, String expectedName, String expectedDescription, String expectedFileName, boolean expectedStatus) {
         assertEquals(expectedName, messageDto.getName());
         assertEquals(expectedDescription, messageDto.getDescription());
         assertEquals(expectedFileName, messageDto.getExternalId());
+        assertEquals(expectedStatus, messageDto.isActive());
+    }
+
+    class TestCourseUpdater extends CourseUpdater {
+
+        private UUID contentId;
+
+        public TestCourseUpdater(CourseService courseService, ModuleUpdater moduleUpdater) {
+            super(courseService, moduleUpdater);
+        }
+
+        @Override
+        public void update(List<CourseDto> course) {
+            CourseDto courseDto = course.get(0);
+            courseDto.getModules().get(0).setContentId(contentId);
+        }
+
+        public void setContentId(UUID contentId) {
+            this.contentId = contentId;
+        }
     }
 }

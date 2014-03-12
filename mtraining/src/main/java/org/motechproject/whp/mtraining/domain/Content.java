@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Content {
+    private static final String INACTIVE_STATUS = "INACTIVE";
+
     private String name;
     private ContentType contentType;
-    private String status;
+    private boolean isActive;
     private String description;
     private String fileName;
     private List<Content> childContents;
 
-    public Content(String name, ContentType contentType, String status, String description, String fileName) {
+    public Content(String name, String contentType, String status, String description, String fileName) {
         this.name = name;
-        this.contentType = contentType;
-        this.status = status;
+        this.contentType = ContentType.from(contentType);
+        this.isActive = !INACTIVE_STATUS.equalsIgnoreCase(status);
         this.description = description;
         this.fileName = fileName;
         this.childContents = new ArrayList<>();
@@ -30,6 +32,14 @@ public class Content {
             Object childDto = childContent.toDto();
             childDtos.add(childDto);
         }
-        return contentType.toDto(name, description, fileName, childDtos);
+        return contentType.toDto(name, description, fileName, isActive, childDtos);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 }

@@ -49,7 +49,7 @@ public class CoursePublisherTest {
 
         List<ModuleDto> modules = Collections.emptyList();
         int courseVersion = 2;
-        CourseDto course = new CourseDto("CS001", "CS Course", modules);
+        CourseDto course = new CourseDto("CS001", "CS Course", true, modules);
 
         when(courseService.getCourse(new ContentIdentifierDto(courseId, courseVersion))).thenReturn(course);
 
