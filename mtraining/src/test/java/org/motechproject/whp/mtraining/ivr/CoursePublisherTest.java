@@ -11,7 +11,6 @@ import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.repository.Courses;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,8 +24,6 @@ import static org.mockito.Mockito.when;
 public class CoursePublisherTest {
 
 
-    public static final String CONTENT_ID = "CONTENT_ID";
-    public static final String VERSION = "VERSION";
     static UUID cs001 = UUID.randomUUID();
 
     private CourseService courseService;
@@ -53,8 +50,7 @@ public class CoursePublisherTest {
 
         when(courseService.getCourse(new ContentIdentifierDto(courseId, courseVersion))).thenReturn(course);
 
-        IVRResponse ivrResponse = new IVRResponse();
-        ivrResponse.markSuccess();
+        IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.OK);
         when(ivrGateway.postCourse(any(CourseDto.class))).thenReturn(ivrResponse);
 
         CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
@@ -68,28 +64,26 @@ public class CoursePublisherTest {
     @Test
     public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() {
 
-        CourseDto courseDTO = new CourseDto();
-        when(courseService.getCourse(new ContentIdentifierDto(cs001, 2))).thenReturn(courseDTO);
+        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
+        CourseDto courseDTO = new CourseDto("CS001", "", contentIdentifierDto, null);
+        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
-        when(ivrGateway.postCourse(courseDTO)).thenReturn(new IVRResponse(true));
+        when(ivrGateway.postCourse(courseDTO)).thenReturn(new IVRResponse(800, "OK"));
 
         CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
         coursePublisher.publish(cs001, 2);
 
         verify(ivrGateway).postCourse(courseDTO);
-        verify(courseAdmin).notifyCoursePublished(cs001.toString());
+        verify(courseAdmin).notifyCoursePublished("CS001", 2);
     }
 
     @Test
     public void shouldNotifyCourseAdminOfFailureIfThereAreValidationErrorsInResponse() {
+        IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.MISSING_FILES, "file1,file2");
 
-        IVRResponse ivrResponse = new IVRResponse(false);
-        HashMap<String, String> errors = new HashMap<>();
-        errors.put("missingFiles", "hello.wav");
-        ivrResponse.setErrors(errors);
-
-        CourseDto courseDTO = new CourseDto();
-        when(courseService.getCourse(new ContentIdentifierDto(cs001, 2))).thenReturn(courseDTO);
+        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
+        CourseDto courseDTO = new CourseDto("CS001", "", contentIdentifierDto, null);
+        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
 
@@ -97,17 +91,17 @@ public class CoursePublisherTest {
         coursePublisher.publish(cs001, 2);
 
         verify(ivrGateway).postCourse(courseDTO);
-        verify(courseAdmin).notifyValidationFailures(cs001.toString(), ivrResponse);
+        verify(courseAdmin).notifyCoursePublishFailure("CS001", 2, ivrResponse);
 
     }
 
     @Test
     public void shouldRetryPublishingInCaseOfNetworkFailure() {
-        IVRResponse ivrResponse = new IVRResponse(false);
-        ivrResponse.markNetworkFailure();
+        IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
 
-        CourseDto courseDTO = new CourseDto();
-        when(courseService.getCourse(new ContentIdentifierDto(cs001, 2))).thenReturn(courseDTO);
+        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
+        CourseDto courseDTO = new CourseDto("CS001", "", contentIdentifierDto, null);
+        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
 
@@ -115,7 +109,7 @@ public class CoursePublisherTest {
         coursePublisher.publish(cs001, 2);
 
         verify(ivrGateway, times(CoursePublisher.MAX_ATTEMPTS)).postCourse(courseDTO);
-        verify(courseAdmin, times(CoursePublisher.MAX_ATTEMPTS)).notifyNetworkFailure(cs001.toString());
+        verify(courseAdmin, times(CoursePublisher.MAX_ATTEMPTS)).notifyCoursePublishFailure("CS001", 2, ivrResponse);
     }
 
 

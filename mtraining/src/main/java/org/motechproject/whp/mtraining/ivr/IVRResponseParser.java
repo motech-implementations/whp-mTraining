@@ -25,11 +25,7 @@ public class IVRResponseParser {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonFactory jsonFactory = objectMapper.getJsonFactory();
             JsonParser jsonParser = jsonFactory.createJsonParser(ivrResponseAsString);
-            IVRResponse response = jsonParser.readValueAs(IVRResponse.class);
-            if (!response.hasValidationErrors()) {
-                response.markSuccess();
-            }
-            return response;
+            return jsonParser.readValueAs(IVRResponse.class);
         } catch (IOException e) {
             LOGGER.error(String.format("Response returned %s", ivrResponseAsString));
             throw new MTrainingException("Could not parse httpResponse", e);

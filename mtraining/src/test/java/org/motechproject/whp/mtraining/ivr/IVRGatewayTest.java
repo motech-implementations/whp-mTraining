@@ -1,14 +1,18 @@
 package org.motechproject.whp.mtraining.ivr;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.entity.StringEntity;
 import org.hamcrest.core.Is;
+import org.junit.Before;
 import org.junit.Test;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.WebClient;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -18,43 +22,66 @@ import static org.mockito.Mockito.when;
 
 public class IVRGatewayTest {
 
+    SettingsFacade settingsFacade;
+    IVRResponseParser ivrResponseHandler;
+    WebClient webClient;
+
+    IVRGateway ivrGateway;
+
+    @Before
+    public void before() {
+        settingsFacade = mock(SettingsFacade.class);
+        ivrResponseHandler = mock(IVRResponseParser.class);
+        webClient = mock(WebClient.class);
+        ivrGateway = new IVRGateway(settingsFacade, webClient, ivrResponseHandler);
+    }
+
     @Test
     public void shouldReturnNetworkErrorResponse() throws IOException {
-        SettingsFacade settingsFacade = mock(SettingsFacade.class);
-
-        WebClient webClient = mock(WebClient.class);
-        IVRResponseParser ivrResponseHandler = mock(IVRResponseParser.class);
-
         when(webClient.post(anyString(), anyString())).thenThrow(new IOException("IO exception thrown in tests"));
 
-        IVRGateway ivrGateway = new IVRGateway(settingsFacade, webClient, ivrResponseHandler);
-
-        CourseDto someCourse = new CourseDto();
+        CourseDto someCourse = new CourseDto("CS001", "desc", new ContentIdentifierDto(UUID.randomUUID(), 1), null);
         IVRResponse ivrResponse = ivrGateway.postCourse(someCourse);
 
         assertThat(ivrResponse.isNetworkFailure(), Is.is(true));
     }
 
     @Test
-    public void shouldDelegateToResponseHandlerForNonExceptionalCases() throws IOException {
-        IVRResponseParser ivrResponseHandler = mock(IVRResponseParser.class);
-
-        WebClient webClient = mock(WebClient.class);
-
+    public void shouldDelegateToResponseHandlerToHandleIVRResponse() throws IOException {
         HttpResponse httpResponse = mock(HttpResponse.class);
-        when(httpResponse.getEntity()).thenReturn(new StringEntity("{\"error\":true}"));
+        StatusLine statusLine = mock(StatusLine.class);
+
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        when(httpResponse.getEntity()).thenReturn(new StringEntity("{\"responseCode\":800,\"responseMessage\":\"OK\"}"));
 
         when(webClient.post(anyString(), anyString())).thenReturn(httpResponse);
 
         when(ivrResponseHandler.parse(httpResponse)).thenReturn(new IVRResponse());
 
-        IVRGateway ivrGateway = new IVRGateway(mock(SettingsFacade.class), webClient, ivrResponseHandler);
-
-        CourseDto someCourse = new CourseDto();
+        CourseDto someCourse = new CourseDto("CS001", "desc", new ContentIdentifierDto(UUID.randomUUID(), 1), null);
 
         ivrGateway.postCourse(someCourse);
 
         verify(ivrResponseHandler).parse(httpResponse);
+    }
+
+
+    @Test
+    public void shouldHandleHttpResponseOtherThanOk() throws IOException {
+        HttpResponse httpResponse = mock(HttpResponse.class);
+        StatusLine statusLine = mock(StatusLine.class);
+        when(statusLine.getStatusCode()).thenReturn(401);
+        when(statusLine.getReasonPhrase()).thenReturn("Not Authenticated");
+
+        when(httpResponse.getStatusLine()).thenReturn(statusLine);
+
+        when(webClient.post(anyString(), anyString())).thenReturn(httpResponse);
+
+        IVRResponse response = ivrGateway.postCourse(new CourseDto("CS001", "desc", new ContentIdentifierDto(UUID.randomUUID(), 1), null));
+
+        assertThat(response.getResponseCode(), Is.is(401));
+        assertThat(response.getResponseMessage(), Is.is("Not Authenticated"));
     }
 
 }

@@ -42,30 +42,33 @@ public class CoursePublisher {
             return;
         }
         LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s , version %s ", numberOfAttempts, DateTime.now(), courseId, version));
+
         CourseDto course = courseService.getCourse(new ContentIdentifierDto(courseId, version));
+
+        LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, DateTime.now(), course.getName(), courseId, version));
+
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
         courses.add(new Course(courseId, version, ivrResponse.isSuccess()));
+
         try {
-            notifyCourseAdmin(courseId, version, ivrResponse);
+            notifyCourseAdmin(course.getName(), version, ivrResponse);
+            if (ivrResponse.isNetworkFailure()) {
+                retryPublishing(courseId, version);
+            }
         } catch (MailSendException ex) {
             LOGGER.error("Could not send mail", ex);
         }
     }
 
-    private void notifyCourseAdmin(UUID courseId, Integer version, IVRResponse ivrResponse) {
+    private void notifyCourseAdmin(String courseName, Integer version, IVRResponse ivrResponse) {
         if (ivrResponse.isSuccess()) {
-            LOGGER.info(String.format("Attempt %d [%s] - Course published to IVR for courseId %s , version %s ", numberOfAttempts, DateTime.now(), courseId, version));
-            courseAdmin.notifyCoursePublished(courseId.toString());
+            LOGGER.info(String.format("Attempt %d [%s] - Course published to IVR for course %s , version %s ", numberOfAttempts, DateTime.now(), courseName, version));
+            courseAdmin.notifyCoursePublished(courseName, version);
+            return;
         }
-        if (ivrResponse.hasValidationErrors()) {
-            LOGGER.error(String.format("Attempt %d [%s] - Course could not be published to IVR for courseId %s , version %s because of validation errors", numberOfAttempts, DateTime.now(), courseId, version));
-            courseAdmin.notifyValidationFailures(courseId.toString(), ivrResponse);
-        }
-        if (ivrResponse.isNetworkFailure()) {
-            LOGGER.error(String.format("Attempt %d [%s] - Course could not be published to IVR for courseId %s , version %s because of I/O errors", numberOfAttempts, DateTime.now(), courseId, version));
-            courseAdmin.notifyNetworkFailure(courseId.toString());
-            retryPublishing(courseId, version);
-        }
+        LOGGER.error(String.format("Attempt %d [%s] - Course could not be published to IVR for course %s , version %s , responseCode - %s responseMessage - %s",
+                numberOfAttempts, DateTime.now(), courseName, version, ivrResponse.getResponseCode(), ivrResponse.getResponseMessage()));
+        courseAdmin.notifyCoursePublishFailure(courseName, version, ivrResponse);
     }
 
     private void retryPublishing(UUID courseId, Integer version) {

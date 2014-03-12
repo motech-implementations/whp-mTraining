@@ -31,7 +31,7 @@ public class IVRController {
         BufferedReader reader = request.getReader();
         String response = IOUtils.toString(reader);
         publishedCoursesService.store(response);
-        return "{\"success\":true}";
+        return "{\"responseCode\":800,\"responseMessage\":\"OK\"}";
     }
 
     @RequestMapping(value = "/courses/latest")

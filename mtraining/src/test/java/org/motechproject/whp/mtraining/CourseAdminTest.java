@@ -6,11 +6,11 @@ import org.motechproject.email.model.Mail;
 import org.motechproject.email.service.EmailSenderService;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.ivr.IVRResponse;
+import org.motechproject.whp.mtraining.ivr.IVRResponseCodes;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
+import static java.lang.String.format;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,19 +31,17 @@ public class CourseAdminTest {
         Properties properties = new Properties();
         properties.put("course.admin.email.from", "motech@email.com");
         properties.put("course.admin.email.to", "admin@email.com");
-        properties.put("course.admin.email.subject.success", "Course Published");
-        properties.put("course.admin.email.success.message.format", "Course %s Published");
         when(settingsFacade.getProperties("mtraining.properties")).thenReturn(properties);
 
         CourseAdmin courseAdmin = new CourseAdmin(emailSenderService, settingsFacade);
-        courseAdmin.notifyCoursePublished("CS001");
+        courseAdmin.notifyCoursePublished("CS001", 1);
 
-        Mail mail = new Mail("motech@email.com", "admin@email.com", "Course Published", "Course CS001 Published");
+        Mail mail = new Mail("motech@email.com", "admin@email.com", format(CourseAdmin.SUCCESS_SUBJECT_FORMAT, "CS001", 1), format(CourseAdmin.SUCCESS_SUBJECT_FORMAT, "CS001", 1));
         verify(emailSenderService).send(mail);
     }
 
     @Test
-    public void shouldSendValidationFailureEmail() {
+    public void shouldSendPublishFailureMail() {
         Properties properties = new Properties();
         properties.put("course.admin.email.from", "motech@email.com");
         properties.put("course.admin.email.to", "admin@email.com");
@@ -51,34 +49,13 @@ public class CourseAdminTest {
         properties.put("course.admin.email.validation.failure.message.format", "Course %s failed with reason : %s");
         when(settingsFacade.getProperties("mtraining.properties")).thenReturn(properties);
 
-        IVRResponse response = new IVRResponse();
-        Map<String, String> errors = new HashMap<>();
-        errors.put("missingFiles", "hello.wav");
-        response.setErrors(errors);
+        IVRResponse response = new IVRResponse(IVRResponseCodes.MISSING_FILES, "hello.wav");
 
         CourseAdmin courseAdmin = new CourseAdmin(emailSenderService, settingsFacade);
-        courseAdmin.notifyValidationFailures("CS001", response);
+        courseAdmin.notifyCoursePublishFailure("CS001", 1, response);
 
-        Mail mail = new Mail("motech@email.com", "admin@email.com", "Course Validation Failed", "Course CS001 failed with reason : Missing file(s) hello.wav ");
+        Mail mail = new Mail("motech@email.com", "admin@email.com", format(CourseAdmin.FAILURE_SUBJECT_FORMAT, "CS001"), format(CourseAdmin.FAILURE_MESSAGE_FORMAT, "CS001", 1, response.getResponseMessage()));
         verify(emailSenderService).send(mail);
     }
-
-    @Test
-    public void shouldSendNetworkFailureEmail() {
-        Properties properties = new Properties();
-        properties.put("course.admin.email.from", "motech@email.com");
-        properties.put("course.admin.email.to", "admin@email.com");
-        properties.put("course.admin.email.subject.network.failure", "Course Publish Failed");
-        properties.put("course.admin.email.network.failure.message.format", "Course %s publish failed");
-        when(settingsFacade.getProperties("mtraining.properties")).thenReturn(properties);
-
-
-        CourseAdmin courseAdmin = new CourseAdmin(emailSenderService, settingsFacade);
-        courseAdmin.notifyNetworkFailure("CS001");
-
-        Mail mail = new Mail("motech@email.com", "admin@email.com", "Course Publish Failed", "Course CS001 publish failed");
-        verify(emailSenderService).send(mail);
-    }
-
 
 }

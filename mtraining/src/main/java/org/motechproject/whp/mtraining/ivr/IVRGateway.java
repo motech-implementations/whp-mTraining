@@ -1,6 +1,8 @@
 package org.motechproject.whp.mtraining.ivr;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.server.config.SettingsFacade;
@@ -33,13 +35,21 @@ public class IVRGateway {
 
     public IVRResponse postCourse(CourseDto course) {
         try {
-            HttpResponse response = webClient.post(getIVRUrl(), toJson(course));
+            LOGGER.info(String.format("Publishing Course to IVR Course name %s and version %s", course.getName(),
+                    course.getCourseIdentifier().getVersion()));
+            String courseToPublish = toJson(course);
+            LOGGER.debug("Publishing course ...");
+            LOGGER.debug(courseToPublish);
+            HttpResponse response = webClient.post(getIVRUrl(), courseToPublish);
+            StatusLine statusLine = response.getStatusLine();
+            LOGGER.info(String.format("Course publish response status : %s", statusLine.getStatusCode()));
+            if (!wasCoursePosted(statusLine.getStatusCode())) {
+                return new IVRResponse(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+            }
             return ivrResponseParser.parse(response);
         } catch (IOException ex) {
             LOGGER.error(ex.getMessage(), ex);
-            IVRResponse ivrResponse = new IVRResponse();
-            ivrResponse.markNetworkFailure();
-            return ivrResponse;
+            return new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
         }
     }
 
@@ -56,5 +66,10 @@ public class IVRGateway {
             throw new MTrainingException("Error while converting course to JSON", exception);
         }
         return writer.toString();
+    }
+
+    //Expect IVR to return 200 as per doc but handling for 201 as well
+    private boolean wasCoursePosted(Integer httpStatusCode) {
+        return httpStatusCode.equals(HttpStatus.SC_OK) || httpStatusCode.equals(HttpStatus.SC_CREATED);
     }
 }

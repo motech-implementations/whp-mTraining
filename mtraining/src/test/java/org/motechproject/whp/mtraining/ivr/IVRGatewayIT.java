@@ -48,9 +48,8 @@ public class IVRGatewayIT {
 
     @Test
     public void shouldPostCourseJSONToIVR() throws IOException {
-
         List<ModuleDto> modules = new ArrayList<>();
-        CourseDto course = new CourseDto("CS001", "Description", true,modules);
+        CourseDto course = new CourseDto("CS001", "Description", new ContentIdentifierDto(UUID.randomUUID(), 1), modules);
 
         new IVRGateway(settingsFacade, new WebClient(), ivrResponseHandler).postCourse(course);
 

@@ -16,8 +16,8 @@ import static org.mockito.Mockito.when;
 
 public class IVRResponseParserTest {
 
-    private static final String SUCCESS_RESPONSE = "{\"success\":true}";
-    private static final String VALIDATION_FAILURE = "{\"success\":false,\"errors\":{\"missingFiles\":\"hello.wav,ch01.wav\"}}";
+    private static final String SUCCESS_RESPONSE = "{\"responseCode\":800,\"responseMessage\":\"OK\"}";
+    private static final String VALIDATION_FAILURE = "{\"responseCode\":1001,\"responseMessage\":\"hello.wav,ch01.wav\"}";
 
     @Test
     public void shouldParseSuccessfulResponse() throws UnsupportedEncodingException {

@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class IVRServer {
 
-    public static final String DEFAULT_RESPONSE = "{\"success\":true}";
+    public static final String DEFAULT_RESPONSE = "{\"responseCode\":800,\"responseMessage\":\"OK\"}";
     private final Server server;
 
     private Map<String, RequestInfo> requests = new HashMap<>();
