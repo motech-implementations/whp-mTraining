@@ -47,6 +47,20 @@ abstract public class RepositorySupport<T> {
     }
 
     @Transactional
+    public List<T> allInOrder(String orderFieldName, String order){
+        List<T> allItems = new ArrayList<>();
+        PersistenceManager persistenceManager = getPersistenceManager();
+        Query query = persistenceManager.newQuery(getType());
+        query.setOrdering(orderFieldName+" "+order);
+        Collection results = persistenceManager.detachCopyAll((List) query.execute("*"));
+        for (Object result : results) {
+            allItems.add((T) result);
+        }
+        return allItems;
+    }
+
+
+    @Transactional
     public void deleteAll() {
         PersistenceManager persistenceManager = getPersistenceManager();
         Query query = persistenceManager.newQuery(getType());

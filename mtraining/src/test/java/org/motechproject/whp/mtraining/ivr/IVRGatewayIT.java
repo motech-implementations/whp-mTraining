@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.server.config.SettingsFacade;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertThat;
 

@@ -47,7 +47,6 @@ public class Course {
         if (publishedToIvr != course.publishedToIvr) return false;
         if (courseId != null ? !courseId.equals(course.courseId) : course.courseId != null) return false;
         if (version != null ? !version.equals(course.version) : course.version != null) return false;
-
         return true;
     }
 
@@ -57,8 +56,14 @@ public class Course {
         result = 31 * result + (courseId != null ? courseId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (publishedToIvr ? 1 : 0);
-        result = 31 * result + (publisAttemptedOn != null ? publisAttemptedOn.hashCode() : 0);
         return result;
     }
 
+    public UUID getCourseId() {
+        return courseId;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
 }

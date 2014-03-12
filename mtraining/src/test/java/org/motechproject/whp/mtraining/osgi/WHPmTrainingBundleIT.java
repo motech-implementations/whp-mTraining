@@ -7,13 +7,20 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.dto.CourseDto;
+import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
+import org.motechproject.testing.utils.Wait;
+import org.motechproject.testing.utils.WaitCondition;
+import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
+import org.motechproject.whp.mtraining.repository.Courses;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
 import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
@@ -24,6 +31,7 @@ import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ACTIVE_RHP;
@@ -51,8 +59,7 @@ public class WHPmTrainingBundleIT extends AuthenticationAwareIT {
         assertNotNull(courseService);
     }
 
-
-    public void testThatBookmarkUrlIsAvailableWhenProviderIsKnown() throws IOException, InterruptedException {
+    public void ThatBookmarkUrlIsAvailableWhenProviderIsKnown() throws IOException, InterruptedException {
         String bookamrkURLForUnknownUser = getBookmarkRequestUrlWith(9988776655L, "un1qId", null);
         HttpUriRequest httpGetRequest = getHttpRequestWithAuthHeaders(bookamrkURLForUnknownUser);
 

@@ -22,4 +22,6 @@
 
     <osgi:reference interface="org.motechproject.mtraining.service.MessageService" id="messageService"/>
 
+    <osgi:reference interface="org.motechproject.mtraining.service.BookmarkService" id="bookmarkService"/>
+
 </beans>

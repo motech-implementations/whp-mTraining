@@ -1,0 +1,2 @@
+ALTER TABLE mtraining.bookmark_request_log DROP COLUMN bookmark;
+ALTER TABLE mtraining.bookmark_request_log ADD COLUMN provider_id bigint, ADD COLUMN course_id varchar(40), ADD COLUMN course_version bigint, ADD COLUMN module_id varchar(40), ADD COLUMN module_version bigint, ADD COLUMN chapter_id varchar(40), ADD COLUMN chapter_version bigint, ADD COLUMN message_id varchar(40), ADD COLUMN message_version bigint;

@@ -18,4 +18,9 @@ public class Courses extends RepositorySupport<Course> {
     public Course byCourseId(UUID courseId) {
         return filterByField("courseId", UUID.class, courseId);
     }
+
+    @Transactional
+    public Course getLatestCourse(){
+       return allInOrder("version","desc").get(0);
+    }
 }

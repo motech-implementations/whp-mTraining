@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.osgi;
 
 import org.motechproject.ivr.stub.PublishedCoursesService;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
@@ -11,6 +12,7 @@ import org.osgi.framework.ServiceReference;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CoursePublishingBundleIT extends AuthenticationAwareIT {
 
