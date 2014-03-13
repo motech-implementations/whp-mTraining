@@ -34,7 +34,7 @@ public class CourseImportService {
         CourseDto courseDto = (CourseDto) courseContent.toDto();
         courseUpdater.update(asList(courseDto));
 
-        courseService.addCourse(courseDto);
+        courseService.addOrUpdateCourse(courseDto);
     }
 
     private Map<String, Content> formContents(List<CourseStructureCsvRequest> requests) {

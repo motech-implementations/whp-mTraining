@@ -56,7 +56,7 @@ public class CourseImportServiceTest {
         courseImportService.importCourse(requests);
 
         ArgumentCaptor<CourseDto> courseDtoCaptor = ArgumentCaptor.forClass(CourseDto.class);
-        verify(courseService).addCourse(courseDtoCaptor.capture());
+        verify(courseService).addOrUpdateCourse(courseDtoCaptor.capture());
         CourseDto savedCourseDto = courseDtoCaptor.getValue();
 
         assertCourseDetails(savedCourseDto);
