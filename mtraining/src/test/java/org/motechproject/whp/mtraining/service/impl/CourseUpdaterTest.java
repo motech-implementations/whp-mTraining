@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
@@ -40,19 +39,19 @@ public class CourseUpdaterTest {
 
     @Test
     public void shouldUpdateContentId() {
-        CourseDto courseDtoToBeUpdated = new CourseDto("course1", "some description", true, Collections.EMPTY_LIST);
+        CourseDto courseDtoToBeUpdated = new CourseDto(true, "course1", "some description", Collections.EMPTY_LIST);
         UUID courseContentId = UUID.randomUUID();
-        CourseDto courseDtoFromDb = new CourseDto("course1", "some description", new ContentIdentifierDto(courseContentId, 1), Collections.EMPTY_LIST);
+        CourseDto courseDtoFromDb = new CourseDto(courseContentId, 1, true, "course1", "some description", Collections.EMPTY_LIST);
 
         courseUpdater.updateContentId(courseDtoToBeUpdated, courseDtoFromDb);
 
-        assertEquals(courseContentId, courseDtoToBeUpdated.getCourseIdentifier().getContentId());
+        assertEquals(courseContentId, courseDtoToBeUpdated.getContentId());
     }
 
     @Test
     public void shouldUpdateChildContents() throws Exception {
         List<ModuleDto> modules = asList(new ModuleDto());
-        CourseDto courseDto = new CourseDto("course1", "some description", true, modules);
+        CourseDto courseDto = new CourseDto(true, "course1", "some description", modules);
 
         courseUpdater.updateChildContents(courseDto);
 
@@ -61,7 +60,7 @@ public class CourseUpdaterTest {
 
     @Test
     public void shouldGetExistingCoursesFromDbOnlyFirstTime() throws Exception {
-        CourseDto courseDtoFromDb = new CourseDto("course1", "some description", true, Collections.EMPTY_LIST);
+        CourseDto courseDtoFromDb = new CourseDto(true, "course1", "some description", Collections.EMPTY_LIST);
         when(courseService.getAllCourses()).thenReturn(asList(courseDtoFromDb));
 
         List<CourseDto> existingContents1 = courseUpdater.getExistingContents();
@@ -79,11 +78,11 @@ public class CourseUpdaterTest {
 
     @Test
     public void shouldEquateCoursesByName() throws Exception {
-        CourseDto course1 = new CourseDto("course1", "old description", true, Collections.EMPTY_LIST);
-        CourseDto course2 = new CourseDto("course1", "new description", new ContentIdentifierDto(UUID.randomUUID(), 1), Collections.EMPTY_LIST);
+        CourseDto course1 = new CourseDto(true, "course1", "old description", Collections.EMPTY_LIST);
+        CourseDto course2 = new CourseDto(UUID.randomUUID(), 1, true, "course1", "new description", Collections.EMPTY_LIST);
         assertTrue(courseUpdater.isEqual(course1, course2));
 
-        CourseDto course3 = new CourseDto("course2", "old description", true, Collections.EMPTY_LIST);
+        CourseDto course3 = new CourseDto(true, "course2", "old description", Collections.EMPTY_LIST);
         assertFalse(courseUpdater.isEqual(course1, course3));
     }
 }

@@ -5,9 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.dto.ChapterDto;
+import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.ModuleService;
 
 import java.util.Collections;
@@ -40,19 +39,19 @@ public class ModuleUpdaterTest {
 
     @Test
     public void shouldUpdateContentId() {
-        ModuleDto moduleDtoToBeUpdated = new ModuleDto("module1", "some description", true, Collections.EMPTY_LIST);
+        ModuleDto moduleDtoToBeUpdated = new ModuleDto(true, "module1", "some description", Collections.EMPTY_LIST);
         UUID moduleContentId = UUID.randomUUID();
-        ModuleDto moduleDtoFromDb = new ModuleDto("module1", "some description", new ContentIdentifierDto(moduleContentId, 1), Collections.EMPTY_LIST);
+        ModuleDto moduleDtoFromDb = new ModuleDto(moduleContentId, 1, true, "module1", "some description", Collections.EMPTY_LIST);
 
         moduleUpdater.updateContentId(moduleDtoToBeUpdated, moduleDtoFromDb);
 
-        assertEquals(moduleContentId, moduleDtoToBeUpdated.getModuleIdentifier().getContentId());
+        assertEquals(moduleContentId, moduleDtoToBeUpdated.getContentId());
     }
 
     @Test
     public void shouldUpdateChildContents() throws Exception {
         List<ChapterDto> chapters = asList(new ChapterDto());
-        ModuleDto moduleDto = new ModuleDto("module1", "some description", true, chapters);
+        ModuleDto moduleDto = new ModuleDto(true, "module1", "some description", chapters);
 
         moduleUpdater.updateChildContents(moduleDto);
 
@@ -61,7 +60,7 @@ public class ModuleUpdaterTest {
 
     @Test
     public void shouldGetExistingModulesFromDbOnlyFirstTime() throws Exception {
-        ModuleDto moduleDtoFromDb = new ModuleDto("module1", "some description", true, Collections.EMPTY_LIST);
+        ModuleDto moduleDtoFromDb = new ModuleDto(true, "module1", "some description", Collections.EMPTY_LIST);
         when(moduleService.getAllModules()).thenReturn(asList(moduleDtoFromDb));
 
         List<ModuleDto> existingContents1 = moduleUpdater.getExistingContents();
@@ -79,11 +78,11 @@ public class ModuleUpdaterTest {
 
     @Test
     public void shouldEquateModulesByName() throws Exception {
-        ModuleDto module1 = new ModuleDto("module1", "old description", true, Collections.EMPTY_LIST);
-        ModuleDto module2 = new ModuleDto("module1", "new description", new ContentIdentifierDto(UUID.randomUUID(), 1), Collections.EMPTY_LIST);
+        ModuleDto module1 = new ModuleDto(true, "module1", "old description", Collections.EMPTY_LIST);
+        ModuleDto module2 = new ModuleDto(UUID.randomUUID(), 1, true, "module1", "new description", Collections.EMPTY_LIST);
         assertTrue(moduleUpdater.isEqual(module1, module2));
 
-        ModuleDto module3 = new ModuleDto("module2", "old description", true, Collections.EMPTY_LIST);
+        ModuleDto module3 = new ModuleDto(true, "module2", "old description", Collections.EMPTY_LIST);
         assertFalse(moduleUpdater.isEqual(module1, module3));
     }
 }

@@ -70,7 +70,7 @@ public class CourseImportServiceTest {
 
     private void assertModuleDetails(List<ModuleDto> modules, UUID module1Id) {
         assertEquals(2, modules.size());
-        assertEquals(module1Id, modules.get(0).getModuleIdentifier().getContentId());
+        assertEquals(module1Id, modules.get(0).getContentId());
         assertEquals("module1", modules.get(0).getName());
         assertEquals("module1 description", modules.get(0).getDescription());
         assertEquals("module2", modules.get(1).getName());

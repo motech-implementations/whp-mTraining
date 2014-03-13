@@ -24,7 +24,7 @@ public class CourseUpdater extends Updater<CourseDto> {
 
     @Override
     protected void updateContentId(CourseDto courseDto, CourseDto existingContentByName) {
-        courseDto.setContentId(existingContentByName.getCourseIdentifier().getContentId());
+        courseDto.setContentId(existingContentByName.getContentId());
     }
 
     @Override

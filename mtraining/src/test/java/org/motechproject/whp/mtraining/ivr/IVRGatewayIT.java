@@ -8,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.server.config.SettingsFacade;
@@ -49,7 +48,7 @@ public class IVRGatewayIT {
     @Test
     public void shouldPostCourseJSONToIVR() throws IOException {
         List<ModuleDto> modules = new ArrayList<>();
-        CourseDto course = new CourseDto("CS001", "Description", new ContentIdentifierDto(UUID.randomUUID(), 1), modules);
+        CourseDto course = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "Description", modules);
 
         new IVRGateway(settingsFacade, new WebClient(), ivrResponseHandler).postCourse(course);
 

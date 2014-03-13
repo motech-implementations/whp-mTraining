@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.service.MessageService;
 
@@ -35,18 +34,18 @@ public class MessageUpdaterTest {
 
     @Test
     public void shouldUpdateContentId() {
-        MessageDto messageDtoToBeUpdated = new MessageDto("message1", "filename", "some description", true);
+        MessageDto messageDtoToBeUpdated = new MessageDto(true, "message1", "filename", "some description");
         UUID messageContentId = UUID.randomUUID();
-        MessageDto messageDtoFromDb = new MessageDto("message1", "filename", "some description", new ContentIdentifierDto(messageContentId, 1));
+        MessageDto messageDtoFromDb = new MessageDto(messageContentId, 1, true, "message1", "filename", "some description");
 
         messageUpdater.updateContentId(messageDtoToBeUpdated, messageDtoFromDb);
 
-        assertEquals(messageContentId, messageDtoToBeUpdated.getMessageIdentifier().getContentId());
+        assertEquals(messageContentId, messageDtoToBeUpdated.getContentId());
     }
 
     @Test
     public void shouldGetExistingMessagesFromDbOnlyFirstTime() throws Exception {
-        MessageDto messageDtoFromDb = new MessageDto("message1", "filename", "some description", true);
+        MessageDto messageDtoFromDb = new MessageDto(true, "message1", "filename", "some description");
         when(messageService.getAllMessages()).thenReturn(asList(messageDtoFromDb));
 
         List<MessageDto> existingContents1 = messageUpdater.getExistingContents();
@@ -64,11 +63,11 @@ public class MessageUpdaterTest {
 
     @Test
     public void shouldEquateMessagesByName() throws Exception {
-        MessageDto message1 = new MessageDto("message1", "fileName1", "old description", true);
-        MessageDto message2 = new MessageDto("message1", "fileName2", "new description", new ContentIdentifierDto(UUID.randomUUID(), 1));
+        MessageDto message1 = new MessageDto(true, "message1", "fileName1", "old description");
+        MessageDto message2 = new MessageDto(UUID.randomUUID(), 1, true, "message1", "fileName2", "new description");
         assertTrue(messageUpdater.isEqual(message1, message2));
 
-        MessageDto message3 = new MessageDto("message2", "fileName1", "old description", true);
+        MessageDto message3 = new MessageDto(true, "message2", "fileName1", "old description");
         assertFalse(messageUpdater.isEqual(message1, message3));
     }
 }

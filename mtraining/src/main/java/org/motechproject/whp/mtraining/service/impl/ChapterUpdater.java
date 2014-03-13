@@ -24,7 +24,7 @@ public class ChapterUpdater extends Updater<ChapterDto> {
 
     @Override
     protected void updateContentId(ChapterDto chapterDto, ChapterDto existingChapterDto) {
-        chapterDto.setContentId(existingChapterDto.getChapterIdentifier().getContentId());
+        chapterDto.setContentId(existingChapterDto.getContentId());
     }
 
     @Override

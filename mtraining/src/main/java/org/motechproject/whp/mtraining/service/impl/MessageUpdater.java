@@ -22,7 +22,7 @@ public class MessageUpdater extends Updater<MessageDto> {
 
     @Override
     protected void updateContentId(MessageDto messageDto, MessageDto existingMessageDto) {
-        messageDto.setContentId(existingMessageDto.getMessageIdentifier().getContentId());
+        messageDto.setContentId(existingMessageDto.getContentId());
     }
 
     @Override

@@ -6,7 +6,6 @@ import org.apache.http.entity.StringEntity;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.WebClient;
@@ -40,7 +39,7 @@ public class IVRGatewayTest {
     public void shouldReturnNetworkErrorResponse() throws IOException {
         when(webClient.post(anyString(), anyString())).thenThrow(new IOException("IO exception thrown in tests"));
 
-        CourseDto someCourse = new CourseDto("CS001", "desc", new ContentIdentifierDto(UUID.randomUUID(), 1), null);
+        CourseDto someCourse = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", null);
         IVRResponse ivrResponse = ivrGateway.postCourse(someCourse);
 
         assertThat(ivrResponse.isNetworkFailure(), Is.is(true));
@@ -59,7 +58,7 @@ public class IVRGatewayTest {
 
         when(ivrResponseHandler.parse(httpResponse)).thenReturn(new IVRResponse());
 
-        CourseDto someCourse = new CourseDto("CS001", "desc", new ContentIdentifierDto(UUID.randomUUID(), 1), null);
+        CourseDto someCourse = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", null);
 
         ivrGateway.postCourse(someCourse);
 
@@ -78,7 +77,7 @@ public class IVRGatewayTest {
 
         when(webClient.post(anyString(), anyString())).thenReturn(httpResponse);
 
-        IVRResponse response = ivrGateway.postCourse(new CourseDto("CS001", "desc", new ContentIdentifierDto(UUID.randomUUID(), 1), null));
+        IVRResponse response = ivrGateway.postCourse(new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", null));
 
         assertThat(response.getResponseCode(), Is.is(401));
         assertThat(response.getResponseMessage(), Is.is("Not Authenticated"));

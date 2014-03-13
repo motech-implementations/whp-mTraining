@@ -23,7 +23,7 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
         publishedCourseService.removeAll();
         assertNull(publishedCourseService.latest());
 
-        courseService.addOrUpdateCourse(new CourseDto("test-cs001", "Test course", true, new ArrayList<ModuleDto>()));
+        courseService.addOrUpdateCourse(new CourseDto(true, "test-cs001", "Test course", new ArrayList<ModuleDto>()));
 
         new Wait(new WaitCondition() {
             @Override

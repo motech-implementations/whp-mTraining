@@ -12,25 +12,25 @@ public enum ContentType {
     COURSE {
         @Override
         public CourseDto toDto(String nodeName, String description, String fileName, boolean isActive, List<Object> childDtos) {
-            return new CourseDto(nodeName, description, isActive, (List<ModuleDto>) (Object) childDtos);
+            return new CourseDto(isActive, nodeName, description, (List<ModuleDto>) (Object) childDtos);
         }
     },
     MODULE {
         @Override
         public ModuleDto toDto(String nodeName, String description, String fileName, boolean isActive, List<Object> childDtos) {
-            return new ModuleDto(nodeName, description, isActive, (List<ChapterDto>) (Object) childDtos);
+            return new ModuleDto(isActive, nodeName, description, (List<ChapterDto>) (Object) childDtos);
         }
     },
     CHAPTER {
         @Override
         public ChapterDto toDto(String nodeName, String description, String fileName, boolean isActive, List<Object> childDtos) {
-            return new ChapterDto(nodeName, description, isActive, (List<MessageDto>) (Object) childDtos);
+            return new ChapterDto(isActive, nodeName, description, (List<MessageDto>) (Object) childDtos);
         }
     },
     MESSAGE {
         @Override
         public MessageDto toDto(String nodeName, String description, String fileName, boolean isActive, List<Object> childDtos) {
-            return new MessageDto(nodeName, fileName, description, isActive);
+            return new MessageDto(isActive, nodeName, fileName, description);
         }
     };
 

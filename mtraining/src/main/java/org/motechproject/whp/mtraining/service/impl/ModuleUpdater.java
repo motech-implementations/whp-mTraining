@@ -24,7 +24,7 @@ public class ModuleUpdater extends Updater<ModuleDto> {
 
     @Override
     protected void updateContentId(ModuleDto moduleDto, ModuleDto existingModuleDto) {
-       moduleDto.setContentId(existingModuleDto.getModuleIdentifier().getContentId());
+       moduleDto.setContentId(existingModuleDto.getContentId());
     }
 
     @Override

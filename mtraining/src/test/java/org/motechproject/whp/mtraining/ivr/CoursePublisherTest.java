@@ -46,7 +46,7 @@ public class CoursePublisherTest {
 
         List<ModuleDto> modules = Collections.emptyList();
         int courseVersion = 2;
-        CourseDto course = new CourseDto("CS001", "CS Course", true, modules);
+        CourseDto course = new CourseDto(true, "CS001", "CS Course", modules);
 
         when(courseService.getCourse(new ContentIdentifierDto(courseId, courseVersion))).thenReturn(course);
 
@@ -65,7 +65,7 @@ public class CoursePublisherTest {
     public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() {
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto("CS001", "", contentIdentifierDto, null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         when(ivrGateway.postCourse(courseDTO)).thenReturn(new IVRResponse(800, "OK"));
@@ -82,7 +82,7 @@ public class CoursePublisherTest {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.MISSING_FILES, "file1,file2");
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto("CS001", "", contentIdentifierDto, null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
@@ -100,7 +100,7 @@ public class CoursePublisherTest {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto("CS001", "", contentIdentifierDto, null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
