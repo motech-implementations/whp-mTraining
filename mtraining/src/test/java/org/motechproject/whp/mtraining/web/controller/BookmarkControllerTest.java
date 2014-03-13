@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.dto.BookmarkDto;
@@ -18,15 +19,20 @@ import org.motechproject.whp.mtraining.repository.Courses;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
+import org.motechproject.whp.mtraining.web.domain.Bookmark;
+import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -122,4 +128,64 @@ public class BookmarkControllerTest {
         verify(providers).getByCallerId(callerId);
         verify(callLogs).record(any(BookmarkRequestLog.class));
     }
+
+    @Test
+    public void shouldPostBookmarkToBookmarkService() {
+        Long callerId = 87676598l;
+        String uniqueId = "unk001";
+        String sessionId = "session001";
+        ContentIdentifierDto courseIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        ContentIdentifierDto moduleIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 2);
+        ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        ContentIdentifierDto messageIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier));
+
+        bookmarkController.postBookmark(bookmarkPostRequest);
+
+        ArgumentCaptor<BookmarkDto> bookmarkDtoArgumentCaptor = ArgumentCaptor.forClass(BookmarkDto.class);
+        verify(bookmarkService).update(bookmarkDtoArgumentCaptor.capture());
+
+        BookmarkDto postedBookmark = bookmarkDtoArgumentCaptor.getValue();
+        assertThat(postedBookmark.getExternalId(), Is.is(callerId.toString()));
+        assertThat(postedBookmark.getCourse(), Is.is(courseIdentifier));
+        assertThat(postedBookmark.getModule(), Is.is(moduleIdentifier));
+        assertThat(postedBookmark.getChapter(), Is.is(chapterIdentifier));
+        assertThat(postedBookmark.getMessage(), Is.is(messageIdentifier));
+    }
+
+    @Test
+    public void shouldSendErrorResponseWhenCallerIdIsMissing() {
+        String uniqueId = "unk001";
+        String sessionId = "session001";
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(null, uniqueId, sessionId, new Bookmark());
+
+        ResponseEntity<ResponseStatus> response = bookmarkController.postBookmark(bookmarkPostRequest);
+        assertEquals(ResponseStatus.MISSING_CALLER_ID, response.getBody());
+
+        verify(bookmarkService, never()).update(any(BookmarkDto.class));
+
+    }
+
+    @Test
+    public void shouldSendErrorResponseWhenUniqueIdIsMissing() {
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(3232938l, null, "session01", new Bookmark());
+
+        ResponseEntity<ResponseStatus> response = bookmarkController.postBookmark(bookmarkPostRequest);
+        assertEquals(ResponseStatus.MISSING_UNIQUE_ID, response.getBody());
+
+        verify(bookmarkService, never()).update(any(BookmarkDto.class));
+    }
+
+    @Test
+    public void shouldSendErrorResponseWhenSessionIdIsMissing() {
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(3232938l, "unq11", null, new Bookmark());
+
+        ResponseEntity<ResponseStatus> response = bookmarkController.postBookmark(bookmarkPostRequest);
+        assertEquals(ResponseStatus.MISSING_SESSION_ID, response.getBody());
+
+        verify(bookmarkService, never()).update(any(BookmarkDto.class));
+    }
+
+
 }

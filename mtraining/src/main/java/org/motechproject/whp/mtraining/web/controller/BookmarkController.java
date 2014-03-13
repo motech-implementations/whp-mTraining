@@ -10,12 +10,17 @@ import org.motechproject.whp.mtraining.repository.BookmarkRequestLogs;
 import org.motechproject.whp.mtraining.repository.Courses;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
+import org.motechproject.whp.mtraining.web.domain.Bookmark;
+import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
 import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.ErrorResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +52,7 @@ public class BookmarkController {
         this.courses = courses;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/bookmark")
+    @RequestMapping(value = "/bookmark", method = RequestMethod.GET)
     @ResponseBody
     public MotechResponse getBookmark(@RequestParam Long callerId, @RequestParam String uniqueId, @RequestParam(required = false) String sessionId) {
         String currentSessionId = currentSession(sessionId);
@@ -68,6 +73,25 @@ public class BookmarkController {
                 bookmark.getChapter().getVersion(), bookmark.getMessage().getContentId(), bookmark.getMessage().getVersion()));
         BookmarkResponse bookmarkResponse = new BookmarkResponse(callerId, currentSessionId, uniqueId, provider.getLocation(), bookmark);
         return bookmarkResponse;
+    }
+
+    @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity<ResponseStatus> postBookmark(@RequestBody BookmarkPostRequest bookmarkPostRequest) {
+        Long callerId = bookmarkPostRequest.getCallerId();
+        if (callerId == null) {
+            return new ResponseEntity<>(ResponseStatus.MISSING_CALLER_ID, HttpStatus.OK);
+        }
+        if (isBlank(bookmarkPostRequest.getUniqueId())) {
+            return new ResponseEntity<>(ResponseStatus.MISSING_UNIQUE_ID, HttpStatus.OK);
+        }
+        if (isBlank(bookmarkPostRequest.getSessionId())) {
+            return new ResponseEntity<>(ResponseStatus.MISSING_SESSION_ID, HttpStatus.OK);
+        }
+        Bookmark bookmark = bookmarkPostRequest.getBookmark();
+        BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
+                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), bookmarkPostRequest.getDateModified());
+        bookmarkService.update(bookmarkDto);
+        return new ResponseEntity<>(ResponseStatus.OK, HttpStatus.CREATED);
     }
 
     private BookmarkDto getBookmark(Long externalId) {

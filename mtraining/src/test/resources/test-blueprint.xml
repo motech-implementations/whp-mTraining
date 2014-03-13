@@ -11,4 +11,6 @@
 
     <osgi:reference interface="org.motechproject.mtraining.service.CourseService" id="courseService"/>
 
+    <osgi:reference interface="org.motechproject.mtraining.service.BookmarkService" id="bookmarkService"/>
+
 </beans>
