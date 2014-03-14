@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.web.controller;
 
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
 import org.motechproject.whp.mtraining.csv.response.CourseImportResponse;
@@ -44,8 +45,8 @@ public class CourseImportController {
             if (!errors.isEmpty()) {
                 return CourseImportResponse.failure(errors);
             }
-            courseImportService.importCourse(courseStructureCsvRequests);
-            return CourseImportResponse.success();
+            ContentIdentifierDto importedCourseIdentifier = courseImportService.importCourse(courseStructureCsvRequests);
+            return CourseImportResponse.success(importedCourseIdentifier);
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             return CourseImportResponse.failure(asList(new CourseImportError(ex.getMessage())));

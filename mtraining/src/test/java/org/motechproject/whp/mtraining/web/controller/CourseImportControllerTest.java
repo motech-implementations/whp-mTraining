@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
 import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CourseImportResponse;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
@@ -78,6 +80,7 @@ public class CourseImportControllerTest {
         List<CourseStructureCsvRequest> csvRequests = asList(new CourseStructureCsvRequest());
         when(csvParser.parse(csvFile, CourseStructureCsvRequest.class)).thenReturn(csvRequests);
         when(courseStructureValidator.validate(csvRequests)).thenReturn(Collections.EMPTY_LIST);
+        when(courseImportService.importCourse(csvRequests)).thenReturn(new ContentIdentifierDto(UUID.randomUUID(), 1));
 
         CourseImportResponse courseImportResponse = courseImportController.importCourseStructure(csvFile);
 

@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
@@ -25,7 +26,7 @@ public class CourseImportService {
         this.courseUpdater = courseUpdater;
     }
 
-    public void importCourse(List<CourseStructureCsvRequest> requests) {
+    public ContentIdentifierDto importCourse(List<CourseStructureCsvRequest> requests) {
         Map<String, Content> contentMap = formContents(requests);
 
         addChildContents(contentMap, requests);
@@ -34,7 +35,7 @@ public class CourseImportService {
         CourseDto courseDto = (CourseDto) courseContent.toDto();
         courseUpdater.update(asList(courseDto));
 
-        courseService.addOrUpdateCourse(courseDto);
+        return courseService.addOrUpdateCourse(courseDto);
     }
 
     private Map<String, Content> formContents(List<CourseStructureCsvRequest> requests) {

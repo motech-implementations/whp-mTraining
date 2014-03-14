@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.csv.response;
 
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.whp.mtraining.csv.validator.CourseImportError;
 
 import java.util.Collections;
@@ -23,8 +24,9 @@ public class CourseImportResponse {
         return new CourseImportResponse(FAILURE_RESPONSE_STATUS, errorMessage, validationErrors);
     }
 
-    public static CourseImportResponse success() {
-        return new CourseImportResponse(SUCCESS_RESPONSE_STATUS, "Course structure has been imported successfully", Collections.EMPTY_LIST);
+    public static CourseImportResponse success(ContentIdentifierDto courseIdentifier) {
+        String message = String.format("Course: %s with version %s has been imported successfully", courseIdentifier.getContentId(), courseIdentifier.getVersion());
+        return new CourseImportResponse(SUCCESS_RESPONSE_STATUS, message, Collections.EMPTY_LIST);
     }
 
     public boolean isSuccess() {
