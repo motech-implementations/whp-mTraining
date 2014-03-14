@@ -16,8 +16,16 @@
                         }, function(error){
                         console.log("there was an error getting new cool data");
                 });
-
+            clearFileName();
             };
+
+            clearFileName = function(){
+                            angular.forEach(
+                                angular.element("input[type='file']"),
+                                function(inputElem) {
+                                  angular.element(inputElem).val(null);
+                                });
+                            };
 
         }]);
 
