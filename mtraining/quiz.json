@@ -1,0 +1,43 @@
+{
+    "contentId":"645aa7e9-0ac0-42d9-92d5-12973e554893",
+    "version":1,
+    "name":"Course 01",
+    "description":"Test description for Course 01",
+    "modules":[
+        {
+            "contentId":"b6619eb5-f16c-409a-b154-43023cfa314c",
+            "version":1,
+            "name":"Module 01",
+            "description":"Test description for Module 01",
+            "chapters":[
+                {
+                    "contentId":"bf75a6ca-9fab-49b2-acaf-2f5e6f7d01b3",
+                    "version":1,
+                    "name":"Chapter 1-1",
+                    "description":"Test description for Chapter 1-1",
+                    "messages":[
+                        {
+                            "contentId":"4bb3c15e-9e51-4832-a5a5-8f8754a14a9b",
+                            "version":1,
+                            "name":"Message 1-1-1",
+                            "externalId":"Audio-Message 1-1-1.filetype",
+                            "description":"Test description for Message 1-1-1",
+                            "active":true
+                        },
+                        {
+                            "contentId":"5b484a1c-e8d8-4f0c-85f8-db207a20bc14",
+                            "version":1,
+                            "name":"Message 1-1-2",
+                            "externalId":"Audio-Message 1-1-2.filetype",
+                            "description":"Test description for Message 1-1-2",
+                            "active":true
+                        }
+                    ],
+                    "active":true
+                }
+            ],
+            "active":true
+        }
+    ],
+    "active":true
+}

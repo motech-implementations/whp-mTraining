@@ -27,12 +27,12 @@ public class Provider {
     @Column(name = "remedy_id")
     @Unique(name = "remedy_id")
     @NotNull
-    private String remedy_id;
+    private String remedyId;
 
     public Provider(Long callerId, Location location, ActivationStatus activationStatus) {
         this.callerId = callerId;
         this.location = location;
-        this.remedy_id = randomAlphanumeric(20);
+        this.remedyId = randomAlphanumeric(20);
         this.activationStatus = activationStatus.getStatus();
     }
 
@@ -52,7 +52,7 @@ public class Provider {
         return activationStatus;
     }
 
-    public String getRemedy_id() {
-        return remedy_id;
+    public String getRemedyId() {
+        return remedyId;
     }
 }

@@ -87,8 +87,15 @@ public class BookmarkController {
         if (isBlank(bookmarkPostRequest.getSessionId())) {
             return new ResponseEntity<>(ResponseStatus.MISSING_SESSION_ID, HttpStatus.OK);
         }
+
+        Provider provider = providers.getByCallerId(callerId);
+
+        if (provider == null) {
+            return new ResponseEntity<>(ResponseStatus.UNKNOWN_PROVIDER, HttpStatus.OK);
+        }
+
         Bookmark bookmark = bookmarkPostRequest.getBookmark();
-        BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
+        BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemedyId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
                 bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), bookmarkPostRequest.getDateModified());
         bookmarkService.update(bookmarkDto);
         return new ResponseEntity<>(ResponseStatus.OK, HttpStatus.CREATED);

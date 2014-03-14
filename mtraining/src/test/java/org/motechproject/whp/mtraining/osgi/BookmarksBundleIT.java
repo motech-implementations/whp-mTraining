@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ACTIVE_RHP;
+import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ACTIVE_TPC;
 import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ELIMINATED_RHP;
 
 public class BookmarksBundleIT extends AuthenticationAwareIT {
@@ -48,7 +48,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     PollingHttpClient httpClient = new PollingHttpClient(new DefaultHttpClient(), 10);
 
-    List<Long> providersToBeDeleted = new ArrayList<>();
+    private List<Provider> providersAdded = new ArrayList<>();
 
     private CourseService courseService;
 
@@ -57,6 +57,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     private ProviderService providerService;
 
     private ContentIdentifierDto courseIdentifier;
+    private Provider activeProvider;
 
     @Override
     public void onSetUp() throws InterruptedException, IOException {
@@ -73,7 +74,8 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
         courseIdentifier = courseService.addOrUpdateCourse(new CourseBuilder().build());
 
-        bookmarkService.addBookmark(CALLER_ID_FOR_BOOKMARK.toString(), courseIdentifier);
+        activeProvider = addProvider(11111L, ACTIVE_TPC);
+        bookmarkService.addBookmark(activeProvider.getRemedyId(), courseIdentifier);
     }
 
 
@@ -97,18 +99,14 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         assertNotNull(bookmarkForUnknownUser.getSessionId());
         assertEquals(ResponseStatus.UNKNOWN_PROVIDER.getCode(), bookmarkForUnknownUser.getResponseStatusCode());
 
-
-        Long callerId = 102l;
-        addProvider(callerId, ACTIVE_RHP);
-
-        String bookmarkRequestURLForAKnownUser = getBookmarkRequestUrlWith(callerId, "un1qId", "s001");
+        String bookmarkRequestURLForAKnownUser = getBookmarkRequestUrlWith(activeProvider.getCallerId(), "un1qId", "s001");
         CustomHttpResponse responseForKnownUser = httpClient.execute(httpRequestWithAuthHeaders(bookmarkRequestURLForAKnownUser, "Get"), new CustomHttpResponseHandler());
         assertEquals(HttpStatus.SC_OK, responseForKnownUser.getStatusCode());
 
         BookmarkResponse bookmarkForKnownUser = (BookmarkResponse) responseToJson(responseForKnownUser.getContent(), BookmarkResponse.class);
 
         assertEquals(ResponseStatus.OK.getCode(), bookmarkForKnownUser.getResponseStatusCode());
-        assertEquals(callerId, bookmarkForKnownUser.getCallerId());
+        assertEquals(activeProvider.getCallerId(), bookmarkForKnownUser.getCallerId());
         assertEquals("un1qId", bookmarkForKnownUser.getUniqueId());
         assertEquals("s001", bookmarkForKnownUser.getSessionId());
         assertEquals("state", bookmarkForKnownUser.getLocation().getState());
@@ -154,10 +152,11 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         return objectMapper.writeValueAsString(bookmarkPostRequest);
     }
 
-    private void addProvider(Long callerId, ActivationStatus activationStatus) {
+    private Provider addProvider(Long callerId, ActivationStatus activationStatus) {
         Provider provider = new Provider(callerId, new Location("block", "district", "state"), activationStatus);
-        Long providerId = providerService.add(provider);
-        markForDeletion(providerId);
+        providerService.add(provider);
+        providersAdded.add(provider);
+        return provider;
     }
 
     private String getBookmarkRequestUrlWith(long callerId, String uniqueId, String sessionId) {
@@ -181,20 +180,16 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         return new String[]{"test-blueprint.xml"};
     }
 
-    @Override
-    public void onTearDown() throws InterruptedException {
-        ProviderService providerService = (ProviderService) getService("providerService");
-        assertNotNull(providerService);
-
-        for (Long providerId : providersToBeDeleted) {
-            providerService.delete(providerId);
-        }
-    }
-
     private Object getService(String serviceBeanName) {
         return getApplicationContext().getBean(serviceBeanName);
     }
 
+    @Override
+    protected void onTearDown() throws Exception {
+        for (Provider provider : providersAdded) {
+            providerService.delete(provider.getId());
+        }
+    }
 
     private MotechResponse responseToJson(String response, Class<? extends MotechResponse> responseType) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -202,10 +197,5 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         JsonParser parser = factory.createJsonParser(response);
         return mapper.readValue(parser, responseType);
     }
-
-    private void markForDeletion(Long id) {
-        providersToBeDeleted.add(id);
-    }
-
 
 }
