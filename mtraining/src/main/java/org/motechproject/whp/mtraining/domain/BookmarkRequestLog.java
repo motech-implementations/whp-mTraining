@@ -2,6 +2,8 @@ package org.motechproject.whp.mtraining.domain;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.motechproject.mtraining.dto.BookmarkDto;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -52,23 +54,18 @@ public class BookmarkRequestLog {
     private Integer messageVersion;
 
 
-    public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus,
-                              String providerRemedyId, UUID courseId, Integer courseVersion, UUID moduleId, Integer moduleVersion, UUID chapterId, Integer chapterVersion, UUID messageId, Integer messageVersion) {
+    public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, String providerRemedyId, BookmarkDto bookmark) {
         this.callerId = callerId;
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
         this.providerRemedyId = providerRemedyId;
-        this.courseId = courseId;
-        this.courseVersion = courseVersion;
-        this.moduleId = moduleId;
-        this.moduleVersion = moduleVersion;
-        this.chapterId = chapterId;
-        this.chapterVersion = chapterVersion;
-        this.messageId = messageId;
-        this.messageVersion = messageVersion;
         this.responseCode = responseStatus.getCode();
         this.responseMessage = responseStatus.getMessage();
         this.createdOn = DateTime.now().withZone(DateTimeZone.UTC);
+        setCourse(bookmark.getCourse());
+        setModule(bookmark.getModule());
+        setChapter(bookmark.getChapter());
+        setMessage(bookmark.getMessage());
     }
 
     public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus) {
@@ -90,4 +87,26 @@ public class BookmarkRequestLog {
     public String getSessionId() {
         return sessionId;
     }
+
+    private void setCourse(ContentIdentifierDto course) {
+        this.courseId = course.getContentId();
+        this.courseVersion = course.getVersion();
+    }
+
+    private void setModule(ContentIdentifierDto module) {
+        this.moduleId = module.getContentId();
+        this.moduleVersion = module.getVersion();
+    }
+
+    private void setChapter(ContentIdentifierDto chapter) {
+        this.chapterId = chapter.getContentId();
+        this.chapterVersion = chapter.getVersion();
+    }
+
+    private void setMessage(ContentIdentifierDto message) {
+        this.messageId = message.getContentId();
+        this.messageVersion = message.getVersion();
+    }
+
+
 }

@@ -31,7 +31,7 @@ public class CallLogsIT {
     public void shouldAddCallLogRecord() {
         List<BookmarkRequestLog> all = callLogs.all();
         assertThat(all.size(), Is.is(0));
-        callLogs.record(new BookmarkRequestLog(1234567L, "UNQ1", "session01", ResponseStatus.OK, null, null, null, null, null, null, null, null, null));
+        callLogs.record(new BookmarkRequestLog(1234567L, "UNQ1", "session01", ResponseStatus.OK));
 
         List<BookmarkRequestLog> savedBookmarkRequestLogs = callLogs.all();
         assertThat(savedBookmarkRequestLogs.size(), Is.is(1));

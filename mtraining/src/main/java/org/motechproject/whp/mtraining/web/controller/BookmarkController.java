@@ -69,9 +69,7 @@ public class BookmarkController {
             return errorResponse(callerId, uniqueId, currentSessionId, NOT_WORKING_PROVIDER);
 
         BookmarkDto bookmark = getBookmark(provider.getRemedyId());
-        bookmarkRequestLogs.record(new BookmarkRequestLog(callerId, uniqueId, currentSessionId, OK, provider.getRemedyId(), bookmark.getCourse().getContentId(),
-                bookmark.getCourse().getVersion(), bookmark.getModule().getContentId(), bookmark.getModule().getVersion(), bookmark.getChapter().getContentId(),
-                bookmark.getChapter().getVersion(), bookmark.getMessage().getContentId(), bookmark.getMessage().getVersion()));
+        bookmarkRequestLogs.record(new BookmarkRequestLog(callerId, uniqueId, currentSessionId, OK, provider.getRemedyId(), bookmark));
         BookmarkResponse bookmarkResponse = new BookmarkResponse(callerId, currentSessionId, uniqueId, provider.getLocation(), bookmark);
         return bookmarkResponse;
     }
