@@ -52,7 +52,7 @@ public class BookmarkRequestLog {
     private Integer messageVersion;
 
 
-    public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatusCode,
+    public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus,
                               String providerRemedyId, UUID courseId, Integer courseVersion, UUID moduleId, Integer moduleVersion, UUID chapterId, Integer chapterVersion, UUID messageId, Integer messageVersion) {
         this.callerId = callerId;
         this.uniqueId = uniqueId;
@@ -66,9 +66,17 @@ public class BookmarkRequestLog {
         this.chapterVersion = chapterVersion;
         this.messageId = messageId;
         this.messageVersion = messageVersion;
-        this.responseCode = responseStatusCode.getCode();
-        this.responseMessage = responseStatusCode.getMessage();
+        this.responseCode = responseStatus.getCode();
+        this.responseMessage = responseStatus.getMessage();
         this.createdOn = DateTime.now().withZone(DateTimeZone.UTC);
+    }
+
+    public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus) {
+        this.callerId = callerId;
+        this.uniqueId = uniqueId;
+        this.sessionId = sessionId;
+        this.responseCode = responseStatus.getCode();
+        this.responseMessage = responseStatus.getMessage();
     }
 
     public Long getCallerId() {

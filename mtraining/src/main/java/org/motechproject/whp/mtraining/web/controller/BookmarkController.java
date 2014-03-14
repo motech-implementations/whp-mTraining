@@ -16,6 +16,8 @@ import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.ErrorResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,8 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.*;
 
 @Controller
 public class BookmarkController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookmarkController.class);
 
     private Providers providers;
     private Sessions sessions;
@@ -52,6 +56,7 @@ public class BookmarkController {
     @ResponseBody
     public MotechResponse getBookmark(@RequestParam Long callerId, @RequestParam String uniqueId, @RequestParam(required = false) String sessionId) {
         String currentSessionId = currentSession(sessionId);
+        LOGGER.debug(String.format("Received bookmark request for caller %s with session %s and uniqueId %s", callerId, sessionId, uniqueId));
         if (callerId == null)
             return errorResponse(null, uniqueId, currentSessionId, MISSING_CALLER_ID);
         if (isBlank(uniqueId))
@@ -73,14 +78,18 @@ public class BookmarkController {
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<ResponseStatus> postBookmark(@RequestBody BookmarkPostRequest bookmarkPostRequest) {
+        LOGGER.debug(String.format("Received bookmark update request for %s with bookmark %s", bookmarkPostRequest.getCallerId(), bookmarkPostRequest));
         Long callerId = bookmarkPostRequest.getCallerId();
         if (callerId == null) {
+            logBookmarkPostResponse(null, bookmarkPostRequest.getSessionId(), ResponseStatus.MISSING_CALLER_ID);
             return new ResponseEntity<>(ResponseStatus.MISSING_CALLER_ID, HttpStatus.OK);
         }
         if (isBlank(bookmarkPostRequest.getUniqueId())) {
+            logBookmarkPostResponse(callerId, bookmarkPostRequest.getSessionId(), ResponseStatus.MISSING_UNIQUE_ID);
             return new ResponseEntity<>(ResponseStatus.MISSING_UNIQUE_ID, HttpStatus.OK);
         }
         if (isBlank(bookmarkPostRequest.getSessionId())) {
+            logBookmarkPostResponse(callerId, bookmarkPostRequest.getSessionId(), ResponseStatus.MISSING_SESSION_ID);
             return new ResponseEntity<>(ResponseStatus.MISSING_SESSION_ID, HttpStatus.OK);
         }
 
@@ -108,13 +117,18 @@ public class BookmarkController {
         return bookmark;
     }
 
-    //TODO:What if sessionId is present but no session can be found with that do we need to check that ?
     private String currentSession(String sessionId) {
         return isBlank(sessionId) ? sessions.create() : sessionId;
     }
 
     private MotechResponse errorResponse(Long callerId, String uniqueId, String currentSessionId, ResponseStatus status) {
-        bookmarkRequestLogs.record(new BookmarkRequestLog(callerId, uniqueId, currentSessionId, status, null, null, null, null, null, null, null, null, null));
+        bookmarkRequestLogs.record(new BookmarkRequestLog(callerId, uniqueId, currentSessionId, status));
         return new ErrorResponse(callerId, currentSessionId, uniqueId, status);
     }
+
+    private void logBookmarkPostResponse(Long callerId, String sessionId, ResponseStatus responseStatus) {
+        LOGGER.debug(String.format("bookmark update request for %s in sesssion %s completed with status %s", callerId, sessionId, responseStatus));
+    }
+
+
 }

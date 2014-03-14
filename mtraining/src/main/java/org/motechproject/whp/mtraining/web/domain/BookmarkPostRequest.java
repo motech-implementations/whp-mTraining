@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.joda.time.DateTime;
+import org.motechproject.whp.mtraining.util.JSONUtil;
 
 public class BookmarkPostRequest {
 
@@ -39,6 +40,11 @@ public class BookmarkPostRequest {
 
     public DateTime getDateModified() {
         return dateModified;
+    }
+
+    @Override
+    public String toString() {
+        return JSONUtil.toJsonString(this);
     }
 }
 

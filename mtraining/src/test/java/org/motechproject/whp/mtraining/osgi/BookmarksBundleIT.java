@@ -130,6 +130,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     public void testBookmarkPosting() throws IOException, InterruptedException {
         HttpPost httpPost = (HttpPost) httpRequestWithAuthHeaders(String.format("http://localhost:%s/mtraining/web-api/bookmark", TestContext.getJettyPort()), "POST");
         String bookmarkAsJSON = getBookmarkAsJSON();
+        System.out.println(bookmarkAsJSON);
         httpPost.setEntity(new StringEntity(bookmarkAsJSON));
         CustomHttpResponse response = httpClient.execute(httpPost, new CustomHttpResponseHandler());
         assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
