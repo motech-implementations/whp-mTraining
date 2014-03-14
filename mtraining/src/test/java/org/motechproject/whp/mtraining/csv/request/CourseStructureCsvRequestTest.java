@@ -56,6 +56,12 @@ public class CourseStructureCsvRequestTest {
         CourseStructureCsvRequest courseWithInActiveStatus = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "inActive", "parentNode", "Message Description", null);
         assertTrue(courseWithInActiveStatus.isValidStatus());
 
+        CourseStructureCsvRequest courseWithNullStatus = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", null, "parentNode", "Message Description", null);
+        assertTrue(courseWithNullStatus.isValidStatus());
+
+        CourseStructureCsvRequest courseWithBlankStatus = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "  ", "parentNode", "Message Description", null);
+        assertTrue(courseWithBlankStatus.isValidStatus());
+
         CourseStructureCsvRequest courseWithWrongStatus = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "status", "parentNode", "Message Description", null);
         assertFalse(courseWithWrongStatus.isValidStatus());
     }

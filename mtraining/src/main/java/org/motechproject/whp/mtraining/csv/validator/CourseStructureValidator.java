@@ -20,7 +20,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Component
 public class CourseStructureValidator {
-    private static final Logger LOG = LoggerFactory.getLogger(CourseStructureValidator.class);
+    private static final Logger logger = LoggerFactory.getLogger(CourseStructureValidator.class);
 
     private static final String COURSE_NAME_NOT_FOUND = "Could not find the course name in the CSV. Please add the course details to CSV and try importing again.";
     private static final String MULTIPLE_COURSE_NODES_IN_CSV = "There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.";
@@ -32,8 +32,9 @@ public class CourseStructureValidator {
         List<CourseImportError> errors = new ArrayList<>();
         Set<String> parents = new HashSet<>();
         if (!requests.get(0).isCourse()) {
-            LOG.error(COURSE_NAME_NOT_FOUND);
-            errors.add(new CourseImportError(COURSE_NAME_NOT_FOUND));
+            CourseImportError error = new CourseImportError(COURSE_NAME_NOT_FOUND);
+            errors.add(error);
+            logger.info(String.format("Validation error: %s", error.getMessage()));
             return errors;
         }
         for (CourseStructureCsvRequest request : requests) {
@@ -43,8 +44,9 @@ public class CourseStructureValidator {
         }
         for (CourseStructureCsvRequest request : requests) {
             if (request.isCourse() && requests.indexOf(request) != 0) {
-                LOG.error(MULTIPLE_COURSE_NODES_IN_CSV);
-                errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), MULTIPLE_COURSE_NODES_IN_CSV));
+                CourseImportError error = new CourseImportError(request.getNodeName(), request.getNodeType(), MULTIPLE_COURSE_NODES_IN_CSV);
+                errors.add(error);
+                logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
                 return errors;
             }
             validate(request, requests, errors, parents);
@@ -69,24 +71,26 @@ public class CourseStructureValidator {
             return;
         }
         if (request.isMessage() && !request.hasFileName()) {
-            String errorMessage = "A message should have the name of the audio file. Please add the filename to CSV and try importing it again.";
-            LOG.error(errorMessage);
-            errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), errorMessage));
+            CourseImportError error = new CourseImportError(request.getNodeName(), request.getNodeType(), "A message should have the name of the audio file. Please add the filename to CSV and try importing it again.");
+            errors.add(error);
+            logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
         }
     }
 
     private void validateStatus(CourseStructureCsvRequest request, List<CourseImportError> errors) {
         if (request.isValidStatus())
             return;
-        errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), "Invalid status. Status should be either ACTIVE OR INACTIVE or blank."));
+        CourseImportError error = new CourseImportError(request.getNodeName(), request.getNodeType(), "Invalid status. Status should be either ACTIVE OR INACTIVE.");
+        errors.add(error);
+        logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
     }
 
     private boolean isInvalidNodeName(CourseStructureCsvRequest request, List<CourseImportError> errors) {
         String nodeName = request.getNodeName();
         if (isBlank(nodeName)) {
-            String errorMessage = "Name not specified. Please specify the node name and try importing again.";
-            LOG.error(errorMessage);
-            errors.add(new CourseImportError(errorMessage));
+            CourseImportError error = new CourseImportError("Name not specified. Please specify the node name and try importing again.");
+            errors.add(error);
+            logger.info(String.format("Validation error: %s", error.getMessage()));
             return true;
         }
         return request.isCourse() ? isValidCourseName(nodeName, errors) : false;
@@ -96,15 +100,17 @@ public class CourseStructureValidator {
         List<CourseDto> existingCourses = courseService.getAllCourses();
         if (existingCourses.isEmpty() || StringUtils.equalsIgnoreCase(existingCourses.get(0).getName(), nodeName))
             return true;
-        errors.add(new CourseImportError(String.format("Course: %s already exists in database. You cannot import a new course.", existingCourses.get(0).getName())));
+        CourseImportError error = new CourseImportError(String.format("Course: %s already exists in database. You cannot import a new course.", existingCourses.get(0).getName()));
+        errors.add(error);
+        logger.info(String.format("Validation error: %s", error.getMessage()));
         return false;
     }
 
     private boolean hasNoChild(CourseStructureCsvRequest courseStructureObject, Set<String> parentNamesMap, List<CourseImportError> errors) {
         if (!parentNamesMap.contains(courseStructureObject.getNodeName())) {
             String errorMessage = "A " + courseStructureObject.getNodeType().toLowerCase() + " should have at least one " + courseStructureObject.getChildNodeType().toLowerCase() + " under it. Please check if the parent node name is correctly specified for modules in the CSV and try importing it again.";
-            LOG.error(errorMessage);
             errors.add(new CourseImportError(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));
+            logger.info(String.format("Validation error for node %s with node type %s: %s", courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));
             return true;
         }
         return false;
@@ -120,8 +126,8 @@ public class CourseStructureValidator {
         });
         if (duplicateNodeNameExists) {
             String errorMessage = "There are 2 or more nodes with the same name: " + request.getNodeName() + ". Please ensure the nodes are named differently and try importing again.";
-            LOG.error(errorMessage);
             errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), errorMessage));
+            logger.info(String.format("Validation error for node %s with node type %s: %s", request.getNodeName(), request.getNodeType(), errorMessage));
             return true;
         }
         return false;
@@ -129,9 +135,9 @@ public class CourseStructureValidator {
 
     private boolean hasNoParent(CourseStructureCsvRequest courseStructureObject, List<CourseImportError> errors) {
         if (!courseStructureObject.hasParent()) {
-            String errorMessage = "All nodes other than course should have a parent node. Please ensure a parent node is specified and try importing again.";
-            LOG.error(errorMessage);
-            errors.add(new CourseImportError(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));
+            CourseImportError error = new CourseImportError(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), "All nodes other than course should have a parent node. Please ensure a parent node is specified and try importing again.");
+            errors.add(error);
+            logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
             return true;
         }
         return false;
@@ -148,9 +154,9 @@ public class CourseStructureValidator {
         });
 
         if (parentNode != null && !request.hasValidParentType(parentNode.getNodeType())) {
-            String errorMessage = "The parent node specified is of not of valid type. Please check the parent node name and try importing again.";
-            LOG.error(errorMessage);
-            errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), errorMessage));
+            CourseImportError error = new CourseImportError(request.getNodeName(), request.getNodeType(), "The parent node specified is of not of valid type. Please check the parent node name and try importing again.");
+            errors.add(error);
+            logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
             return true;
         }
         return false;
@@ -167,9 +173,9 @@ public class CourseStructureValidator {
         });
 
         if (!parentNodeExists) {
-            String errorMessage = "Could not find the parent node specified in the CSV. Please check the parent node name for spelling and try importing again.";
-            LOG.error(errorMessage);
-            errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), errorMessage));
+            CourseImportError error = new CourseImportError(request.getNodeName(), request.getNodeType(), "Could not find the parent node specified in the CSV. Please check the parent node name for spelling and try importing again.");
+            errors.add(error);
+            logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
             return true;
         }
         return false;
