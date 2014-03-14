@@ -63,8 +63,8 @@ public class BookmarkController {
         if (isInvalid(provider.getActivationStatus()))
             return errorResponse(callerId, uniqueId, currentSessionId, NOT_WORKING_PROVIDER);
 
-        BookmarkDto bookmark = getBookmark(provider.getId());
-        bookmarkRequestLogs.record(new BookmarkRequestLog(callerId, uniqueId, currentSessionId, OK, provider.getId(), bookmark.getCourse().getContentId(),
+        BookmarkDto bookmark = getBookmark(provider.getRemedyId());
+        bookmarkRequestLogs.record(new BookmarkRequestLog(callerId, uniqueId, currentSessionId, OK, provider.getRemedyId(), bookmark.getCourse().getContentId(),
                 bookmark.getCourse().getVersion(), bookmark.getModule().getContentId(), bookmark.getModule().getVersion(), bookmark.getChapter().getContentId(),
                 bookmark.getChapter().getVersion(), bookmark.getMessage().getContentId(), bookmark.getMessage().getVersion()));
         BookmarkResponse bookmarkResponse = new BookmarkResponse(callerId, currentSessionId, uniqueId, provider.getLocation(), bookmark);
@@ -97,13 +97,13 @@ public class BookmarkController {
         return new ResponseEntity<>(ResponseStatus.OK, HttpStatus.CREATED);
     }
 
-    private BookmarkDto getBookmark(Long externalId) {
-        BookmarkDto bookmark = bookmarkService.getBookmark(externalId.toString());
+    private BookmarkDto getBookmark(String externalId) {
+        BookmarkDto bookmark = bookmarkService.getBookmark(externalId);
         if (bookmark == null) {
             Course latestCourse = courses.getLatestCourse();
             ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(latestCourse.getCourseId(), latestCourse.getVersion());
-            bookmarkService.addBookmark(externalId.toString(), contentIdentifierDto);
-            bookmark = bookmarkService.getBookmark(externalId.toString());
+            bookmarkService.addBookmark(externalId, contentIdentifierDto);
+            bookmark = bookmarkService.getBookmark(externalId);
         }
         return bookmark;
     }

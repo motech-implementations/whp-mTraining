@@ -32,8 +32,8 @@ public class BookmarkRequestLog {
     @Persistent(column = "created_on")
     @Temporal(TemporalType.TIMESTAMP)
     private DateTime createdOn;
-    @Persistent(column = "provider_id")
-    private Long provider;
+    @Persistent(column = "provider_remedy_id")
+    private String providerRemedyId;
     @Persistent(column = "course_id")
     private UUID courseId;
     @Persistent(column = "course_version")
@@ -53,11 +53,11 @@ public class BookmarkRequestLog {
 
 
     public BookmarkRequestLog(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatusCode,
-                              Long provider, UUID courseId, Integer courseVersion, UUID moduleId, Integer moduleVersion, UUID chapterId, Integer chapterVersion, UUID messageId, Integer messageVersion) {
+                              String providerRemedyId, UUID courseId, Integer courseVersion, UUID moduleId, Integer moduleVersion, UUID chapterId, Integer chapterVersion, UUID messageId, Integer messageVersion) {
         this.callerId = callerId;
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
-        this.provider = provider;
+        this.providerRemedyId = providerRemedyId;
         this.courseId = courseId;
         this.courseVersion = courseVersion;
         this.moduleId = moduleId;

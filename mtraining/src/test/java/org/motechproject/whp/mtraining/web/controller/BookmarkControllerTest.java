@@ -71,13 +71,13 @@ public class BookmarkControllerTest {
     public void shouldMarkCallerAsIdentifiedIfCallerIdRegistered() {
         Long callerId = 76465464L;
         Provider provider = mock(Provider.class);
-        Long providerId = 1234L;
-        when(provider.getId()).thenReturn(providerId);
+        String providerRemedyId = "remedyId";
+        when(provider.getRemedyId()).thenReturn(providerRemedyId);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
         when(provider.getActivationStatus()).thenReturn(ActivationStatus.ACTIVE_RHP.getStatus());
         ContentIdentifierDto contentId = new ContentIdentifierDto(UUID.randomUUID(), 1);
         BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, DateTime.now());
-        when(bookmarkService.getBookmark(provider.getId().toString())).thenReturn(bookmarkDto);
+        when(bookmarkService.getBookmark(providerRemedyId)).thenReturn(bookmarkDto);
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
 
