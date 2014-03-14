@@ -5,7 +5,7 @@ public enum ResponseStatus {
     UNKNOWN_PROVIDER(901, "Provider Number not recognised"),
     MISSING_CALLER_ID(902, "Missing Caller Id"),
     MISSING_UNIQUE_ID(903, "Missing Unique Id"),
-    NOT_WORKING_PROVIDER(904, "Not a working provider"),
+    NOT_WORKING_PROVIDER(904, "Eliminated provider"),
     MISSING_SESSION_ID(905, "Missing Session Id");
 
     private final int code;
@@ -23,6 +23,4 @@ public enum ResponseStatus {
     public String getMessage() {
         return message;
     }
-
-
 }
