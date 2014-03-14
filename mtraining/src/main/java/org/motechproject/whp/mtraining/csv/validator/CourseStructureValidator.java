@@ -96,7 +96,7 @@ public class CourseStructureValidator {
         List<CourseDto> existingCourses = courseService.getAllCourses();
         if (existingCourses.isEmpty() || StringUtils.equalsIgnoreCase(existingCourses.get(0).getName(), nodeName))
             return true;
-        errors.add(new CourseImportError("Invalid course name. Course already exists with different name. Please ensure that you are adding a couse with same name as existing course to update it"));
+        errors.add(new CourseImportError(String.format("Course: %s already exists in database. You cannot import a new course.", existingCourses.get(0).getName())));
         return false;
     }
 

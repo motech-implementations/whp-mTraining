@@ -158,7 +158,7 @@ public class CourseStructureValidatorTest {
 
         assertEquals(1, errors.size());
         String errorMessage = errors.get(0).getMessage();
-        assertEquals("Invalid course name. Course already exists with different name. Please ensure that you are adding a couse with same name as existing course to update it", errorMessage);
+        assertEquals("Course: Different Course Name already exists in database. You cannot import a new course.", errorMessage);
     }
 
     @Test
