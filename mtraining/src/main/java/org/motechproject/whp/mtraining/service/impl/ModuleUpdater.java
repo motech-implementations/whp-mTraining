@@ -45,4 +45,9 @@ public class ModuleUpdater extends Updater<ModuleDto> {
     protected boolean isEqual(ModuleDto moduleDto1, ModuleDto moduleDto2) {
         return moduleDto1.getName().equalsIgnoreCase(moduleDto2.getName());
     }
+
+    public void invalidateCache() {
+        existingModules.clear();
+        chapterUpdater.invalidateCache();
+    }
 }

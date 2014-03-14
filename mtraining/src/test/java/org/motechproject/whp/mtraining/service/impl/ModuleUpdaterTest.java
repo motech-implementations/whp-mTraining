@@ -9,6 +9,7 @@ import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.ModuleService;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -84,5 +85,19 @@ public class ModuleUpdaterTest {
 
         ModuleDto module3 = new ModuleDto(true, "module2", "old description", Collections.EMPTY_LIST);
         assertFalse(moduleUpdater.isEqual(module1, module3));
+    }
+
+    @Test
+    public void shouldInvalidateExistingContentCache() {
+        final ModuleDto moduleDtoFromDb = new ModuleDto(true, "module1", "some description", Collections.EMPTY_LIST);
+        when(moduleService.getAllModules()).thenReturn(new ArrayList<ModuleDto>() {{
+            add(moduleDtoFromDb);
+        }});
+        assertFalse(moduleUpdater.getExistingContents().isEmpty());
+
+        moduleUpdater.invalidateCache();
+
+        assertTrue(moduleUpdater.getExistingContents().isEmpty());
+        verify(chapterUpdater).invalidateCache();
     }
 }

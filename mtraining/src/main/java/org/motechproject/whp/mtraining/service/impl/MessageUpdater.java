@@ -41,4 +41,8 @@ public class MessageUpdater extends Updater<MessageDto> {
     protected boolean isEqual(MessageDto messageDto1, MessageDto messageDto2) {
         return messageDto1.getName().equalsIgnoreCase(messageDto2.getName());
     }
+
+    public void invalidateCache() {
+        existingMessages.clear();
+    }
 }

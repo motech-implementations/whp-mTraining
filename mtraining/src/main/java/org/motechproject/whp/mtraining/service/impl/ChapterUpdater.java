@@ -44,4 +44,9 @@ public class ChapterUpdater extends Updater<ChapterDto> {
     protected boolean isEqual(ChapterDto chapterDto1, ChapterDto chapterDto2) {
         return chapterDto1.getName().equalsIgnoreCase(chapterDto2.getName());
     }
+
+    public void invalidateCache() {
+        existingChapters.clear();
+        messageUpdater.invalidateCache();
+    }
 }

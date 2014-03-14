@@ -8,6 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.service.MessageService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,5 +70,18 @@ public class MessageUpdaterTest {
 
         MessageDto message3 = new MessageDto(true, "message2", "fileName1", "old description");
         assertFalse(messageUpdater.isEqual(message1, message3));
+    }
+
+    @Test
+    public void shouldInvalidateExistingContentCache() {
+        final MessageDto messageDtoFromDb = new MessageDto(true, "message1", "fileName", "some description");
+        when(messageService.getAllMessages()).thenReturn(new ArrayList<MessageDto>() {{
+            add(messageDtoFromDb);
+        }});
+        assertFalse(messageUpdater.getExistingContents().isEmpty());
+
+        messageUpdater.invalidateCache();
+
+        assertTrue(messageUpdater.getExistingContents().isEmpty());
     }
 }

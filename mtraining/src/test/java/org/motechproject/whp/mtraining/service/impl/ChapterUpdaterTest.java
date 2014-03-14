@@ -9,6 +9,7 @@ import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.service.ChapterService;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -84,5 +85,19 @@ public class ChapterUpdaterTest {
 
         ChapterDto chapter3 = new ChapterDto(true, "chapter2", "old description", Collections.EMPTY_LIST);
         assertFalse(chapterUpdater.isEqual(chapter1, chapter3));
+    }
+
+    @Test
+    public void shouldInvalidateExistingContentCache() {
+        final ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", Collections.EMPTY_LIST);
+        when(chapterService.getAllChapters()).thenReturn(new ArrayList<ChapterDto>() {{
+            add(chapterDtoFromDb);
+        }});
+        assertFalse(chapterUpdater.getExistingContents().isEmpty());
+
+        chapterUpdater.invalidateCache();
+
+        assertTrue(chapterUpdater.getExistingContents().isEmpty());
+        verify(messageUpdater).invalidateCache();
     }
 }

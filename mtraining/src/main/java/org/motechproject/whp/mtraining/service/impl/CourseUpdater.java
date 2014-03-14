@@ -41,7 +41,18 @@ public class CourseUpdater extends Updater<CourseDto> {
     }
 
     @Override
+    public void update(List<CourseDto> contentsToUpdate) {
+        super.update(contentsToUpdate);
+        invalidateCache();
+    }
+
+    @Override
     protected boolean isEqual(CourseDto courseDto1, CourseDto courseDto2) {
         return courseDto1.getName().equalsIgnoreCase(courseDto2.getName());
+    }
+
+    private void invalidateCache() {
+        existingCourses.clear();
+        moduleUpdater.invalidateCache();
     }
 }
