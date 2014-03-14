@@ -3,9 +3,12 @@ package org.motechproject.whp.mtraining.csv.validator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.mtraining.dto.CourseDto;
+import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,6 +24,9 @@ public class CourseStructureValidator {
 
     private static final String COURSE_NAME_NOT_FOUND = "Could not find the course name in the CSV. Please add the course details to CSV and try importing again.";
     private static final String MULTIPLE_COURSE_NODES_IN_CSV = "There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.";
+
+    @Autowired
+    private CourseService courseService;
 
     public List<CourseImportError> validate(List<CourseStructureCsvRequest> requests) {
         List<CourseImportError> errors = new ArrayList<>();
@@ -47,7 +53,7 @@ public class CourseStructureValidator {
     }
 
     private void validate(CourseStructureCsvRequest request, List<CourseStructureCsvRequest> requests, List<CourseImportError> errors, Set<String> parentNamesMap) {
-        if (isNodeNameEmpty(request.getNodeName(), errors) || isNodeNameADuplicate(request, errors, requests)) {
+        if (isInvalidNodeName(request, errors) || isNodeNameADuplicate(request, errors, requests)) {
             return;
         }
         validateStatus(request, errors);
@@ -75,13 +81,22 @@ public class CourseStructureValidator {
         errors.add(new CourseImportError(request.getNodeName(), request.getNodeType(), "Invalid status. Status should be either ACTIVE OR INACTIVE or blank."));
     }
 
-    private boolean isNodeNameEmpty(String nodeName, List<CourseImportError> errors) {
+    private boolean isInvalidNodeName(CourseStructureCsvRequest request, List<CourseImportError> errors) {
+        String nodeName = request.getNodeName();
         if (isBlank(nodeName)) {
             String errorMessage = "Name not specified. Please specify the node name and try importing again.";
             LOG.error(errorMessage);
             errors.add(new CourseImportError(errorMessage));
             return true;
         }
+        return request.isCourse() ? isValidCourseName(nodeName, errors) : false;
+    }
+
+    private boolean isValidCourseName(String nodeName, List<CourseImportError> errors) {
+        List<CourseDto> existingCourses = courseService.getAllCourses();
+        if (existingCourses.isEmpty() || StringUtils.equalsIgnoreCase(existingCourses.get(0).getName(), nodeName))
+            return true;
+        errors.add(new CourseImportError("Invalid course name. Course already exists with different name. Please ensure that you are adding a couse with same name as existing course to update it"));
         return false;
     }
 

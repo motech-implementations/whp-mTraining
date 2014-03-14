@@ -2,28 +2,46 @@ package org.motechproject.whp.mtraining.csv.validator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mtraining.dto.CourseDto;
+import org.motechproject.mtraining.dto.ModuleDto;
+import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CourseStructureValidatorTest {
-    CourseStructureValidator courseStructureValidator;
-    List<CourseStructureCsvRequest> courseStructureCsvs;
-    List<CourseImportError> errors;
+    private List<CourseStructureCsvRequest> courseStructureCsvs;
+    private List<CourseImportError> errors;
+
+    @Mock
+    private CourseService courseService;
+
+    @InjectMocks
+    private CourseStructureValidator courseStructureValidator = new CourseStructureValidator();
 
     @Before
     public void setUp() throws Exception {
-        courseStructureValidator = new CourseStructureValidator();
         courseStructureCsvs = new ArrayList<>();
         courseStructureCsvs.add(new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
         courseStructureCsvs.add(new CourseStructureCsvRequest("Module TB Symptoms", "Module", "Active", "Basic TB Symptoms", "Message Description", null));
         courseStructureCsvs.add(new CourseStructureCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", null));
         courseStructureCsvs.add(new CourseStructureCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
+
+        when(courseService.getAllCourses()).thenReturn(Collections.<CourseDto>emptyList());
     }
 
     @Test
@@ -32,12 +50,13 @@ public class CourseStructureValidatorTest {
         assertThat(errors.size(), is(0));
 
     }
+
     @Test
     public void shouldHaveErrorWhenNoCourseIsProvided() {
         courseStructureCsvs.remove(0);
         errors = courseStructureValidator.validate(courseStructureCsvs);
         assertThat(errors.size(), is(1));
-        assertEquals(errors.get(0).getMessage(),"Could not find the course name in the CSV. Please add the course details to CSV and try importing again.");
+        assertEquals(errors.get(0).getMessage(), "Could not find the course name in the CSV. Please add the course details to CSV and try importing again.");
     }
 
     @Test
@@ -125,10 +144,39 @@ public class CourseStructureValidatorTest {
     }
 
     @Test
-    public void shouldReturnErrorForNodeHavingInvalidStatus(){
+    public void shouldReturnErrorForNodeHavingInvalidStatus() {
         courseStructureCsvs.add(new CourseStructureCsvRequest("Message TB Symptoms 1", "Message", "status_invalid", "Chapter TB Symptoms", "Message Description", "FileName"));
         errors = courseStructureValidator.validate(courseStructureCsvs);
         assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void shouldValidateIfCourseNameIsSameAsExistingCourse() {
+        when(courseService.getAllCourses()).thenReturn(asList(new CourseDto(true, "Different Course Name", "description", Collections.<ModuleDto>emptyList())));
+
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+
+        assertEquals(1, errors.size());
+        String errorMessage = errors.get(0).getMessage();
+        assertEquals("Invalid course name. Course already exists with different name. Please ensure that you are adding a couse with same name as existing course to update it", errorMessage);
+    }
+
+    @Test
+    public void shouldNotValidateCourseNameIfNoCourseExistsAlready() {
+        when(courseService.getAllCourses()).thenReturn(Collections.<CourseDto>emptyList());
+
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+
+        assertTrue(errors.isEmpty());
+    }
+
+    @Test
+    public void shouldNotReturnAnyErrorIfCourseNameIsSameAsExistingCourse() {
+        when(courseService.getAllCourses()).thenReturn(asList(new CourseDto(true, "Basic TB Symptoms", "description", Collections.<ModuleDto>emptyList())));
+
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+
+        assertTrue(errors.isEmpty());
     }
 }
 
