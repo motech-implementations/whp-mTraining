@@ -29,8 +29,8 @@ public abstract class Updater<T> {
 
             if (existingContentByName != null) {
                 updateContentId(contentToUpdate, existingContentByName);
-                updateChildContents(contentToUpdate);
             }
+            updateChildContents(contentToUpdate);
         }
     }
 }

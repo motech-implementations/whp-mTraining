@@ -14,33 +14,44 @@ import static org.junit.Assert.assertNull;
 
 public class UpdaterTest {
     @Test
-    public void shouldUpdateCourse() {
-        ModuleDto module1 = new ModuleDto(true, "module1", null, asList(new ChapterDto(true, "chapter1", null, Collections.EMPTY_LIST)));
-        ModuleDto module2 = new ModuleDto(true, "module2", null, Collections.EMPTY_LIST);
-        UUID expectedModule1Id = UUID.randomUUID();
-        UUID expectedChapter1Id = UUID.randomUUID();
-        Updater<ModuleDto> updater = new TestUpdater(module1, expectedModule1Id, expectedChapter1Id);
+    public void shouldUpdateAContentAndItsChildContents() {
+        ChapterDto chapterWithSameNameAsExistingChapter = new ChapterDto(true, "chapter1", null, Collections.EMPTY_LIST);
+        ModuleDto moduleWithNameSameAsExistingModule = new ModuleDto(true, "module1", null, asList(chapterWithSameNameAsExistingChapter));
+        ChapterDto chapterToBeUpdatedForNotExistingModule = new ChapterDto(true, "chapter2", null, Collections.EMPTY_LIST);
+        ModuleDto newModuleWithExistingChapter = new ModuleDto(true, "module2", null, asList(chapterToBeUpdatedForNotExistingModule));
+        ModuleDto newModule = new ModuleDto(true, "module3", null, Collections.EMPTY_LIST);
+        UUID expectedModuleId = UUID.randomUUID();
+        UUID expectedChapterId = UUID.randomUUID();
+        Updater<ModuleDto> updater = new TestUpdater(moduleWithNameSameAsExistingModule, chapterToBeUpdatedForNotExistingModule, expectedModuleId, expectedChapterId);
 
-        updater.update(asList(module1, module2));
+        updater.update(asList(moduleWithNameSameAsExistingModule, newModuleWithExistingChapter));
 
-        assertEquals(expectedModule1Id, module1.getContentId());
-        assertEquals("module1", module1.getName());
-        assertNull(module2.getContentId());
-        assertEquals("module2", module2.getName());
+        assertEquals(expectedModuleId, moduleWithNameSameAsExistingModule.getContentId());
+        assertEquals("module1", moduleWithNameSameAsExistingModule.getName());
+        ChapterDto updatedChapter1 = moduleWithNameSameAsExistingModule.getChapters().get(0);
+        assertEquals(expectedChapterId, updatedChapter1.getContentId());
+        assertEquals("chapter1", updatedChapter1.getName());
 
-        ChapterDto actualChapter = module1.getChapters().get(0);
-        assertEquals(expectedChapter1Id, actualChapter.getContentId());
-        assertEquals("chapter1", actualChapter.getName());
+        assertNull(newModuleWithExistingChapter.getContentId());
+        assertEquals("module2", newModuleWithExistingChapter.getName());
+        ChapterDto updatedChapter2 = newModuleWithExistingChapter.getChapters().get(0);
+        assertEquals(expectedChapterId, updatedChapter2.getContentId());
+        assertEquals("chapter2", updatedChapter2.getName());
+
+        assertNull(newModule.getContentId());
+        assertEquals("module3", newModule.getName());
     }
 
     class TestUpdater extends Updater<ModuleDto> {
 
-        private ModuleDto moduleDto;
+        private ModuleDto moduleToUpdate;
+        private ChapterDto chapterToUpdate;
         private UUID moduleId;
         private UUID chapterId;
 
-        public TestUpdater(ModuleDto moduleDto, UUID moduleId, UUID chapterId) {
-            this.moduleDto = moduleDto;
+        public TestUpdater(ModuleDto moduleToUpdate, ChapterDto chapterToUpdate, UUID moduleId, UUID chapterId) {
+            this.moduleToUpdate = moduleToUpdate;
+            this.chapterToUpdate = chapterToUpdate;
             this.moduleId = moduleId;
             this.chapterId = chapterId;
         }
@@ -52,15 +63,18 @@ public class UpdaterTest {
 
         @Override
         protected void updateChildContents(ModuleDto moduleDto) {
-            moduleDto.getChapters().get(0).setContentId(chapterId);
+            if (!moduleDto.getChapters().isEmpty())
+                moduleDto.getChapters().get(0).setContentId(chapterId);
         }
 
         @Override
         protected List<ModuleDto> getExistingContents() {
-            ChapterDto chapterDto = moduleDto.getChapters().get(0);
+            ChapterDto chapterDto = moduleToUpdate.getChapters().get(0);
             ChapterDto chapterInDb = new ChapterDto(chapterId, 1, true, chapterDto.getName(), chapterDto.getDescription(), Collections.EMPTY_LIST);
-            ModuleDto moduleInDb = new ModuleDto(moduleId, 2, true, moduleDto.getName(), moduleDto.getDescription(), asList(chapterInDb));
-            return asList(moduleInDb);
+            ModuleDto moduleInDb = new ModuleDto(moduleId, 2, true, moduleToUpdate.getName(), moduleToUpdate.getDescription(), asList(chapterInDb));
+            ChapterDto chapterForOrphanModule = new ChapterDto(chapterId, 1, true, chapterToUpdate.getName(), chapterToUpdate.getDescription(), Collections.EMPTY_LIST);
+            ModuleDto orphanModule = new ModuleDto(true, "some_name", "some_desc", asList(chapterForOrphanModule));
+            return asList(moduleInDb, orphanModule);
         }
 
         @Override
