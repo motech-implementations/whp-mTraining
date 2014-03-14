@@ -31,7 +31,14 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_UNIQUE_ID;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BookmarkControllerTest {
@@ -61,7 +68,7 @@ public class BookmarkControllerTest {
         when(providers.getByCallerId(callerId)).thenReturn(null);
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
-        assertThat(response.getResponseStatusCode(), is(ResponseStatus.UNKNOWN_PROVIDER.getCode()));
+        assertThat(response.getResponseCode(), is(UNKNOWN_PROVIDER.getCode()));
 
         verify(providers).getByCallerId(callerId);
         verify(callLogs).record(any(BookmarkRequestLog.class));
@@ -81,7 +88,7 @@ public class BookmarkControllerTest {
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
 
-        assertThat(response.getResponseStatusCode(), is(ResponseStatus.OK.getCode()));
+        assertThat(response.getResponseCode(), is(ResponseStatus.OK.getCode()));
         verify(providers).getByCallerId(callerId);
         verify(callLogs).record(any(BookmarkRequestLog.class));
         verify(bookmarkService).getBookmark(provider.getId().toString());
@@ -104,13 +111,13 @@ public class BookmarkControllerTest {
     @Test
     public void shouldMarkErrorIfCallerIdIsMissing() {
         MotechResponse response = bookmarkController.getBookmark(null, "uni", "ssn001");
-        assertThat(response.getResponseStatusCode(), Is.is(ResponseStatus.MISSING_CALLER_ID.getCode()));
+        assertThat(response.getResponseCode(), Is.is(MISSING_CALLER_ID.getCode()));
     }
 
     @Test
     public void shouldMarkErrorIfUniqueIdIsMissing() {
         MotechResponse response = bookmarkController.getBookmark(123l, "", "ssn001");
-        assertThat(response.getResponseStatusCode(), Is.is(ResponseStatus.MISSING_UNIQUE_ID.getCode()));
+        assertThat(response.getResponseCode(), Is.is(MISSING_UNIQUE_ID.getCode()));
     }
 
     @Test
@@ -121,7 +128,7 @@ public class BookmarkControllerTest {
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
 
-        assertThat(response.getResponseStatusCode(), is(ResponseStatus.NOT_WORKING_PROVIDER.getCode()));
+        assertThat(response.getResponseCode(), is(ResponseStatus.NOT_WORKING_PROVIDER.getCode()));
         verify(providers).getByCallerId(callerId);
         verify(callLogs).record(any(BookmarkRequestLog.class));
     }
@@ -160,8 +167,8 @@ public class BookmarkControllerTest {
         String sessionId = "session001";
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(null, uniqueId, sessionId, new Bookmark());
 
-        ResponseEntity<ResponseStatus> response = bookmarkController.postBookmark(bookmarkPostRequest);
-        assertEquals(ResponseStatus.MISSING_CALLER_ID, response.getBody());
+        ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
+        assertEquals(MISSING_CALLER_ID.getCode(), response.getBody().getResponseCode());
 
         verify(bookmarkService, never()).update(any(BookmarkDto.class));
 
@@ -176,8 +183,8 @@ public class BookmarkControllerTest {
 
         when(providers.getByCallerId(callerId)).thenReturn(null);
 
-        ResponseEntity<ResponseStatus> response = bookmarkController.postBookmark(bookmarkPostRequest);
-        assertEquals(ResponseStatus.UNKNOWN_PROVIDER, response.getBody());
+        ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
+        assertEquals(UNKNOWN_PROVIDER.getCode(), response.getBody().getResponseCode());
 
         verify(bookmarkService, never()).update(any(BookmarkDto.class));
     }
@@ -187,8 +194,8 @@ public class BookmarkControllerTest {
     public void shouldSendErrorResponseWhenUniqueIdIsMissing() {
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(3232938l, null, "session01", new Bookmark());
 
-        ResponseEntity<ResponseStatus> response = bookmarkController.postBookmark(bookmarkPostRequest);
-        assertEquals(ResponseStatus.MISSING_UNIQUE_ID, response.getBody());
+        ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
+        assertEquals(MISSING_UNIQUE_ID.getCode(), response.getBody().getResponseCode());
 
         verify(bookmarkService, never()).update(any(BookmarkDto.class));
     }
@@ -197,8 +204,8 @@ public class BookmarkControllerTest {
     public void shouldSendErrorResponseWhenSessionIdIsMissing() {
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(3232938l, "unq11", null, new Bookmark());
 
-        ResponseEntity<ResponseStatus> response = bookmarkController.postBookmark(bookmarkPostRequest);
-        assertEquals(ResponseStatus.MISSING_SESSION_ID, response.getBody());
+        ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
+        assertEquals(MISSING_SESSION_ID.getCode(), response.getBody().getResponseCode());
 
         verify(bookmarkService, never()).update(any(BookmarkDto.class));
     }

@@ -25,10 +25,10 @@ import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
+import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
 import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
 import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
-import org.motechproject.whp.mtraining.web.domain.ErrorResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
@@ -92,12 +92,12 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         CustomHttpResponse responseForUnknownUser = httpClient.execute(httpGetRequest, new CustomHttpResponseHandler());
         assertEquals(HttpStatus.SC_OK, responseForUnknownUser.getStatusCode());
 
-        ErrorResponse bookmarkForUnknownUser = (ErrorResponse) responseToJson(responseForUnknownUser.getContent(), ErrorResponse.class);
+        BasicResponse bookmarkForUnknownUser = (BasicResponse) responseToJson(responseForUnknownUser.getContent(), BasicResponse.class);
 
         assertEquals(new Long(9988776655l), bookmarkForUnknownUser.getCallerId());
         assertEquals("un1qId", bookmarkForUnknownUser.getUniqueId());
         assertNotNull(bookmarkForUnknownUser.getSessionId());
-        assertEquals(ResponseStatus.UNKNOWN_PROVIDER.getCode(), bookmarkForUnknownUser.getResponseStatusCode());
+        assertEquals(ResponseStatus.UNKNOWN_PROVIDER.getCode(), bookmarkForUnknownUser.getResponseCode());
 
         String bookmarkRequestURLForAKnownUser = getBookmarkRequestUrlWith(activeProvider.getCallerId(), "un1qId", "s001");
         CustomHttpResponse responseForKnownUser = httpClient.execute(httpRequestWithAuthHeaders(bookmarkRequestURLForAKnownUser, "Get"), new CustomHttpResponseHandler());
@@ -105,7 +105,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
         BookmarkResponse bookmarkForKnownUser = (BookmarkResponse) responseToJson(responseForKnownUser.getContent(), BookmarkResponse.class);
 
-        assertEquals(ResponseStatus.OK.getCode(), bookmarkForKnownUser.getResponseStatusCode());
+        assertEquals(ResponseStatus.OK.getCode(), bookmarkForKnownUser.getResponseCode());
         assertEquals(activeProvider.getCallerId(), bookmarkForKnownUser.getCallerId());
         assertEquals("un1qId", bookmarkForKnownUser.getUniqueId());
         assertEquals("s001", bookmarkForKnownUser.getSessionId());
@@ -120,10 +120,10 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
         String bookmarkURL = getBookmarkRequestUrlWith(callerId, "un1qId", null);
         CustomHttpResponse responseForNotWorkingProvider = httpClient.execute(httpRequestWithAuthHeaders(bookmarkURL, "Get"), new CustomHttpResponseHandler());
-        ErrorResponse bookmarkForNotWorkingProvider = (ErrorResponse) responseToJson(responseForNotWorkingProvider.getContent(), ErrorResponse.class);
+        BasicResponse bookmarkForNotWorkingProvider = (BasicResponse) responseToJson(responseForNotWorkingProvider.getContent(), BasicResponse.class);
 
         assertEquals(HttpStatus.SC_OK, responseForNotWorkingProvider.getStatusCode());
-        assertEquals(ResponseStatus.NOT_WORKING_PROVIDER.getCode(), bookmarkForNotWorkingProvider.getResponseStatusCode());
+        assertEquals(ResponseStatus.NOT_WORKING_PROVIDER.getCode(), bookmarkForNotWorkingProvider.getResponseCode());
 
     }
 

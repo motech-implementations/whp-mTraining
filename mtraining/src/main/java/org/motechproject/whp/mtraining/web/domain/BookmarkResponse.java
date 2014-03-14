@@ -10,8 +10,8 @@ public class BookmarkResponse implements MotechResponse {
     private String sessionId;
     private String uniqueId;
     private Location location;
-    private String responseStatusMessage;
-    private int responseStatusCode;
+    private String responseMessage;
+    private int responseCode;
     @JsonProperty
     private BookmarkDto bookmark;
 
@@ -26,8 +26,8 @@ public class BookmarkResponse implements MotechResponse {
         this.uniqueId = uniqueId;
         this.location = location;
         this.bookmark = bookmark;
-        this.responseStatusCode = ResponseStatus.OK.getCode();
-        this.responseStatusMessage = ResponseStatus.OK.getMessage();
+        this.responseCode = ResponseStatus.OK.getCode();
+        this.responseMessage = ResponseStatus.OK.getMessage();
     }
 
     public Long getCallerId() {
@@ -48,12 +48,12 @@ public class BookmarkResponse implements MotechResponse {
 
 
     @Override
-    public int getResponseStatusCode() {
-        return responseStatusCode;
+    public int getResponseCode() {
+        return responseCode;
     }
 
     @Override
-    public String getResponseStatusMessage() {
-        return responseStatusMessage;
+    public String getResponseMessage() {
+        return responseMessage;
     }
 }
