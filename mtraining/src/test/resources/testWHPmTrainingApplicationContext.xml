@@ -20,7 +20,8 @@
         <property name="configLocation" value="classpath:test-datanucleus.properties"/>
     </bean>
 
-    <bean id="persistenceManagerFactory" class="org.springframework.orm.jdo.TransactionAwarePersistenceManagerFactoryProxy">
+    <bean id="persistenceManagerFactory"
+          class="org.springframework.orm.jdo.TransactionAwarePersistenceManagerFactoryProxy">
         <property name="targetPersistenceManagerFactory" ref="persistenceManagerFactoryBean"/>
         <property name="allowCreate" value="false"/>
     </bean>

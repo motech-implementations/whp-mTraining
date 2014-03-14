@@ -11,9 +11,7 @@ import org.motechproject.whp.mtraining.ivr.IVRResponseCodes;
 import java.util.Properties;
 
 import static java.lang.String.format;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CourseAdminTest {
 

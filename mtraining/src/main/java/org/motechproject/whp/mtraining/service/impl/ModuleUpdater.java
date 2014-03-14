@@ -28,7 +28,7 @@ public class ModuleUpdater extends Updater<ModuleDto> {
     }
 
     @Override
-    protected  void updateChildContents(ModuleDto moduleDto){
+    protected void updateChildContents(ModuleDto moduleDto) {
         chapterUpdater.update(moduleDto.getChapters());
     }
 

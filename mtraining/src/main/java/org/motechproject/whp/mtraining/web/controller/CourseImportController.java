@@ -1,8 +1,9 @@
 package org.motechproject.whp.mtraining.web.controller;
 
+
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
+import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CourseImportResponse;
 import org.motechproject.whp.mtraining.csv.validator.CourseImportError;
 import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;

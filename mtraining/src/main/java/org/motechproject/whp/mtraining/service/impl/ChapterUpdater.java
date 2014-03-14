@@ -28,7 +28,7 @@ public class ChapterUpdater extends Updater<ChapterDto> {
     }
 
     @Override
-    protected void updateChildContents(ChapterDto chapterDto){
+    protected void updateChildContents(ChapterDto chapterDto) {
         messageUpdater.update(chapterDto.getMessages());
     }
 

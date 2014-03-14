@@ -3,9 +3,7 @@ package org.motechproject.whp.mtraining.csv.request;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CourseStructureCsvRequestTest {
 
@@ -51,7 +49,7 @@ public class CourseStructureCsvRequestTest {
     }
 
     @Test
-    public void testThatNodeHasValidStatus(){
+    public void testThatNodeHasValidStatus() {
         CourseStructureCsvRequest courseWithActiveStatus = new CourseStructureCsvRequest("Basic TB Symptoms", "Course", "Active", "parentNode", "Message Description", null);
         assertTrue(courseWithActiveStatus.isValidStatus());
 

@@ -40,6 +40,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ACTIVE_TPC;
 import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ELIMINATED_RHP;
 
+
 public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     static final String BOOKMARK_QUERY_WITH_SESSION_ID = "http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s&sessionId=%s";

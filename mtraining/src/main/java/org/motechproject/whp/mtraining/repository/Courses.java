@@ -20,7 +20,7 @@ public class Courses extends RepositorySupport<Course> {
     }
 
     @Transactional
-    public Course getLatestCourse(){
-       return allInOrder("version","desc").get(0);
+    public Course getLatestCourse() {
+        return allInOrder("version", "desc").get(0);
     }
 }

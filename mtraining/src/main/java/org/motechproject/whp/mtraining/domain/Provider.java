@@ -3,7 +3,13 @@ package org.motechproject.whp.mtraining.domain;
 
 import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
 
-import javax.jdo.annotations.*;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
 import javax.validation.constraints.NotNull;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;

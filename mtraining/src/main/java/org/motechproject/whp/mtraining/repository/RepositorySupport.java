@@ -47,11 +47,11 @@ abstract public class RepositorySupport<T> {
     }
 
     @Transactional
-    public List<T> allInOrder(String orderFieldName, String order){
+    public List<T> allInOrder(String orderFieldName, String order) {
         List<T> allItems = new ArrayList<>();
         PersistenceManager persistenceManager = getPersistenceManager();
         Query query = persistenceManager.newQuery(getType());
-        query.setOrdering(orderFieldName+" "+order);
+        query.setOrdering(orderFieldName + " " + order);
         Collection results = persistenceManager.detachCopyAll((List) query.execute("*"));
         for (Object result : results) {
             allItems.add((T) result);

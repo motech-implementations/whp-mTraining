@@ -6,7 +6,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
-import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 
 import java.io.IOException;
 

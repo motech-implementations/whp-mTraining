@@ -14,12 +14,11 @@ import java.util.List;
 
 public class CoursePublishingBundleIT extends AuthenticationAwareIT {
 
-    //TODO: Fix and rename the test
-    public void ignoreThatCourseIsPublishedToIVR() throws IOException, InterruptedException {
+    public void testThatCourseIsPublishedToIVR() throws IOException, InterruptedException {
         CourseService courseService = (CourseService) getApplicationContext().getBean("courseService");
         assertNotNull(courseService);
 
-        final PublishedCoursesService publishedCourseService = getPublisedCourseService();
+        final PublishedCoursesService publishedCourseService = getPublishedCourseService();
         publishedCourseService.removeAll();
         assertNull(publishedCourseService.latest());
 
@@ -30,7 +29,7 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
             public boolean needsToWait() {
                 return publishedCourseService.latest() == null;
             }
-        }, 10000).start();
+        }, 40000).start();
 
 
         String publishedCourse = publishedCourseService.latest();
@@ -39,7 +38,7 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
 
     }
 
-    private PublishedCoursesService getPublisedCourseService() {
+    private PublishedCoursesService getPublishedCourseService() {
         ServiceReference serviceReference = bundleContext.getServiceReference(PublishedCoursesService.class.getName());
         assertNotNull(serviceReference);
         return (PublishedCoursesService) bundleContext.getService(serviceReference);

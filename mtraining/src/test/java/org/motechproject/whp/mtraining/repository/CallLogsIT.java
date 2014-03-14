@@ -40,6 +40,7 @@ public class CallLogsIT {
         assertThat(bookmarkRequestLog.getSessionId(), Is.is("session01"));
         assertThat(bookmarkRequestLog.getUniqueId(), Is.is("UNQ1"));
     }
+
     @After
     public void After() {
         callLogs.deleteAll();

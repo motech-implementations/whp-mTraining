@@ -40,7 +40,7 @@ public class CsvParserTest {
         assertEquals(4, actualCourseCsvContent.size());
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void shouldThrowExceptionIfCsvFileDoesNotContainAllTheHeaders() throws IOException {
         String resourceName = "fileWithMissingHeading.csv";
         File file = new File("./src/test/resources/fileWithMissingHeading.csv");

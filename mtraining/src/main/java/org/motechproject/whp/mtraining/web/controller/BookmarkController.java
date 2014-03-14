@@ -28,11 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.isInvalid;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_UNIQUE_ID;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.NOT_WORKING_PROVIDER;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.*;
 
 @Controller
 public class BookmarkController {

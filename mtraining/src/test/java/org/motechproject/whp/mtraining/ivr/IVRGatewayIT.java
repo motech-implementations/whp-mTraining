@@ -59,7 +59,7 @@ public class IVRGatewayIT {
     }
 
     @After
-    public void after() {
+    public void after() throws InterruptedException {
         ivrServer.stop();
     }
 
