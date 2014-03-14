@@ -26,4 +26,8 @@ public class ProviderServiceImpl implements ProviderService {
     public boolean delete(Long providerId) {
         return providers.delete(providerId);
     }
+
+    public Provider byCallerId(Long callerId) {
+        return providers.getByCallerId(callerId);
+    }
 }

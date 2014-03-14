@@ -44,11 +44,10 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     static final String BOOKMARK_QUERY_WITH_SESSION_ID = "http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s&sessionId=%s";
     static final String BOOKMARK_QUERY_WITHOUT_SESSION_ID = "http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s";
-    static final Long CALLER_ID_FOR_BOOKMARK = 67576576l;
 
     PollingHttpClient httpClient = new PollingHttpClient(new DefaultHttpClient(), 10);
 
-    private List<Provider> providersAdded = new ArrayList<>();
+    private List<Long> providersAdded = new ArrayList<>();
 
     private CourseService courseService;
 
@@ -74,7 +73,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
         courseIdentifier = courseService.addOrUpdateCourse(new CourseBuilder().build());
 
-        activeProvider = addProvider(11111L, ACTIVE_TPC);
+        activeProvider = addProvider(22222L, ACTIVE_TPC);
         bookmarkService.addBookmark(activeProvider.getRemedyId(), courseIdentifier);
     }
 
@@ -147,16 +146,16 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         ContentIdentifierDto message = messageDto.toContentIdentifierDto();
 
         Bookmark bookmark = new Bookmark(courseIdentifier, module, chapter, message);
-        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(CALLER_ID_FOR_BOOKMARK, "unk001", "ssn001", bookmark);
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", bookmark);
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(bookmarkPostRequest);
     }
 
     private Provider addProvider(Long callerId, ActivationStatus activationStatus) {
+        //this provider copy gets detached once saved,hence need to retrieve
         Provider provider = new Provider(callerId, new Location("block", "district", "state"), activationStatus);
-        providerService.add(provider);
-        providersAdded.add(provider);
-        return provider;
+        providersAdded.add(providerService.add(provider));
+        return providerService.byCallerId(callerId);
     }
 
     private String getBookmarkRequestUrlWith(long callerId, String uniqueId, String sessionId) {
@@ -186,8 +185,8 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     @Override
     protected void onTearDown() throws Exception {
-        for (Provider provider : providersAdded) {
-            providerService.delete(provider.getId());
+        for (Long providerId : providersAdded) {
+            providerService.delete(providerId);
         }
     }
 

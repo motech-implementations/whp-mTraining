@@ -8,4 +8,5 @@ public interface ProviderService {
 
     boolean delete(Long providerId);
 
+    Provider byCallerId(Long callerId);
 }
