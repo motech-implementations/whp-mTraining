@@ -27,14 +27,14 @@ public class Course {
 
     @Persistent(column = "publish_attempted_on")
     @Temporal(TemporalType.TIMESTAMP)
-    private DateTime publisAttemptedOn;
+    private DateTime publishAttemptedOn;
 
 
     public Course(UUID courseId, Integer version, boolean publishedToIvr) {
         this.courseId = courseId;
         this.version = version;
         this.publishedToIvr = publishedToIvr;
-        this.publisAttemptedOn = DateTime.now();
+        this.publishAttemptedOn = DateTime.now();
     }
 
     @Override

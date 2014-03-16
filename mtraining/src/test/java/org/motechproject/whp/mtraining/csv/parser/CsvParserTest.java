@@ -6,21 +6,24 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 public class CsvParserTest {
     private CsvParser csvParser = new CsvParser();
     private MockMultipartFile mockMultipartFile;
 
     @Test
-    public void shouldParseGivenCsvFileToGivenBeanType() throws IOException {
+    public void shouldParseGivenCsvFileToGivenBeanType() throws IOException, URISyntaxException {
         String resourceName = "file.csv";
-        File file = new File("./src/test/resources/file.csv");
-        InputStream inputStream = new FileInputStream(file);
+        InputStream inputStream = getFileInputStream(resourceName);
         mockMultipartFile = new MockMultipartFile(resourceName, resourceName, "", inputStream);
 
         List<CourseStructureCsvRequest> actualCourseCsvContent = csvParser.parse(mockMultipartFile, CourseStructureCsvRequest.class);
@@ -29,10 +32,9 @@ public class CsvParserTest {
     }
 
     @Test
-    public void shouldParseGivenCsvFileToGivenBeanTypeIgnoringExtraColumnOfCsv() throws IOException {
+    public void shouldParseGivenCsvFileToGivenBeanTypeIgnoringExtraColumnOfCsv() throws IOException, URISyntaxException {
         String resourceName = "fileWithExtraHeading.csv";
-        File file = new File("./src/test/resources/fileWithExtraHeading.csv");
-        InputStream inputStream = new FileInputStream(file);
+        InputStream inputStream = getFileInputStream(resourceName);
         mockMultipartFile = new MockMultipartFile(resourceName, resourceName, "", inputStream);
 
         List<CourseStructureCsvRequest> actualCourseCsvContent = csvParser.parse(mockMultipartFile, CourseStructureCsvRequest.class);
@@ -41,11 +43,18 @@ public class CsvParserTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void shouldThrowExceptionIfCsvFileDoesNotContainAllTheHeaders() throws IOException {
+    public void shouldThrowExceptionIfCsvFileDoesNotContainAllTheHeaders() throws IOException, URISyntaxException {
         String resourceName = "fileWithMissingHeading.csv";
-        File file = new File("./src/test/resources/fileWithMissingHeading.csv");
-        InputStream inputStream = new FileInputStream(file);
+        InputStream inputStream = getFileInputStream(resourceName);
         mockMultipartFile = new MockMultipartFile(resourceName, resourceName, "", inputStream);
         csvParser.parse(mockMultipartFile, CourseStructureCsvRequest.class);
     }
+
+    private InputStream getFileInputStream(String resourceName) throws URISyntaxException, FileNotFoundException {
+        URL systemResource = ClassLoader.getSystemResource(resourceName);
+        assertNotNull(systemResource);
+        File file = new File(systemResource.toURI());
+        return new FileInputStream(file);
+    }
+
 }

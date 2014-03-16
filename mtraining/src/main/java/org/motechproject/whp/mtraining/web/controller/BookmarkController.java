@@ -6,8 +6,10 @@ import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.whp.mtraining.domain.BookmarkRequestLog;
 import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.Provider;
+import org.motechproject.whp.mtraining.domain.BookmarkReport;
 import org.motechproject.whp.mtraining.repository.BookmarkRequestLogs;
 import org.motechproject.whp.mtraining.repository.Courses;
+import org.motechproject.whp.mtraining.repository.AllBookmarkReports;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
@@ -47,14 +49,17 @@ public class BookmarkController {
     private BookmarkRequestLogs bookmarkRequestLogs;
     private BookmarkService bookmarkService;
     private Courses courses;
+    private AllBookmarkReports bookmarkReports;
 
     @Autowired
-    public BookmarkController(Providers providers, Sessions sessions, BookmarkRequestLogs bookmarkRequestLogs, BookmarkService bookmarkService, Courses courses) {
+    public BookmarkController(Providers providers, Sessions sessions, BookmarkRequestLogs bookmarkRequestLogs,
+                              BookmarkService bookmarkService, Courses courses, AllBookmarkReports bookmarkReports) {
         this.providers = providers;
         this.sessions = sessions;
         this.bookmarkRequestLogs = bookmarkRequestLogs;
         this.bookmarkService = bookmarkService;
         this.courses = courses;
+        this.bookmarkReports = bookmarkReports;
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.GET)
@@ -110,7 +115,7 @@ public class BookmarkController {
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemedyId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
                 bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), bookmarkPostRequest.getDateModified());
         bookmarkService.update(bookmarkDto);
-
+        bookmarkReports.add(new BookmarkReport(provider.getRemedyId(), bookmarkDto));
         return new ResponseEntity<>(response(callerId, uniqueId, sessionId, OK), HttpStatus.CREATED);
     }
 

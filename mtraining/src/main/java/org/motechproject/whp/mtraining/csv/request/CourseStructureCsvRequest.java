@@ -1,7 +1,6 @@
 package org.motechproject.whp.mtraining.csv.request;
 
-import org.apache.commons.lang.StringUtils;
-
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class CourseStructureCsvRequest {
@@ -99,6 +98,6 @@ public class CourseStructureCsvRequest {
     }
 
     public boolean isValidStatus() {
-        return status.equalsIgnoreCase("active") || status.equalsIgnoreCase("inactive") || StringUtils.isBlank(status);
+        return isBlank(status) || "ACTIVE".equalsIgnoreCase(status) || "INACTIVE".equalsIgnoreCase(status);
     }
 }

@@ -14,8 +14,10 @@ import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.whp.mtraining.domain.BookmarkRequestLog;
 import org.motechproject.whp.mtraining.domain.Provider;
+import org.motechproject.whp.mtraining.domain.BookmarkReport;
 import org.motechproject.whp.mtraining.repository.BookmarkRequestLogs;
 import org.motechproject.whp.mtraining.repository.Courses;
+import org.motechproject.whp.mtraining.repository.AllBookmarkReports;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
@@ -52,13 +54,15 @@ public class BookmarkControllerTest {
     private BookmarkService bookmarkService;
     @Mock
     private Courses courses;
+    @Mock
+    private AllBookmarkReports providerBookmarks;
 
     @Before
     public void before() {
         providers = mock(Providers.class);
         sessions = mock(Sessions.class);
         callLogs = mock(BookmarkRequestLogs.class);
-        bookmarkController = new BookmarkController(providers, sessions, callLogs, bookmarkService, courses);
+        bookmarkController = new BookmarkController(providers, sessions, callLogs, bookmarkService, courses, providerBookmarks);
     }
 
     @Test
@@ -152,6 +156,12 @@ public class BookmarkControllerTest {
 
         ArgumentCaptor<BookmarkDto> bookmarkDtoArgumentCaptor = ArgumentCaptor.forClass(BookmarkDto.class);
         verify(bookmarkService).update(bookmarkDtoArgumentCaptor.capture());
+
+        ArgumentCaptor<BookmarkReport> providerBookmarkArgumentCaptor = ArgumentCaptor.forClass(BookmarkReport.class);
+        verify(providerBookmarks).add(providerBookmarkArgumentCaptor.capture());
+        BookmarkReport bookmarkReport = providerBookmarkArgumentCaptor.getValue();
+        assertThat(bookmarkReport.getRemedyId(), is(provider.getRemedyId()));
+        assertThat(bookmarkReport.getMessageId(), is(messageIdentifier.getContentId()));
 
         BookmarkDto postedBookmark = bookmarkDtoArgumentCaptor.getValue();
         assertThat(postedBookmark.getExternalId(), Is.is(provider.getRemedyId()));
