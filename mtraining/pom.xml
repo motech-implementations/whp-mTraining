@@ -266,12 +266,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.motechproject</groupId>
-            <artifactId>ivr-stub</artifactId>
-            <version>0.1-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
             <version>4.2.3</version>
