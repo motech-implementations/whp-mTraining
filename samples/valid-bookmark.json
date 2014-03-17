@@ -1,0 +1,31 @@
+{
+    "callerId": 999999,
+    "sessionId": "afbd9ad7-6c40-458b-8c75-af3128ca167a",
+    "uniqueId": "200",
+    "location": {
+        "block": "Bhagwanpur",
+        "district": "Vaishali",
+        "state": "Bihar"
+    },
+    "responseMessage": "OK",
+    "responseCode": 800,
+    "bookmark": {
+        "course": {
+            "contentId": "5ddf060e-28c8-45b4-84ab-1623317a7303",
+            "version": 2
+        },
+        "module": {
+            "contentId": "3a93b613-f411-4c2f-a11e-c5b174c0be07",
+            "version": 1
+        },
+        "chapter": {
+            "contentId": "83c94f42-1789-4080-912c-96a7a8a6ea5c",
+            "version": 1
+        },
+        "message": {
+            "contentId": "dfd453cb-2ab0-48b2-9812-7f8f0f8356d4",
+            "version": 1
+        },
+        "dateModified": "17-03-2014 13:08:02.282"
+    }
+}

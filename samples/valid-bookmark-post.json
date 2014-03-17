@@ -1,0 +1,24 @@
+{
+    "callerId": 9999999999,
+    "sessionId": "ssn001",
+    "uniqueId": "unk001",
+    "bookmark": {
+        "dateModified": "17-03-2014 20:15:49.287",
+        "course": {
+            "contentId": "91de8862-31c2-4124-aac7-e9212828d968",
+            "version": 1
+        },
+        "module": {
+            "contentId": "d898437e-8dcb-4a0e-9d4e-4cd6ef08b296",
+            "version": 0
+        },
+        "chapter": {
+            "contentId": "e7c7f467-7b43-4223-9348-7e03d57fd435",
+            "version": 2
+        },
+        "message": {
+            "contentId": "e72b3681-50c6-4e61-97de-d2b20ace720f",
+            "version": 1
+        }
+    }
+}

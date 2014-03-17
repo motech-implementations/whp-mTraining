@@ -1,7 +1,6 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.whp.mtraining.domain.Location;
 
 public class BookmarkResponse implements MotechResponse {
@@ -13,14 +12,14 @@ public class BookmarkResponse implements MotechResponse {
     private String responseMessage;
     private int responseCode;
     @JsonProperty
-    private BookmarkDto bookmark;
+    private Bookmark bookmark;
 
     //For JSON parsing
     public BookmarkResponse() {
 
     }
 
-    public BookmarkResponse(Long callerId, String sessionId, String uniqueId, Location location, BookmarkDto bookmark) {
+    public BookmarkResponse(Long callerId, String sessionId, String uniqueId, Location location, Bookmark bookmark) {
         this.callerId = callerId;
         this.sessionId = sessionId;
         this.uniqueId = uniqueId;

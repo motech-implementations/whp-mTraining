@@ -1,0 +1,35 @@
+{
+    "contentId": "5ddf060e-28c8-45b4-84ab-1623317a7303",
+    "version": 2,
+    "name": "CS001",
+    "description": "Test description for Course 01",
+    "modules": [
+        {
+            "contentId": "3a93b613-f411-4c2f-a11e-c5b174c0be07",
+            "version": 1,
+            "name": "Module 01",
+            "description": "Test description for Module 01",
+            "chapters": [
+                {
+                    "contentId": "83c94f42-1789-4080-912c-96a7a8a6ea5c",
+                    "version": 1,
+                    "name": "Chapter 1-1",
+                    "description": "Test description for Chapter 1-1",
+                    "messages": [
+                        {
+                            "contentId": "dfd453cb-2ab0-48b2-9812-7f8f0f8356d4",
+                            "version": 1,
+                            "name": "Message 1-1-1",
+                            "externalId": "Audio-Message 1-1-2.wav",
+                            "description": "Test description for Message 1-1-1",
+                            "active": true
+                        }
+                    ],
+                    "active": true
+                }
+            ],
+            "active": true
+        }
+    ],
+    "active": true
+}

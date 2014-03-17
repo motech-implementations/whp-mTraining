@@ -1,15 +1,13 @@
 package org.motechproject.whp.mtraining.web.domain;
 
-import org.joda.time.DateTime;
 import org.motechproject.whp.mtraining.util.JSONUtil;
 
 public class BookmarkPostRequest {
 
     private Long callerId;
     private String sessionId;
-    private Bookmark bookmark;
     private String uniqueId;
-    private DateTime dateModified;
+    private Bookmark bookmark;
 
     public BookmarkPostRequest() {
     }
@@ -19,7 +17,6 @@ public class BookmarkPostRequest {
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
         this.bookmark = bookmark;
-        this.dateModified = DateTime.now();
     }
 
     public Long getCallerId() {
@@ -36,10 +33,6 @@ public class BookmarkPostRequest {
 
     public String getUniqueId() {
         return uniqueId;
-    }
-
-    public DateTime getDateModified() {
-        return dateModified;
     }
 
     @Override

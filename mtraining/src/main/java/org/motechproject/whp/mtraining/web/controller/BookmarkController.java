@@ -11,6 +11,7 @@ import org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType;
 import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
 import org.motechproject.whp.mtraining.repository.Courses;
 import org.motechproject.whp.mtraining.repository.Providers;
+import org.motechproject.whp.mtraining.util.DateTimeUtil;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
@@ -78,7 +79,7 @@ public class BookmarkController {
 
         BookmarkDto bookmarkDto = getBookmark(provider.getRemedyId());
         allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, currentSessionId, OK, BookmarkRequestType.GET, new BookmarkReport(bookmarkDto)));
-        return new ResponseEntity<>(new BookmarkResponse(callerId, currentSessionId, uniqueId, provider.getLocation(), bookmarkDto), HttpStatus.OK);
+        return new ResponseEntity<>(new BookmarkResponse(callerId, currentSessionId, uniqueId, provider.getLocation(), new Bookmark(bookmarkDto)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")
@@ -107,7 +108,7 @@ public class BookmarkController {
 
         Bookmark bookmark = bookmarkPostRequest.getBookmark();
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemedyId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
-                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), bookmarkPostRequest.getDateModified());
+                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), DateTimeUtil.parse(bookmark.getDateModified()));
         bookmarkService.update(bookmarkDto);
         allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, sessionId, OK, BookmarkRequestType.POST, new BookmarkReport(bookmarkDto)));
         return responseFor(callerId, uniqueId, sessionId, OK, BookmarkRequestType.POST, HttpStatus.CREATED);
