@@ -12,12 +12,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.service.BookmarkService;
-import org.motechproject.whp.mtraining.domain.BookmarkRequestLog;
 import org.motechproject.whp.mtraining.domain.Provider;
-import org.motechproject.whp.mtraining.domain.BookmarkReport;
-import org.motechproject.whp.mtraining.repository.BookmarkRequestLogs;
+import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
+import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
 import org.motechproject.whp.mtraining.repository.Courses;
-import org.motechproject.whp.mtraining.repository.AllBookmarkReports;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
@@ -43,26 +41,24 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BookmarkControllerTest {
+public class BookmarkReportControllerTest {
 
     private Providers providers;
     private BookmarkController bookmarkController;
     private Sessions sessions;
-    private BookmarkRequestLogs callLogs;
+    private AllBookmarkRequests callLogs;
 
     @Mock
     private BookmarkService bookmarkService;
     @Mock
     private Courses courses;
-    @Mock
-    private AllBookmarkReports providerBookmarks;
 
     @Before
     public void before() {
         providers = mock(Providers.class);
         sessions = mock(Sessions.class);
-        callLogs = mock(BookmarkRequestLogs.class);
-        bookmarkController = new BookmarkController(providers, sessions, callLogs, bookmarkService, courses, providerBookmarks);
+        callLogs = mock(AllBookmarkRequests.class);
+        bookmarkController = new BookmarkController(providers, sessions, callLogs, bookmarkService, courses);
     }
 
     @Test
@@ -71,11 +67,11 @@ public class BookmarkControllerTest {
 
         when(providers.getByCallerId(callerId)).thenReturn(null);
 
-        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
+        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
         assertThat(response.getResponseCode(), is(UNKNOWN_PROVIDER.getCode()));
 
         verify(providers).getByCallerId(callerId);
-        verify(callLogs).record(any(BookmarkRequestLog.class));
+        verify(callLogs).add(any(BookmarkRequest.class));
     }
 
     @Test
@@ -90,11 +86,11 @@ public class BookmarkControllerTest {
         BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, DateTime.now());
         when(bookmarkService.getBookmark(providerRemedyId)).thenReturn(bookmarkDto);
 
-        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
+        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
 
         assertThat(response.getResponseCode(), is(ResponseStatus.OK.getCode()));
         verify(providers).getByCallerId(callerId);
-        verify(callLogs).record(any(BookmarkRequestLog.class));
+        verify(callLogs).add(any(BookmarkRequest.class));
         verify(bookmarkService).getBookmark(provider.getId().toString());
     }
 
@@ -105,22 +101,22 @@ public class BookmarkControllerTest {
 
         when(sessions.create()).thenReturn("7868jhgjg");
 
-        MotechResponse bookmark = bookmarkController.getBookmark(callerId, uniqueId, null);
+        MotechResponse bookmark = bookmarkController.getBookmark(callerId, uniqueId, null).getBody();
 
         assertThat(StringUtils.isBlank(bookmark.getSessionId()), Is.is(false));
         verify(sessions).create();
-        verify(callLogs).record(any(BookmarkRequestLog.class));
+        verify(callLogs).add(any(BookmarkRequest.class));
     }
 
     @Test
     public void shouldMarkErrorIfCallerIdIsMissing() {
-        MotechResponse response = bookmarkController.getBookmark(null, "uni", "ssn001");
+        MotechResponse response = bookmarkController.getBookmark(null, "uni", "ssn001").getBody();
         assertThat(response.getResponseCode(), Is.is(MISSING_CALLER_ID.getCode()));
     }
 
     @Test
     public void shouldMarkErrorIfUniqueIdIsMissing() {
-        MotechResponse response = bookmarkController.getBookmark(123l, "", "ssn001");
+        MotechResponse response = bookmarkController.getBookmark(123l, "", "ssn001").getBody();
         assertThat(response.getResponseCode(), Is.is(MISSING_UNIQUE_ID.getCode()));
     }
 
@@ -130,11 +126,11 @@ public class BookmarkControllerTest {
         Provider provider = new Provider(callerId, null, ActivationStatus.ELIMINATED_RHP);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
-        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null);
+        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
 
         assertThat(response.getResponseCode(), is(ResponseStatus.NOT_WORKING_PROVIDER.getCode()));
         verify(providers).getByCallerId(callerId);
-        verify(callLogs).record(any(BookmarkRequestLog.class));
+        verify(callLogs).add(any(BookmarkRequest.class));
     }
 
     @Test
@@ -157,11 +153,6 @@ public class BookmarkControllerTest {
         ArgumentCaptor<BookmarkDto> bookmarkDtoArgumentCaptor = ArgumentCaptor.forClass(BookmarkDto.class);
         verify(bookmarkService).update(bookmarkDtoArgumentCaptor.capture());
 
-        ArgumentCaptor<BookmarkReport> providerBookmarkArgumentCaptor = ArgumentCaptor.forClass(BookmarkReport.class);
-        verify(providerBookmarks).add(providerBookmarkArgumentCaptor.capture());
-        BookmarkReport bookmarkReport = providerBookmarkArgumentCaptor.getValue();
-        assertThat(bookmarkReport.getRemedyId(), is(provider.getRemedyId()));
-        assertThat(bookmarkReport.getMessageId(), is(messageIdentifier.getContentId()));
 
         BookmarkDto postedBookmark = bookmarkDtoArgumentCaptor.getValue();
         assertThat(postedBookmark.getExternalId(), Is.is(provider.getRemedyId()));
