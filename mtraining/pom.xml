@@ -173,7 +173,6 @@
             <groupId>org.datanucleus</groupId>
             <artifactId>datanucleus-rdbms</artifactId>
             <version>3.2.6</version>
-            <scope>test</scope>
         </dependency>
 
 
