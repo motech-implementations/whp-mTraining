@@ -20,6 +20,7 @@ import java.util.Map;
 public class IVRServer {
 
     public static final String DEFAULT_RESPONSE = "{\"responseCode\":800,\"responseMessage\":\"OK\"}";
+    public static final String POST_BODY = "post_body";
     private final Server server;
 
     private Map<String, RequestInfo> requests = new HashMap<>();
@@ -83,7 +84,7 @@ public class IVRServer {
                 if (request.getMethod().equalsIgnoreCase("Post")) {
                     BufferedReader reader = request.getReader();
                     String postBody = IOUtils.toString(reader);
-                    map.put("post_body", postBody);
+                    map.put(POST_BODY, postBody);
                 }
                 return new RequestInfo(request.getContextPath(), map);
             }

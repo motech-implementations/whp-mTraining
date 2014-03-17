@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Properties;
 
 @Component
 public class IVRGateway {
@@ -22,6 +23,8 @@ public class IVRGateway {
     private static final Logger LOGGER = LoggerFactory.getLogger(IVRGateway.class);
 
     public static final String IVR_URL = "ivr.url";
+    public static final String IVR_API_KEY_NAME = "ivr.api.key.name";
+    public static final String IVR_API_KEY_VALUE = "ivr.api.key.value";
     private SettingsFacade settingsFacade;
     private WebClient webClient;
     private IVRResponseParser ivrResponseParser;
@@ -40,7 +43,7 @@ public class IVRGateway {
             String courseToPublish = toJson(course);
             LOGGER.debug("Publishing course ...");
             LOGGER.debug(courseToPublish);
-            HttpResponse response = webClient.post(getIVRUrl(), courseToPublish);
+            HttpResponse response = webClient.post(getIVRUrl(), courseToPublish, getHeaders());
             StatusLine statusLine = response.getStatusLine();
             LOGGER.info(String.format("Course publish response status : %s", statusLine.getStatusCode()));
             if (!wasCoursePosted(statusLine.getStatusCode())) {
@@ -51,6 +54,14 @@ public class IVRGateway {
             LOGGER.error(ex.getMessage(), ex);
             return new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
         }
+    }
+
+    private Properties getHeaders() {
+        Properties properties = new Properties();
+        String headerName = settingsFacade.getProperty(IVR_API_KEY_NAME);
+        String headerValue = settingsFacade.getProperty(IVR_API_KEY_VALUE);
+        properties.put(headerName, headerValue);
+        return properties;
     }
 
     private String getIVRUrl() {
