@@ -119,7 +119,7 @@ public class BookmarkController {
         if (bookmark == null) {
             Course latestCourse = courses.getLatestCourse();
             ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(latestCourse.getCourseId(), latestCourse.getVersion());
-            bookmarkService.addBookmark(externalId, contentIdentifierDto);
+            bookmarkService.createInitialBookmark(externalId, contentIdentifierDto);
             bookmark = bookmarkService.getBookmark(externalId);
         }
         return bookmark;
