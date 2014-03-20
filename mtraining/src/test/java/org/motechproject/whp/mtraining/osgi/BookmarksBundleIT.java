@@ -75,7 +75,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         courseIdentifier = courseService.addOrUpdateCourse(new CourseBuilder().build());
 
         activeProvider = addProvider(22222L, ACTIVE_TPC);
-        bookmarkService.addBookmark(activeProvider.getRemedyId(), courseIdentifier);
+        bookmarkService.createInitialBookmark(activeProvider.getRemedyId(), courseIdentifier);
     }
 
 
