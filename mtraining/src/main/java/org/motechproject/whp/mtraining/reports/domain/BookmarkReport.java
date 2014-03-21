@@ -1,11 +1,15 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
+import org.joda.time.DateTime;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 
 import javax.jdo.annotations.EmbeddedOnly;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.UUID;
 
 @PersistenceCapable
@@ -29,12 +33,25 @@ public class BookmarkReport {
     @Persistent
     private Integer messageVersion;
 
+    @Persistent
+    @Temporal(TemporalType.TIMESTAMP)
+    private DateTime dateModified;
+
 
     public BookmarkReport(BookmarkDto bookmark) {
         setCourse(bookmark.getCourse());
         setModule(bookmark.getModule());
         setChapter(bookmark.getChapter());
         setMessage(bookmark.getMessage());
+        dateModified = ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified());
+    }
+
+    public UUID getCourseId() {
+        return courseId;
+    }
+
+    public DateTime getDateModified() {
+        return dateModified;
     }
 
     private void setMessage(ContentIdentifierDto message) {

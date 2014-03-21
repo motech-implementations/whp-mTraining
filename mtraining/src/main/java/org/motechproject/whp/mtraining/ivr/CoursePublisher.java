@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.CourseService;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.CourseAdmin;
 import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.repository.Courses;
@@ -38,14 +39,14 @@ public class CoursePublisher {
 
     public void publish(UUID courseId, Integer version) {
         if (numberOfAttempts > MAX_ATTEMPTS) {
-            LOGGER.info(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s , version %s.", numberOfAttempts, DateTime.now(), courseId, version));
+            LOGGER.info(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s , version %s.", numberOfAttempts, currentDateTime(), courseId, version));
             return;
         }
-        LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s , version %s ", numberOfAttempts, DateTime.now(), courseId, version));
+        LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s , version %s ", numberOfAttempts, currentDateTime(), courseId, version));
 
         CourseDto course = courseService.getCourse(new ContentIdentifierDto(courseId, version));
 
-        LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, DateTime.now(), course.getName(), courseId, version));
+        LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, currentDateTime(), course.getName(), courseId, version));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
         courses.add(new Course(courseId, version, ivrResponse.isSuccess()));
@@ -62,13 +63,17 @@ public class CoursePublisher {
 
     private void notifyCourseAdmin(String courseName, Integer version, IVRResponse ivrResponse) {
         if (ivrResponse.isSuccess()) {
-            LOGGER.info(String.format("Attempt %d [%s] - Course published to IVR for course %s , version %s ", numberOfAttempts, DateTime.now(), courseName, version));
+            LOGGER.info(String.format("Attempt %d [%s] - Course published to IVR for course %s , version %s ", numberOfAttempts, currentDateTime(), courseName, version));
             courseAdmin.notifyCoursePublished(courseName, version);
             return;
         }
         LOGGER.error(String.format("Attempt %d [%s] - Course could not be published to IVR for course %s , version %s , responseCode - %s responseMessage - %s",
-                numberOfAttempts, DateTime.now(), courseName, version, ivrResponse.getResponseCode(), ivrResponse.getResponseMessage()));
+                numberOfAttempts, currentDateTime(), courseName, version, ivrResponse.getResponseCode(), ivrResponse.getResponseMessage()));
         courseAdmin.notifyCoursePublishFailure(courseName, version, ivrResponse);
+    }
+
+    private static DateTime currentDateTime() {
+        return ISODateTimeUtil.nowInTimeZoneUTC();
     }
 
     private void retryPublishing(UUID courseId, Integer version) {

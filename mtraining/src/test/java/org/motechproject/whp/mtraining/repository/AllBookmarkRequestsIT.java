@@ -1,13 +1,13 @@
 package org.motechproject.whp.mtraining.repository;
 
 import org.hamcrest.core.Is;
-import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkReport;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType;
@@ -39,7 +39,7 @@ public class AllBookmarkRequestsIT {
         assertThat(all.size(), Is.is(0));
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, DateTime.now());
+        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, ISODateTimeUtil.nowInTimeZoneUTC());
         allBookmarkRequests.add(new BookmarkRequest("rmd001", 1234567L, "UNQ1", "session01", ResponseStatus.OK, BookmarkRequestType.GET, new BookmarkReport(bookmarkDto)));
 
         List<BookmarkRequest> savedBookmarkRequestses = allBookmarkRequests.all();

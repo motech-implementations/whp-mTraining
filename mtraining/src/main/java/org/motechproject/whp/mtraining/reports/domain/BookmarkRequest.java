@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
 import javax.jdo.annotations.Column;
@@ -49,6 +49,7 @@ public class BookmarkRequest {
             @Persistent(name = "chapterVersion", columns = @Column(name = "chapter_version")),
             @Persistent(name = "messageId", columns = @Column(name = "message_id")),
             @Persistent(name = "messageVersion", columns = @Column(name = "message_version")),
+            @Persistent(name = "dateModified", columns = @Column(name = "bookmark_modified_on")),
     })
     @Persistent
     private BookmarkReport bookmarkReport;
@@ -60,7 +61,7 @@ public class BookmarkRequest {
         this.responseCode = responseStatus.getCode();
         this.responseMessage = responseStatus.getMessage();
         this.requestType = requestType;
-        this.createdOn = DateTime.now().withZone(DateTimeZone.UTC);
+        this.createdOn = ISODateTimeUtil.nowInTimeZoneUTC();
     }
 
     public BookmarkRequest(String remedyId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, BookmarkReport bookmarkReport) {

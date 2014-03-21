@@ -1,10 +1,9 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.joda.time.DateTime;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.whp.mtraining.util.DateTimeUtil;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 
 public class Bookmark {
 
@@ -29,7 +28,7 @@ public class Bookmark {
         this.moduleIdentifierDto = moduleIdentifierDto;
         this.chapterIdentifierDto = chapterIdentifierDto;
         this.messageIdentifierDto = messageIdentifierDto;
-        this.dateModified = DateTimeUtil.formatDateTime(DateTime.now());
+        this.dateModified = ISODateTimeUtil.nowAsStringInTimeZoneUTC();
     }
 
     public Bookmark(BookmarkDto bookmarkDto) {
@@ -37,7 +36,7 @@ public class Bookmark {
         this.moduleIdentifierDto = bookmarkDto.getModule();
         this.chapterIdentifierDto = bookmarkDto.getChapter();
         this.messageIdentifierDto = bookmarkDto.getMessage();
-        this.dateModified = DateTimeUtil.formatDateTime(DateTime.now());
+        this.dateModified = bookmarkDto.getDateModified();
     }
 
     public ContentIdentifierDto getCourseIdentifierDto() {

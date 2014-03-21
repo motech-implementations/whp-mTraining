@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.joda.time.DateTime;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -34,7 +35,7 @@ public class Course {
         this.courseId = courseId;
         this.version = version;
         this.publishedToIvr = publishedToIvr;
-        this.publishAttemptedOn = DateTime.now();
+        this.publishAttemptedOn = ISODateTimeUtil.nowInTimeZoneUTC();
     }
 
     @Override

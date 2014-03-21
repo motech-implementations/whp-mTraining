@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.web.controller;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.service.BookmarkService;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkReport;
@@ -11,7 +12,6 @@ import org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType;
 import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
 import org.motechproject.whp.mtraining.repository.Courses;
 import org.motechproject.whp.mtraining.repository.Providers;
-import org.motechproject.whp.mtraining.util.DateTimeUtil;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
@@ -108,7 +108,7 @@ public class BookmarkController {
 
         Bookmark bookmark = bookmarkPostRequest.getBookmark();
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemedyId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
-                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), DateTimeUtil.parse(bookmark.getDateModified()));
+                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
         bookmarkService.update(bookmarkDto);
         allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, sessionId, OK, BookmarkRequestType.POST, new BookmarkReport(bookmarkDto)));
         return responseFor(callerId, uniqueId, sessionId, OK, BookmarkRequestType.POST, HttpStatus.CREATED);

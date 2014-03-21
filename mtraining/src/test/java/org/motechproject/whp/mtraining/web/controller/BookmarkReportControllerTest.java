@@ -2,7 +2,6 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.Is;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.service.BookmarkService;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
 import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
@@ -83,7 +83,7 @@ public class BookmarkReportControllerTest {
         when(providers.getByCallerId(callerId)).thenReturn(provider);
         when(provider.getActivationStatus()).thenReturn(ActivationStatus.ACTIVE_RHP.getStatus());
         ContentIdentifierDto contentId = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, DateTime.now());
+        BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, ISODateTimeUtil.nowInTimeZoneUTC());
         when(bookmarkService.getBookmark(providerRemedyId)).thenReturn(bookmarkDto);
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
