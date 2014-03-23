@@ -30,6 +30,7 @@ public class IVRController {
     public String publish(HttpServletRequest request) throws IOException {
         BufferedReader reader = request.getReader();
         String response = IOUtils.toString(reader);
+        System.out.println(response);
         publishedCoursesService.store(response);
         return "{\"responseCode\":800,\"responseMessage\":\"OK\"}";
     }

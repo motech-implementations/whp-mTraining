@@ -11,7 +11,7 @@ import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
-import org.motechproject.whp.mtraining.csv.request.CourseStructureCsvRequest;
+import org.motechproject.whp.mtraining.csv.request.CsvRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +20,6 @@ import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CourseImportServiceTest {
@@ -39,17 +38,17 @@ public class CourseImportServiceTest {
 
     @Test
     public void shouldInvokeCourseServiceToAddACourseEventuallyByConstructingContentTree() {
-        List<CourseStructureCsvRequest> requests = asList(
-                new CourseStructureCsvRequest("course1", "course", "active", null, "course description", null),
-                new CourseStructureCsvRequest("module1", "module", "active", "course1", "module1 description", null),
-                new CourseStructureCsvRequest("module2", "Module", "active", "course1", "module2 description", null),
-                new CourseStructureCsvRequest("chapter1", "CHAPTER", "active", "module1", "chapter1 description", null),
-                new CourseStructureCsvRequest("chapter2", "CHAPTER", "active", "module2", "chapter2 description", null),
-                new CourseStructureCsvRequest("message1", "message", "active", "chapter1", "message1 description", "filename1"),
-                new CourseStructureCsvRequest("message2", "message", "active", "chapter1", "message2 description", "filename2"),
-                new CourseStructureCsvRequest("message3", "message", "active", "chapter2", "message3 description", "filename3"),
-                new CourseStructureCsvRequest("message4", "message", "active", "chapter2", "message4 description", "filename4"),
-                new CourseStructureCsvRequest("message5", "message", "inactive", "chapter2", "message5 description", "filename4")
+        List<CsvRequest> requests = asList(
+                new CsvRequest("course1", "course", "active", null, "course description", null),
+                new CsvRequest("module1", "module", "active", "course1", "module1 description", null),
+                new CsvRequest("module2", "Module", "active", "course1", "module2 description", null),
+                new CsvRequest("chapter1", "CHAPTER", "active", "module1", "chapter1 description", null),
+                new CsvRequest("chapter2", "CHAPTER", "active", "module2", "chapter2 description", null),
+                new CsvRequest("message1", "message", "active", "chapter1", "message1 description", "filename1"),
+                new CsvRequest("message2", "message", "active", "chapter1", "message2 description", "filename2"),
+                new CsvRequest("message3", "message", "active", "chapter2", "message3 description", "filename3"),
+                new CsvRequest("message4", "message", "active", "chapter2", "message4 description", "filename4"),
+                new CsvRequest("message5", "message", "inactive", "chapter2", "message5 description", "filename4")
         );
         UUID module1Id = UUID.randomUUID();
         testCourseUpdater.setContentId(module1Id);

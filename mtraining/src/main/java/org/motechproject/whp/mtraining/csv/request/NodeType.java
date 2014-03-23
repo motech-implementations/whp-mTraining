@@ -6,7 +6,8 @@ public enum NodeType {
     COURSE(null),
     MODULE(COURSE),
     CHAPTER(MODULE),
-    MESSAGE(CHAPTER);
+    MESSAGE(CHAPTER),
+    QUESTION(CHAPTER);
 
     private NodeType parent;
 
@@ -45,5 +46,9 @@ public enum NodeType {
 
     public static boolean isMessage(String nodeType) {
         return NodeType.MESSAGE.equals(from(nodeType));
+    }
+
+    public static boolean isQuestion(String nodeType) {
+        return NodeType.QUESTION.equals(from(nodeType));
     }
 }

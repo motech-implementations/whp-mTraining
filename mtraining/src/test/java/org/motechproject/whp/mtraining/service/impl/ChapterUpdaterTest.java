@@ -35,9 +35,9 @@ public class ChapterUpdaterTest {
 
     @Test
     public void shouldUpdateContentId() {
-        ChapterDto chapterDtoToBeUpdated = new ChapterDto(true, "chapter1", "some description", Collections.EMPTY_LIST);
+        ChapterDto chapterDtoToBeUpdated = new ChapterDto(true, "chapter1", "some description", Collections.EMPTY_LIST, null);
         UUID chapterContentId = UUID.randomUUID();
-        ChapterDto chapterDtoFromDb = new ChapterDto(chapterContentId, 1, true, "chapter1", "some description", Collections.EMPTY_LIST);
+        ChapterDto chapterDtoFromDb = new ChapterDto(chapterContentId, 1, true, "chapter1", "some description", Collections.EMPTY_LIST, null);
 
         chapterUpdater.updateContentId(chapterDtoToBeUpdated, chapterDtoFromDb);
 
@@ -47,7 +47,7 @@ public class ChapterUpdaterTest {
     @Test
     public void shouldUpdateChildContents() throws Exception {
         List<MessageDto> messages = asList(new MessageDto());
-        ChapterDto chapterDto = new ChapterDto(true, "chapter1", "some description", messages);
+        ChapterDto chapterDto = new ChapterDto(true, "chapter1", "some description", messages, null);
 
         chapterUpdater.updateChildContents(chapterDto);
 
@@ -56,7 +56,7 @@ public class ChapterUpdaterTest {
 
     @Test
     public void shouldGetExistingChaptersFromDbOnlyFirstTime() throws Exception {
-        ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", Collections.EMPTY_LIST);
+        ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", Collections.EMPTY_LIST, null);
         when(chapterService.getAllChapters()).thenReturn(asList(chapterDtoFromDb));
 
         List<ChapterDto> existingContents1 = chapterUpdater.getExistingContents();
@@ -74,17 +74,17 @@ public class ChapterUpdaterTest {
 
     @Test
     public void shouldEquateChaptersByName() throws Exception {
-        ChapterDto chapter1 = new ChapterDto(true, "chapter1", "old description", Collections.EMPTY_LIST);
-        ChapterDto chapter2 = new ChapterDto(UUID.randomUUID(), 1, true, "chapter1", "new description", Collections.EMPTY_LIST);
+        ChapterDto chapter1 = new ChapterDto(true, "chapter1", "old description", Collections.EMPTY_LIST, null);
+        ChapterDto chapter2 = new ChapterDto(UUID.randomUUID(), 1, true, "chapter1", "new description", Collections.EMPTY_LIST, null);
         assertTrue(chapterUpdater.isEqual(chapter1, chapter2));
 
-        ChapterDto chapter3 = new ChapterDto(true, "chapter2", "old description", Collections.EMPTY_LIST);
+        ChapterDto chapter3 = new ChapterDto(true, "chapter2", "old description", Collections.EMPTY_LIST, null);
         assertFalse(chapterUpdater.isEqual(chapter1, chapter3));
     }
 
     @Test
     public void shouldInvalidateExistingContentCache() {
-        final ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", Collections.EMPTY_LIST);
+        final ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", Collections.EMPTY_LIST, null);
         when(chapterService.getAllChapters()).thenReturn(new ArrayList<ChapterDto>() {{
             add(chapterDtoFromDb);
         }});

@@ -1,4 +1,4 @@
-nodeName,nodeType,childnode,status,parentNode,description,fileName
+nodeName,nodeType,childnode,status,parentNode,description,fileName,options,correctAnswer,correctAnswerFileName,noOfQuizQuestions,passPercentage
 Basic TB Symptoms,Course,,Active,, Message Description, null
 Module TB Symptoms,,,Active,Basic TB Symptoms,Message Description
 Chapter TB Symptoms,Chapter,,Active,Module TB Symptoms,Message Description

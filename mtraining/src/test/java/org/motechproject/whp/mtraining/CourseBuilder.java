@@ -31,7 +31,7 @@ public class CourseBuilder {
 
     private List<ChapterDto> buildChapters() {
         List<ChapterDto> chapters = new ArrayList<>();
-        ChapterDto chapterDto = new ChapterDto(isActive, "ch001", desc, buildMessages());
+        ChapterDto chapterDto = new ChapterDto(isActive, "ch001", desc, buildMessages(), null);
         chapters.add(chapterDto);
         return chapters;
     }

@@ -15,9 +15,9 @@ import static org.junit.Assert.assertNull;
 public class UpdaterTest {
     @Test
     public void shouldUpdateAContentAndItsChildContents() {
-        ChapterDto chapterWithSameNameAsExistingChapter = new ChapterDto(true, "chapter1", null, Collections.EMPTY_LIST);
+        ChapterDto chapterWithSameNameAsExistingChapter = new ChapterDto(true, "chapter1", null, Collections.EMPTY_LIST, null);
         ModuleDto moduleWithNameSameAsExistingModule = new ModuleDto(true, "module1", null, asList(chapterWithSameNameAsExistingChapter));
-        ChapterDto chapterToBeUpdatedForNotExistingModule = new ChapterDto(true, "chapter2", null, Collections.EMPTY_LIST);
+        ChapterDto chapterToBeUpdatedForNotExistingModule = new ChapterDto(true, "chapter2", null, Collections.EMPTY_LIST, null);
         ModuleDto newModuleWithExistingChapter = new ModuleDto(true, "module2", null, asList(chapterToBeUpdatedForNotExistingModule));
         ModuleDto newModule = new ModuleDto(true, "module3", null, Collections.EMPTY_LIST);
         UUID expectedModuleId = UUID.randomUUID();
@@ -70,9 +70,9 @@ public class UpdaterTest {
         @Override
         protected List<ModuleDto> getExistingContents() {
             ChapterDto chapterDto = moduleToUpdate.getChapters().get(0);
-            ChapterDto chapterInDb = new ChapterDto(chapterId, 1, true, chapterDto.getName(), chapterDto.getDescription(), Collections.EMPTY_LIST);
+            ChapterDto chapterInDb = new ChapterDto(chapterId, 1, true, chapterDto.getName(), chapterDto.getDescription(), Collections.EMPTY_LIST, null);
             ModuleDto moduleInDb = new ModuleDto(moduleId, 2, true, moduleToUpdate.getName(), moduleToUpdate.getDescription(), asList(chapterInDb));
-            ChapterDto chapterForOrphanModule = new ChapterDto(chapterId, 1, true, chapterToUpdate.getName(), chapterToUpdate.getDescription(), Collections.EMPTY_LIST);
+            ChapterDto chapterForOrphanModule = new ChapterDto(chapterId, 1, true, chapterToUpdate.getName(), chapterToUpdate.getDescription(), Collections.EMPTY_LIST, null);
             ModuleDto orphanModule = new ModuleDto(true, "some_name", "some_desc", asList(chapterForOrphanModule));
             return asList(moduleInDb, orphanModule);
         }
