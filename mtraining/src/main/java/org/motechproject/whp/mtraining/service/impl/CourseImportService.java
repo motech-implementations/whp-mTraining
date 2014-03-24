@@ -45,7 +45,7 @@ public class CourseImportService {
             String noOfQuizQuestions = request.getNoOfQuizQuestions();
             Content content = new Content(request.getNodeName(), request.getNodeType(), request.getStatus(), request.getDescription(),
                     request.getFileName(), isBlank(noOfQuizQuestions) ? 0 : Integer.parseInt(noOfQuizQuestions), request.getOptionsAsList(),
-                    request.getCorrectAnswer(), request.getCorrectAnswerFileName(), isBlank(request.getPassPercentage()) ? null : Long.getLong(request.getPassPercentage()));
+                    request.getCorrectAnswer(), request.getCorrectAnswerFileName(), isBlank(request.getPassPercentage()) ? null : Long.parseLong(request.getPassPercentage()));
             contentMap.put(request.getNodeName(), content);
         }
         return contentMap;
