@@ -206,4 +206,37 @@ public class CourseStructureValidatorTest {
         assertEquals(1, errors.size());
         assertEquals("A Question should contain options and correct answer should be one among the options. Please verify and try importing it again.", errors.get(0).getMessage());
     }
+
+    @Test
+    public void shouldReturnErrorIfNoOfQuestionsIsLessThanTheRequiredNoOfQuestionsToBeAnswered() {
+        courseStructureCsvs.add(new CsvRequest("Chapter TB Symptoms1", "Chapter", "Active", "Module TB Symptoms", "Message Description", null, null, null, null, "2", "60"));
+        courseStructureCsvs.add(new CsvRequest("Question TB Symptoms1", "Question", "Active", "Chapter TB Symptoms1", "Message Description", "FileName", "1;2", "1", "CorrectAnswer", null, null));
+
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+
+        assertEquals(1, errors.size());
+        assertEquals("The no of questions for the chapter is less than the specified minimum no of questions required to be answered. Please verify and ry importing again.", errors.get(0).getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorIfNoOfQuestionsIsGreaterThanZeroAndPassPercentageIsNotValid() {
+        courseStructureCsvs.add(new CsvRequest("Chapter TB Symptoms1", "Chapter", "Active", "Module TB Symptoms", "Message Description", null, null, null, null, "2", "200"));
+        courseStructureCsvs.add(new CsvRequest("Question TB Symptoms1", "Question", "Active", "Chapter TB Symptoms1", "Message Description", "FileName", "1;2", "1", "CorrectAnswer", null, null));
+
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+
+        assertEquals(1, errors.size());
+        assertEquals("Pass percentage should be between 0 and 100. Please verify and try importing again", errors.get(0).getMessage());
+    }
+
+    @Test
+    public void shouldThrowNumberFormatExceptionWhenNoOfQuestionsIsNonNumeric() {
+        courseStructureCsvs.add(new CsvRequest("Chapter TB Symptoms1", "Chapter", "Active", "Module TB Symptoms", "Message Description", null, null, null, null, "*", ""));
+        courseStructureCsvs.add(new CsvRequest("Question TB Symptoms1", "Question", "Active", "Chapter TB Symptoms1", "Message Description", "FileName", "1;2", "1", "CorrectAnswer", null, null));
+
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+
+        assertEquals(1, errors.size());
+        assertEquals("A Chapter should have valid no of questions and pass percentage between 0 and 100. Please try importing it again.", errors.get(0).getMessage());
+    }
 }

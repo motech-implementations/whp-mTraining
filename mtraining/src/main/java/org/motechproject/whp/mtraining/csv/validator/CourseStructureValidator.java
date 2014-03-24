@@ -16,8 +16,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Component
 public class CourseStructureValidator {
@@ -72,17 +75,56 @@ public class CourseStructureValidator {
                 return;
             }
         }
+        if (request.isChapter()) {
+            try {
+                Integer quizQuestions = isNotBlank(request.getNoOfQuizQuestions()) ? parseInt(request.getNoOfQuizQuestions()) : 0;
+                if (quizQuestions > 0) {
+                    Long passPercentage = isNotBlank(request.getPassPercentage()) ? parseLong(request.getPassPercentage()) : 0;
+                    if (passPercentage < 0 || passPercentage > 100) {
+                        CourseImportError error = new CourseImportError(request.getNodeName(), request.getNodeType(), "Pass percentage should be between 0 and 100. Please verify and try importing again");
+                        errors.add(error);
+                        logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
+                        return;
+                    }
+                    verifyQuestions(quizQuestions, requests, request, errors);
+                }
+            } catch (NumberFormatException e) {
+                CourseImportError error = new CourseImportError(request.getNodeName(), request.getNodeType(), "A Chapter should have valid no of questions and pass percentage between 0 and 100. Please try importing it again.");
+                errors.add(error);
+                logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
+                return;
+            }
+
+        }
+
         if (!(request.isMessage() || request.isQuestion()) && hasNoChild(request, parentNamesMap, errors)) {
             return;
         }
+
         if ((request.isMessage() || request.isQuestion()) && !request.hasFileName()) {
             CourseImportError error = new CourseImportError(request.getNodeName(), request.getNodeType(), "A message and question should have the name of the audio file. Please add the filename to CSV and try importing it again.");
             errors.add(error);
             logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
             return;
         }
+
         if (request.isQuestion())
+
             validateOptionsAndAnswers(request, errors);
+
+    }
+
+    private void verifyQuestions(Integer quizQuestions, List<CsvRequest> requests, CsvRequest chapterRequest, List<CourseImportError> errors) {
+        Integer noOfQuestions = 0;
+        for (CsvRequest request : requests) {
+            if (chapterRequest.getNodeName().equalsIgnoreCase(request.getParentNode()))
+                noOfQuestions++;
+        }
+        if (noOfQuestions < quizQuestions) {
+            CourseImportError error = new CourseImportError(chapterRequest.getNodeName(), chapterRequest.getNodeType(), "The no of questions for the chapter is less than the specified minimum no of questions required to be answered. Please verify and ry importing again.");
+            errors.add(error);
+            logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
+        }
     }
 
     private void validateOptionsAndAnswers(CsvRequest request, List<CourseImportError> errors) {

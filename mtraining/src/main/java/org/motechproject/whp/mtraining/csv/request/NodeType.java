@@ -51,4 +51,8 @@ public enum NodeType {
     public static boolean isQuestion(String nodeType) {
         return NodeType.QUESTION.equals(from(nodeType));
     }
+
+    public static boolean isChapter(String nodeType) {
+        return NodeType.CHAPTER.equals(from(nodeType));
+    }
 }

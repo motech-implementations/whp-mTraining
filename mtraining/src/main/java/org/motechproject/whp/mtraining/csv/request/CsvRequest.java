@@ -87,6 +87,10 @@ public class CsvRequest {
         return NodeType.isQuestion(nodeType);
     }
 
+    public boolean isChapter() {
+        return NodeType.isChapter(nodeType);
+    }
+
     public boolean hasFileName() {
         return isNotBlank(fileName);
     }
