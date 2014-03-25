@@ -15,10 +15,14 @@ import java.util.Map;
 
 public class CoursePublishingBundleIT extends AuthenticationAwareIT {
 
+    protected IVRServer ivrServer;
+    protected List<String> coursesPublished;
 
     @Override
     public void onSetUp() throws IOException, InterruptedException {
         super.onSetUp();
+        ivrServer = new IVRServer(8888,"/ivr-wgn").start();
+        coursesPublished = new ArrayList<>();
     }
 
     public void testThatCourseIsPublishedToIVR() throws IOException, InterruptedException {
@@ -53,15 +57,21 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
 
     @Override
     protected List<String> getImports() {
-        List<String> imports = super.getImports();
+        List<String> imports = new ArrayList<>();
+        imports.add("org.motechproject.commons.api");
+        imports.add("org.apache.http.util");
+        imports.add("org.mortbay.jetty");
+        imports.add("org.mortbay.jetty.servlet");
+        imports.add("javax.servlet");
+        imports.add("javax.servlet.http");
+        imports.add("org.apache.commons.io");
         imports.add("org.motechproject.whp.mtraining.service");
         return imports;
     }
 
     @Override
     protected void onTearDown() throws Exception {
-        super.onTearDown();
-        if (null != ivrServer) {
+        if (ivrServer != null) {
             ivrServer.stop();
         }
     }

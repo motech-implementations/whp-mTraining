@@ -11,12 +11,9 @@ import org.motechproject.security.service.MotechPermissionService;
 import org.motechproject.security.service.MotechRoleService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.testing.osgi.BaseOsgiIT;
-import org.motechproject.whp.mtraining.IVRServer;
 import org.osgi.framework.ServiceReference;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 public class AuthenticationAwareIT extends BaseOsgiIT {
@@ -32,8 +29,6 @@ public class AuthenticationAwareIT extends BaseOsgiIT {
     private static final Locale USER_LOCALE = Locale.ENGLISH;
     private static final String BUNDLE_NAME = "bundle";
 
-    protected IVRServer ivrServer;
-    protected List<String> coursesPublished;
 
     protected HttpUriRequest httpRequestWithAuthHeaders(String url, String httpMethod) {
         HttpUriRequest httpUriRequest = null;
@@ -63,9 +58,6 @@ public class AuthenticationAwareIT extends BaseOsgiIT {
         permissions.addPermission(permission);
         roles.createRole(role);
         users.register(USER_NAME, USER_PASSWORD, USER_EMAIL, USER_EXTERNAL_ID, Arrays.asList(ROLE_NAME, SECURITY_ADMIN), USER_LOCALE);
-
-        ivrServer = new IVRServer(8888, "/ivr-wgn").start();
-        coursesPublished = new ArrayList<>();
     }
 
 
@@ -97,16 +89,4 @@ public class AuthenticationAwareIT extends BaseOsgiIT {
         return serviceReference;
     }
 
-    @Override
-    protected List<String> getImports() {
-        List<String> imports = new ArrayList<>();
-        imports.add("org.motechproject.commons.api");
-        imports.add("org.apache.http.util");
-        imports.add("org.mortbay.jetty");
-        imports.add("org.mortbay.jetty.servlet");
-        imports.add("javax.servlet");
-        imports.add("javax.servlet.http");
-        imports.add("org.apache.commons.io");
-        return imports;
-    }
 }

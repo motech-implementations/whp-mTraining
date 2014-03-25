@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.commons.api.MotechException;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.server.config.SettingsFacade;
@@ -60,7 +61,11 @@ public class IVRGatewayIT {
 
     @After
     public void after() throws InterruptedException {
-        ivrServer.stop();
+        try {
+            ivrServer.stop();
+        } catch (Exception e) {
+            throw new MotechException("Stub Server could not be stopped", e);
+        }
     }
 
     private String toJson(Object obj) throws IOException {

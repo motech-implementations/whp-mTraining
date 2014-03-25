@@ -18,6 +18,7 @@ import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
 import org.motechproject.whp.mtraining.CourseBuilder;
+import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
@@ -52,10 +53,13 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private ContentIdentifierDto courseIdentifier;
     private Provider activeProvider;
+    protected IVRServer ivrServer;
+
 
     @Override
     public void onSetUp() throws InterruptedException, IOException {
         super.onSetUp();
+        ivrServer = new IVRServer(8888,"/ivr-wgn").start();
         courseService = (CourseService) getService("courseService");
         assertNotNull(courseService);
 
@@ -157,7 +161,14 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     }
 
     protected List<String> getImports() {
-        List<String> imports = super.getImports();
+        List<String> imports = new ArrayList<>();
+        imports.add("org.motechproject.commons.api");
+        imports.add("org.apache.http.util");
+        imports.add("org.mortbay.jetty");
+        imports.add("org.mortbay.jetty.servlet");
+        imports.add("javax.servlet");
+        imports.add("javax.servlet.http");
+        imports.add("org.apache.commons.io");
         imports.add("org.motechproject.whp.mtraining.domain");
         imports.add("org.motechproject.whp.mtraining.web.domain");
         return imports;
@@ -175,7 +186,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     @Override
     protected void onTearDown() throws Exception {
         removeAllProviders();
-        if (null != ivrServer) {
+        if (ivrServer != null) {
             ivrServer.stop();
         }
     }
