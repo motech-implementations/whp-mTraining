@@ -1,21 +1,21 @@
-package org.motechproject.whp.mtraining.csv.validator;
+package org.motechproject.whp.mtraining.csv.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class CourseImportError {
+public class CsvImportError {
     private static final String DEFAULT = "-";
     private String nodeName;
     private String nodeType;
     private String message;
 
-    public CourseImportError(String nodeName, String nodeType, String message) {
+    public CsvImportError(String nodeName, String nodeType, String message) {
         this.nodeName = nodeName;
         this.nodeType = nodeType;
         this.message = message;
     }
 
-    public CourseImportError(String message) {
+    public CsvImportError(String message) {
         this.message = message;
         this.nodeName = DEFAULT;
         this.nodeType = "-";

@@ -1,1 +1,24 @@
-/* put your custom styles here */
+main {
+    margin-top: 20px;
+}
+
+.btnContainer {
+    margin: 20px;
+}
+
+.chooseFileBtn {
+    width: 80%;
+}
+
+.response {
+    margin-top: 20px;
+}
+
+.mtrain-spinner {
+    height: 32px;
+    width: 32px;
+    background: url('../images/spinner.gif') center no-repeat;
+    display: inline-block;
+    float: left;
+    margin-left: 20px;
+}

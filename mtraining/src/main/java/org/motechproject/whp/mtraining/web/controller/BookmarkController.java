@@ -5,6 +5,7 @@ import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.domain.Course;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkReport;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
@@ -32,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.GET;
+import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.POST;
 import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.isInvalid;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
@@ -39,6 +42,7 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.NOT_WORKING_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @Controller
 public class BookmarkController {
@@ -67,19 +71,20 @@ public class BookmarkController {
         String currentSessionId = currentSession(sessionId);
         LOGGER.debug(String.format("Received bookmarkDto request for caller %s with session %s and uniqueId %s", callerId, sessionId, uniqueId));
         if (callerId == null)
-            return responseFor(null, uniqueId, currentSessionId, BookmarkRequestType.GET, MISSING_CALLER_ID);
+            return responseFor(null, uniqueId, currentSessionId, GET, MISSING_CALLER_ID);
         if (isBlank(uniqueId))
-            return responseFor(callerId, null, currentSessionId, BookmarkRequestType.GET, MISSING_UNIQUE_ID);
+            return responseFor(callerId, null, currentSessionId, GET, MISSING_UNIQUE_ID);
 
         Provider provider = providers.getByCallerId(callerId);
         if (provider == null)
-            return responseFor(callerId, uniqueId, currentSessionId, BookmarkRequestType.GET, UNKNOWN_PROVIDER);
+            return responseFor(callerId, uniqueId, currentSessionId, GET, UNKNOWN_PROVIDER);
         if (isInvalid(provider.getActivationStatus()))
-            return responseFor(callerId, uniqueId, currentSessionId, BookmarkRequestType.GET, NOT_WORKING_PROVIDER);
+            return responseFor(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER);
 
         BookmarkDto bookmarkDto = getBookmark(provider.getRemedyId());
-        allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, currentSessionId, OK, BookmarkRequestType.GET, new BookmarkReport(bookmarkDto)));
-        return new ResponseEntity<>(new BookmarkResponse(callerId, currentSessionId, uniqueId, provider.getLocation(), mapToBookmark(bookmarkDto)), HttpStatus.OK);
+        allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, currentSessionId, OK, GET, new BookmarkReport(bookmarkDto)));
+        return new ResponseEntity<>(new BookmarkResponse(callerId, currentSessionId, uniqueId,
+                new Location(provider.getBlock(), provider.getDistrict(), provider.getState()), mapToBookmark(bookmarkDto)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")
@@ -91,13 +96,13 @@ public class BookmarkController {
         String sessionId = bookmarkPostRequest.getSessionId();
 
         if (callerId == null) {
-            return responseFor(null, uniqueId, sessionId, BookmarkRequestType.POST, MISSING_CALLER_ID);
+            return responseFor(null, uniqueId, sessionId, POST, MISSING_CALLER_ID);
         }
         if (isBlank(uniqueId)) {
-            return responseFor(callerId, null, sessionId, BookmarkRequestType.POST, MISSING_UNIQUE_ID);
+            return responseFor(callerId, null, sessionId, POST, MISSING_UNIQUE_ID);
         }
         if (isBlank(sessionId)) {
-            return responseFor(callerId, uniqueId, null, BookmarkRequestType.POST, MISSING_SESSION_ID);
+            return responseFor(callerId, uniqueId, null, POST, MISSING_SESSION_ID);
         }
         Bookmark bookmark = bookmarkPostRequest.getBookmark();
 
@@ -108,14 +113,14 @@ public class BookmarkController {
         Provider provider = providers.getByCallerId(callerId);
 
         if (provider == null) {
-            return responseFor(callerId, uniqueId, sessionId, BookmarkRequestType.POST, UNKNOWN_PROVIDER);
+            return responseFor(callerId, uniqueId, sessionId, POST, UNKNOWN_PROVIDER);
         }
 
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemedyId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
                 bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
         bookmarkService.update(bookmarkDto);
-        allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, sessionId, OK, BookmarkRequestType.POST, new BookmarkReport(bookmarkDto)));
-        return responseFor(callerId, uniqueId, sessionId, OK, BookmarkRequestType.POST, HttpStatus.CREATED);
+        allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, sessionId, OK, POST, new BookmarkReport(bookmarkDto)));
+        return responseFor(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 
     private Bookmark mapToBookmark(BookmarkDto bookmarkDto) {

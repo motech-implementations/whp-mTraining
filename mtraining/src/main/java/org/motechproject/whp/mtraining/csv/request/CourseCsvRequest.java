@@ -1,5 +1,7 @@
 package org.motechproject.whp.mtraining.csv.request;
 
+import org.motechproject.whp.mtraining.csv.domain.NodeType;
+
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -7,7 +9,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.split;
 
-public class CsvRequest {
+public class CourseCsvRequest {
     private String nodeName;
     private String nodeType;
     private String status;
@@ -20,10 +22,10 @@ public class CsvRequest {
     private String noOfQuizQuestions;
     private String passPercentage;
 
-    public CsvRequest() {
+    public CourseCsvRequest() {
     }
 
-    public CsvRequest(String nodeName, String nodeType, String status, String parentNode, String description, String fileName) {
+    public CourseCsvRequest(String nodeName, String nodeType, String status, String parentNode, String description, String fileName) {
         this.nodeName = nodeName;
         this.nodeType = nodeType;
         this.status = status;
@@ -32,8 +34,8 @@ public class CsvRequest {
         this.fileName = fileName;
     }
 
-    public CsvRequest(String nodeName, String nodeType, String status, String parentNode, String description,
-                      String fileName, String options, String correctAnswer, String correctAnswerFileName, String noOfQuizQuestions, String passPercentage) {
+    public CourseCsvRequest(String nodeName, String nodeType, String status, String parentNode, String description,
+                            String fileName, String options, String correctAnswer, String correctAnswerFileName, String noOfQuizQuestions, String passPercentage) {
         this.nodeName = nodeName;
         this.nodeType = nodeType;
         this.status = status;

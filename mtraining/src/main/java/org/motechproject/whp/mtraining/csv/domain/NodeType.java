@@ -1,4 +1,4 @@
-package org.motechproject.whp.mtraining.csv.request;
+package org.motechproject.whp.mtraining.csv.domain;
 
 import org.apache.commons.lang.StringUtils;
 

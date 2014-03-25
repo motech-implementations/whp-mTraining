@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.domain;
 
-
 import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
 
 import javax.jdo.annotations.Column;
@@ -22,12 +21,18 @@ public class Provider {
     private Long id;
 
     @Persistent(column = "primary_contact_number", defaultFetchGroup = "true")
+    @Unique(name = "primary_contact_number")
+    @NotNull
     private Long callerId;
 
-    @Column(name = "location_id")
-    private Location location;
+    @Column(name = "district", allowsNull = "false")
+    private String district;
+    @Column(name = "block", allowsNull = "false")
+    private String block;
+    @Column(name = "state", allowsNull = "false")
+    private String state;
 
-    @Column(name = "activation_status")
+    @Column(name = "activation_status", allowsNull = "false")
     private String activationStatus;
 
     @Column(name = "remedy_id")
@@ -35,11 +40,17 @@ public class Provider {
     @NotNull
     private String remedyId;
 
-    public Provider(Long callerId, Location location, ActivationStatus activationStatus) {
+    public Provider(String remedyId, Long callerId, ActivationStatus activationStatus, String district, String block, String state) {
         this.callerId = callerId;
-        this.location = location;
-        this.remedyId = randomAlphanumeric(20);
+        this.district = district;
+        this.block = block;
+        this.state = state;
+        this.remedyId = remedyId;
         this.activationStatus = activationStatus.getStatus();
+    }
+
+    public Provider() {
+
     }
 
     public Long getCallerId() {
@@ -50,15 +61,23 @@ public class Provider {
         return id;
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
     public String getActivationStatus() {
         return activationStatus;
     }
 
     public String getRemedyId() {
         return remedyId;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public String getBlock() {
+        return block;
+    }
+
+    public String getState() {
+        return state;
     }
 }

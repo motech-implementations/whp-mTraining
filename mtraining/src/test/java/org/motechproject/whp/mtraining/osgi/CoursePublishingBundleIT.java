@@ -15,13 +15,10 @@ import java.util.Map;
 
 public class CoursePublishingBundleIT extends AuthenticationAwareIT {
 
-    private IVRServer ivrServer;
-    private List<String> coursesPublished;
 
     @Override
-    public void onSetUp() {
-        ivrServer = new IVRServer(8888, "/ivr-wgn").start();
-        coursesPublished = new ArrayList<>();
+    public void onSetUp() throws IOException, InterruptedException {
+        super.onSetUp();
     }
 
     public void testThatCourseIsPublishedToIVR() throws IOException, InterruptedException {
@@ -50,22 +47,15 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
     }
 
     @Override
-    protected List<String> getImports() {
-        List<String> imports = new ArrayList<>();
-        imports.add("org.motechproject.commons.api");
-        imports.add("org.apache.http.util");
-        imports.add("org.mortbay.jetty");
-        imports.add("org.mortbay.jetty.servlet");
-        imports.add("javax.servlet");
-        imports.add("javax.servlet.http");
-        imports.add("org.apache.commons.io");
-        imports.add("org.motechproject.whp.mtraining.service");
-        return imports;
+    protected String[] getConfigLocations() {
+        return new String[]{"test-blueprint.xml"};
     }
 
     @Override
-    protected String[] getConfigLocations() {
-        return new String[]{"test-blueprint.xml"};
+    protected List<String> getImports() {
+        List<String> imports = super.getImports();
+        imports.add("org.motechproject.whp.mtraining.service");
+        return imports;
     }
 
     @Override

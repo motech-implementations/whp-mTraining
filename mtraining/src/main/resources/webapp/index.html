@@ -1,36 +1,33 @@
-<br/>
-<br/>
 <div ng-controller="fileUploadController" class="table col-lg-10 main-content">
     <main role="main">
         <div class="box-header">Upload CSV</div>
         <div class="box-content gutter-border">
-            <div class="row">
+            <div class="row btnContainer">
                 <form role="form" class="form-inline">
-                    <br/>
-
                     <div class="form-group col-xs-offset-1 col-lg-5">
-                        <input class="btn btn-default btn-file col-lg-11" type="file" file-model="multipartFile"/>
+                        <input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"
+                               file-model="multipartFile"/>
                     </div>
                     <div class="form-group">
-                        <span class="form-control btn btn-default" ng-click="uploadFile()">
-                            Upload File
-                        </span>
+                        <input type="button" class="providerUpload form-control btn btn-default" value="Upload Course"
+                               ng-click="uploadCourse()" ng-disabled="uploading || !multipartFile"/>
                     </div>
+                    <div class="mtrain-spinner" ng-show="uploading"></div>
+                    <div class="form-group col-xs-offset-1">
+                        <input type="button" class="providerUpload form-control btn btn-default" value="Upload Provider"
+                               ng-click="uploadProvider()" ng-disabled="uploading || !multipartFile"/>
+                    </div>
+                    <div class="mtrain-spinner" ng-show="uploading"></div>
                 </form>
             </div>
-            <br/>
         </div>
-        <br/>
-        <br/>
 
-        <div>
+        <div class="response" ng-hide="multipartFile">
             <div ng-show="response.status=='SUCCESS'">
                 <ul class="alert alert-success">{{response.message}}</ul>
             </div>
-
             <div ng-show="response.status=='FAILURE'">
                 <ul class="alert alert-danger">{{response.message}}</ul>
-
                 <table class="table table-hover table-bordered">
                     <tr>
                         <th class="col-lg-2">nodeName</th>

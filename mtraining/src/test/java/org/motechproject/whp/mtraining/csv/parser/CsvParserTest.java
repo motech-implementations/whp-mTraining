@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.csv.parser;
 
 import org.junit.Test;
-import org.motechproject.whp.mtraining.csv.request.CsvRequest;
+import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
@@ -26,7 +26,7 @@ public class CsvParserTest {
         InputStream inputStream = getFileInputStream(resourceName);
         mockMultipartFile = new MockMultipartFile(resourceName, resourceName, "", inputStream);
 
-        List<CsvRequest> actualCourseCsvContent = csvParser.parse(mockMultipartFile, CsvRequest.class);
+        List<CourseCsvRequest> actualCourseCsvContent = csvParser.parse(mockMultipartFile, CourseCsvRequest.class);
 
         assertEquals(4, actualCourseCsvContent.size());
     }
@@ -37,7 +37,7 @@ public class CsvParserTest {
         InputStream inputStream = getFileInputStream(resourceName);
         mockMultipartFile = new MockMultipartFile(resourceName, resourceName, "", inputStream);
 
-        List<CsvRequest> actualCourseCsvContent = csvParser.parse(mockMultipartFile, CsvRequest.class);
+        List<CourseCsvRequest> actualCourseCsvContent = csvParser.parse(mockMultipartFile, CourseCsvRequest.class);
 
         assertEquals(4, actualCourseCsvContent.size());
     }
@@ -47,7 +47,7 @@ public class CsvParserTest {
         String resourceName = "fileWithMissingHeading.csv";
         InputStream inputStream = getFileInputStream(resourceName);
         mockMultipartFile = new MockMultipartFile(resourceName, resourceName, "", inputStream);
-        csvParser.parse(mockMultipartFile, CsvRequest.class);
+        csvParser.parse(mockMultipartFile, CourseCsvRequest.class);
     }
 
     private InputStream getFileInputStream(String resourceName) throws URISyntaxException, FileNotFoundException {

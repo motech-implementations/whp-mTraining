@@ -14,12 +14,10 @@ import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
 import org.motechproject.whp.mtraining.CourseBuilder;
-import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
@@ -31,11 +29,9 @@ import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
 import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ACTIVE_TPC;
 import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ELIMINATED_RHP;
@@ -52,8 +48,6 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private CourseService courseService;
 
-    private BookmarkService bookmarkService;
-
     private ProviderService providerService;
 
     private ContentIdentifierDto courseIdentifier;
@@ -62,10 +56,6 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     @Override
     public void onSetUp() throws InterruptedException, IOException {
         super.onSetUp();
-
-        bookmarkService = (BookmarkService) getService("bookmarkService");
-        assertNotNull(bookmarkService);
-
         courseService = (CourseService) getService("courseService");
         assertNotNull(courseService);
 
@@ -73,9 +63,8 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         assertNotNull(providerService);
 
         courseIdentifier = courseService.addOrUpdateCourse(new CourseBuilder().build());
-
-        activeProvider = addProvider(22222L, ACTIVE_TPC);
-        bookmarkService.createInitialBookmark(activeProvider.getRemedyId(), courseIdentifier);
+        removeAllProviders();
+        activeProvider = addProvider("remedyId1", 22222L, ACTIVE_TPC);
     }
 
 
@@ -85,26 +74,12 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         assertEquals(200, httpResponse.getStatusLine().getStatusCode());
     }
 
-    public void testThatBookmarkUrlIsAvailableWhenProviderIsKnown() throws IOException, InterruptedException {
-        String bookmarkURLForUnknownUser = getBookmarkRequestUrlWith(9988776655L, "un1qId", null);
-        HttpUriRequest httpGetRequest = httpRequestWithAuthHeaders(bookmarkURLForUnknownUser, "Get");
-
-        CustomHttpResponse responseForUnknownUser = httpClient.execute(httpGetRequest, new CustomHttpResponseHandler());
-        assertEquals(HttpStatus.SC_OK, responseForUnknownUser.getStatusCode());
-
-        BasicResponse bookmarkForUnknownUser = (BasicResponse) responseToJson(responseForUnknownUser.getContent(), BasicResponse.class);
-
-        assertEquals(new Long(9988776655l), bookmarkForUnknownUser.getCallerId());
-        assertEquals("un1qId", bookmarkForUnknownUser.getUniqueId());
-        assertNotNull(bookmarkForUnknownUser.getSessionId());
-        assertEquals(ResponseStatus.UNKNOWN_PROVIDER.getCode(), bookmarkForUnknownUser.getResponseCode());
-
+    public void testThatResponseIs800WhenProviderIsKnown() throws IOException, InterruptedException {
         String bookmarkRequestURLForAKnownUser = getBookmarkRequestUrlWith(activeProvider.getCallerId(), "un1qId", "s001");
         CustomHttpResponse responseForKnownUser = httpClient.execute(httpRequestWithAuthHeaders(bookmarkRequestURLForAKnownUser, "Get"), new CustomHttpResponseHandler());
-        assertEquals(HttpStatus.SC_OK, responseForKnownUser.getStatusCode());
-
         BookmarkResponse bookmarkForKnownUser = (BookmarkResponse) responseToJson(responseForKnownUser.getContent(), BookmarkResponse.class);
 
+        assertEquals(HttpStatus.SC_OK, responseForKnownUser.getStatusCode());
         assertEquals(ResponseStatus.OK.getCode(), bookmarkForKnownUser.getResponseCode());
         assertEquals(activeProvider.getCallerId(), bookmarkForKnownUser.getCallerId());
         assertEquals("un1qId", bookmarkForKnownUser.getUniqueId());
@@ -114,9 +89,24 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         assertEquals("district", bookmarkForKnownUser.getLocation().getDistrict());
     }
 
+    public void testThatResponseIs901WhenProviderIsInvalid() throws IOException, InterruptedException {
+        String bookmarkURLForUnknownUser = getBookmarkRequestUrlWith(9988776655L, "un1qId", null);
+        HttpUriRequest httpGetRequest = httpRequestWithAuthHeaders(bookmarkURLForUnknownUser, "Get");
+
+        CustomHttpResponse responseForUnknownUser = httpClient.execute(httpGetRequest, new CustomHttpResponseHandler());
+        BasicResponse bookmarkForUnknownUser = (BasicResponse) responseToJson(responseForUnknownUser.getContent(), BasicResponse.class);
+
+        assertEquals(HttpStatus.SC_OK, responseForUnknownUser.getStatusCode());
+        assertEquals(new Long(9988776655l), bookmarkForUnknownUser.getCallerId());
+        assertEquals("un1qId", bookmarkForUnknownUser.getUniqueId());
+        assertNotNull(bookmarkForUnknownUser.getSessionId());
+        assertEquals(ResponseStatus.UNKNOWN_PROVIDER.getCode(), bookmarkForUnknownUser.getResponseCode());
+
+    }
+
     public void testThatResponseIs902WhenTheActivationStatusOfProviderIsInvalid() throws IOException, InterruptedException {
         Long callerId = 103l;
-        addProvider(callerId, ELIMINATED_RHP);
+        addProvider("remedyId2", callerId, ELIMINATED_RHP);
 
         String bookmarkURL = getBookmarkRequestUrlWith(callerId, "un1qId", null);
         CustomHttpResponse responseForNotWorkingProvider = httpClient.execute(httpRequestWithAuthHeaders(bookmarkURL, "Get"), new CustomHttpResponseHandler());
@@ -130,7 +120,6 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     public void testBookmarkPosting() throws IOException, InterruptedException {
         HttpPost httpPost = (HttpPost) httpRequestWithAuthHeaders(String.format("http://localhost:%s/mtraining/web-api/bookmark", TestContext.getJettyPort()), "POST");
         String bookmarkAsJSON = getBookmarkAsJSON();
-        System.out.println(bookmarkAsJSON);
         httpPost.setEntity(new StringEntity(bookmarkAsJSON));
         CustomHttpResponse response = httpClient.execute(httpPost, new CustomHttpResponseHandler());
         assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
@@ -153,9 +142,9 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         return objectMapper.writeValueAsString(bookmarkPostRequest);
     }
 
-    private Provider addProvider(Long callerId, ActivationStatus activationStatus) {
+    private Provider addProvider(String remedyId, Long callerId, ActivationStatus activationStatus) {
         //this provider copy gets detached once saved,hence need to retrieve
-        Provider provider = new Provider(callerId, new Location("block", "district", "state"), activationStatus);
+        Provider provider = new Provider(remedyId, callerId, activationStatus, "district", "block", "state");
         providersAdded.add(providerService.add(provider));
         return providerService.byCallerId(callerId);
     }
@@ -167,10 +156,8 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         return String.format(BOOKMARK_QUERY_WITHOUT_SESSION_ID, TestContext.getJettyPort(), callerId, uniqueId);
     }
 
-    @Override
     protected List<String> getImports() {
-        List<String> imports = new ArrayList<>();
-        imports.add("org.apache.http.util");
+        List<String> imports = super.getImports();
         imports.add("org.motechproject.whp.mtraining.domain");
         imports.add("org.motechproject.whp.mtraining.web.domain");
         return imports;
@@ -187,6 +174,13 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     @Override
     protected void onTearDown() throws Exception {
+        removeAllProviders();
+        if (null != ivrServer) {
+            ivrServer.stop();
+        }
+    }
+
+    private void removeAllProviders() {
         for (Long providerId : providersAdded) {
             providerService.delete(providerId);
         }

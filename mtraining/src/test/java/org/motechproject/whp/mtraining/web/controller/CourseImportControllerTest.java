@@ -7,9 +7,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
-import org.motechproject.whp.mtraining.csv.request.CsvRequest;
-import org.motechproject.whp.mtraining.csv.response.CourseImportResponse;
-import org.motechproject.whp.mtraining.csv.validator.CourseImportError;
+import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
+import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
+import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.service.impl.CourseImportService;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,13 +49,13 @@ public class CourseImportControllerTest {
     @Test
     public void shouldReturnErrorWhenCourseStructureIsInvalid() throws Exception {
         CommonsMultipartFile csvFile = mock(CommonsMultipartFile.class);
-        CsvRequest courseRequestWithoutParentName = new CsvRequest("nodeName", "nodeType", "status", null, "description", "fileName");
-        List<CsvRequest> courseList = asList(courseRequestWithoutParentName);
-        List<CourseImportError> errors = asList(new CourseImportError("nodeName", "nodeType", "some message"));
-        when(csvParser.parse(csvFile, CsvRequest.class)).thenReturn(courseList);
+        CourseCsvRequest courseRequestWithoutParentName = new CourseCsvRequest("nodeName", "nodeType", "status", null, "description", "fileName");
+        List<CourseCsvRequest> courseList = asList(courseRequestWithoutParentName);
+        List<CsvImportError> errors = asList(new CsvImportError("nodeName", "nodeType", "some message"));
+        when(csvParser.parse(csvFile, CourseCsvRequest.class)).thenReturn(courseList);
         when(courseStructureValidator.validate(courseList)).thenReturn(errors);
 
-        CourseImportResponse response = courseImportController.importCourseStructure(csvFile);
+        CsvImportResponse response = courseImportController.importCourseStructure(csvFile);
 
         assertTrue(response.isFailure());
         assertEquals(errors, response.getErrors());
@@ -66,9 +66,9 @@ public class CourseImportControllerTest {
     public void shouldReturnErrorResultWhenExceptionThrownParsingCsv() throws Exception {
         String exceptionMessage = "Error parsing CSV";
         when(csvParser.parse(any(MultipartFile.class), any(Class.class))).thenThrow(new IOException(exceptionMessage));
-        List<CourseImportError> expectedError = asList(new CourseImportError(exceptionMessage));
+        List<CsvImportError> expectedError = asList(new CsvImportError(exceptionMessage));
 
-        CourseImportResponse response = courseImportController.importCourseStructure(mock(CommonsMultipartFile.class));
+        CsvImportResponse response = courseImportController.importCourseStructure(mock(CommonsMultipartFile.class));
 
         assertTrue(response.isFailure());
         assertEquals(expectedError, response.getErrors());
@@ -77,16 +77,16 @@ public class CourseImportControllerTest {
     @Test
     public void shouldImportCourseStructureIfThereAreNoValidationFailures() throws IOException {
         CommonsMultipartFile csvFile = mock(CommonsMultipartFile.class);
-        List<CsvRequest> CsvRequests = asList(new CsvRequest());
-        when(csvParser.parse(csvFile, CsvRequest.class)).thenReturn(CsvRequests);
-        when(courseStructureValidator.validate(CsvRequests)).thenReturn(Collections.EMPTY_LIST);
-        when(courseImportService.importCourse(CsvRequests)).thenReturn(new ContentIdentifierDto(UUID.randomUUID(), 1));
+        List<CourseCsvRequest> courseCsvRequests = asList(new CourseCsvRequest());
+        when(csvParser.parse(csvFile, CourseCsvRequest.class)).thenReturn(courseCsvRequests);
+        when(courseStructureValidator.validate(courseCsvRequests)).thenReturn(Collections.EMPTY_LIST);
+        when(courseImportService.importCourse(courseCsvRequests)).thenReturn(new ContentIdentifierDto(UUID.randomUUID(), 1));
 
-        CourseImportResponse courseImportResponse = courseImportController.importCourseStructure(csvFile);
+        CsvImportResponse csvImportResponse = courseImportController.importCourseStructure(csvFile);
 
-        verify(courseImportService).importCourse(CsvRequests);
-        assertTrue(courseImportResponse.isSuccess());
-        assertTrue(courseImportResponse.getErrors().isEmpty());
+        verify(courseImportService).importCourse(courseCsvRequests);
+        assertTrue(csvImportResponse.isSuccess());
+        assertTrue(csvImportResponse.getErrors().isEmpty());
     }
 
 }

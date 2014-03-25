@@ -29,7 +29,7 @@ public enum ActivationStatus {
         return Arrays.asList(ELIMINATED_RHP, ELIMINATED_TPC, LEFT_NETWORK_RH, LEFT_NETWORK_TP).contains(from(status));
     }
 
-    private static ActivationStatus from(String status) {
+    public static ActivationStatus from(String status) {
         ActivationStatus[] values = ActivationStatus.values();
         for (ActivationStatus value : values) {
             if (value.getStatus().equalsIgnoreCase(status))

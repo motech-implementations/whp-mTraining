@@ -3,9 +3,9 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
-import org.motechproject.whp.mtraining.csv.request.CsvRequest;
-import org.motechproject.whp.mtraining.csv.response.CourseImportResponse;
-import org.motechproject.whp.mtraining.csv.validator.CourseImportError;
+import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
+import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
+import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.service.impl.CourseImportService;
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 @Controller
@@ -39,18 +40,20 @@ public class CourseImportController {
 
     @RequestMapping(value = "/course-structure/import", method = RequestMethod.POST)
     @ResponseBody
-    public CourseImportResponse importCourseStructure(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) {
+    public CsvImportResponse importCourseStructure(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) {
         try {
-            List<CsvRequest> CsvRequests = csvParser.parse(multipartFile, CsvRequest.class);
-            List<CourseImportError> errors = courseStructureValidator.validate(CsvRequests);
+            List<CourseCsvRequest> courseCsvRequests = csvParser.parse(multipartFile, CourseCsvRequest.class);
+            List<CsvImportError> errors = courseStructureValidator.validate(courseCsvRequests);
             if (!errors.isEmpty()) {
-                return CourseImportResponse.failure(errors);
+                return CsvImportResponse.failure(errors);
             }
-            ContentIdentifierDto importedCourseIdentifier = courseImportService.importCourse(CsvRequests);
-            return CourseImportResponse.success(importedCourseIdentifier);
+            ContentIdentifierDto importedCourseIdentifier = courseImportService.importCourse(courseCsvRequests);
+            return CsvImportResponse.success(format("Course: %s with version %s has been imported successfully",
+                    importedCourseIdentifier.getContentId(),
+                    importedCourseIdentifier.getVersion()));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            return CourseImportResponse.failure(asList(new CourseImportError(ex.getMessage())));
+            return CsvImportResponse.failure(asList(new CsvImportError(ex.getMessage())));
         }
     }
 }
