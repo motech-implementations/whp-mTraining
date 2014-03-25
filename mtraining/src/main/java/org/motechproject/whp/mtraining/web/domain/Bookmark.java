@@ -1,9 +1,10 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class Bookmark {
 
@@ -23,6 +24,7 @@ public class Bookmark {
     public Bookmark() {
     }
 
+
     public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto, ContentIdentifierDto messageIdentifierDto) {
         this.courseIdentifierDto = courseIdentifierDto;
         this.moduleIdentifierDto = moduleIdentifierDto;
@@ -31,12 +33,12 @@ public class Bookmark {
         this.dateModified = ISODateTimeUtil.nowAsStringInTimeZoneUTC();
     }
 
-    public Bookmark(BookmarkDto bookmarkDto) {
-        this.courseIdentifierDto = bookmarkDto.getCourse();
-        this.moduleIdentifierDto = bookmarkDto.getModule();
-        this.chapterIdentifierDto = bookmarkDto.getChapter();
-        this.messageIdentifierDto = bookmarkDto.getMessage();
-        this.dateModified = bookmarkDto.getDateModified();
+    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto, ContentIdentifierDto messageIdentifierDto, String dateModified) {
+        this.courseIdentifierDto = courseIdentifierDto;
+        this.moduleIdentifierDto = moduleIdentifierDto;
+        this.chapterIdentifierDto = chapterIdentifierDto;
+        this.messageIdentifierDto = messageIdentifierDto;
+        this.dateModified = dateModified;
     }
 
     public ContentIdentifierDto getCourseIdentifierDto() {
@@ -57,5 +59,12 @@ public class Bookmark {
 
     public String getDateModified() {
         return dateModified;
+    }
+
+    public boolean hasValidModifiedDate() {
+        if (isBlank(dateModified)) {
+            return false;
+        }
+        return ISODateTimeUtil.validate(dateModified);
     }
 }

@@ -79,7 +79,7 @@ public class BookmarkController {
 
         BookmarkDto bookmarkDto = getBookmark(provider.getRemedyId());
         allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, currentSessionId, OK, BookmarkRequestType.GET, new BookmarkReport(bookmarkDto)));
-        return new ResponseEntity<>(new BookmarkResponse(callerId, currentSessionId, uniqueId, provider.getLocation(), new Bookmark(bookmarkDto)), HttpStatus.OK);
+        return new ResponseEntity<>(new BookmarkResponse(callerId, currentSessionId, uniqueId, provider.getLocation(), mapToBookmark(bookmarkDto)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")
@@ -99,6 +99,11 @@ public class BookmarkController {
         if (isBlank(sessionId)) {
             return responseFor(callerId, uniqueId, null, BookmarkRequestType.POST, MISSING_SESSION_ID);
         }
+        Bookmark bookmark = bookmarkPostRequest.getBookmark();
+
+        if (!bookmark.hasValidModifiedDate()) {
+            return responseFor(callerId, uniqueId, sessionId, BookmarkRequestType.POST, ResponseStatus.INVALID_BOOKMARK_MODIFIED_DATE);
+        }
 
         Provider provider = providers.getByCallerId(callerId);
 
@@ -106,12 +111,15 @@ public class BookmarkController {
             return responseFor(callerId, uniqueId, sessionId, BookmarkRequestType.POST, UNKNOWN_PROVIDER);
         }
 
-        Bookmark bookmark = bookmarkPostRequest.getBookmark();
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemedyId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
                 bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
         bookmarkService.update(bookmarkDto);
         allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, sessionId, OK, BookmarkRequestType.POST, new BookmarkReport(bookmarkDto)));
         return responseFor(callerId, uniqueId, sessionId, OK, BookmarkRequestType.POST, HttpStatus.CREATED);
+    }
+
+    private Bookmark mapToBookmark(BookmarkDto bookmarkDto) {
+        return new Bookmark(bookmarkDto.getCourse(), bookmarkDto.getModule(), bookmarkDto.getChapter(), bookmarkDto.getMessage(), bookmarkDto.getDateModified());
     }
 
     private BookmarkDto getBookmark(String externalId) {

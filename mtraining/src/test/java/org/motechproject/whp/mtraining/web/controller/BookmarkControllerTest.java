@@ -12,6 +12,7 @@ import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.BookmarkBuilder;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
 import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
@@ -35,13 +36,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK_MODIFIED_DATE;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_UNIQUE_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BookmarkReportControllerTest {
+public class BookmarkControllerTest {
 
     private Providers providers;
     private BookmarkController bookmarkController;
@@ -209,6 +211,20 @@ public class BookmarkReportControllerTest {
         assertEquals(MISSING_SESSION_ID.getCode(), response.getBody().getResponseCode());
 
         verify(bookmarkService, never()).update(any(BookmarkDto.class));
+    }
+
+    @Test
+    public void shouldSendErrorResponseWhenBookmarkDateModifiedAbsent() {
+        long callerId = 3232938l;
+        Provider provider = new Provider(callerId, null, ActivationStatus.ACTIVE_TPC);
+        when(providers.getByCallerId(callerId)).thenReturn(provider);
+
+
+        Bookmark bookmark = new BookmarkBuilder().withDateModified(null).build();
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, "unq11", "s001", bookmark);
+        ResponseEntity<MotechResponse> responseEntity = bookmarkController.postBookmark(bookmarkPostRequest);
+
+        assertEquals(INVALID_BOOKMARK_MODIFIED_DATE.getCode(), responseEntity.getBody().getResponseCode());
     }
 
 
