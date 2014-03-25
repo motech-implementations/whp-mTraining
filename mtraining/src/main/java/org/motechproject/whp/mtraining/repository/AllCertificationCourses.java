@@ -10,7 +10,7 @@ public class AllCertificationCourses extends RepositorySupport<CertificationCour
 
     @Override
     protected void configureFetchGroup(FetchPlan fetchPlan) {
-        fetchPlan.setMaxFetchDepth(3);
+        fetchPlan.setMaxFetchDepth(4);
         fetchPlan.setFetchSize(FetchPlan.FETCH_SIZE_GREEDY);
     }
 

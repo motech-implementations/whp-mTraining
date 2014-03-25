@@ -5,11 +5,15 @@ import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
+import org.motechproject.mtraining.dto.QuestionDto;
+import org.motechproject.mtraining.dto.QuizDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.domain.CertificationCourse;
 import org.motechproject.whp.mtraining.domain.Chapter;
 import org.motechproject.whp.mtraining.domain.Message;
 import org.motechproject.whp.mtraining.domain.Module;
+import org.motechproject.whp.mtraining.domain.Question;
+import org.motechproject.whp.mtraining.domain.Quiz;
 import org.motechproject.whp.mtraining.repository.AllCertificationCourses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,12 +59,25 @@ public class CourseReporter {
     private Chapter map(ChapterDto chapterDto) {
         List<Message> messages = new ArrayList<>();
         for (MessageDto messageDto : chapterDto.getMessages()) {
-            messages.add(map(messageDto));
+            messages.add(new Message(messageDto));
         }
-        return new Chapter(chapterDto.getName(), chapterDto.getContentId(), chapterDto.getVersion(), chapterDto.getDescription(), chapterDto.getCreatedBy(), chapterDto.getCreatedOn(), messages);
+        Chapter chapter = new Chapter(chapterDto.getName(), chapterDto.getContentId(), chapterDto.getVersion(), chapterDto.getDescription(), chapterDto.getCreatedBy(), chapterDto.getCreatedOn(), messages);
+        QuizDto quizDto = chapterDto.getQuiz();
+        if (quizDto != null) {
+            Quiz quiz = map(quizDto);
+            chapter.setQuiz(quiz);
+        }
+        return chapter;
     }
 
-    private Message map(MessageDto messageDto) {
-        return new Message(messageDto.getName(), messageDto.getContentId(), messageDto.getVersion(), messageDto.getDescription(), messageDto.getCreatedBy(), messageDto.getCreatedOn(), messageDto.getExternalId());
+
+    private Quiz map(QuizDto quizDto) {
+        Quiz quiz = new Quiz(null, quizDto.getContentId(), quizDto.getVersion(), null, quizDto.getCreatedBy(), quizDto.getCreatedOn(), quizDto.getPassPercentage());
+        List<Question> questions = new ArrayList<>();
+        for (QuestionDto questionDto : quizDto.getQuestions()) {
+            questions.add(new Question(questionDto));
+        }
+        quiz.addQuestions(questions);
+        return quiz;
     }
 }

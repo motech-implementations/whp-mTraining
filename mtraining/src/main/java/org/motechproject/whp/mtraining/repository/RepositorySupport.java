@@ -17,7 +17,7 @@ import java.util.List;
 abstract public class RepositorySupport<T> {
 
     @Autowired
-    private PersistenceManagerFactory persistenceManagerFactory;
+    protected PersistenceManagerFactory persistenceManagerFactory;
 
     //Required for proxy creation by cglib
     protected RepositorySupport() {
