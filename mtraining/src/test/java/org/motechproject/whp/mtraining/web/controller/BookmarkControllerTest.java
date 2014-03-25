@@ -182,7 +182,8 @@ public class BookmarkControllerTest {
         String uniqueId = "unk001";
         String sessionId = "session001";
         Long callerId = 124456l;
-        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark());
+        Bookmark bookmark = new BookmarkBuilder().build();
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, bookmark);
 
         when(providers.getByCallerId(callerId)).thenReturn(null);
 
