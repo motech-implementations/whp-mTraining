@@ -3,6 +3,8 @@ package org.motechproject.whp.mtraining.service.impl;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.CourseService;
+import org.motechproject.security.model.UserDto;
+import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.request.CsvRequest;
 import org.motechproject.whp.mtraining.domain.Content;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +22,17 @@ public class CourseImportService {
 
     private CourseService courseService;
     private CourseUpdater courseUpdater;
+    private MotechUserService motechUserService;
 
     @Autowired
-    public CourseImportService(CourseService courseService, CourseUpdater courseUpdater) {
+    public CourseImportService(CourseService courseService, CourseUpdater courseUpdater, MotechUserService motechUserService) {
         this.courseService = courseService;
         this.courseUpdater = courseUpdater;
+        this.motechUserService = motechUserService;
     }
 
     public ContentIdentifierDto importCourse(List<CsvRequest> requests) {
-        Map<String, Content> contentMap = formContents(requests);
+        Map<String, Content> contentMap = formContents(requests, contentAuthor());
 
         addChildContents(contentMap, requests);
 
@@ -39,13 +43,17 @@ public class CourseImportService {
         return courseService.addOrUpdateCourse(courseDto);
     }
 
-    private Map<String, Content> formContents(List<CsvRequest> requests) {
+    private Map<String, Content> formContents(List<CsvRequest> requests, String contentAuthor) {
         Map<String, Content> contentMap = new HashMap<>();
         for (CsvRequest request : requests) {
             String noOfQuizQuestions = request.getNoOfQuizQuestions();
+
+            Integer numberOfQuizQuestions = isBlank(noOfQuizQuestions) ? 0 : Integer.parseInt(noOfQuizQuestions);
+            Long passPercentage = isBlank(request.getPassPercentage()) ? null : Long.parseLong(request.getPassPercentage());
+
             Content content = new Content(request.getNodeName(), request.getNodeType(), request.getStatus(), request.getDescription(),
-                    request.getFileName(), isBlank(noOfQuizQuestions) ? 0 : Integer.parseInt(noOfQuizQuestions), request.getOptionsAsList(),
-                    request.getCorrectAnswer(), request.getCorrectAnswerFileName(), isBlank(request.getPassPercentage()) ? null : Long.parseLong(request.getPassPercentage()));
+                                          request.getFileName(), numberOfQuizQuestions, request.getOptionsAsList(),
+                                          request.getCorrectAnswer(), request.getCorrectAnswerFileName(), passPercentage, contentAuthor);
             contentMap.put(request.getNodeName(), content);
         }
         return contentMap;
@@ -59,5 +67,12 @@ public class CourseImportService {
                 parentContent.addChildContent(content);
         }
     }
+
+    private String contentAuthor() {
+        UserDto currentUser = motechUserService.getCurrentUser();
+        return currentUser == null ? null : currentUser.getUserName();
+    }
+
+
 }
 

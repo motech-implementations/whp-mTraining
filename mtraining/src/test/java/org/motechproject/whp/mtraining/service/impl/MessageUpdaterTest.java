@@ -13,11 +13,17 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageUpdaterTest {
+    public static final String AUTHOR = "Author";
     @Mock
     private MessageService messageService;
 
@@ -30,9 +36,9 @@ public class MessageUpdaterTest {
 
     @Test
     public void shouldUpdateContentId() {
-        MessageDto messageDtoToBeUpdated = new MessageDto(true, "message1", "filename", "some description");
+        MessageDto messageDtoToBeUpdated = new MessageDto(true, "message1", "filename", "some description", AUTHOR);
         UUID messageContentId = UUID.randomUUID();
-        MessageDto messageDtoFromDb = new MessageDto(messageContentId, 1, true, "message1", "filename", "some description");
+        MessageDto messageDtoFromDb = new MessageDto(messageContentId, 1, true, "message1", "filename", "some description", AUTHOR);
 
         messageUpdater.updateContentId(messageDtoToBeUpdated, messageDtoFromDb);
 
@@ -41,7 +47,7 @@ public class MessageUpdaterTest {
 
     @Test
     public void shouldGetExistingMessagesFromDbOnlyFirstTime() throws Exception {
-        MessageDto messageDtoFromDb = new MessageDto(true, "message1", "filename", "some description");
+        MessageDto messageDtoFromDb = new MessageDto(true, "message1", "filename", "some description", AUTHOR);
         when(messageService.getAllMessages()).thenReturn(asList(messageDtoFromDb));
 
         List<MessageDto> existingContents1 = messageUpdater.getExistingContents();
@@ -59,17 +65,17 @@ public class MessageUpdaterTest {
 
     @Test
     public void shouldEquateMessagesByName() throws Exception {
-        MessageDto message1 = new MessageDto(true, "message1", "fileName1", "old description");
-        MessageDto message2 = new MessageDto(UUID.randomUUID(), 1, true, "message1", "fileName2", "new description");
+        MessageDto message1 = new MessageDto(true, "message1", "fileName1", "old description", AUTHOR);
+        MessageDto message2 = new MessageDto(UUID.randomUUID(), 1, true, "message1", "fileName2", "new description", AUTHOR);
         assertTrue(messageUpdater.isEqual(message1, message2));
 
-        MessageDto message3 = new MessageDto(true, "message2", "fileName1", "old description");
+        MessageDto message3 = new MessageDto(true, "message2", "fileName1", "old description", AUTHOR);
         assertFalse(messageUpdater.isEqual(message1, message3));
     }
 
     @Test
     public void shouldInvalidateExistingContentCache() {
-        final MessageDto messageDtoFromDb = new MessageDto(true, "message1", "fileName", "some description");
+        final MessageDto messageDtoFromDb = new MessageDto(true, "message1", "fileName", "some description", AUTHOR);
         when(messageService.getAllMessages()).thenReturn(new ArrayList<MessageDto>() {{
             add(messageDtoFromDb);
         }});

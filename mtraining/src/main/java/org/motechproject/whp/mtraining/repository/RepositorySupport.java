@@ -38,6 +38,7 @@ abstract public class RepositorySupport<T> {
     public List<T> all() {
         List<T> allItems = new ArrayList<>();
         PersistenceManager persistenceManager = getPersistenceManager();
+        configureFetchGroup(persistenceManager.getFetchPlan());
         Query query = persistenceManager.newQuery(getType());
         Collection results = persistenceManager.detachCopyAll((List) query.execute("*"));
         for (Object result : results) {
@@ -96,6 +97,10 @@ abstract public class RepositorySupport<T> {
             deleted = true;
         }
         return deleted;
+    }
+
+    protected void configureFetchGroup(FetchPlan fetchPlan) {
+        fetchPlan.setFetchSize(FetchPlan.FETCH_SIZE_GREEDY);
     }
 
     protected void setPersistenceManagerFactory(PersistenceManagerFactory persistenceManagerFactory) {

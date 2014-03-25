@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +12,8 @@ import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
+import org.motechproject.security.model.UserDto;
+import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.request.CsvRequest;
 
 import java.util.List;
@@ -18,8 +21,10 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CourseImportServiceTest {
@@ -28,12 +33,16 @@ public class CourseImportServiceTest {
     @Mock
     private CourseService courseService;
 
+    @Mock
+    private MotechUserService motechUserService;
+
     private TestCourseUpdater testCourseUpdater;
 
     @Before
     public void setUp() throws Exception {
-        testCourseUpdater = new TestCourseUpdater(courseService, mock(ModuleUpdater.class));
-        courseImportService = new CourseImportService(courseService, testCourseUpdater);
+        ModuleUpdater moduleUpdater = mock(ModuleUpdater.class);
+        testCourseUpdater = new TestCourseUpdater(courseService, moduleUpdater);
+        courseImportService = new CourseImportService(courseService, testCourseUpdater, motechUserService);
     }
 
     @Test
@@ -61,6 +70,28 @@ public class CourseImportServiceTest {
 
         assertCourseDetails(savedCourseDto);
         assertModuleDetails(savedCourseDto.getModules(), module1Id);
+    }
+
+    @Test
+    public void shouldRetrieveCurrentUserAndSetItAsCourseContentCreator() {
+        List<CsvRequest> requests = asList(
+                new CsvRequest("course1", "course", "active", null, "course description", null),
+                new CsvRequest("module1", "module", "active", "course1", "module1 description", null)
+        );
+
+        UserDto userDto = mock(UserDto.class);
+        when(userDto.getUserName()).thenReturn("Course Admin");
+        when(motechUserService.getCurrentUser()).thenReturn(userDto);
+
+        courseImportService.importCourse(requests);
+
+        ArgumentCaptor<CourseDto> courseDtoCaptor = ArgumentCaptor.forClass(CourseDto.class);
+        verify(courseService).addOrUpdateCourse(courseDtoCaptor.capture());
+        CourseDto savedCourseDto = courseDtoCaptor.getValue();
+
+        assertThat(savedCourseDto.getCreatedBy(), Is.is("Course Admin"));
+
+        verify(motechUserService).getCurrentUser();
     }
 
     private void assertCourseDetails(CourseDto savedCourseDto) {

@@ -7,6 +7,7 @@ public class Content {
     private static final String INACTIVE_STATUS = "INACTIVE";
 
     private String name;
+    private String contentAuthor;
     private ContentType contentType;
     private boolean isActive;
     private String description;
@@ -19,7 +20,9 @@ public class Content {
 
     private List<Content> childContents;
 
-    public Content(String name, String contentType, String status, String description, String fileName, Integer numberOfQuizQuestions, List<String> options, String correctAnswer, String correctAnswerFileName, Long passPercentage) {
+    public Content(String name, String contentType, String status, String description, String fileName,
+                   Integer numberOfQuizQuestions, List<String> options, String correctAnswer,
+                   String correctAnswerFileName, Long passPercentage, String contentAuthor) {
         this.name = name;
         this.passPercentage = passPercentage;
         this.contentType = ContentType.from(contentType);
@@ -31,6 +34,7 @@ public class Content {
         this.correctAnswer = correctAnswer;
         this.correctAnswerFileName = correctAnswerFileName;
         this.childContents = new ArrayList<>();
+        this.contentAuthor = contentAuthor;
     }
 
     public void addChildContent(Content childContent) {
@@ -43,7 +47,7 @@ public class Content {
             Object childDto = childContent.toDto();
             childDtos.add(childDto);
         }
-        return contentType.toDto(name, description, fileName, isActive, numberOfQuizQuestions, options, correctAnswer, correctAnswerFileName,passPercentage, childDtos);
+        return contentType.toDto(name, description, fileName, isActive, numberOfQuizQuestions, options, correctAnswer, correctAnswerFileName, passPercentage, childDtos, contentAuthor);
     }
 
     public String getName() {

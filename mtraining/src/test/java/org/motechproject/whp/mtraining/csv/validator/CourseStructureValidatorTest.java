@@ -150,7 +150,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldValidateIfCourseNameIsSameAsExistingCourse() {
-        when(courseService.getAllCourses()).thenReturn(asList(new CourseDto(true, "Different Course Name", "description", Collections.<ModuleDto>emptyList())));
+        when(courseService.getAllCourses()).thenReturn(asList(new CourseDto(true, "Different Course Name", "description", "Author", Collections.<ModuleDto>emptyList())));
 
         errors = courseStructureValidator.validate(courseStructureCsvs);
 
@@ -170,7 +170,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldNotReturnAnyErrorIfCourseNameIsSameAsExistingCourse() {
-        when(courseService.getAllCourses()).thenReturn(asList(new CourseDto(true, "Basic TB Symptoms", "description", Collections.<ModuleDto>emptyList())));
+        when(courseService.getAllCourses()).thenReturn(asList(new CourseDto(true, "Basic TB Symptoms", "description", "Author", Collections.<ModuleDto>emptyList())));
 
         errors = courseStructureValidator.validate(courseStructureCsvs);
 

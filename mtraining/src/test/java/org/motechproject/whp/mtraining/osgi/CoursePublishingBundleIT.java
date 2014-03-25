@@ -28,7 +28,7 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
         CourseService courseService = (CourseService) getApplicationContext().getBean("courseService");
         assertNotNull(courseService);
 
-        courseService.addOrUpdateCourse(new CourseDto(true, "test-cs001", "Test course", new ArrayList<ModuleDto>()));
+        courseService.addOrUpdateCourse(new CourseDto(true, "test-cs001", "Test course", "Created By", new ArrayList<ModuleDto>()));
 
         new Wait(new WaitCondition() {
             @Override

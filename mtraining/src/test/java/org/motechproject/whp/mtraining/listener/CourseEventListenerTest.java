@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.whp.mtraining.ivr.CoursePublisher;
+import org.motechproject.whp.mtraining.reports.CourseReporter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,13 +20,15 @@ public class CourseEventListenerTest {
     public static final String VERSION = "VERSION";
 
     private CoursePublisher coursePublisher;
+    private CourseReporter courseReporter;
     private CourseEventListener courseEventListener;
     static UUID cs001 = UUID.randomUUID();
 
     @Before
     public void before() {
         coursePublisher = mock(CoursePublisher.class);
-        courseEventListener = new CourseEventListener(coursePublisher);
+        courseReporter = mock(CourseReporter.class);
+        courseEventListener = new CourseEventListener(coursePublisher, courseReporter);
 
     }
 
@@ -39,6 +42,17 @@ public class CourseEventListenerTest {
         courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
 
         verify(coursePublisher).publish(cs001, 3);
+    }
+
+    @Test
+    public void shouldReportWhenCourseIsAdded() {
+        Map<String, Object> eventData = new HashMap<>();
+
+        eventData.put(CONTENT_ID, cs001);
+        eventData.put(VERSION, 3);
+
+        courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
+        verify(courseReporter).reportCourseAdded(cs001, 3);
     }
 
 

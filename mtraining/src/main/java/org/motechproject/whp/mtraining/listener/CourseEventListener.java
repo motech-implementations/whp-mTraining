@@ -4,6 +4,7 @@ import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mtraining.constants.MTrainingEventConstants;
 import org.motechproject.whp.mtraining.ivr.CoursePublisher;
+import org.motechproject.whp.mtraining.reports.CourseReporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +16,12 @@ public class CourseEventListener {
 
 
     private CoursePublisher coursePublisher;
+    private CourseReporter courseReporter;
 
     @Autowired
-    public CourseEventListener(CoursePublisher coursePublisher) {
+    public CourseEventListener(CoursePublisher coursePublisher, CourseReporter courseReporter) {
         this.coursePublisher = coursePublisher;
+        this.courseReporter = courseReporter;
     }
 
     @MotechListener(subjects = MTrainingEventConstants.COURSE_CREATION_EVENT)
@@ -26,6 +29,7 @@ public class CourseEventListener {
         Map<String, Object> eventData = event.getParameters();
         UUID courseId = (UUID) eventData.get(MTrainingEventConstants.CONTENT_ID);
         Integer version = (Integer) eventData.get(MTrainingEventConstants.VERSION);
+        courseReporter.reportCourseAdded(courseId, version);
         coursePublisher.publish(courseId, version);
     }
 

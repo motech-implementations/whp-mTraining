@@ -46,7 +46,7 @@ public class IVRGatewayTest {
     public void shouldReturnNetworkErrorResponse() throws IOException {
         when(webClient.post(anyString(), anyString(), any(Properties.class))).thenThrow(new IOException("IO exception thrown in tests"));
 
-        CourseDto someCourse = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", null);
+        CourseDto someCourse = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", "Created By", null);
         IVRResponse ivrResponse = ivrGateway.postCourse(someCourse);
 
         assertThat(ivrResponse.isNetworkFailure(), Is.is(true));
@@ -67,7 +67,7 @@ public class IVRGatewayTest {
 
         when(ivrResponseHandler.parse(httpResponse)).thenReturn(new IVRResponse());
 
-        CourseDto someCourse = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", null);
+        CourseDto someCourse = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", "Created By", null);
 
         ivrGateway.postCourse(someCourse);
 
@@ -86,7 +86,7 @@ public class IVRGatewayTest {
 
         when(webClient.post(anyString(), anyString(), any(Properties.class))).thenReturn(httpResponse);
 
-        IVRResponse response = ivrGateway.postCourse(new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", null));
+        IVRResponse response = ivrGateway.postCourse(new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", "Created By", null));
 
         assertThat(response.getResponseCode(), Is.is(401));
         assertThat(response.getResponseMessage(), Is.is("Not Authenticated"));
@@ -111,7 +111,7 @@ public class IVRGatewayTest {
         when(webClient.post(anyString(), anyString(), eq(headers))).thenReturn(httpResponse);
 
 
-        ivrGateway.postCourse(new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", null));
+        ivrGateway.postCourse(new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", "Created By", null));
 
 
         verify(webClient).post(eq("http://ivr.url"), anyString(), eq(headers));

@@ -16,7 +16,10 @@ import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CoursePublisherTest {
 
@@ -43,7 +46,7 @@ public class CoursePublisherTest {
 
         List<ModuleDto> modules = Collections.emptyList();
         int courseVersion = 2;
-        CourseDto course = new CourseDto(true, "CS001", "CS Course", modules);
+        CourseDto course = new CourseDto(true, "CS001", "CS Course", "Created By", modules);
 
         when(courseService.getCourse(new ContentIdentifierDto(courseId, courseVersion))).thenReturn(course);
 
@@ -62,7 +65,7 @@ public class CoursePublisherTest {
     public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() {
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Created By", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         when(ivrGateway.postCourse(courseDTO)).thenReturn(new IVRResponse(800, "OK"));
@@ -79,7 +82,7 @@ public class CoursePublisherTest {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.MISSING_FILES, "file1,file2");
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Created By", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
@@ -97,7 +100,7 @@ public class CoursePublisherTest {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Created By", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
