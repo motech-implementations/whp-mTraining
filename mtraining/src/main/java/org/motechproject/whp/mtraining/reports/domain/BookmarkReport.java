@@ -73,4 +73,8 @@ public class BookmarkReport {
         this.courseId = course.getContentId();
         this.courseVersion = course.getVersion();
     }
+
+    public boolean hasCourse(ContentIdentifierDto course) {
+        return this.courseId.equals(course.getContentId()) && this.courseVersion.equals(course.getVersion());
+    }
 }

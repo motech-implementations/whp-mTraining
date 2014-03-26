@@ -34,6 +34,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK_MODIFIED_DATE;
@@ -48,7 +49,7 @@ public class BookmarkControllerTest {
     private Providers providers;
     private BookmarkController bookmarkController;
     private Sessions sessions;
-    private AllBookmarkRequests callLogs;
+    private AllBookmarkRequests allBookmarkRequests;
 
     @Mock
     private BookmarkService bookmarkService;
@@ -59,8 +60,8 @@ public class BookmarkControllerTest {
     public void before() {
         providers = mock(Providers.class);
         sessions = mock(Sessions.class);
-        callLogs = mock(AllBookmarkRequests.class);
-        bookmarkController = new BookmarkController(providers, sessions, callLogs, bookmarkService, courses);
+        allBookmarkRequests = mock(AllBookmarkRequests.class);
+        bookmarkController = new BookmarkController(providers, sessions, allBookmarkRequests, bookmarkService, courses);
     }
 
     @Test
@@ -72,7 +73,7 @@ public class BookmarkControllerTest {
 
         assertThat(response.getResponseCode(), is(UNKNOWN_PROVIDER.getCode()));
         verify(providers).getByCallerId(callerId);
-        verify(callLogs).add(any(BookmarkRequest.class));
+        verify(allBookmarkRequests).add(any(BookmarkRequest.class));
     }
 
     @Test
@@ -91,7 +92,7 @@ public class BookmarkControllerTest {
 
         assertThat(response.getResponseCode(), is(ResponseStatus.OK.getCode()));
         verify(providers).getByCallerId(callerId);
-        verify(callLogs).add(any(BookmarkRequest.class));
+        verify(allBookmarkRequests).add(any(BookmarkRequest.class));
         verify(bookmarkService).getBookmark(provider.getId().toString());
     }
 
@@ -105,7 +106,7 @@ public class BookmarkControllerTest {
 
         assertThat(StringUtils.isBlank(bookmark.getSessionId()), Is.is(false));
         verify(sessions).create();
-        verify(callLogs).add(any(BookmarkRequest.class));
+        verify(allBookmarkRequests).add(any(BookmarkRequest.class));
     }
 
     @Test
@@ -130,7 +131,7 @@ public class BookmarkControllerTest {
 
         assertThat(response.getResponseCode(), is(ResponseStatus.NOT_WORKING_PROVIDER.getCode()));
         verify(providers).getByCallerId(callerId);
-        verify(callLogs).add(any(BookmarkRequest.class));
+        verify(allBookmarkRequests).add(any(BookmarkRequest.class));
     }
 
     @Test
@@ -149,13 +150,21 @@ public class BookmarkControllerTest {
         bookmarkController.postBookmark(bookmarkPostRequest);
 
         ArgumentCaptor<BookmarkDto> bookmarkDtoArgumentCaptor = ArgumentCaptor.forClass(BookmarkDto.class);
-        verify(bookmarkService).update(bookmarkDtoArgumentCaptor.capture());
+        verify(bookmarkService).addOrUpdate(bookmarkDtoArgumentCaptor.capture());
+
         BookmarkDto postedBookmark = bookmarkDtoArgumentCaptor.getValue();
         assertThat(postedBookmark.getExternalId(), Is.is(provider.getRemedyId()));
         assertThat(postedBookmark.getCourse(), Is.is(courseIdentifier));
         assertThat(postedBookmark.getModule(), Is.is(moduleIdentifier));
         assertThat(postedBookmark.getChapter(), Is.is(chapterIdentifier));
         assertThat(postedBookmark.getMessage(), Is.is(messageIdentifier));
+
+        ArgumentCaptor<BookmarkRequest> bookmarkRequestArgumentCaptor = ArgumentCaptor.forClass(BookmarkRequest.class);
+        verify(allBookmarkRequests, times(1)).add(bookmarkRequestArgumentCaptor.capture());
+        BookmarkRequest bookmarkRequest = bookmarkRequestArgumentCaptor.getValue();
+
+        assertThat(bookmarkRequest.getCallerId(), Is.is(callerId));
+        assertThat(bookmarkRequest.hasBookmarkFor(courseIdentifier), Is.is(true));
     }
 
     @Test
@@ -167,7 +176,8 @@ public class BookmarkControllerTest {
         ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
 
         assertEquals(MISSING_CALLER_ID.getCode(), response.getBody().getResponseCode());
-        verify(bookmarkService, never()).update(any(BookmarkDto.class));
+        verify(bookmarkService, never()).addOrUpdate(any(BookmarkDto.class));
+
     }
 
     @Test
@@ -182,7 +192,7 @@ public class BookmarkControllerTest {
         ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
 
         assertEquals(UNKNOWN_PROVIDER.getCode(), response.getBody().getResponseCode());
-        verify(bookmarkService, never()).update(any(BookmarkDto.class));
+        verify(bookmarkService, never()).addOrUpdate(any(BookmarkDto.class));
     }
 
     @Test
@@ -192,7 +202,7 @@ public class BookmarkControllerTest {
         ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
 
         assertEquals(MISSING_UNIQUE_ID.getCode(), response.getBody().getResponseCode());
-        verify(bookmarkService, never()).update(any(BookmarkDto.class));
+        verify(bookmarkService, never()).addOrUpdate(any(BookmarkDto.class));
     }
 
     @Test
@@ -202,7 +212,7 @@ public class BookmarkControllerTest {
         ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
 
         assertEquals(MISSING_SESSION_ID.getCode(), response.getBody().getResponseCode());
-        verify(bookmarkService, never()).update(any(BookmarkDto.class));
+        verify(bookmarkService, never()).addOrUpdate(any(BookmarkDto.class));
     }
 
     @Test

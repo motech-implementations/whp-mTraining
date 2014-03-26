@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
 import org.joda.time.DateTime;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
@@ -83,4 +84,10 @@ public class BookmarkRequest {
     }
 
 
+    public boolean hasBookmarkFor(ContentIdentifierDto course) {
+        if (bookmarkReport == null) {
+            return false;
+        }
+        return bookmarkReport.hasCourse(course);
+    }
 }
