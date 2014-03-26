@@ -11,56 +11,56 @@ import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNumeric;
-import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.from;
+import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.from;
 
 @Component
 public class ProviderStructureValidator {
 
     public List<CsvImportError> validate(List<ProviderCsvRequest> providerCsvRequests) {
         ArrayList<CsvImportError> errors = new ArrayList<>();
-        Set<String> remedyIds = new HashSet<>();
+        Set<String> remediIds = new HashSet<>();
         Set<String> contactNumbers = new HashSet<>();
         for (ProviderCsvRequest providerCsvRequest : providerCsvRequests) {
-            String remedyId = providerCsvRequest.getRemedyId();
-            validateRemedyId(errors, providerCsvRequest, remedyIds);
+            String remediId = providerCsvRequest.getRemedi_id();
+            validateRemediId(errors, providerCsvRequest, remediIds);
             validatePrimaryContactNumber(errors, providerCsvRequest, contactNumbers);
 
-            if (from(providerCsvRequest.getActivationStatus()) == null)
-                errors.add(new CsvImportError("Activation Status", "-", "Activation Status for Remedy Id: " + remedyId + " is blank or invalid."));
+            if (from(providerCsvRequest.getProviderstatus()) == null)
+                errors.add(new CsvImportError("Provider Status", "-", "Provider Status for Remedi Id: " + remediId + " is blank or invalid."));
 
             if (isBlank(providerCsvRequest.getBlock()))
-                errors.add(new CsvImportError("BLock", "-", "Block is blank for Remedy Id: " + remedyId + "."));
+                errors.add(new CsvImportError("Block", "-", "Block is blank for Remedi Id: " + remediId + "."));
 
             if (isBlank(providerCsvRequest.getDistrict()))
-                errors.add(new CsvImportError("BLock", "-", "District is blank for Remedy Id: " + remedyId + "."));
+                errors.add(new CsvImportError("District", "-", "District is blank for Remedi Id: " + remediId + "."));
 
             if (isBlank(providerCsvRequest.getState()))
-                errors.add(new CsvImportError("BLock", "-", "State is blank for Remedy Id: " + remedyId + "."));
+                errors.add(new CsvImportError("State", "-", "State is blank for Remedi Id: " + remediId + "."));
 
         }
         return errors;
     }
 
     private void validatePrimaryContactNumber(ArrayList<CsvImportError> errors, ProviderCsvRequest providerCsvRequest, Set<String> contactNumbers) {
-        String primaryContactNumber = providerCsvRequest.getPrimaryContactNumber();
+        String primaryContactNumber = providerCsvRequest.getPrimary_contact_number();
         if (contactNumbers.contains(primaryContactNumber))
-            errors.add(new CsvImportError("Primary Contact has multiple occurrences."));
+            errors.add(new CsvImportError("Primary Contact Number", "-", "Primary Contact Number " + primaryContactNumber + " has multiple occurrences."));
         if (isBlank(primaryContactNumber) || !isNumeric(primaryContactNumber) || primaryContactNumber.length() != 10) {
-            errors.add(new CsvImportError("Primary Contact Number", "-", "Primary Contact Number is invalid for Remedy Id: " + providerCsvRequest.getRemedyId() + ". It should be a 10 digit phone number."));
+            errors.add(new CsvImportError("Primary Contact Number", "-", "Primary Contact Number is invalid for Remedi Id: " + providerCsvRequest.getRemedi_id() + ". It should be a 10 digit phone number."));
             return;
         }
         contactNumbers.add(primaryContactNumber);
     }
 
-    private void validateRemedyId(ArrayList<CsvImportError> errors, ProviderCsvRequest providerCsvRequest, Set<String> remedyIds) {
-        String remedyId = providerCsvRequest.getRemedyId();
-        if (remedyIds.contains(remedyId))
-            errors.add(new CsvImportError("RemedyId", "-", "Remedy Id : " + remedyId + " has multiple occurrences. Remedy id should be unique."));
-        if (isBlank(remedyId)) {
-            errors.add(new CsvImportError("RemedyId", "-", "Remedy Id is not present for caller : " + providerCsvRequest.getPrimaryContactNumber()));
+    private void validateRemediId(ArrayList<CsvImportError> errors, ProviderCsvRequest providerCsvRequest, Set<String> remediIds) {
+        String remediId = providerCsvRequest.getRemedi_id();
+        if (remediIds.contains(remediId))
+            errors.add(new CsvImportError("RemediId", "-", "Remedi Id : " + remediId + " has multiple occurrences. Remedi id should be unique."));
+        if (isBlank(remediId)) {
+            errors.add(new CsvImportError("RemediId", "-", "Remedi Id is not present for caller : " + providerCsvRequest.getPrimary_contact_number()));
             return;
         }
-        remedyIds.add(remedyId);
+        remediIds.add(remediId);
     }
 
 }

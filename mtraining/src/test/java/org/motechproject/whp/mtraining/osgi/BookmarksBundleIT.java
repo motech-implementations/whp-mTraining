@@ -23,7 +23,7 @@ import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
 import org.motechproject.whp.mtraining.service.ProviderService;
-import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
+import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
 import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
@@ -34,8 +34,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ACTIVE_TPC;
-import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.ELIMINATED_RHP;
+import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
+import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.NOT_WORKING_PROVIDER;
 
 
 public class BookmarksBundleIT extends AuthenticationAwareIT {
@@ -68,7 +68,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
         courseIdentifier = courseService.addOrUpdateCourse(new CourseBuilder().build());
         removeAllProviders();
-        activeProvider = addProvider("remedyId1", 22222L, ACTIVE_TPC);
+        activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);
     }
 
 
@@ -108,9 +108,9 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     }
 
-    public void testThatResponseIs902WhenTheActivationStatusOfProviderIsInvalid() throws IOException, InterruptedException {
+    public void testThatResponseIs902WhenProviderStatusIsInvalid() throws IOException, InterruptedException {
         Long callerId = 103l;
-        addProvider("remedyId2", callerId, ELIMINATED_RHP);
+        addProvider("remediId2", callerId, NOT_WORKING_PROVIDER);
 
         String bookmarkURL = getBookmarkRequestUrlWith(callerId, "un1qId", null);
         CustomHttpResponse responseForNotWorkingProvider = httpClient.execute(httpRequestWithAuthHeaders(bookmarkURL, "Get"), new CustomHttpResponseHandler());
@@ -146,9 +146,9 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         return objectMapper.writeValueAsString(bookmarkPostRequest);
     }
 
-    private Provider addProvider(String remedyId, Long callerId, ActivationStatus activationStatus) {
+    private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {
         //this provider copy gets detached once saved,hence need to retrieve
-        Provider provider = new Provider(remedyId, callerId, activationStatus, "district", "block", "state");
+        Provider provider = new Provider(remediId, callerId, providerStatus, "district", "block", "state");
         providersAdded.add(providerService.add(provider));
         return providerService.byCallerId(callerId);
     }

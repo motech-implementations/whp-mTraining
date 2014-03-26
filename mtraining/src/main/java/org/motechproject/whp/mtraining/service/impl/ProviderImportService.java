@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.from;
+import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.from;
 
 @Service
 public class ProviderImportService {
@@ -30,7 +30,7 @@ public class ProviderImportService {
     }
 
     private Provider createProvider(ProviderCsvRequest providerCsvRequest) {
-        return new Provider(providerCsvRequest.getRemedyId(), Long.valueOf(providerCsvRequest.getPrimaryContactNumber()), from(providerCsvRequest.getActivationStatus()),
+        return new Provider(providerCsvRequest.getRemedi_id(), Long.valueOf(providerCsvRequest.getPrimary_contact_number()), from(providerCsvRequest.getProviderstatus()),
                 providerCsvRequest.getDistrict(), providerCsvRequest.getBlock(), providerCsvRequest.getState());
     }
 }

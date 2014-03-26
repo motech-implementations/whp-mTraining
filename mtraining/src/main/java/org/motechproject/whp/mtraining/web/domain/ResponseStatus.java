@@ -5,7 +5,7 @@ public enum ResponseStatus {
     UNKNOWN_PROVIDER(901, "Provider Number not recognised"),
     MISSING_CALLER_ID(902, "Missing Caller Id"),
     MISSING_UNIQUE_ID(903, "Missing Unique Id"),
-    NOT_WORKING_PROVIDER(904, "Eliminated provider"),
+    NOT_WORKING_PROVIDER(904, "Not Working Provider"),
     MISSING_SESSION_ID(905, "Missing Session Id"),
     INVALID_BOOKMARK_MODIFIED_DATE(906, "Missing or Invalid Bookmark Modified Date");
 

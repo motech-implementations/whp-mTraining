@@ -39,7 +39,7 @@ public class ProviderImportControllerTest {
     public void shouldImportSuccessfullyWhenTheRequestsAreValid() throws IOException {
         CommonsMultipartFile csvFile = mock(CommonsMultipartFile.class);
         ProviderImportController providerImportController = new ProviderImportController(csvParser, providerStructureValidator, providerImportService);
-        ArrayList<ProviderCsvRequest> providerCsvRequests = newArrayList(new ProviderCsvRequest("remedyId", "1234567890", "Active Rhp", "state", "block", "district"));
+        ArrayList<ProviderCsvRequest> providerCsvRequests = newArrayList(new ProviderCsvRequest("remediId", "1234567890", "Active Rhp", "state", "block", "district"));
         when(csvParser.parse(csvFile, ProviderCsvRequest.class)).thenReturn(providerCsvRequests);
         when(providerStructureValidator.validate(providerCsvRequests)).thenReturn(Collections.EMPTY_LIST);
 
@@ -54,7 +54,7 @@ public class ProviderImportControllerTest {
     public void shouldReturnErrorsWhenProviderListIsInvalid() throws IOException {
         CommonsMultipartFile csvFile = mock(CommonsMultipartFile.class);
         ProviderImportController providerImportController = new ProviderImportController(csvParser, providerStructureValidator, providerImportService);
-        ArrayList<ProviderCsvRequest> providerCsvRequests = newArrayList(new ProviderCsvRequest("remedyId", "1234567890", "Active Rhp", "state", "block", "district"));
+        ArrayList<ProviderCsvRequest> providerCsvRequests = newArrayList(new ProviderCsvRequest("remediId", "1234567890", "Active Rhp", "state", "block", "district"));
         when(csvParser.parse(csvFile, ProviderCsvRequest.class)).thenReturn(providerCsvRequests);
         when(providerStructureValidator.validate(providerCsvRequests)).thenReturn(newArrayList(new CsvImportError("Some error")));
 

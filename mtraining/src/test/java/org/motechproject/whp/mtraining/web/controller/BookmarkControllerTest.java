@@ -19,7 +19,7 @@ import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
 import org.motechproject.whp.mtraining.repository.Courses;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
-import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
+import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
 import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
@@ -80,13 +80,13 @@ public class BookmarkControllerTest {
     public void shouldMarkCallerAsIdentifiedIfCallerIdRegistered() {
         Long callerId = 76465464L;
         Provider provider = mock(Provider.class);
-        String providerRemedyId = "remedyId";
-        when(provider.getRemedyId()).thenReturn(providerRemedyId);
+        String providerRemediId = "remediId";
+        when(provider.getRemediId()).thenReturn(providerRemediId);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
-        when(provider.getActivationStatus()).thenReturn(ActivationStatus.ACTIVE_RHP.getStatus());
+        when(provider.getProviderStatus()).thenReturn(ProviderStatus.WORKING_PROVIDER.getStatus());
         ContentIdentifierDto contentId = new ContentIdentifierDto(UUID.randomUUID(), 1);
         BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, ISODateTimeUtil.nowInTimeZoneUTC());
-        when(bookmarkService.getBookmark(providerRemedyId)).thenReturn(bookmarkDto);
+        when(bookmarkService.getBookmark(providerRemediId)).thenReturn(bookmarkDto);
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
 
@@ -124,7 +124,7 @@ public class BookmarkControllerTest {
     @Test
     public void shouldMarkErrorIfProviderIsNotValid() {
         long callerId = 76465464L;
-        Provider provider = new Provider("remedyId", callerId, ActivationStatus.ELIMINATED_RHP, "district", "block", "state");
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, "district", "block", "state");
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
@@ -144,7 +144,7 @@ public class BookmarkControllerTest {
         ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         ContentIdentifierDto messageIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier));
-        Provider provider = new Provider("remedyId", callerId, ActivationStatus.ACTIVE_TPC, "district", "block", "state");
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
         bookmarkController.postBookmark(bookmarkPostRequest);
@@ -153,7 +153,7 @@ public class BookmarkControllerTest {
         verify(bookmarkService).addOrUpdate(bookmarkDtoArgumentCaptor.capture());
 
         BookmarkDto postedBookmark = bookmarkDtoArgumentCaptor.getValue();
-        assertThat(postedBookmark.getExternalId(), Is.is(provider.getRemedyId()));
+        assertThat(postedBookmark.getExternalId(), Is.is(provider.getRemediId()));
         assertThat(postedBookmark.getCourse(), Is.is(courseIdentifier));
         assertThat(postedBookmark.getModule(), Is.is(moduleIdentifier));
         assertThat(postedBookmark.getChapter(), Is.is(chapterIdentifier));
@@ -218,7 +218,7 @@ public class BookmarkControllerTest {
     @Test
     public void shouldSendErrorResponseWhenBookmarkDateModifiedAbsent() {
         long callerId = 3232938l;
-        Provider provider = new Provider(null, callerId, ActivationStatus.ACTIVE_TPC, "district", "block", "state");
+        Provider provider = new Provider(null, callerId, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
         when(providers.getByCallerId(callerId)).thenReturn(provider);
         Bookmark bookmark = new BookmarkBuilder().withDateModified(null).build();
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, "unq11", "s001", bookmark);

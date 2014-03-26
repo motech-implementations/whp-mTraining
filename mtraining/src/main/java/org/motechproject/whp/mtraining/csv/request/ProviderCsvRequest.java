@@ -2,9 +2,9 @@ package org.motechproject.whp.mtraining.csv.request;
 
 public class ProviderCsvRequest {
 
-    private String remedyId;
-    private String primaryContactNumber;
-    private String activationStatus;
+    private String remedi_id;
+    private String primary_contact;
+    private String providerstatus;
     private String state;
     private String block;
     private String district;
@@ -12,37 +12,41 @@ public class ProviderCsvRequest {
     public ProviderCsvRequest() {
     }
 
-    public ProviderCsvRequest(String remedyId, String primaryContactNumber, String activationStatus, String state, String block, String district) {
-        this.remedyId = remedyId;
-        this.primaryContactNumber = primaryContactNumber;
-        this.activationStatus = activationStatus;
+    public ProviderCsvRequest(String remedi_id, String primary_contact, String providerstatus, String state, String block, String district) {
+        this.remedi_id = remedi_id;
+        this.primary_contact = primary_contact;
+        this.providerstatus = providerstatus;
         this.state = state;
         this.block = block;
         this.district = district;
     }
 
-    public String getRemedyId() {
-        return remedyId;
+    public String getRemedi_id() {
+        return remedi_id;
     }
 
-    public void setRemedyId(String remedyId) {
-        this.remedyId = remedyId;
+    public void setRemedi_id(String remedi_id) {
+        this.remedi_id = remedi_id;
     }
 
-    public String getPrimaryContactNumber() {
-        return primaryContactNumber;
+    public void setPrimary_contact(String primary_contact) {
+        this.primary_contact = primary_contact;
     }
 
-    public void setPrimaryContactNumber(String primaryContactNumber) {
-        this.primaryContactNumber = primaryContactNumber;
+    public String getPrimary_contact_number() {
+        return primary_contact;
     }
 
-    public String getActivationStatus() {
-        return activationStatus;
+    public String getProviderstatus() {
+        return providerstatus;
     }
 
-    public void setActivationStatus(String activationStatus) {
-        this.activationStatus = activationStatus;
+    public String getPrimary_contact() {
+        return primary_contact;
+    }
+
+    public void setProviderstatus(String providerstatus) {
+        this.providerstatus = providerstatus;
     }
 
     public String getState() {

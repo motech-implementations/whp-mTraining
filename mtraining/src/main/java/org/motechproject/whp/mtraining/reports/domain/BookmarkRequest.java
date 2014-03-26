@@ -34,8 +34,8 @@ public class BookmarkRequest {
     @Persistent(column = "created_on")
     @Temporal(TemporalType.TIMESTAMP)
     private DateTime createdOn;
-    @Persistent(column = "provider_remedy_id")
-    private String remedyId;
+    @Persistent(column = "provider_remedi_id")
+    private String remediId;
 
     @Persistent(column = "request_type")
     private BookmarkRequestType requestType;
@@ -65,9 +65,9 @@ public class BookmarkRequest {
         this.createdOn = ISODateTimeUtil.nowInTimeZoneUTC();
     }
 
-    public BookmarkRequest(String remedyId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, BookmarkReport bookmarkReport) {
+    public BookmarkRequest(String remediId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, BookmarkReport bookmarkReport) {
         this(callerId, uniqueId, sessionId, responseStatus, requestType);
-        this.remedyId = remedyId;
+        this.remediId = remediId;
         this.bookmarkReport = bookmarkReport;
     }
 

@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.service.ProviderService;
-import org.motechproject.whp.mtraining.web.domain.ActivationStatus;
+import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -18,7 +18,7 @@ public class ProviderServiceImplTest {
     public void shouldAddProvider() {
         Providers providers = mock(Providers.class);
         ProviderService providerService = new ProviderServiceImpl(providers);
-        Provider provider = new Provider("remedyId", 654654l, ActivationStatus.ACTIVE_RHP, "district", "block", "state");
+        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
         Provider persistedProvider = mock(Provider.class);
         when(providers.add(provider)).thenReturn(persistedProvider);
         when(persistedProvider.getId()).thenReturn(100l);

@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.GET;
 import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.POST;
-import static org.motechproject.whp.mtraining.web.domain.ActivationStatus.isInvalid;
+import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.isInvalid;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_UNIQUE_ID;
@@ -78,11 +78,11 @@ public class BookmarkController {
         Provider provider = providers.getByCallerId(callerId);
         if (provider == null)
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, UNKNOWN_PROVIDER);
-        if (isInvalid(provider.getActivationStatus()))
+        if (isInvalid(provider.getProviderStatus()))
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER);
 
-        BookmarkDto bookmarkDto = getBookmark(provider.getRemedyId());
-        allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, currentSessionId, OK, GET, new BookmarkReport(bookmarkDto)));
+        BookmarkDto bookmarkDto = getBookmark(provider.getRemediId());
+        allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET, new BookmarkReport(bookmarkDto)));
         return new ResponseEntity<>(new BookmarkResponse(callerId, currentSessionId, uniqueId,
                 new Location(provider.getBlock(), provider.getDistrict(), provider.getState()), mapToBookmark(bookmarkDto)), HttpStatus.OK);
     }
@@ -116,10 +116,10 @@ public class BookmarkController {
             return responseAfterLogging(callerId, uniqueId, sessionId, POST, UNKNOWN_PROVIDER);
         }
 
-        BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemedyId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
+        BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemediId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
                 bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
         bookmarkService.addOrUpdate(bookmarkDto);
-        allBookmarkRequests.add(new BookmarkRequest(provider.getRemedyId(), callerId, uniqueId, sessionId, OK, POST, new BookmarkReport(bookmarkDto)));
+        allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId, OK, POST, new BookmarkReport(bookmarkDto)));
         return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 
