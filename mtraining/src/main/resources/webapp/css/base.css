@@ -1,4 +1,4 @@
-main {
+main, .providerUpload, .response {
     margin-top: 20px;
 }
 
@@ -8,10 +8,6 @@ main {
 
 .chooseFileBtn {
     width: 80%;
-}
-
-.response {
-    margin-top: 20px;
 }
 
 .mtrain-spinner {
