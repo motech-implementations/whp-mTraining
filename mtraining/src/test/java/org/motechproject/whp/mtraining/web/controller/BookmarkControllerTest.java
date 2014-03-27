@@ -3,13 +3,16 @@ package org.motechproject.whp.mtraining.web.controller;
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.Is;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.exception.BookmarkUpdateException;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.BookmarkBuilder;
@@ -19,10 +22,10 @@ import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
 import org.motechproject.whp.mtraining.repository.Courses;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
-import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
 import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
+import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -32,6 +35,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -55,6 +59,9 @@ public class BookmarkControllerTest {
     private BookmarkService bookmarkService;
     @Mock
     private Courses courses;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void before() {
@@ -165,6 +172,30 @@ public class BookmarkControllerTest {
 
         assertThat(bookmarkRequest.getCallerId(), Is.is(callerId));
         assertThat(bookmarkRequest.hasBookmarkFor(courseIdentifier), Is.is(true));
+    }
+
+    @Test
+    public void shouldDeleteBookmarkForInvalidBookmarkPost() {
+        Long callerId = 87676598l;
+        String uniqueId = "unk001";
+        String sessionId = "session001";
+        ContentIdentifierDto courseIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        ContentIdentifierDto moduleIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 2);
+        ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        ContentIdentifierDto messageIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier));
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
+        ArgumentCaptor<BookmarkDto> bookmarkDtoArgumentCaptor = ArgumentCaptor.forClass(BookmarkDto.class);
+        ArgumentCaptor<BookmarkRequest> bookmarkRequestArgumentCaptor = ArgumentCaptor.forClass(BookmarkRequest.class);
+
+        when(providers.getByCallerId(callerId)).thenReturn(provider);
+        doThrow(new BookmarkUpdateException(""))
+                .when(bookmarkService).addOrUpdate(bookmarkDtoArgumentCaptor.capture());
+
+        bookmarkController.postBookmark(bookmarkPostRequest);
+
+        verify(bookmarkService).deleteBookmarkFor("remediId");
+        verify(allBookmarkRequests, times(1)).add(bookmarkRequestArgumentCaptor.capture());
     }
 
     @Test
