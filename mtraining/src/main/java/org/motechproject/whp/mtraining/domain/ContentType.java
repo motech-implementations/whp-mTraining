@@ -33,7 +33,7 @@ public enum ContentType {
                                 List<String> options, String correctAnswer, String correctAnswerFileName, Long passPercentage, List<Object> childDtos, String contentAuthor) {
             List<QuestionDto> questions = filterChildNodesOfType(childDtos, QuestionDto.class);
             List<MessageDto> messages = filterChildNodesOfType(childDtos, MessageDto.class);
-            QuizDto quizDto = new QuizDto(true, questions, numberOfQuizQuestions, passPercentage, contentAuthor);
+            QuizDto quizDto = new QuizDto(true, nodeName, questions, numberOfQuizQuestions, passPercentage, contentAuthor);
             return numberOfQuizQuestions > 0 ? new ChapterDto(isActive, nodeName, description, contentAuthor, messages, quizDto) :
                     new ChapterDto(isActive, nodeName, description, contentAuthor, messages, null);
         }

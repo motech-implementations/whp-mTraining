@@ -24,6 +24,10 @@
 
     <osgi:reference interface="org.motechproject.mtraining.service.BookmarkService" id="bookmarkService"/>
 
+    <osgi:reference interface="org.motechproject.mtraining.service.QuestionService" id="questionService"/>
+
+    <osgi:reference interface="org.motechproject.mtraining.service.QuizService" id="quizService"/>
+
     <osgi:reference interface="org.motechproject.security.service.MotechUserService" id="motechUserService"/>
 
 </beans>

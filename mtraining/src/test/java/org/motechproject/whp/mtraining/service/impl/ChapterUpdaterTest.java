@@ -27,15 +27,16 @@ import static org.mockito.Mockito.when;
 public class ChapterUpdaterTest {
     @Mock
     private ChapterService chapterService;
-
     @Mock
     private MessageUpdater messageUpdater;
+    @Mock
+    private QuizUpdater quizUpdater;
 
     private ChapterUpdater chapterUpdater;
 
     @Before
     public void setUp() throws Exception {
-        chapterUpdater = new ChapterUpdater(chapterService, messageUpdater);
+        chapterUpdater = new ChapterUpdater(chapterService, messageUpdater, quizUpdater);
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
+import org.motechproject.whp.mtraining.csv.domain.NodeType;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ import static java.lang.Long.parseLong;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.motechproject.whp.mtraining.csv.domain.NodeType.QUESTION;
+import static org.motechproject.whp.mtraining.csv.domain.NodeType.from;
 
 @Component
 public class CourseStructureValidator {
@@ -81,13 +84,19 @@ public class CourseStructureValidator {
                 Integer quizQuestions = isNotBlank(request.getNoOfQuizQuestions()) ? parseInt(request.getNoOfQuizQuestions()) : 0;
                 if (quizQuestions > 0) {
                     Long passPercentage = isNotBlank(request.getPassPercentage()) ? parseLong(request.getPassPercentage()) : 0;
-                    if (passPercentage < 0 || passPercentage > 100) {
-                        CsvImportError error = new CsvImportError(request.getNodeName(), request.getNodeType(), "Pass percentage should be between 0 and 100. Please verify and try importing again");
+                    if (passPercentage <= 0 || passPercentage > 100) {
+                        CsvImportError error = new CsvImportError(request.getNodeName(), request.getNodeType(), "Specify the pass percentage between 1 and 100 for the chapter's quiz and try importing again.");
                         errors.add(error);
                         logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
                         return;
                     }
                     verifyQuestions(quizQuestions, requests, request, errors);
+                }
+                if (quizQuestions == 0 && questionsPresentForChapter(requests, request)) {
+                    CsvImportError error = new CsvImportError(request.getNodeName(), request.getNodeType(), "The chapter has questions in the CSV but number of questions to be played in the quiz is not specified. Please specify the number of questions for the chapter and try again.");
+                    errors.add(error);
+                    logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
+                    return;
                 }
             } catch (NumberFormatException e) {
                 CsvImportError error = new CsvImportError(request.getNodeName(), request.getNodeType(), "A Chapter should have valid no of questions and pass percentage between 0 and 100. Please try importing it again.");
@@ -115,6 +124,14 @@ public class CourseStructureValidator {
 
     }
 
+    private boolean questionsPresentForChapter(List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest) {
+        for (CourseCsvRequest request : requests) {
+            if (QUESTION.equals(from(request.getNodeType())) && request.getParentNode().equals(chapterRequest.getNodeName()))
+                return true;
+        }
+        return false;
+    }
+
     private void verifyQuestions(Integer quizQuestions, List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest, List<CsvImportError> errors) {
         Integer noOfQuestions = 0;
         for (CourseCsvRequest request : requests) {
@@ -122,7 +139,7 @@ public class CourseStructureValidator {
                 noOfQuestions++;
         }
         if (noOfQuestions < quizQuestions) {
-            CsvImportError error = new CsvImportError(chapterRequest.getNodeName(), chapterRequest.getNodeType(), "The no of questions for the chapter is less than the specified minimum no of questions required to be answered. Please verify and ry importing again.");
+            CsvImportError error = new CsvImportError(chapterRequest.getNodeName(), chapterRequest.getNodeType(), "Number of questions available in the CSV for this chapter is less than number of quiz questions specified for the chapter. Please add more questions for the chapter and try importing again.");
             errors.add(error);
             logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
         }

@@ -37,7 +37,7 @@ public class CourseStructureValidatorTest {
         courseStructureCsvs = new ArrayList<>();
         courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
         courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "Active", "Basic TB Symptoms", "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "1", "50"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
 
         when(courseService.getAllCourses()).thenReturn(Collections.<CourseDto>emptyList());
@@ -180,7 +180,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldReturnErrorIfTheCorrectAnswerFileIsNotAvailable() throws Exception {
-        courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms", "Question", "Active", "Chapter TB Symptoms", "Message Description", "FileName", "1;2", "1", "", "1", "90"));
+        courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms", "Question", "Active", "Chapter TB Symptoms", "Message Description", "FileName", "1;2", "1", "", null, null));
 
         errors = courseStructureValidator.validate(courseStructureCsvs);
 
@@ -190,7 +190,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldReturnErrorIfOptionsAreNotAvailable() throws Exception {
-        courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms", "Question", "Active", "Chapter TB Symptoms", "Message Description", "FileName", "", "1", "CorrectAnswer", "1", "90"));
+        courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms", "Question", "Active", "Chapter TB Symptoms", "Message Description", "FileName", "", "1", "CorrectAnswer", "", ""));
 
         errors = courseStructureValidator.validate(courseStructureCsvs);
 
@@ -200,7 +200,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldReturnErrorIfTheCorrectAnswerIsNotOneAmongTheOptions() throws Exception {
-        courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms", "Question", "Active", "Chapter TB Symptoms", "Message Description", "FileName", "1;2", "3", "CorrectAnswer", "1", "90"));
+        courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms", "Question", "Active", "Chapter TB Symptoms", "Message Description", "FileName", "1;2", "3", "CorrectAnswer", "", ""));
 
         errors = courseStructureValidator.validate(courseStructureCsvs);
 
@@ -216,7 +216,7 @@ public class CourseStructureValidatorTest {
         errors = courseStructureValidator.validate(courseStructureCsvs);
 
         assertEquals(1, errors.size());
-        assertEquals("The no of questions for the chapter is less than the specified minimum no of questions required to be answered. Please verify and ry importing again.", errors.get(0).getMessage());
+        assertEquals("Number of questions available in the CSV for this chapter is less than number of quiz questions specified for the chapter. Please add more questions for the chapter and try importing again.", errors.get(0).getMessage());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class CourseStructureValidatorTest {
         errors = courseStructureValidator.validate(courseStructureCsvs);
 
         assertEquals(1, errors.size());
-        assertEquals("Pass percentage should be between 0 and 100. Please verify and try importing again", errors.get(0).getMessage());
+        assertEquals("Specify the pass percentage between 1 and 100 for the chapter's quiz and try importing again.", errors.get(0).getMessage());
     }
 
     @Test
@@ -239,5 +239,20 @@ public class CourseStructureValidatorTest {
 
         assertEquals(1, errors.size());
         assertEquals("A Chapter should have valid no of questions and pass percentage between 0 and 100. Please try importing it again.", errors.get(0).getMessage());
+    }
+
+    @Test
+    public void shouldThrowErrorWhenChapterDoesNotSpecifyQuestionsButQuestionsForTheChapterAreAvailable() {
+        List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "Active", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "", "50"));
+        courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
+        courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms", "Question", "Active", "Chapter TB Symptoms", "Message Description", "FileName", "1;2", "1", "CorrectAnswer", "", ""));
+
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+
+        assertEquals(1, errors.size());
+        assertEquals("The chapter has questions in the CSV but number of questions to be played in the quiz is not specified. Please specify the number of questions for the chapter and try again.", errors.get(0).getMessage());
     }
 }
