@@ -26,21 +26,28 @@ public abstract class CourseContent {
     private Integer version;
     @Persistent
     private String description;
-    @Persistent(column = "modified_by")
-    private String modifiedBy;
-    @Persistent(column = "date_modified")
-    private DateTime dateModified;
+    @Persistent(column = "created_by")
+    private String createdBy;
+    @Persistent(column = "created_on")
+    private DateTime createdOn;
+    @Persistent(column = "is_active")
+    private boolean isActive;
 
-    protected CourseContent(String name, UUID contentId, Integer version, String description, String modifiedBy, DateTime dateModified) {
+    protected CourseContent(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, boolean isActive) {
         this.name = name;
         this.contentId = contentId;
         this.version = version;
         this.description = description;
-        this.modifiedBy = modifiedBy;
-        this.dateModified = dateModified;
+        this.createdBy = createdBy;
+        this.createdOn = createdOn;
+        this.isActive = isActive;
     }
 
     public String getName() {
         return name;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 }

@@ -32,15 +32,15 @@ public class Question extends CourseContent {
     @Persistent(column = "valid_answer_options")
     private String answerOptions;
 
-    public Question(String name, UUID contentId, Integer version, String description, String modifiedBy, DateTime dateModified, String externalId, List<String> answerOptions, Answer answer) {
-        super(name, contentId, version, description, modifiedBy, dateModified);
+    public Question(String name, UUID contentId, Integer version, String description, String modifiedBy, DateTime dateModified, String externalId, List<String> answerOptions, Answer answer, boolean isActive) {
+        super(name, contentId, version, description, modifiedBy, dateModified, isActive);
         this.externalId = externalId;
         this.answer = answer;
         this.answerOptions = commaSeparatedOptions(answerOptions);
     }
 
     public Question(QuestionDto questionDto) {
-        super(questionDto.getName(), questionDto.getContentId(), questionDto.getVersion(), questionDto.getDescription(), questionDto.getCreatedBy(), questionDto.getCreatedOn());
+        super(questionDto.getName(), questionDto.getContentId(), questionDto.getVersion(), questionDto.getDescription(), questionDto.getCreatedBy(), questionDto.getCreatedOn(), questionDto.isActive());
         this.externalId = questionDto.getExternalId();
         this.answerOptions = commaSeparatedOptions(questionDto.getOptions());
         this.answer = new Answer(questionDto.getAnswer());

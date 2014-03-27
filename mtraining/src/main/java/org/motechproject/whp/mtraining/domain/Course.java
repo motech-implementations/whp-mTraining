@@ -12,7 +12,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.UUID;
 
-@PersistenceCapable(table = "course", identityType = IdentityType.APPLICATION)
+@PersistenceCapable(table = "course_publication_status", identityType = IdentityType.APPLICATION)
 public class Course {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)

@@ -25,6 +25,7 @@ public class CertificationCourseBuilder {
     private String audioFileName = "audio.wav";
     private String questionAudioFileName = "question audio.wav";
     private String answerAudioFileName = "answer audio.wav";
+    private boolean isActive = true;
 
     public CertificationCourseBuilder withName(String courseName) {
         this.courseName = courseName;
@@ -32,31 +33,31 @@ public class CertificationCourseBuilder {
     }
 
     public CertificationCourse build() {
-        return new CertificationCourse(courseName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildModule("MOD001")));
+        return new CertificationCourse(courseName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildModule("MOD001")), isActive);
     }
 
     private Module buildModule(String moduleName) {
-        return new Module(moduleName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildChapter("CH001")));
+        return new Module(moduleName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildChapter("CH001")), isActive);
     }
 
     private Chapter buildChapter(String chapterName) {
-        Chapter chapter = new Chapter(chapterName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildMessage("MSG001")));
+        Chapter chapter = new Chapter(chapterName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildMessage("MSG001")), isActive);
         chapter.setQuiz(buildQuiz("Test Quiz"));
         return chapter;
     }
 
     private Message buildMessage(String messageName) {
-        return new Message(messageName, contentId, version, description, modifiedBy, dateModified, audioFileName);
+        return new Message(messageName, contentId, version, description, modifiedBy, dateModified, audioFileName, isActive);
     }
 
     private Quiz buildQuiz(String quizName) {
-        Quiz quiz = new Quiz(quizName, contentId, version, description, modifiedBy, dateModified, passPercentage);
-        quiz.addQuestions(Arrays.asList(buildQuestion("Test Question")));
+        Quiz quiz = new Quiz(quizName, contentId, version, modifiedBy, dateModified, passPercentage, isActive);
+        quiz.addQuestion(buildQuestion("Test Question"));
         return quiz;
     }
 
     private Question buildQuestion(String questionName) {
-        return new Question(questionName, contentId, version, description, modifiedBy, dateModified, questionAudioFileName, Arrays.asList("A", "B"), new Answer(answerAudioFileName, "A"));
+        return new Question(questionName, contentId, version, description, modifiedBy, dateModified, questionAudioFileName, Arrays.asList("A", "B"), new Answer(answerAudioFileName, "A"), isActive);
     }
 
     public CertificationCourseBuilder withMessageAudioFile(String audioFileName) {

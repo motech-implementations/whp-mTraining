@@ -59,6 +59,7 @@ public class AllCertificationCoursesIT {
 
         CertificationCourse persistedCourse = allCourses.get(0);
         assertThat(persistedCourse.getName(), Is.is("NA001"));
+        assertThat(persistedCourse.isActive(), Is.is(true));
         List<Module> modules = persistedCourse.getModules();
         assertThat(modules.size(), Is.is(1));
         Module module = modules.get(0);
@@ -83,7 +84,9 @@ public class AllCertificationCoursesIT {
 
         List<Message> messages = chapter.getMessages();
         assertThat(messages.size(), Is.is(1));
-        assertThat(messages.get(0).getAudioFileName(), Is.is("hello.wav"));
+        Message message = messages.get(0);
+        assertThat(message.getAudioFileName(), Is.is("hello.wav"));
+        assertThat(message.isActive(), Is.is(true));
     }
 
     @Before
