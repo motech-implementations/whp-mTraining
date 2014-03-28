@@ -1,12 +1,12 @@
 package org.motechproject.whp.mtraining.repository;
 
-import org.motechproject.whp.mtraining.domain.CertificationCourse;
+import org.motechproject.whp.mtraining.domain.Course;
 import org.springframework.stereotype.Repository;
 
 import javax.jdo.FetchPlan;
 
 @Repository
-public class AllCertificationCourses extends RepositorySupport<CertificationCourse> {
+public class AllCourses extends RepositorySupport<Course> {
 
     @Override
     protected void configureFetchGroup(FetchPlan fetchPlan) {
@@ -16,6 +16,6 @@ public class AllCertificationCourses extends RepositorySupport<CertificationCour
 
     @Override
     Class getType() {
-        return CertificationCourse.class;
+        return Course.class;
     }
 }

@@ -5,9 +5,9 @@ import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.whp.mtraining.CertificationCourseBuilder;
+import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.whp.mtraining.domain.Answer;
-import org.motechproject.whp.mtraining.domain.CertificationCourse;
+import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.Chapter;
 import org.motechproject.whp.mtraining.domain.Message;
 import org.motechproject.whp.mtraining.domain.Module;
@@ -24,10 +24,10 @@ import static org.springframework.test.util.MatcherAssertionErrors.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:testWHPmTrainingApplicationContext.xml")
-public class AllCertificationCoursesIT {
+public class AllCoursesIT {
 
     @Autowired
-    private AllCertificationCourses allCertificationCourses;
+    private AllCourses allCourses;
 
     @Autowired
     private AllTestModules allTestModules;
@@ -48,16 +48,16 @@ public class AllCertificationCoursesIT {
     @Test
     public void shouldAddACertificateCourseStructure() {
 
-        CertificationCourse certificationCourse = new CertificationCourseBuilder().withName("NA001").withMessageAudioFile("hello.wav").build();
+        Course course = new CourseBuilder().withName("NA001").withMessageAudioFile("hello.wav").build();
 
-        assertThat(allCertificationCourses.all().size(), Is.is(0));
+        assertThat(allCourses.all().size(), Is.is(0));
 
-        allCertificationCourses.add(certificationCourse);
+        allCourses.add(course);
 
-        List<CertificationCourse> allCourses = allCertificationCourses.all();
+        List<Course> allCourses = this.allCourses.all();
         assertThat(allCourses.size(), Is.is(1));
 
-        CertificationCourse persistedCourse = allCourses.get(0);
+        Course persistedCourse = allCourses.get(0);
         assertThat(persistedCourse.getName(), Is.is("NA001"));
         assertThat(persistedCourse.isActive(), Is.is(true));
         List<Module> modules = persistedCourse.getModules();
@@ -96,7 +96,7 @@ public class AllCertificationCoursesIT {
         allTestChapters.deleteAll();
         allTestQuizzes.deleteAll();
         allTestModules.deleteAll();
-        allCertificationCourses.deleteAll();
+        allCourses.deleteAll();
     }
 
 }

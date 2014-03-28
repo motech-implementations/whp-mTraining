@@ -17,7 +17,7 @@ import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
-import org.motechproject.whp.mtraining.CourseBuilder;
+import org.motechproject.whp.mtraining.CourseDTOBuilder;
 import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
@@ -66,7 +66,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         providerService = (ProviderService) getApplicationContext().getBean("providerService");
         assertNotNull(providerService);
 
-        courseIdentifier = courseService.addOrUpdateCourse(new CourseBuilder().build());
+        courseIdentifier = courseService.addOrUpdateCourse(new CourseDTOBuilder().build());
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);
     }

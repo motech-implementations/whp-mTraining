@@ -14,19 +14,19 @@ import java.util.List;
 import java.util.UUID;
 
 @PersistenceCapable(table = "course", identityType = IdentityType.APPLICATION, detachable = "true")
-public class CertificationCourse extends CourseContent {
+public class Course extends CourseContent {
 
     @Element(column = "course_id")
     @Order(column = "module_order")
     @Persistent(dependentElement = "true")
     private List<Module> modules = new ArrayList<>();
 
-    public CertificationCourse(String name, UUID courseId, Integer version, String description, String modifiedBy, DateTime dateModified, List<Module> modules, boolean isActive) {
+    public Course(String name, UUID courseId, Integer version, String description, String modifiedBy, DateTime dateModified, List<Module> modules, boolean isActive) {
         super(name, courseId, version, description, modifiedBy, dateModified, isActive);
         this.modules = modules;
     }
 
-    public CertificationCourse(CourseDto courseDto) {
+    public Course(CourseDto courseDto) {
         super(courseDto.getName(), courseDto.getContentId(), courseDto.getVersion(), courseDto.getDescription(), courseDto.getCreatedBy(), courseDto.getCreatedOn(), courseDto.isActive());
         for (ModuleDto moduleDto : courseDto.getModules()) {
             modules.add(new Module(moduleDto));

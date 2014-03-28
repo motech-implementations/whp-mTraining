@@ -12,12 +12,12 @@ import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
-import org.motechproject.whp.mtraining.CourseBuilder;
-import org.motechproject.whp.mtraining.domain.CertificationCourse;
+import org.motechproject.whp.mtraining.CourseDTOBuilder;
+import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.Chapter;
 import org.motechproject.whp.mtraining.domain.Message;
 import org.motechproject.whp.mtraining.domain.Module;
-import org.motechproject.whp.mtraining.repository.AllCertificationCourses;
+import org.motechproject.whp.mtraining.repository.AllCourses;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,29 +33,29 @@ public class CourseReporterTest {
     CourseService courseService;
 
     @Mock
-    AllCertificationCourses allCertificationCourses;
+    AllCourses allCourses;
 
     CourseReporter courseReporter;
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        courseReporter = new CourseReporter(courseService, allCertificationCourses);
+        courseReporter = new CourseReporter(courseService, allCourses);
     }
 
     @Test
     public void shouldAddACertificationCourseWhenCourseReported() {
         UUID courseId = UUID.randomUUID();
 
-        CourseDto courseDto = new CourseBuilder().withName("NT001").build();
+        CourseDto courseDto = new CourseDTOBuilder().withName("NT001").build();
         when(courseService.getCourse(new ContentIdentifierDto(courseId, 1))).thenReturn(courseDto);
 
         courseReporter.reportCourseAdded(courseId, 1);
 
-        ArgumentCaptor<CertificationCourse> certificationCourseArgumentCaptor = ArgumentCaptor.forClass(CertificationCourse.class);
-        verify(allCertificationCourses).add(certificationCourseArgumentCaptor.capture());
+        ArgumentCaptor<Course> certificationCourseArgumentCaptor = ArgumentCaptor.forClass(Course.class);
+        verify(allCourses).add(certificationCourseArgumentCaptor.capture());
 
-        CertificationCourse courseAddedToReports = certificationCourseArgumentCaptor.getValue();
+        Course courseAddedToReports = certificationCourseArgumentCaptor.getValue();
 
         assertThat(courseAddedToReports.getName(), Is.is(courseDto.getName()));
         assertModules(courseAddedToReports.getModules(), courseDto.getModules());
