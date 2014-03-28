@@ -55,4 +55,8 @@ public class BookmarkResponse implements MotechResponse {
     public String getResponseMessage() {
         return responseMessage;
     }
+
+    public Bookmark getBookmark() {
+        return bookmark;
+    }
 }

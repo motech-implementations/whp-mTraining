@@ -24,19 +24,19 @@ import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
 import org.motechproject.whp.mtraining.service.ProviderService;
-import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
 import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
 import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
+import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.NOT_WORKING_PROVIDER;
+import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
 
 
 public class BookmarksBundleIT extends AuthenticationAwareIT {
@@ -128,6 +128,13 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         httpPost.setEntity(new StringEntity(bookmarkAsJSON));
         CustomHttpResponse response = httpClient.execute(httpPost, new CustomHttpResponseHandler());
         assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
+    }
+
+    public void testThatInitialBookmarkIsReturnedIfBookmarkForExternalIdDoesNotExist() throws IOException, InterruptedException {
+        String bookmarkRequestURLForAKnownUser = getBookmarkRequestUrlWith(activeProvider.getCallerId(), "un1qId", "s001");
+        CustomHttpResponse responseForKnownUser = httpClient.execute(httpRequestWithAuthHeaders(bookmarkRequestURLForAKnownUser, "Get"), new CustomHttpResponseHandler());
+        BookmarkResponse bookmarkForKnownUser = (BookmarkResponse) responseToJson(responseForKnownUser.getContent(), BookmarkResponse.class);
+        assertNotNull(bookmarkForKnownUser.getBookmark());
     }
 
     private String getBookmarkAsJSON() throws IOException {

@@ -2,7 +2,6 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.exception.BookmarkUpdateException;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
@@ -118,14 +117,9 @@ public class BookmarkController {
 
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemediId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
                 bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
-        try {
-            bookmarkService.addOrUpdate(bookmarkDto);
-        } catch (BookmarkUpdateException ex) {
-            bookmarkService.deleteBookmarkFor(bookmarkDto.getExternalId());
-        } finally {
-            allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId, OK, POST, new BookmarkReport(bookmarkDto)));
-            return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
-        }
+        bookmarkService.addOrUpdate(bookmarkDto);
+        allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId, OK, POST, new BookmarkReport(bookmarkDto)));
+        return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 
     private Bookmark mapToBookmark(BookmarkDto bookmarkDto) {
@@ -137,7 +131,7 @@ public class BookmarkController {
         if (bookmark == null) {
             CoursePublicationAttempt latestCoursePublicationAttempt = allCoursePublicationAttempts.getLastSuccessfulCoursePublicationAttempt();
             ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(latestCoursePublicationAttempt.getCourseId(), latestCoursePublicationAttempt.getVersion());
-            bookmark = bookmarkService.createInitialBookmark(externalId, contentIdentifierDto);
+            bookmark = bookmarkService.getInitialBookmark(externalId, contentIdentifierDto);
         }
         return bookmark;
     }
