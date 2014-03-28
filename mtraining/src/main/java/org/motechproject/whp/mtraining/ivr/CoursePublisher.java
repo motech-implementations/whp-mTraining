@@ -6,8 +6,8 @@ import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.CourseAdmin;
-import org.motechproject.whp.mtraining.domain.CoursePublicationStatus;
-import org.motechproject.whp.mtraining.repository.AllCoursePublicationStatus;
+import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
+import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +25,12 @@ public class CoursePublisher {
     private CourseService courseService;
     private IVRGateway ivrGateway;
     private CourseAdmin courseAdmin;
-    private AllCoursePublicationStatus allCoursePublicationStatus;
+    private AllCoursePublicationAttempts allCoursePublicationStatus;
 
     private Integer numberOfAttempts = 1;
 
     @Autowired
-    public CoursePublisher(CourseService courseService, IVRGateway ivrGateway, CourseAdmin courseAdmin, AllCoursePublicationStatus allCoursePublicationStatus) {
+    public CoursePublisher(CourseService courseService, IVRGateway ivrGateway, CourseAdmin courseAdmin, AllCoursePublicationAttempts allCoursePublicationStatus) {
         this.courseService = courseService;
         this.ivrGateway = ivrGateway;
         this.courseAdmin = courseAdmin;
@@ -49,7 +49,7 @@ public class CoursePublisher {
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, currentDateTime(), course.getName(), courseId, version));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
-        allCoursePublicationStatus.add(new CoursePublicationStatus(courseId, version, ivrResponse.isSuccess()));
+        allCoursePublicationStatus.add(new CoursePublicationAttempt(courseId, version, ivrResponse.isSuccess()));
 
         try {
             notifyCourseAdmin(course.getName(), version, ivrResponse);

@@ -7,8 +7,8 @@ import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.CourseAdmin;
-import org.motechproject.whp.mtraining.domain.CoursePublicationStatus;
-import org.motechproject.whp.mtraining.repository.AllCoursePublicationStatus;
+import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
+import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,14 +28,14 @@ public class CoursePublisherTest {
 
     private CourseService courseService;
     private IVRGateway ivrGateway;
-    private AllCoursePublicationStatus allCoursePublicationStatus;
+    private AllCoursePublicationAttempts allCoursePublicationStatus;
     private CourseAdmin courseAdmin;
 
     @Before
     public void before() {
         courseService = mock(CourseService.class);
         ivrGateway = mock(IVRGateway.class);
-        allCoursePublicationStatus = mock(AllCoursePublicationStatus.class);
+        allCoursePublicationStatus = mock(AllCoursePublicationAttempts.class);
         courseAdmin = mock(CourseAdmin.class);
     }
 
@@ -58,7 +58,7 @@ public class CoursePublisherTest {
 
         verify(ivrGateway).postCourse(course);
         verify(courseService).getCourse(new ContentIdentifierDto(courseId, courseVersion));
-        verify(allCoursePublicationStatus).add(new CoursePublicationStatus(courseId, courseVersion, true));
+        verify(allCoursePublicationStatus).add(new CoursePublicationAttempt(courseId, courseVersion, true));
     }
 
     @Test

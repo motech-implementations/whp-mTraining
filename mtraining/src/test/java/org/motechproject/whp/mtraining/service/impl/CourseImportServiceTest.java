@@ -62,6 +62,10 @@ public class CourseImportServiceTest {
         UUID module1Id = UUID.randomUUID();
         testCourseUpdater.setContentId(module1Id);
 
+        UserDto userDTo = mock(UserDto.class);
+        when(userDTo.getUserName()).thenReturn("Superman");
+        when(motechUserService.getCurrentUser()).thenReturn(userDTo);
+
         courseImportService.importCourse(requests);
 
         ArgumentCaptor<CourseDto> courseDtoCaptor = ArgumentCaptor.forClass(CourseDto.class);

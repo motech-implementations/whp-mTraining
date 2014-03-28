@@ -5,8 +5,10 @@ import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.service.MotechUserService;
-import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.csv.domain.Content;
+import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Service
 public class CourseImportService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CourseImportService.class);
 
     private CourseService courseService;
     private CourseUpdater courseUpdater;
@@ -69,6 +73,7 @@ public class CourseImportService {
 
     private String contentAuthor() {
         UserDto currentUser = motechUserService.getCurrentUser();
+        LOGGER.error("CURRENT USER IS " + currentUser.getUserName());
         return currentUser == null ? null : currentUser.getUserName();
     }
 }

@@ -12,24 +12,24 @@ public class CourseTest {
     @Test
     public void shouldTestCourseEquality() {
         UUID courseId = UUID.randomUUID();
-        CoursePublicationStatus coursePublicationStatus = new CoursePublicationStatus(courseId, 1, true);
-        CoursePublicationStatus sameCoursePublicationStatus = new CoursePublicationStatus(courseId, 1, true);
-        CoursePublicationStatus coursePublicationStatusWithDifferentVersion = new CoursePublicationStatus(courseId, 2, true);
-        CoursePublicationStatus coursePublicationStatusWithDifferentPublishedState = new CoursePublicationStatus(courseId, 2, false);
-        CoursePublicationStatus courseWithDifferentCoursePublicationStatusId = new CoursePublicationStatus(UUID.randomUUID(), 1, true);
+        CoursePublicationAttempt coursePublicationAttempt = new CoursePublicationAttempt(courseId, 1, true);
+        CoursePublicationAttempt sameCoursePublicationAttempt = new CoursePublicationAttempt(courseId, 1, true);
+        CoursePublicationAttempt coursePublicationAttemptWithDifferentVersion = new CoursePublicationAttempt(courseId, 2, true);
+        CoursePublicationAttempt publishedCourseWithDifferentStatePublicationAttempt = new CoursePublicationAttempt(courseId, 2, false);
+        CoursePublicationAttempt courseWithDifferentCoursePublicationAttemptId = new CoursePublicationAttempt(UUID.randomUUID(), 1, true);
 
-        assertTrue(coursePublicationStatus.equals(sameCoursePublicationStatus));
-        assertFalse(coursePublicationStatus.equals(null));
-        assertFalse(coursePublicationStatus.equals(courseWithDifferentCoursePublicationStatusId));
-        assertFalse(coursePublicationStatus.equals(coursePublicationStatusWithDifferentVersion));
-        assertFalse(coursePublicationStatus.equals(coursePublicationStatusWithDifferentPublishedState));
+        assertTrue(coursePublicationAttempt.equals(sameCoursePublicationAttempt));
+        assertFalse(coursePublicationAttempt.equals(null));
+        assertFalse(coursePublicationAttempt.equals(courseWithDifferentCoursePublicationAttemptId));
+        assertFalse(coursePublicationAttempt.equals(coursePublicationAttemptWithDifferentVersion));
+        assertFalse(coursePublicationAttempt.equals(publishedCourseWithDifferentStatePublicationAttempt));
     }
 
     @Test
     public void shouldTestThatEqualCoursesHaveSameHashCodes() {
         UUID courseId = UUID.randomUUID();
-        CoursePublicationStatus coursePublicationStatus = new CoursePublicationStatus(courseId, 1, true);
-        CoursePublicationStatus sameCoursePublicationStatus = new CoursePublicationStatus(courseId, 1, true);
-        assertThat(coursePublicationStatus.hashCode(), Is.is(sameCoursePublicationStatus.hashCode()));
+        CoursePublicationAttempt coursePublicationAttempt = new CoursePublicationAttempt(courseId, 1, true);
+        CoursePublicationAttempt sameCoursePublicationAttempt = new CoursePublicationAttempt(courseId, 1, true);
+        assertThat(coursePublicationAttempt.hashCode(), Is.is(sameCoursePublicationAttempt.hashCode()));
     }
 }

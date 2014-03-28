@@ -12,8 +12,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.UUID;
 
-@PersistenceCapable(table = "course_publication_status", identityType = IdentityType.APPLICATION)
-public class CoursePublicationStatus {
+@PersistenceCapable(table = "course_publication_attempt", identityType = IdentityType.APPLICATION)
+public class CoursePublicationAttempt {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
     @PrimaryKey
@@ -31,7 +31,7 @@ public class CoursePublicationStatus {
     private DateTime publishAttemptedOn;
 
 
-    public CoursePublicationStatus(UUID courseId, Integer version, boolean publishedToIvr) {
+    public CoursePublicationAttempt(UUID courseId, Integer version, boolean publishedToIvr) {
         this.courseId = courseId;
         this.version = version;
         this.publishedToIvr = publishedToIvr;
@@ -43,11 +43,11 @@ public class CoursePublicationStatus {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        CoursePublicationStatus coursePublicationStatus = (CoursePublicationStatus) o;
+        CoursePublicationAttempt coursePublicationAttempt = (CoursePublicationAttempt) o;
 
-        if (publishedToIvr != coursePublicationStatus.publishedToIvr) return false;
-        if (courseId != null ? !courseId.equals(coursePublicationStatus.courseId) : coursePublicationStatus.courseId != null) return false;
-        if (version != null ? !version.equals(coursePublicationStatus.version) : coursePublicationStatus.version != null) return false;
+        if (publishedToIvr != coursePublicationAttempt.publishedToIvr) return false;
+        if (courseId != null ? !courseId.equals(coursePublicationAttempt.courseId) : coursePublicationAttempt.courseId != null) return false;
+        if (version != null ? !version.equals(coursePublicationAttempt.version) : coursePublicationAttempt.version != null) return false;
         return true;
     }
 
@@ -66,5 +66,9 @@ public class CoursePublicationStatus {
 
     public Integer getVersion() {
         return version;
+    }
+
+    public boolean isPublishedToIvr() {
+        return publishedToIvr;
     }
 }
