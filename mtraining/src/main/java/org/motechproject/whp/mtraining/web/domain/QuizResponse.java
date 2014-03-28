@@ -1,30 +1,28 @@
 package org.motechproject.whp.mtraining.web.domain;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.whp.mtraining.domain.Location;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 
-public class BookmarkResponse implements MotechResponse {
+import java.util.List;
+
+public class QuizResponse implements MotechResponse {
 
     private Long callerId;
     private String sessionId;
     private String uniqueId;
-    private Location location;
+    private List<ContentIdentifierDto> questions;
     private String responseMessage;
     private int responseCode;
-    @JsonProperty
-    private Bookmark bookmark;
 
     //For JSON parsing
-    public BookmarkResponse() {
+    public QuizResponse() {
 
     }
 
-    public BookmarkResponse(Long callerId, String sessionId, String uniqueId, Location location, Bookmark bookmark) {
+    public QuizResponse(Long callerId, String sessionId, String uniqueId, List<ContentIdentifierDto> questions) {
         this.callerId = callerId;
         this.sessionId = sessionId;
         this.uniqueId = uniqueId;
-        this.location = location;
-        this.bookmark = bookmark;
+        this.questions = questions;
         this.responseCode = ResponseStatus.OK.getCode();
         this.responseMessage = ResponseStatus.OK.getMessage();
     }
@@ -41,8 +39,8 @@ public class BookmarkResponse implements MotechResponse {
         return uniqueId;
     }
 
-    public Location getLocation() {
-        return location;
+    public List<ContentIdentifierDto> getQuestions() {
+        return questions;
     }
 
     @Override
@@ -53,9 +51,5 @@ public class BookmarkResponse implements MotechResponse {
     @Override
     public String getResponseMessage() {
         return responseMessage;
-    }
-
-    public Bookmark getBookmark() {
-        return bookmark;
     }
 }

@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -47,6 +48,7 @@ public abstract class CourseContent {
         return name;
     }
 
+    @JsonIgnore
     public boolean isActive() {
         return isActive;
     }

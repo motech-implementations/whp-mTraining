@@ -28,4 +28,8 @@ public class Answer {
     public String getCorrectOption() {
         return correctOption;
     }
+
+    public String getExternalId() {
+        return externalId;
+    }
 }
