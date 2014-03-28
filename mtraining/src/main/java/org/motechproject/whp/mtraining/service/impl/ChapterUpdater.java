@@ -34,7 +34,8 @@ public class ChapterUpdater extends Updater<ChapterDto> {
     @Override
     protected void updateChildContents(ChapterDto chapterDto) {
         messageUpdater.update(chapterDto.getMessages());
-        quizUpdater.update(newArrayList(chapterDto.getQuiz()));
+        if (chapterDto.getQuiz() != null)
+            quizUpdater.update(newArrayList(chapterDto.getQuiz()));
     }
 
     @Override
