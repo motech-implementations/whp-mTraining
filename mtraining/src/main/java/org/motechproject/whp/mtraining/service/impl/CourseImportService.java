@@ -6,7 +6,7 @@ import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
-import org.motechproject.whp.mtraining.domain.Content;
+import org.motechproject.whp.mtraining.csv.domain.Content;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

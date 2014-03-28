@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class ProvidersIT {
     public void shouldAddAndRetrieveAProvider() {
         long callerId = 7657667L;
         assertThat(providers.getByCallerId(callerId), IsNull.nullValue());
-        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
 
         providers.add(provider);
 

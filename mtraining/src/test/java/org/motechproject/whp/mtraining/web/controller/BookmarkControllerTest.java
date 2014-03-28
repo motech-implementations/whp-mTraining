@@ -16,6 +16,7 @@ import org.motechproject.mtraining.exception.BookmarkUpdateException;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.BookmarkBuilder;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
 import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
@@ -131,7 +132,7 @@ public class BookmarkControllerTest {
     @Test
     public void shouldMarkErrorIfProviderIsNotValid() {
         long callerId = 76465464L;
-        Provider provider = new Provider("remediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, "district", "block", "state");
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, new Location("block", "district", "state"));
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
@@ -151,7 +152,7 @@ public class BookmarkControllerTest {
         ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         ContentIdentifierDto messageIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier));
-        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
         bookmarkController.postBookmark(bookmarkPostRequest);
@@ -184,7 +185,7 @@ public class BookmarkControllerTest {
         ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         ContentIdentifierDto messageIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier));
-        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
         ArgumentCaptor<BookmarkDto> bookmarkDtoArgumentCaptor = ArgumentCaptor.forClass(BookmarkDto.class);
         ArgumentCaptor<BookmarkRequest> bookmarkRequestArgumentCaptor = ArgumentCaptor.forClass(BookmarkRequest.class);
 
@@ -249,7 +250,7 @@ public class BookmarkControllerTest {
     @Test
     public void shouldSendErrorResponseWhenBookmarkDateModifiedAbsent() {
         long callerId = 3232938l;
-        Provider provider = new Provider(null, callerId, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
+        Provider provider = new Provider(null, callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
         when(providers.getByCallerId(callerId)).thenReturn(provider);
         Bookmark bookmark = new BookmarkBuilder().withDateModified(null).build();
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, "unq11", "s001", bookmark);

@@ -1,17 +1,12 @@
 package org.motechproject.whp.mtraining.domain;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.EmbeddedOnly;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 
-@PersistenceCapable(table = "location", identityType = IdentityType.APPLICATION)
+@PersistenceCapable
+@EmbeddedOnly
 public class Location {
-
-    @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
-    @PrimaryKey
-    private Long id;
 
     @Persistent
     private String block;

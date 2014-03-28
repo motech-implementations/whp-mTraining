@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.domain;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 
 import javax.jdo.annotations.Column;
+import javax.jdo.annotations.Embedded;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
@@ -23,12 +24,12 @@ public class Provider {
     @NotNull
     private Long callerId;
 
-    @Column(name = "district", allowsNull = "false")
-    private String district;
-    @Column(name = "block", allowsNull = "false")
-    private String block;
-    @Column(name = "state", allowsNull = "false")
-    private String state;
+    @Embedded(members = {
+            @Persistent(name = "district", columns = @Column(name = "district", allowsNull = "false")),
+            @Persistent(name = "block", columns = @Column(name = "block", allowsNull = "false")),
+            @Persistent(name = "state", columns = @Column(name = "state", allowsNull = "false")),
+    })
+    private Location location;
 
     @Column(name = "provider_status", allowsNull = "false")
     private String providerStatus;
@@ -38,13 +39,11 @@ public class Provider {
     @NotNull
     private String remediId;
 
-    public Provider(String remediId, Long callerId, ProviderStatus providerStatus, String district, String block, String state) {
-        this.callerId = callerId;
-        this.district = district;
-        this.block = block;
-        this.state = state;
+    public Provider(String remediId, Long callerId, ProviderStatus providerStatus, Location location) {
         this.remediId = remediId;
+        this.callerId = callerId;
         this.providerStatus = providerStatus.getStatus();
+        this.location = location;
     }
 
     public Provider() {
@@ -66,15 +65,7 @@ public class Provider {
         return remediId;
     }
 
-    public String getDistrict() {
-        return district;
-    }
-
-    public String getBlock() {
-        return block;
-    }
-
-    public String getState() {
-        return state;
+    public Location getLocation() {
+        return location;
     }
 }

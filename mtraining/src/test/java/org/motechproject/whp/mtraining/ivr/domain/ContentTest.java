@@ -1,6 +1,7 @@
-package org.motechproject.whp.mtraining.domain;
+package org.motechproject.whp.mtraining.ivr.domain;
 
 import org.junit.Test;
+import org.motechproject.whp.mtraining.csv.domain.Content;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertFalse;

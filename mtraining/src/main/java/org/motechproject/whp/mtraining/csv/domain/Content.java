@@ -1,4 +1,6 @@
-package org.motechproject.whp.mtraining.domain;
+package org.motechproject.whp.mtraining.csv.domain;
+
+import org.motechproject.whp.mtraining.domain.ContentType;
 
 import java.util.ArrayList;
 import java.util.List;

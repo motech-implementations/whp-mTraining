@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.whp.mtraining.csv.request.ProviderCsvRequest;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.Providers;
 
@@ -15,6 +16,7 @@ import java.util.Arrays;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
@@ -47,9 +49,13 @@ public class ProviderImportServiceTest {
         assertEquals(provider.getRemediId(), remediId);
         assertEquals(provider.getCallerId(), Long.valueOf(primaryContactNumber));
         assertEquals(provider.getProviderStatus(), WORKING_PROVIDER.getStatus());
-        assertEquals(provider.getState(), state);
-        assertEquals(provider.getBlock(), block);
-        assertEquals(provider.getDistrict(), district);
+
+        Location providerLocation = provider.getLocation();
+
+        assertNotNull(providerLocation);
+        assertEquals(providerLocation.getState(), state);
+        assertEquals(providerLocation.getBlock(), block);
+        assertEquals(providerLocation.getDistrict(), district);
     }
 
     @Test

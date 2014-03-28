@@ -6,7 +6,6 @@ import org.motechproject.mtraining.exception.BookmarkUpdateException;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.domain.CoursePublicationStatus;
-import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkReport;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
@@ -85,7 +84,7 @@ public class BookmarkController {
         BookmarkDto bookmarkDto = getBookmark(provider.getRemediId());
         allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET, new BookmarkReport(bookmarkDto)));
         return new ResponseEntity<>(new BookmarkResponse(callerId, currentSessionId, uniqueId,
-                new Location(provider.getBlock(), provider.getDistrict(), provider.getState()), mapToBookmark(bookmarkDto)), HttpStatus.OK);
+                provider.getLocation(), mapToBookmark(bookmarkDto)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")

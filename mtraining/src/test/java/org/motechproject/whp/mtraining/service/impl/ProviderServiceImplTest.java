@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.hamcrest.core.Is;
 import org.junit.Test;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.service.ProviderService;
@@ -18,7 +19,7 @@ public class ProviderServiceImplTest {
     public void shouldAddProvider() {
         Providers providers = mock(Providers.class);
         ProviderService providerService = new ProviderServiceImpl(providers);
-        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, "district", "block", "state");
+        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
         Provider persistedProvider = mock(Provider.class);
         when(providers.add(provider)).thenReturn(persistedProvider);
         when(persistedProvider.getId()).thenReturn(100l);

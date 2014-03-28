@@ -19,6 +19,7 @@ import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
 import org.motechproject.whp.mtraining.CourseDTOBuilder;
 import org.motechproject.whp.mtraining.IVRServer;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
@@ -148,7 +149,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {
         //this provider copy gets detached once saved,hence need to retrieve
-        Provider provider = new Provider(remediId, callerId, providerStatus, "district", "block", "state");
+        Provider provider = new Provider(remediId, callerId, providerStatus, new Location("block", "district", "state"));
         providersAdded.add(providerService.add(provider));
         return providerService.byCallerId(callerId);
     }
