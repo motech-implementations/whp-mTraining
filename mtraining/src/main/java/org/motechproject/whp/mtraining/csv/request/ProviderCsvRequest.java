@@ -25,16 +25,12 @@ public class ProviderCsvRequest {
         return remedi_id;
     }
 
-    public void setRemedi_id(String remedi_id) {
-        this.remedi_id = remedi_id;
-    }
-
     public void setPrimary_contact(String primary_contact) {
         this.primary_contact = primary_contact;
     }
 
-    public String getPrimary_contact_number() {
-        return primary_contact;
+    public void setRemedi_id(String remedi_id) {
+        this.remedi_id = remedi_id;
     }
 
     public String getProviderstatus() {

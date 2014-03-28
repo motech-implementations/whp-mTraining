@@ -29,7 +29,7 @@ public class ProviderStructureValidatorTest {
         List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest));
 
         assertEquals(1, errors.size());
-        assertEquals("Remedi Id is not present for caller : 1234567890", errors.get(0).getMessage());
+        assertEquals("Remedi Id is not present for caller: 1234567890", errors.get(0).getMessage());
     }
 
     @Test
@@ -40,17 +40,17 @@ public class ProviderStructureValidatorTest {
         List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest1, providerCsvRequest2));
 
         assertEquals(1, errors.size());
-        assertEquals("Remedi Id : RemediX has multiple occurrences. Remedi id should be unique.", errors.get(0).getMessage());
+        assertEquals("Remedi Id: RemediX has multiple occurrences. Remedi id should be unique.", errors.get(0).getMessage());
     }
 
     @Test
-    public void shouldMandateAPrimaryContactNumberInCsvForEachRequest() {
+    public void shouldCheckIfPrimaryContactNumberExistsInCsvForEachRequest() {
         ProviderCsvRequest providerCsvRequest = new ProviderCsvRequest("RemediX", "", "working provider", "state", "block", "district");
 
         List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest));
 
         assertEquals(1, errors.size());
-        assertEquals("Primary Contact Number is invalid for Remedi Id: RemediX. It should be a 10 digit phone number.", errors.get(0).getMessage());
+        assertEquals("Primary Contact Number is missing.", errors.get(0).getMessage());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class ProviderStructureValidatorTest {
         List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest1, providerCsvRequest2));
 
         assertEquals(1, errors.size());
-        assertEquals("Primary Contact Number 1234567890 has multiple occurrences.", errors.get(0).getMessage());
+        assertEquals("Primary Contact Number has multiple occurrences.", errors.get(0).getMessage());
     }
 
     @Test

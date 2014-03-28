@@ -7,6 +7,8 @@ mtrainingModule.controller('fileUploadController', ['$scope', 'fileUpload', func
 
     $scope.uploadCourse = function () {
         $scope.uploadingCourse = true;
+        $scope.uploadedCourse = true;
+        $scope.uploadedProvider = false;
         var uploadUrl = "../mtraining/web-api/course-structure/import";
         fileUpload.uploadFileToUrl($scope.multipartFile, uploadUrl,
             function success(data) {
@@ -19,6 +21,8 @@ mtrainingModule.controller('fileUploadController', ['$scope', 'fileUpload', func
 
     $scope.uploadProvider = function () {
         $scope.uploadingProvider = true;
+        $scope.uploadedCourse = false;
+        $scope.uploadedProvider = true;
         var uploadUrl = "../mtraining/web-api/provider/import";
         fileUpload.uploadFileToUrl($scope.multipartFile, uploadUrl,
             function success(data) {

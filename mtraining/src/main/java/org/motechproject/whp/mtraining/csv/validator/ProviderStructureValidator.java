@@ -26,27 +26,32 @@ public class ProviderStructureValidator {
             validatePrimaryContactNumber(errors, providerCsvRequest, contactNumbers);
 
             if (from(providerCsvRequest.getProviderstatus()) == null)
-                errors.add(new CsvImportError("Provider Status", "-", "Provider Status for Remedi Id: " + remediId + " is blank or invalid."));
+                errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "Provider Status for Remedi Id: " + remediId + " is blank or invalid."));
 
             if (isBlank(providerCsvRequest.getBlock()))
-                errors.add(new CsvImportError("Block", "-", "Block is blank for Remedi Id: " + remediId + "."));
+                errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "Block is blank for Remedi Id: " + remediId + "."));
 
             if (isBlank(providerCsvRequest.getDistrict()))
-                errors.add(new CsvImportError("District", "-", "District is blank for Remedi Id: " + remediId + "."));
+                errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "District is blank for Remedi Id: " + remediId + "."));
 
             if (isBlank(providerCsvRequest.getState()))
-                errors.add(new CsvImportError("State", "-", "State is blank for Remedi Id: " + remediId + "."));
+                errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "State is blank for Remedi Id: " + remediId + "."));
 
         }
         return errors;
     }
 
     private void validatePrimaryContactNumber(ArrayList<CsvImportError> errors, ProviderCsvRequest providerCsvRequest, Set<String> contactNumbers) {
-        String primaryContactNumber = providerCsvRequest.getPrimary_contact_number();
-        if (contactNumbers.contains(primaryContactNumber))
-            errors.add(new CsvImportError("Primary Contact Number", "-", "Primary Contact Number " + primaryContactNumber + " has multiple occurrences."));
-        if (isBlank(primaryContactNumber) || !isNumeric(primaryContactNumber) || primaryContactNumber.length() != 10) {
-            errors.add(new CsvImportError("Primary Contact Number", "-", "Primary Contact Number is invalid for Remedi Id: " + providerCsvRequest.getRemedi_id() + ". It should be a 10 digit phone number."));
+        String primaryContactNumber = providerCsvRequest.getPrimary_contact();
+        if (contactNumbers.contains(primaryContactNumber)) {
+            errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), primaryContactNumber, "Primary Contact Number has multiple occurrences."));
+        }
+        if (isBlank(primaryContactNumber)) {
+            errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), primaryContactNumber, "Primary Contact Number is missing."));
+            return;
+        }
+        if (!isNumeric(primaryContactNumber) || primaryContactNumber.length() != 10) {
+            errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), primaryContactNumber, "Primary Contact Number is invalid for Remedi Id: " + providerCsvRequest.getRemedi_id() + ". It should be a 10 digit phone number."));
             return;
         }
         contactNumbers.add(primaryContactNumber);
@@ -55,9 +60,9 @@ public class ProviderStructureValidator {
     private void validateRemediId(ArrayList<CsvImportError> errors, ProviderCsvRequest providerCsvRequest, Set<String> remediIds) {
         String remediId = providerCsvRequest.getRemedi_id();
         if (remediIds.contains(remediId))
-            errors.add(new CsvImportError("RemediId", "-", "Remedi Id : " + remediId + " has multiple occurrences. Remedi id should be unique."));
+            errors.add(new CsvImportError(remediId, providerCsvRequest.getPrimary_contact(), "Remedi Id: " + remediId + " has multiple occurrences. Remedi id should be unique."));
         if (isBlank(remediId)) {
-            errors.add(new CsvImportError("RemediId", "-", "Remedi Id is not present for caller : " + providerCsvRequest.getPrimary_contact_number()));
+            errors.add(new CsvImportError(remediId, providerCsvRequest.getPrimary_contact(), "Remedi Id is not present for caller: " + providerCsvRequest.getPrimary_contact()));
             return;
         }
         remediIds.add(remediId);

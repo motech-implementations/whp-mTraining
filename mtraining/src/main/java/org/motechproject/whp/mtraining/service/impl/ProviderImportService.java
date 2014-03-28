@@ -32,7 +32,7 @@ public class ProviderImportService {
 
     private Provider createProvider(ProviderCsvRequest providerCsvRequest) {
         Location location = new Location(providerCsvRequest.getBlock(), providerCsvRequest.getDistrict(), providerCsvRequest.getState());
-        return new Provider(providerCsvRequest.getRemedi_id(), Long.valueOf(providerCsvRequest.getPrimary_contact_number()),
+        return new Provider(providerCsvRequest.getRemedi_id(), Long.valueOf(providerCsvRequest.getPrimary_contact()),
                 from(providerCsvRequest.getProviderstatus()),
                 location);
     }

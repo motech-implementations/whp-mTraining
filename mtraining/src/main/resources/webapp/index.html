@@ -41,10 +41,15 @@
             <div ng-show="response.status=='FAILURE'">
                 <ul class="alert alert-danger">{{response.message}}</ul>
                 <table class="table table-hover table-bordered">
-                    <tr>
-                        <th class="col-lg-2">nodeName</th>
-                        <th class="col-lg-2">nodeType</th>
-                        <th class="col-lg-6">reason</th>
+                    <tr ng-show="uploadedCourse">
+                        <th class="col-lg-2">Node Name</th>
+                        <th class="col-lg-2">Node Type</th>
+                        <th class="col-lg-6">Reason</th>
+                    </tr>
+                    <tr ng-show="uploadedProvider">
+                        <th class="col-lg-2">RemediID</th>
+                        <th class="col-lg-2">Contact Number</th>
+                        <th class="col-lg-6">Reason</th>
                     </tr>
                     <tr ng-repeat="error in response.errors">
                         <td class="col-lg-2">{{error.nodeName}}</td>
