@@ -7,8 +7,8 @@ import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.CourseAdmin;
-import org.motechproject.whp.mtraining.domain.Course;
-import org.motechproject.whp.mtraining.repository.Courses;
+import org.motechproject.whp.mtraining.domain.CoursePublicationStatus;
+import org.motechproject.whp.mtraining.repository.AllCoursePublicationStatus;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,14 +28,14 @@ public class CoursePublisherTest {
 
     private CourseService courseService;
     private IVRGateway ivrGateway;
-    private Courses courses;
+    private AllCoursePublicationStatus allCoursePublicationStatus;
     private CourseAdmin courseAdmin;
 
     @Before
     public void before() {
         courseService = mock(CourseService.class);
         ivrGateway = mock(IVRGateway.class);
-        courses = mock(Courses.class);
+        allCoursePublicationStatus = mock(AllCoursePublicationStatus.class);
         courseAdmin = mock(CourseAdmin.class);
     }
 
@@ -53,12 +53,12 @@ public class CoursePublisherTest {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.OK);
         when(ivrGateway.postCourse(any(CourseDto.class))).thenReturn(ivrResponse);
 
-        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
+        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, allCoursePublicationStatus);
         coursePublisher.publish(courseId, 2);
 
         verify(ivrGateway).postCourse(course);
         verify(courseService).getCourse(new ContentIdentifierDto(courseId, courseVersion));
-        verify(courses).add(new Course(courseId, courseVersion, true));
+        verify(allCoursePublicationStatus).add(new CoursePublicationStatus(courseId, courseVersion, true));
     }
 
     @Test
@@ -70,7 +70,7 @@ public class CoursePublisherTest {
 
         when(ivrGateway.postCourse(courseDTO)).thenReturn(new IVRResponse(800, "OK"));
 
-        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
+        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, allCoursePublicationStatus);
         coursePublisher.publish(cs001, 2);
 
         verify(ivrGateway).postCourse(courseDTO);
@@ -87,7 +87,7 @@ public class CoursePublisherTest {
 
         given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
 
-        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
+        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, allCoursePublicationStatus);
         coursePublisher.publish(cs001, 2);
 
         verify(ivrGateway).postCourse(courseDTO);
@@ -105,7 +105,7 @@ public class CoursePublisherTest {
 
         given(ivrGateway.postCourse(courseDTO)).willReturn(ivrResponse);
 
-        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, courses);
+        CoursePublisher coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, allCoursePublicationStatus);
         coursePublisher.publish(cs001, 2);
 
         verify(ivrGateway, times(CoursePublisher.MAX_ATTEMPTS)).postCourse(courseDTO);

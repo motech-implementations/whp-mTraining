@@ -5,14 +5,14 @@ import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.exception.BookmarkUpdateException;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
-import org.motechproject.whp.mtraining.domain.Course;
+import org.motechproject.whp.mtraining.domain.CoursePublicationStatus;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkReport;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType;
 import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
-import org.motechproject.whp.mtraining.repository.Courses;
+import org.motechproject.whp.mtraining.repository.AllCoursePublicationStatus;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
@@ -54,16 +54,16 @@ public class BookmarkController {
     private Sessions sessions;
     private AllBookmarkRequests allBookmarkRequests;
     private BookmarkService bookmarkService;
-    private Courses courses;
+    private AllCoursePublicationStatus allCoursePublicationStatus;
 
     @Autowired
     public BookmarkController(Providers providers, Sessions sessions, AllBookmarkRequests allBookmarkRequests,
-                              BookmarkService bookmarkService, Courses courses) {
+                              BookmarkService bookmarkService, AllCoursePublicationStatus allCoursePublicationStatus) {
         this.providers = providers;
         this.sessions = sessions;
         this.allBookmarkRequests = allBookmarkRequests;
         this.bookmarkService = bookmarkService;
-        this.courses = courses;
+        this.allCoursePublicationStatus = allCoursePublicationStatus;
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.GET)
@@ -119,7 +119,7 @@ public class BookmarkController {
 
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemediId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
                 bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
-        try{
+        try {
             bookmarkService.addOrUpdate(bookmarkDto);
         } catch (BookmarkUpdateException ex) {
             bookmarkService.deleteBookmarkFor(bookmarkDto.getExternalId());
@@ -133,12 +133,13 @@ public class BookmarkController {
         return new Bookmark(bookmarkDto.getCourse(), bookmarkDto.getModule(), bookmarkDto.getChapter(), bookmarkDto.getMessage(), bookmarkDto.getDateModified());
     }
 
+    //TODO:Don't we need to check if is published ?
     private BookmarkDto getBookmark(String externalId) {
         BookmarkDto bookmark = bookmarkService.getBookmark(externalId);
         if (bookmark == null) {
-            Course latestCourse = courses.getLatestCourse();
-            ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(latestCourse.getCourseId(), latestCourse.getVersion());
-             bookmark = bookmarkService.createInitialBookmark(externalId, contentIdentifierDto);
+            CoursePublicationStatus latestCoursePublicationStatus = allCoursePublicationStatus.getLatestCoursePublicationStatus();
+            ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(latestCoursePublicationStatus.getCourseId(), latestCoursePublicationStatus.getVersion());
+            bookmark = bookmarkService.createInitialBookmark(externalId, contentIdentifierDto);
         }
         return bookmark;
     }

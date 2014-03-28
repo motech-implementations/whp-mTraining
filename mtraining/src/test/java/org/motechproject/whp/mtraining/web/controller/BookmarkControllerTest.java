@@ -19,7 +19,7 @@ import org.motechproject.whp.mtraining.BookmarkBuilder;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequest;
 import org.motechproject.whp.mtraining.repository.AllBookmarkRequests;
-import org.motechproject.whp.mtraining.repository.Courses;
+import org.motechproject.whp.mtraining.repository.AllCoursePublicationStatus;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
@@ -58,7 +58,7 @@ public class BookmarkControllerTest {
     @Mock
     private BookmarkService bookmarkService;
     @Mock
-    private Courses courses;
+    private AllCoursePublicationStatus allCoursePublicationStatus;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -68,7 +68,7 @@ public class BookmarkControllerTest {
         providers = mock(Providers.class);
         sessions = mock(Sessions.class);
         allBookmarkRequests = mock(AllBookmarkRequests.class);
-        bookmarkController = new BookmarkController(providers, sessions, allBookmarkRequests, bookmarkService, courses);
+        bookmarkController = new BookmarkController(providers, sessions, allBookmarkRequests, bookmarkService, allCoursePublicationStatus);
     }
 
     @Test

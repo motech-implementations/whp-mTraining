@@ -13,7 +13,7 @@ import javax.persistence.TemporalType;
 import java.util.UUID;
 
 @PersistenceCapable(table = "course_publication_status", identityType = IdentityType.APPLICATION)
-public class Course {
+public class CoursePublicationStatus {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
     @PrimaryKey
@@ -31,7 +31,7 @@ public class Course {
     private DateTime publishAttemptedOn;
 
 
-    public Course(UUID courseId, Integer version, boolean publishedToIvr) {
+    public CoursePublicationStatus(UUID courseId, Integer version, boolean publishedToIvr) {
         this.courseId = courseId;
         this.version = version;
         this.publishedToIvr = publishedToIvr;
@@ -43,11 +43,11 @@ public class Course {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Course course = (Course) o;
+        CoursePublicationStatus coursePublicationStatus = (CoursePublicationStatus) o;
 
-        if (publishedToIvr != course.publishedToIvr) return false;
-        if (courseId != null ? !courseId.equals(course.courseId) : course.courseId != null) return false;
-        if (version != null ? !version.equals(course.version) : course.version != null) return false;
+        if (publishedToIvr != coursePublicationStatus.publishedToIvr) return false;
+        if (courseId != null ? !courseId.equals(coursePublicationStatus.courseId) : coursePublicationStatus.courseId != null) return false;
+        if (version != null ? !version.equals(coursePublicationStatus.version) : coursePublicationStatus.version != null) return false;
         return true;
     }
 
