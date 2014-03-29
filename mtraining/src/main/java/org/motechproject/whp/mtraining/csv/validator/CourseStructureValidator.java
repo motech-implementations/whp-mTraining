@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
-import org.motechproject.whp.mtraining.csv.domain.NodeType;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,9 +82,9 @@ public class CourseStructureValidator {
             try {
                 Integer quizQuestions = isNotBlank(request.getNoOfQuizQuestions()) ? parseInt(request.getNoOfQuizQuestions()) : 0;
                 if (quizQuestions > 0) {
-                    Long passPercentage = isNotBlank(request.getPassPercentage()) ? parseLong(request.getPassPercentage()) : 0;
-                    if (passPercentage <= 0 || passPercentage > 100) {
-                        CsvImportError error = new CsvImportError(request.getNodeName(), request.getNodeType(), "Specify the pass percentage between 1 and 100 for the chapter's quiz and try importing again.");
+                    Long passPercentage = isNotBlank(request.getPassPercentage()) ? parseLong(request.getPassPercentage()) : -1;
+                    if (passPercentage < 0 || passPercentage > 100) {
+                        CsvImportError error = new CsvImportError(request.getNodeName(), request.getNodeType(), "Specify the pass percentage between 0 and 100 for the chapter's quiz and try importing again.");
                         errors.add(error);
                         logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
                         return;
@@ -135,7 +134,7 @@ public class CourseStructureValidator {
     private void verifyQuestions(Integer quizQuestions, List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest, List<CsvImportError> errors) {
         Integer noOfQuestions = 0;
         for (CourseCsvRequest request : requests) {
-            if (chapterRequest.getNodeName().equalsIgnoreCase(request.getParentNode()))
+            if (QUESTION.equals(from(request.getNodeType())) && chapterRequest.getNodeName().equalsIgnoreCase(request.getParentNode()))
                 noOfQuestions++;
         }
         if (noOfQuestions < quizQuestions) {
