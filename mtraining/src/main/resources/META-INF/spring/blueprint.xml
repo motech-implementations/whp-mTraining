@@ -30,4 +30,6 @@
 
     <osgi:reference interface="org.motechproject.security.service.MotechUserService" id="motechUserService"/>
 
+    <osgi:reference interface="org.motechproject.config.service.ConfigurationService" id="configurationService"/>
+
 </beans>

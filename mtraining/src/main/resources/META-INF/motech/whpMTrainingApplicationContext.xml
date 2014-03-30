@@ -20,13 +20,14 @@
     <aop:aspectj-autoproxy/>
 
 
-    <bean id="settings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
+    <bean id="mtrainingSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="moduleName" value="whp-mtraining"/>
         <property name="configFiles">
             <list>
                 <value>classpath:mtraining.properties</value>
             </list>
         </property>
+        <property name="configurationService" ref="configurationService"/>
     </bean>
 
 

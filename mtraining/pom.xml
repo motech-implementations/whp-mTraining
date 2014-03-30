@@ -300,6 +300,7 @@
                         <Import-Package>
                             org.motechproject.server.config;version=${motech.version},
                             org.motechproject.server.config.service;version=${motech.version},
+                            org.motechproject.config.service;version=${motech.version},
                             org.motechproject.event.listener.annotations;version=${motech.version},
                             org.motechproject.osgi.web;version=${motech.version},
                             org.datanucleus,
