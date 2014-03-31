@@ -106,7 +106,7 @@ public class BookmarkController {
         Bookmark bookmark = bookmarkPostRequest.getBookmark();
 
         if (!bookmark.hasValidModifiedDate()) {
-            return responseAfterLogging(callerId, uniqueId, sessionId, BookmarkRequestType.POST, ResponseStatus.INVALID_BOOKMARK_MODIFIED_DATE);
+            return responseAfterLogging(callerId, uniqueId, sessionId, BookmarkRequestType.POST, ResponseStatus.INVALID_DATE_TIME);
         }
 
         Provider provider = providers.getByCallerId(callerId);

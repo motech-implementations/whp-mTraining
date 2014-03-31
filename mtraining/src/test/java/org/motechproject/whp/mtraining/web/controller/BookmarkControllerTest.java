@@ -41,7 +41,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK_MODIFIED_DATE;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_UNIQUE_ID;
@@ -234,7 +234,7 @@ public class BookmarkControllerTest {
 
         ResponseEntity<MotechResponse> responseEntity = bookmarkController.postBookmark(bookmarkPostRequest);
 
-        assertEquals(INVALID_BOOKMARK_MODIFIED_DATE.getCode(), responseEntity.getBody().getResponseCode());
+        assertEquals(INVALID_DATE_TIME.getCode(), responseEntity.getBody().getResponseCode());
     }
 
     @Test

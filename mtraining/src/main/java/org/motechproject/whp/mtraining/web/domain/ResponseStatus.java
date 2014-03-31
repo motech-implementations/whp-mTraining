@@ -7,7 +7,10 @@ public enum ResponseStatus {
     MISSING_UNIQUE_ID(903, "Missing Unique Id"),
     NOT_WORKING_PROVIDER(904, "Not Working Provider"),
     MISSING_SESSION_ID(905, "Missing Session Id"),
-    INVALID_BOOKMARK_MODIFIED_DATE(906, "Missing or Invalid Bookmark Modified Date");
+    INVALID_DATE_TIME(906, "Missing or Invalid Bookmark Modified Date"),
+    MISSING_TIME(907, "Start time or end time must be present"),
+    INVALID_NODE_TYPE(908, "Invalid node type"),
+    MISSING_NODE(909, "Missing Node Id or Version");
 
     private final int code;
     private final String message;
@@ -23,5 +26,9 @@ public enum ResponseStatus {
 
     public String getMessage() {
         return message;
+    }
+
+    public boolean isValid() {
+        return OK.equals(this);
     }
 }

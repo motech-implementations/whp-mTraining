@@ -10,6 +10,12 @@ public class BasicResponse implements MotechResponse {
     public BasicResponse() {
     }
 
+    public BasicResponse(Long callerId, String sessionId, String uniqueId) {
+        this.callerId = callerId;
+        this.sessionId = sessionId;
+        this.uniqueId = uniqueId;
+    }
+
     public BasicResponse(Long callerId, String sessionId, String uniqueId, ResponseStatus responseStatus) {
         this.callerId = callerId;
         this.sessionId = sessionId;
@@ -43,5 +49,9 @@ public class BasicResponse implements MotechResponse {
         return uniqueId;
     }
 
-
+    public BasicResponse withResponse(ResponseStatus status) {
+        this.responseCode = status.getCode();
+        this.responseMessage = status.getMessage();
+        return this;
+    }
 }
