@@ -6,6 +6,7 @@ import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.CourseAdmin;
+import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
 import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.slf4j.Logger;
@@ -42,9 +43,17 @@ public class CoursePublisher {
             LOGGER.info(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s , version %s.", numberOfAttempts, currentDateTime(), courseId, version));
             return;
         }
+
+        CourseDto courseDTO = courseService.getCourse(new ContentIdentifierDto(courseId, version));
+        if (!courseDTO.isActive()) {
+            LOGGER.warn(String.format("[%s] Course with contentId %s and version %s inactive and hence not being published to IVR ", currentDateTime(), courseId, version));
+            return;
+        }
+
         LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s , version %s ", numberOfAttempts, currentDateTime(), courseId, version));
 
-        CourseDto course = courseService.getCourse(new ContentIdentifierDto(courseId, version));
+        Course course = new Course(courseDTO);
+        course.removeInactiveContent();
 
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, currentDateTime(), course.getName(), courseId, version));
 

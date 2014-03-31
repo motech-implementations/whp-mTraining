@@ -12,15 +12,15 @@ import java.util.UUID;
 public class Message extends CourseContent {
 
     @Persistent(column = "audio_file_name")
-    private String audioFileName;
+    private String externalId;
 
     @Persistent
     private String description;
 
 
-    public Message(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, String audioFileName, boolean isActive) {
+    public Message(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, String externalId, boolean isActive) {
         super(name, contentId, version, createdBy, createdOn, isActive);
-        this.audioFileName = audioFileName;
+        this.externalId = externalId;
         this.description = description;
     }
 
@@ -28,7 +28,11 @@ public class Message extends CourseContent {
         this(messageDto.getName(), messageDto.getContentId(), messageDto.getVersion(), messageDto.getDescription(), messageDto.getCreatedBy(), messageDto.getCreatedOn(), messageDto.getExternalId(), messageDto.isActive());
     }
 
-    public String getAudioFileName() {
-        return audioFileName;
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

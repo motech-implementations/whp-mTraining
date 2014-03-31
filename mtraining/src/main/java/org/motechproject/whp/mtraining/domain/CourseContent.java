@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 
@@ -9,6 +10,7 @@ import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import java.util.Collection;
 import java.util.UUID;
 
 @PersistenceCapable
@@ -49,4 +51,22 @@ public abstract class CourseContent {
     public boolean isActive() {
         return isActive;
     }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public UUID getContentId() {
+        return contentId;
+    }
+
+
+    protected static <T> boolean isBlank(Collection<T> contents) {
+        return CollectionUtils.isEmpty(contents);
+    }
+
+    protected static <T> void filter(Collection<T> contents) {
+        CollectionUtils.filter(contents, new ActiveContentPredicate());
+    }
+
 }

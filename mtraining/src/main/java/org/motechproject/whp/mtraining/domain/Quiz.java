@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.dto.QuestionDto;
 import org.motechproject.mtraining.dto.QuizDto;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @PersistenceCapable(table = "quiz", identityType = IdentityType.APPLICATION)
-public class Quiz extends CourseContent {
+public class Quiz extends CourseContent implements CourseContentHolder {
 
 
     @Element(column = "quiz_id")
@@ -46,8 +47,15 @@ public class Quiz extends CourseContent {
         incrementNumberOfQuestions();
     }
 
+    public void removeInactiveContent() {
+        filter(questions);
+    }
+
     private static List<Question> mapToQuestions(List<QuestionDto> questionDtoList) {
         List<Question> questions = new ArrayList<>();
+        if (isBlank(questionDtoList)) {
+            return questions;
+        }
         for (QuestionDto questionDto : questionDtoList) {
             questions.add(new Question(questionDto));
         }
@@ -58,6 +66,7 @@ public class Quiz extends CourseContent {
         return passPercentage;
     }
 
+    @JsonProperty("noOfQuestionsToBePlayed")
     public Integer getNumberOfQuestions() {
         return numberOfQuestions;
     }

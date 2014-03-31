@@ -6,13 +6,13 @@ import org.apache.http.entity.StringEntity;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.server.config.SettingsFacade;
+import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.whp.mtraining.WebClient;
+import org.motechproject.whp.mtraining.domain.Course;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.UUID;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -46,7 +46,7 @@ public class IVRGatewayTest {
     public void shouldReturnNetworkErrorResponse() throws IOException {
         when(webClient.post(anyString(), anyString(), any(Properties.class))).thenThrow(new IOException("IO exception thrown in tests"));
 
-        CourseDto someCourse = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", "Created By", null);
+        Course someCourse = new CourseBuilder().build();
         IVRResponse ivrResponse = ivrGateway.postCourse(someCourse);
 
         assertThat(ivrResponse.isNetworkFailure(), Is.is(true));
@@ -67,7 +67,7 @@ public class IVRGatewayTest {
 
         when(ivrResponseHandler.parse(httpResponse)).thenReturn(new IVRResponse());
 
-        CourseDto someCourse = new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", "Created By", null);
+        Course someCourse = new CourseBuilder().build();
 
         ivrGateway.postCourse(someCourse);
 
@@ -86,7 +86,8 @@ public class IVRGatewayTest {
 
         when(webClient.post(anyString(), anyString(), any(Properties.class))).thenReturn(httpResponse);
 
-        IVRResponse response = ivrGateway.postCourse(new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", "Created By", null));
+        Course someCourse = new CourseBuilder().build();
+        IVRResponse response = ivrGateway.postCourse(someCourse);
 
         assertThat(response.getResponseCode(), Is.is(401));
         assertThat(response.getResponseMessage(), Is.is("Not Authenticated"));
@@ -111,7 +112,8 @@ public class IVRGatewayTest {
         when(webClient.post(anyString(), anyString(), eq(headers))).thenReturn(httpResponse);
 
 
-        ivrGateway.postCourse(new CourseDto(UUID.randomUUID(), 1, true, "CS001", "desc", "Created By", null));
+        Course someCourse = new CourseBuilder().build();
+        ivrGateway.postCourse(someCourse);
 
 
         verify(webClient).post(eq("http://ivr.url"), anyString(), eq(headers));

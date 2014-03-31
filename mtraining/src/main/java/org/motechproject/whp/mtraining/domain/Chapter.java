@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @PersistenceCapable(table = "chapter", identityType = IdentityType.APPLICATION)
-public class Chapter extends CourseContent {
+public class Chapter extends CourseContent implements CourseContentHolder {
 
     @Element(column = "chapter_id")
     @Order(column = "message_order")
@@ -47,6 +47,9 @@ public class Chapter extends CourseContent {
 
     private static List<Message> mapToMessages(List<MessageDto> messageDtoList) {
         ArrayList<Message> messages = new ArrayList<>();
+        if (isBlank(messageDtoList)) {
+            return messages;
+        }
         for (MessageDto messageDto : messageDtoList) {
             messages.add(new Message(messageDto));
         }
@@ -70,5 +73,18 @@ public class Chapter extends CourseContent {
 
     public Quiz getQuiz() {
         return quiz;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void removeInactiveContent() {
+        filter(messages);
+        if (quiz.isActive()) {
+            quiz.removeInactiveContent();
+            return;
+        }
+        quiz = null;
     }
 }

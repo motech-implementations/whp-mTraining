@@ -1,0 +1,63 @@
+{
+    "name": "CS001",
+    "contentId": "5756a38a-8f8e-45a7-84a4-3609fa1c1edd",
+    "version": 1,
+    "modules": [
+        {
+            "name": "MOD001",
+            "contentId": "0624006a-c6d8-49eb-a9aa-ce707e377a27",
+            "version": 1,
+            "chapters": [
+                {
+                    "name": "ch001",
+                    "contentId": "f6d7162b-5c4b-4907-b6d4-8091e3dca016",
+                    "version": 1,
+                    "messages": [
+                        {
+                            "name": "msg001",
+                            "contentId": "231a4154-1b42-44cd-b85e-0dde8ca833dc",
+                            "version": 1,
+                            "externalId": "aud01",
+                            "description": "message desc"
+                        },
+                        {
+                            "name": "msg002",
+                            "contentId": "e2b09ed1-df82-4712-996b-1c35740ac0ac",
+                            "version": 1,
+                            "externalId": "aud01.wav",
+                            "description": "message desc"
+                        }
+                    ],
+                    "quiz": {
+                        "name": "Quiz001",
+                        "contentId": "b0934819-5523-45b5-b753-39510a964057",
+                        "version": 1,
+                        "questions": [
+                            {
+                                "name": "Q001",
+                                "contentId": "9448b2ca-516f-48cc-8faf-e4cbdf49f4f6",
+                                "version": 1,
+                                "externalId": "ques-aud.wav",
+                                "answer": {
+                                    "externalId": "correct-answer.wav",
+                                    "correctOption": "C"
+                                },
+                                "description": "ques desc",
+                                "options": [
+                                    "A",
+                                    "B",
+                                    "C"
+                                ]
+                            }
+                        ],
+                        "passPercentage": 85,
+                        "noOfQuestionsToBePlayed": 1
+                    },
+                    "description": "chapter description"
+                }
+            ],
+            "description": "module desc"
+        }
+    ],
+    "description": "Course Desc"
+}

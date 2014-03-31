@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @PersistenceCapable(table = "module", identityType = IdentityType.APPLICATION)
-public class Module extends CourseContent {
+public class Module extends CourseContent implements CourseContentHolder {
 
 
     @Element(column = "module_id")
@@ -39,6 +39,9 @@ public class Module extends CourseContent {
 
     private static List<Chapter> mapToChapters(List<ChapterDto> chapterDtoList) {
         ArrayList<Chapter> chapters = new ArrayList<>();
+        if (isBlank(chapterDtoList)) {
+            return chapters;
+        }
         for (ChapterDto chapterDto : chapterDtoList) {
             chapters.add(new Chapter(chapterDto));
         }
@@ -49,5 +52,14 @@ public class Module extends CourseContent {
         return chapters;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
+    public void removeInactiveContent() {
+        filter(chapters);
+        for (Chapter chapter : chapters) {
+            chapter.removeInactiveContent();
+        }
+    }
 }

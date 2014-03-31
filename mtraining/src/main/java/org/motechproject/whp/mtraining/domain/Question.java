@@ -1,6 +1,8 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.dto.AnswerDto;
 import org.motechproject.mtraining.dto.QuestionDto;
@@ -66,11 +68,29 @@ public class Question extends CourseContent {
         return StringUtils.join(options, ",");
     }
 
+    @JsonIgnore
     public String getAnswerOptions() {
         return answerOptions;
     }
 
     public Answer getAnswer() {
         return answer;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+
+    @JsonProperty("options")
+    public String[] getAnswerOptionsArray() {
+        if (StringUtils.isBlank(answerOptions)) {
+            return new String[0];
+        }
+        return answerOptions.split(",");
     }
 }

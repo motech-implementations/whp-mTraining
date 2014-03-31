@@ -85,7 +85,7 @@ public class AllCoursesIT {
         List<Message> messages = chapter.getMessages();
         assertThat(messages.size(), Is.is(1));
         Message message = messages.get(0);
-        assertThat(message.getAudioFileName(), Is.is("hello.wav"));
+        assertThat(message.getExternalId(), Is.is("hello.wav"));
         assertThat(message.isActive(), Is.is(true));
     }
 

@@ -38,4 +38,17 @@ public class QuestionTest {
 
         assertThat(question.getAnswerOptions(), IsNull.nullValue());
     }
+
+    @Test
+    public void shouldReturnAnswerOptionsList() {
+        QuestionDto questionDto = mock(QuestionDto.class);
+
+        when(questionDto.getAnswer()).thenReturn(new AnswerDto("C", "answer-ext-id"));
+        when(questionDto.getOptions()).thenReturn(Arrays.asList("A", "B", "C"));
+
+        Question question = new Question(questionDto);
+
+        assertThat(question.getAnswerOptionsArray(), Is.is(new String[]{"A", "B", "C"}));
+    }
+
 }

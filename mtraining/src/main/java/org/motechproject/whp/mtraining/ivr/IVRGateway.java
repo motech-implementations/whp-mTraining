@@ -4,9 +4,9 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.WebClient;
+import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.exception.MTrainingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class IVRGateway {
         this.ivrResponseParser = ivrResponseParser;
     }
 
-    public IVRResponse postCourse(CourseDto course) {
+    public IVRResponse postCourse(Course course) {
         try {
             LOGGER.info(String.format("Publishing Course to IVR Course name %s and version %s", course.getName(),
                     course.getVersion()));

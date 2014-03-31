@@ -22,8 +22,8 @@ public class CourseBuilder {
     private String courseName = "CS001";
     private Integer version = 1;
     private String description = "description";
-    private String modifiedBy = "User In Test";
-    private DateTime dateModified = ISODateTimeUtil.nowInTimeZoneUTC();
+    private String createdBy = "User In Test";
+    private DateTime createdOn = ISODateTimeUtil.nowInTimeZoneUTC();
     private String audioFileName = "audio.wav";
     private String questionAudioFileName = "question audio.wav";
     private String answerAudioFileName = "answer audio.wav";
@@ -34,38 +34,46 @@ public class CourseBuilder {
         return this;
     }
 
-    public Course build() {
-        return new Course(courseName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildModule("MOD001")), isActive);
+    public CourseBuilder withVersion(Integer version) {
+        this.version = version;
+        return this;
     }
 
+    public Course build() {
+        return new Course(courseName, contentId, version, description, createdBy, createdOn, Arrays.asList(buildModule("MOD001")), isActive);
+    }
+
+
     private Module buildModule(String moduleName) {
-        return new Module(moduleName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildChapter("CH001")), isActive);
+        return new Module(moduleName, contentId, version, description, createdBy, createdOn, Arrays.asList(buildChapter("CH001")), isActive);
     }
 
     private Chapter buildChapter(String chapterName) {
-        Chapter chapter = new Chapter(chapterName, contentId, version, description, modifiedBy, dateModified, Arrays.asList(buildMessage("MSG001")), buildQuiz("Test Quiz"), isActive);
+        Chapter chapter = new Chapter(chapterName, contentId, version, description, createdBy, createdOn, Arrays.asList(buildMessage("MSG001")), buildQuiz("Test Quiz"), isActive);
         chapter.setQuiz(buildQuiz("Test Quiz"));
         return chapter;
     }
 
     private Message buildMessage(String messageName) {
-        return new Message(messageName, contentId, version, description, modifiedBy, dateModified, audioFileName, isActive);
+        return new Message(messageName, contentId, version, description, createdBy, createdOn, audioFileName, isActive);
     }
 
     private Quiz buildQuiz(String quizName) {
         List<Question> questions = new ArrayList<>();
         questions.add(buildQuestion("Test Question 1"));
-        Quiz quiz = new Quiz(quizName, contentId, version, modifiedBy, dateModified, passPercentage, isActive, questions);
+        Quiz quiz = new Quiz(quizName, contentId, version, createdBy, createdOn, passPercentage, isActive, questions);
         quiz.addQuestion(buildQuestion("Test Question 2"));
         return quiz;
     }
 
     private Question buildQuestion(String questionName) {
-        return new Question(questionName, contentId, version, description, modifiedBy, dateModified, questionAudioFileName, Arrays.asList("A", "B"), new Answer(answerAudioFileName, "A"), isActive);
+        return new Question(questionName, contentId, version, description, createdBy, createdOn, questionAudioFileName, Arrays.asList("A", "B"), new Answer(answerAudioFileName, "A"), isActive);
     }
 
     public CourseBuilder withMessageAudioFile(String audioFileName) {
         this.audioFileName = audioFileName;
         return this;
     }
+
+
 }
