@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,9 @@ public class CourseStructureValidator {
     private static final String MULTIPLE_COURSE_NODES_IN_CSV = "There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.";
 
     private Logger logger = LoggerFactory.getLogger(CourseStructureValidator.class);
+    private String ACTIVE_STATUS = "active";
+    private String INACTIVE_STATUS = "inactive";
+    private String BLANK_STATUS = "";
 
     @Autowired
     public CourseStructureValidator(CourseService courseService) {
@@ -106,7 +110,7 @@ public class CourseStructureValidator {
 
         }
 
-        if (!(request.isMessage() || request.isQuestion()) && hasNoChild(request, parentNamesMap, errors)) {
+        if (!(request.isMessage() || request.isQuestion()) && (hasNoChild(request, parentNamesMap, errors) || hasNoActiveChild(request, requests, errors))) {
             return;
         }
 
@@ -132,13 +136,25 @@ public class CourseStructureValidator {
     }
 
     private void verifyQuestions(Integer quizQuestions, List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest, List<CsvImportError> errors) {
-        Integer noOfQuestions = 0;
+        List<String> statusList = new ArrayList<String>(Arrays.asList(ACTIVE_STATUS, INACTIVE_STATUS, BLANK_STATUS)) {
+        };
+        if (!chapterRequest.isInActive()) {
+            statusList.remove(INACTIVE_STATUS);
+            CsvImportError errorForActiveChapter = new CsvImportError(chapterRequest.getNodeName(), chapterRequest.getNodeType(), "Number of active questions available in the CSV for this active chapter is less than number of quiz questions specified for the chapter. Please add more active questions for the chapter or  and try importing again.");
+            addErrorIfNoOfQuestionsIsNotSufficient(quizQuestions, requests, chapterRequest, errors, statusList, errorForActiveChapter);
+        } else {
+            CsvImportError errorForInActiveChapter = new CsvImportError(chapterRequest.getNodeName(), chapterRequest.getNodeType(), "Number of questions available in the CSV for this chapter is less than number of quiz questions specified for the chapter. Please add more questions for the chapter and try importing again.");
+            addErrorIfNoOfQuestionsIsNotSufficient(quizQuestions, requests, chapterRequest, errors, statusList, errorForInActiveChapter);
+        }
+    }
+
+    private void addErrorIfNoOfQuestionsIsNotSufficient(Integer quizQuestions, List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest, List<CsvImportError> errors, List<String> status, CsvImportError error) {
+        int noOfQuestions = 0;
         for (CourseCsvRequest request : requests) {
-            if (QUESTION.equals(from(request.getNodeType())) && chapterRequest.getNodeName().equalsIgnoreCase(request.getParentNode()))
+            if (QUESTION.equals(from(request.getNodeType())) && chapterRequest.getNodeName().equalsIgnoreCase(request.getParentNode()) && status.contains(request.getStatus().toLowerCase()))
                 noOfQuestions++;
         }
         if (noOfQuestions < quizQuestions) {
-            CsvImportError error = new CsvImportError(chapterRequest.getNodeName(), chapterRequest.getNodeType(), "Number of questions available in the CSV for this chapter is less than number of quiz questions specified for the chapter. Please add more questions for the chapter and try importing again.");
             errors.add(error);
             logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
         }
@@ -173,17 +189,17 @@ public class CourseStructureValidator {
             logger.info(String.format("Validation error: %s", error.getMessage()));
             return true;
         }
-        return request.isCourse() ? isValidCourseName(nodeName, errors) : false;
+        return request.isCourse() ? isInValidCourseName(nodeName, errors) : false;
     }
 
-    private boolean isValidCourseName(String nodeName, List<CsvImportError> errors) {
+    private boolean isInValidCourseName(String nodeName, List<CsvImportError> errors) {
         List<CourseDto> existingCourses = courseService.getAllCourses();
         if (existingCourses.isEmpty() || StringUtils.equalsIgnoreCase(existingCourses.get(0).getName(), nodeName))
-            return true;
+            return false;
         CsvImportError error = new CsvImportError(String.format("Course: %s already exists in database. You cannot import a new course.", existingCourses.get(0).getName()));
         errors.add(error);
         logger.info(String.format("Validation error: %s", error.getMessage()));
-        return false;
+        return true;
     }
 
     private boolean hasNoChild(CourseCsvRequest courseStructureObject, Set<String> parentNamesMap, List<CsvImportError> errors) {
@@ -194,6 +210,22 @@ public class CourseStructureValidator {
             return true;
         }
         return false;
+    }
+
+    private boolean hasNoActiveChild(CourseCsvRequest courseStructureObject, List<CourseCsvRequest> requests, List<CsvImportError> errors) {
+        int activeChildNumber = 0;
+        if (courseStructureObject.isInActive())
+            return false;
+        for (CourseCsvRequest request : requests) {
+            if (courseStructureObject.getNodeName().equalsIgnoreCase(request.getParentNode()) && !request.isInActive())
+                activeChildNumber++;
+        }
+        if (activeChildNumber >= 1)
+            return false;
+        String errorMessage = "A " + courseStructureObject.getNodeType().toLowerCase() + " should have at least one active " + courseStructureObject.getChildNodeType().toLowerCase() + " under it. Please add active " + courseStructureObject.getChildNodeType().toLowerCase() + "s under the " + courseStructureObject.getNodeType().toLowerCase() + " or mark the " + courseStructureObject.getNodeType().toLowerCase() + " as inactive and try importing it again.";
+        errors.add(new CsvImportError(courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));
+        logger.info(String.format("Validation error for node %s with node type %s: %s", courseStructureObject.getNodeName(), courseStructureObject.getNodeType(), errorMessage));
+        return true;
     }
 
     private boolean isNodeNameADuplicate(final CourseCsvRequest request, List<CsvImportError> errors, List<CourseCsvRequest> requests) {

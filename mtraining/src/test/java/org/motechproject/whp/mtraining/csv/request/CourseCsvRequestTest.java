@@ -65,4 +65,14 @@ public class CourseCsvRequestTest {
         CourseCsvRequest courseWithWrongStatus = new CourseCsvRequest("Basic TB Symptoms", "Course", "status", "parentNode", "Message Description", null);
         assertFalse(courseWithWrongStatus.isValidStatus());
     }
+
+    @Test
+    public void testThatNodeHasInactiveStatus(){
+        CourseCsvRequest courseWithActiveStatus = new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", "parentNode", "Message Description", null);
+        assertFalse(courseWithActiveStatus.isInActive());
+
+        CourseCsvRequest courseWithInActiveStatus = new CourseCsvRequest("Basic TB Symptoms", "Course", "inActive", "parentNode", "Message Description", null);
+        assertTrue(courseWithInActiveStatus.isInActive());
+    }
+
 }

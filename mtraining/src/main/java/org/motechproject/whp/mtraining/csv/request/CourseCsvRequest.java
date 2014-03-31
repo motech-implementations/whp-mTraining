@@ -127,6 +127,10 @@ public class CourseCsvRequest {
         return noOfQuizQuestions;
     }
 
+    public boolean isInActive() {
+        return "INACTIVE".equalsIgnoreCase(status);
+    }
+
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }
