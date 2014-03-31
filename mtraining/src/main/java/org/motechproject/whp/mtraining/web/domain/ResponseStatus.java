@@ -10,7 +10,10 @@ public enum ResponseStatus {
     INVALID_DATE_TIME(906, "Missing or Invalid Bookmark Modified Date"),
     MISSING_TIME(907, "Start time or end time must be present"),
     INVALID_NODE_TYPE(908, "Invalid node type"),
-    MISSING_NODE(909, "Missing Node Id or Version");
+    MISSING_NODE(909, "Missing Node Id or Version"),
+    MISSING_QUIZ(910, "Missing Quiz Id or Version"),
+    INVALID_QUIZ(911, "Invalid Quiz Id or version"),
+    MISSING_QUESTION(912, "No Questions Available");
 
     private final int code;
     private final String message;
