@@ -7,7 +7,8 @@ session_id varchar(40),
 node_id varchar(40),
 node_version INTEGER ,
 node_type varchar(20),
-start_time TIMESTAMP WITH ZONE,
-end_time TIMESTAMP WITH ZONE ,
+start_time TIMESTAMP WITH TIME ZONE,
+end_time TIMESTAMP WITH TIME ZONE,
 status varchar(10),
+  PRIMARY KEY(id)
 )
