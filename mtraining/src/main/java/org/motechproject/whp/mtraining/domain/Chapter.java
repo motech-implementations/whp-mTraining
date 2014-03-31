@@ -27,20 +27,37 @@ public class Chapter extends CourseContent {
     @Column(name = "quiz_id")
     private Quiz quiz;
 
-    public Chapter(String name, UUID contentId, Integer version, String description, String modifiedBy, DateTime dateModified, List<Message> messages, boolean isActive) {
-        super(name, contentId, version, description, modifiedBy, dateModified, isActive);
+    @Persistent
+    private String description;
+
+
+    public Chapter(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, List<Message> messages, Quiz quiz, boolean isActive) {
+        super(name, contentId, version, createdBy, createdOn, isActive);
         this.messages = messages;
+        this.description = description;
+        this.quiz = quiz;
     }
 
     public Chapter(ChapterDto chapterDto) {
-        super(chapterDto.getName(), chapterDto.getContentId(), chapterDto.getVersion(), chapterDto.getDescription(), chapterDto.getCreatedBy(), chapterDto.getCreatedOn(), chapterDto.isActive());
-        for (MessageDto messageDto : chapterDto.getMessages()) {
+        this(chapterDto.getName(), chapterDto.getContentId(), chapterDto.getVersion(), chapterDto.getDescription(), chapterDto.getCreatedBy(), chapterDto.getCreatedOn(),
+                mapToMessages(chapterDto.getMessages()),
+                mapToQuiz(chapterDto.getQuiz()),
+                chapterDto.isActive());
+    }
+
+    private static List<Message> mapToMessages(List<MessageDto> messageDtoList) {
+        ArrayList<Message> messages = new ArrayList<>();
+        for (MessageDto messageDto : messageDtoList) {
             messages.add(new Message(messageDto));
         }
-        QuizDto quizDto = chapterDto.getQuiz();
-        if (quizDto != null) {
-            this.quiz = new Quiz(quizDto);
+        return messages;
+    }
+
+    private static Quiz mapToQuiz(QuizDto quizDto) {
+        if (quizDto == null) {
+            return null;
         }
+        return new Quiz(quizDto);
     }
 
     public void setQuiz(Quiz quiz) {

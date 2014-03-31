@@ -21,16 +21,27 @@ public class Course extends CourseContent {
     @Persistent(dependentElement = "true")
     private List<Module> modules = new ArrayList<>();
 
-    public Course(String name, UUID courseId, Integer version, String description, String modifiedBy, DateTime dateModified, List<Module> modules, boolean isActive) {
-        super(name, courseId, version, description, modifiedBy, dateModified, isActive);
+    @Persistent
+    private String description;
+
+
+    public Course(String name, UUID courseId, Integer version, String description, String createdBy, DateTime createdOn, List<Module> modules, boolean isActive) {
+        super(name, courseId, version, createdBy, createdOn, isActive);
         this.modules = modules;
+        this.description = description;
     }
 
     public Course(CourseDto courseDto) {
-        super(courseDto.getName(), courseDto.getContentId(), courseDto.getVersion(), courseDto.getDescription(), courseDto.getCreatedBy(), courseDto.getCreatedOn(), courseDto.isActive());
-        for (ModuleDto moduleDto : courseDto.getModules()) {
+        this(courseDto.getName(), courseDto.getContentId(), courseDto.getVersion(), courseDto.getDescription(), courseDto.getCreatedBy(), courseDto.getCreatedOn(),
+                mapToModules(courseDto.getModules()), courseDto.isActive());
+    }
+
+    private static List<Module> mapToModules(List<ModuleDto> moduleDtoList) {
+        ArrayList<Module> modules = new ArrayList<>();
+        for (ModuleDto moduleDto : moduleDtoList) {
             modules.add(new Module(moduleDto));
         }
+        return modules;
     }
 
     public List<Module> getModules() {

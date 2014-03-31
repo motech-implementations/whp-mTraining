@@ -72,7 +72,7 @@ public class AllCoursesIT {
         assertThat(quiz, IsNull.notNullValue());
 
         assertThat(quiz.getPassPercentage(), Is.is(100l));
-        assertThat(quiz.getNumberOfQuestions(), Is.is(1));
+        assertThat(quiz.getNumberOfQuestions(), Is.is(2));
 
         assertNotNull(quiz.getQuestions());
         Question question = quiz.getQuestions().get(0);

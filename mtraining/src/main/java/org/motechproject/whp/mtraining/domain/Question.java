@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.domain;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.motechproject.mtraining.dto.AnswerDto;
 import org.motechproject.mtraining.dto.QuestionDto;
 
 import javax.jdo.annotations.Column;
@@ -25,6 +26,9 @@ public class Question extends CourseContent {
     @Persistent
     private Answer answer;
 
+    @Persistent
+    private String description;
+
 
     /**
      * This is a comma separated list of valid answer options
@@ -32,18 +36,27 @@ public class Question extends CourseContent {
     @Persistent(column = "valid_answer_options")
     private String answerOptions;
 
-    public Question(String name, UUID contentId, Integer version, String description, String modifiedBy, DateTime dateModified, String externalId, List<String> answerOptions, Answer answer, boolean isActive) {
-        super(name, contentId, version, description, modifiedBy, dateModified, isActive);
+    public Question(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, String externalId, List<String> answerOptions, Answer answer, boolean isActive) {
+        super(name, contentId, version, createdBy, createdOn, isActive);
         this.externalId = externalId;
         this.answer = answer;
         this.answerOptions = commaSeparatedOptions(answerOptions);
+        this.description = description;
     }
 
     public Question(QuestionDto questionDto) {
-        super(questionDto.getName(), questionDto.getContentId(), questionDto.getVersion(), questionDto.getDescription(), questionDto.getCreatedBy(), questionDto.getCreatedOn(), questionDto.isActive());
-        this.externalId = questionDto.getExternalId();
-        this.answerOptions = commaSeparatedOptions(questionDto.getOptions());
-        this.answer = new Answer(questionDto.getAnswer());
+        this(questionDto.getName(), questionDto.getContentId(), questionDto.getVersion(), questionDto.getDescription(), questionDto.getCreatedBy(), questionDto.getCreatedOn(),
+                questionDto.getExternalId(),
+                questionDto.getOptions(),
+                mapToAnswer(questionDto.getAnswer()),
+                questionDto.isActive());
+    }
+
+    private static Answer mapToAnswer(AnswerDto answerDto) {
+        if (answerDto == null) {
+            return null;
+        }
+        return new Answer(answerDto);
     }
 
     private String commaSeparatedOptions(List<String> options) {

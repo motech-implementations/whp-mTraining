@@ -22,17 +22,27 @@ public class Module extends CourseContent {
     @Persistent(dependentElement = "true")
     private List<Chapter> chapters = new ArrayList<>();
 
-    public Module(String name, UUID contentId, Integer version, String description, String modifiedBy, DateTime dateModified, List<Chapter> chapters, boolean isActive) {
-        super(name, contentId, version, description, modifiedBy, dateModified, isActive);
+    @Persistent
+    private String description;
+
+
+    public Module(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, List<Chapter> chapters, boolean isActive) {
+        super(name, contentId, version, createdBy, createdOn, isActive);
         this.chapters = chapters;
+        this.description = description;
     }
 
     public Module(ModuleDto moduleDto) {
-        super(moduleDto.getName(), moduleDto.getContentId(), moduleDto.getVersion(), moduleDto.getDescription(), moduleDto.getCreatedBy(), moduleDto.getCreatedOn(), moduleDto.isActive());
-        for (ChapterDto chapterDto : moduleDto.getChapters()) {
+        this(moduleDto.getName(), moduleDto.getContentId(), moduleDto.getVersion(), moduleDto.getDescription(), moduleDto.getCreatedBy(), moduleDto.getCreatedOn(),
+                mapToChapters(moduleDto.getChapters()), moduleDto.isActive());
+    }
+
+    private static List<Chapter> mapToChapters(List<ChapterDto> chapterDtoList) {
+        ArrayList<Chapter> chapters = new ArrayList<>();
+        for (ChapterDto chapterDto : chapterDtoList) {
             chapters.add(new Chapter(chapterDto));
         }
-
+        return chapters;
     }
 
     public List<Chapter> getChapters() {

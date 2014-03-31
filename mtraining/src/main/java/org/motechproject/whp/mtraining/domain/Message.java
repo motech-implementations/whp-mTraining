@@ -14,9 +14,14 @@ public class Message extends CourseContent {
     @Persistent(column = "audio_file_name")
     private String audioFileName;
 
-    public Message(String name, UUID contentId, Integer version, String description, String modifiedBy, DateTime dateModified, String audioFileName, boolean isActive) {
-        super(name, contentId, version, description, modifiedBy, dateModified, isActive);
+    @Persistent
+    private String description;
+
+
+    public Message(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, String audioFileName, boolean isActive) {
+        super(name, contentId, version, createdBy, createdOn, isActive);
         this.audioFileName = audioFileName;
+        this.description = description;
     }
 
     public Message(MessageDto messageDto) {

@@ -5,36 +5,17 @@ import org.motechproject.mtraining.dto.QuestionDto;
 import org.motechproject.mtraining.dto.QuizDto;
 
 import javax.jdo.annotations.Element;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @PersistenceCapable(table = "quiz", identityType = IdentityType.APPLICATION)
-public class Quiz {
+public class Quiz extends CourseContent {
 
-    @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
-    @PrimaryKey
-    private Long id;
-
-    @Persistent
-    private String name;
-    @Persistent(column = "content_id")
-    private UUID contentId;
-    @Persistent
-    private Integer version;
-    @Persistent(column = "created_by")
-    private String createdBy;
-    @Persistent(column = "created_on")
-    private DateTime createdOn;
-
-    @Persistent(column = "is_active")
-    private boolean isActive;
 
     @Element(column = "quiz_id")
     @Order(column = "question_order")
@@ -47,25 +28,30 @@ public class Quiz {
     @Persistent(column = "number_of_questions")
     private Integer numberOfQuestions = 0;
 
-    public Quiz(String name, UUID contentId, Integer version, String createdBy, DateTime createdOn, Long passPercentage, boolean isActive) {
-        this.name = name;
+    public Quiz(String name, UUID contentId, Integer version, String createdBy, DateTime createdOn, Long passPercentage, boolean isActive, List<Question> questions) {
+        super(name, contentId, version, createdBy, createdOn, isActive);
         this.passPercentage = passPercentage;
-        this.contentId = contentId;
-        this.version = version;
-        this.createdBy = createdBy;
-        this.createdOn = createdOn;
-        this.passPercentage = passPercentage;
-        this.isActive = isActive;
+        this.questions = questions;
+        this.numberOfQuestions = (questions == null) ? 0 : questions.size();
     }
 
     public Quiz(QuizDto quizDto) {
-        this(quizDto.getName(), quizDto.getContentId(), quizDto.getVersion(), quizDto.getCreatedBy(), quizDto.getCreatedOn(), quizDto.getPassPercentage(), quizDto.isActive());
-        setQuestions(quizDto.getQuestions());
+        this(quizDto.getName(), quizDto.getContentId(), quizDto.getVersion(), quizDto.getCreatedBy(), quizDto.getCreatedOn(), quizDto.getPassPercentage(),
+                quizDto.isActive(),
+                mapToQuestions(quizDto.getQuestions()));
     }
 
     public void addQuestion(Question question) {
         questions.add(question);
         incrementNumberOfQuestions();
+    }
+
+    private static List<Question> mapToQuestions(List<QuestionDto> questionDtoList) {
+        List<Question> questions = new ArrayList<>();
+        for (QuestionDto questionDto : questionDtoList) {
+            questions.add(new Question(questionDto));
+        }
+        return questions;
     }
 
     public Long getPassPercentage() {
@@ -80,11 +66,6 @@ public class Quiz {
         return questions;
     }
 
-    private void setQuestions(List<QuestionDto> questionDtos) {
-        for (QuestionDto questionDto : questionDtos) {
-            addQuestion(new Question(questionDto));
-        }
-    }
 
     private void incrementNumberOfQuestions() {
         numberOfQuestions = numberOfQuestions + 1;
