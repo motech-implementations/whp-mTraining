@@ -6,6 +6,7 @@ import org.motechproject.whp.mtraining.repository.AllCallLogs;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.CallLogRequest;
+import org.motechproject.whp.mtraining.web.domain.Node;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,11 +33,13 @@ public class CallLogReporter {
         Provider provider = providerService.byCallerId(callLogRequest.getCallerId());
         if (provider == null)
             return new ResponseEntity<>(basicResponse.withResponse(UNKNOWN_PROVIDER), OK);
-        String status = callLogRequest.getEndTime() != null ? "Completed" : "Started";
-        CallLog callLog = new CallLog(provider.getRemediId(), callLogRequest.getCallerId(), callLogRequest.getUniqueId(), callLogRequest.getSessionId(),
-                callLogRequest.getNodeId(), callLogRequest.getNodeVersion(),
-                from(callLogRequest.getNodeType()), parse(callLogRequest.getStartTime()), parse(callLogRequest.getEndTime()), status);
-        allCallLogs.add(callLog);
+        for (Node node : callLogRequest.getNodes()) {
+            String status = node.getEndTime() != null ? "Completed" : "Started";
+            CallLog callLog = new CallLog(provider.getRemediId(), callLogRequest.getCallerId(), callLogRequest.getUniqueId(),
+                    callLogRequest.getSessionId(),node.getContentId(), node.getVersion(),
+                    from(node.getType()), parse(node.getStartTime()), parse(node.getEndTime()), status);
+            allCallLogs.add(callLog);
+        }
         return new ResponseEntity<>(basicResponse.withResponse(ResponseStatus.OK), OK);
     }
 }
