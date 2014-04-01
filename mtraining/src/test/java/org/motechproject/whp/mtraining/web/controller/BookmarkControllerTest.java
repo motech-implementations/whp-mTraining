@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.exception.InvalidBookmarkException;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.BookmarkBuilder;
@@ -36,11 +37,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
@@ -94,7 +97,7 @@ public class BookmarkControllerTest {
         when(providers.getByCallerId(callerId)).thenReturn(provider);
         when(provider.getProviderStatus()).thenReturn(ProviderStatus.WORKING_PROVIDER.getStatus());
         ContentIdentifierDto contentId = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, ISODateTimeUtil.nowInTimeZoneUTC());
+        BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, contentId, ISODateTimeUtil.nowInTimeZoneUTC());
         when(bookmarkService.getBookmark(providerRemediId)).thenReturn(bookmarkDto);
 
         MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
@@ -152,7 +155,8 @@ public class BookmarkControllerTest {
         ContentIdentifierDto moduleIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 2);
         ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         ContentIdentifierDto messageIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier));
+        ContentIdentifierDto quizIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier, quizIdentifier));
         Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
@@ -174,6 +178,24 @@ public class BookmarkControllerTest {
 
         assertThat(bookmarkRequest.getCallerId(), Is.is(callerId));
         assertThat(bookmarkRequest.hasBookmarkFor(courseIdentifier), Is.is(true));
+    }
+
+    @Test
+    public void shouldThrowErrorOnPostBookmarkForInvalidBookmark() {
+        Long callerId = 87676598l;
+        String uniqueId = "unk001";
+        String sessionId = "session001";
+        ContentIdentifierDto courseIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        ContentIdentifierDto moduleIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 2);
+        ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, null, null));
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
+        when(providers.getByCallerId(callerId)).thenReturn(provider);
+        ArgumentCaptor<BookmarkDto> bookmarkDtoArgumentCaptor = ArgumentCaptor.forClass(BookmarkDto.class);
+        doThrow(new InvalidBookmarkException("")).when(bookmarkService).addOrUpdate(bookmarkDtoArgumentCaptor.capture());
+        ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(bookmarkPostRequest);
+
+        assertEquals(INVALID_BOOKMARK.getCode(), response.getBody().getResponseCode());
     }
 
     @Test

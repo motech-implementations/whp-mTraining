@@ -50,6 +50,8 @@ public class BookmarkRequest {
             @Persistent(name = "chapterVersion", columns = @Column(name = "chapter_version")),
             @Persistent(name = "messageId", columns = @Column(name = "message_id")),
             @Persistent(name = "messageVersion", columns = @Column(name = "message_version")),
+            @Persistent(name = "quizId", columns = @Column(name = "quiz_id")),
+            @Persistent(name = "quizVersion", columns = @Column(name = "quiz_version")),
             @Persistent(name = "dateModified", columns = @Column(name = "bookmark_modified_on")),
     })
     @Persistent

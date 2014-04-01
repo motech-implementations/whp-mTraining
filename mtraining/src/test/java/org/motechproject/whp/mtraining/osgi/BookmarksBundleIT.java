@@ -31,9 +31,11 @@ import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.NOT_WORKING_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
@@ -60,7 +62,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     @Override
     public void onSetUp() throws InterruptedException, IOException {
         super.onSetUp();
-        ivrServer = new IVRServer(8888,"/ivr-wgn").start();
+        ivrServer = new IVRServer(8888, "/ivr-wgn").start();
         courseService = (CourseService) getService("courseService");
         assertNotNull(courseService);
 
@@ -148,7 +150,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         ContentIdentifierDto chapter = chapterDto.toContentIdentifierDto();
         ContentIdentifierDto message = messageDto.toContentIdentifierDto();
 
-        Bookmark bookmark = new Bookmark(courseIdentifier, module, chapter, message);
+        Bookmark bookmark = new Bookmark(courseIdentifier, module, chapter, message, null);
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", bookmark);
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(bookmarkPostRequest);

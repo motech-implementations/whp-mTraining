@@ -14,6 +14,7 @@ public class BookmarkBuilder {
     private ContentIdentifierDto module = new ContentIdentifierDto(UUID.randomUUID(), 1);
     private ContentIdentifierDto chapter = new ContentIdentifierDto(UUID.randomUUID(), 1);
     private ContentIdentifierDto message = new ContentIdentifierDto(UUID.randomUUID(), 1);
+    private ContentIdentifierDto quiz = new ContentIdentifierDto(UUID.randomUUID(), 1);
     private String dateModified = ISODateTimeUtil.nowInTimeZoneUTC().toString();
     private String externalId = "RMD001";
 
@@ -29,10 +30,10 @@ public class BookmarkBuilder {
     }
 
     public Bookmark build() {
-        return new Bookmark(course, module, chapter, message, dateModified);
+        return new Bookmark(course, module, chapter, message, quiz, dateModified);
     }
 
     public BookmarkDto buildDTO() {
-        return new BookmarkDto(externalId, course, module, chapter, message, DateTime.now());
+        return new BookmarkDto(externalId, course, module, chapter, message, quiz, DateTime.now());
     }
 }

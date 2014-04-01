@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.exception.InvalidBookmarkException;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
@@ -35,6 +36,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.GET;
 import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.POST;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.isInvalid;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_UNIQUE_ID;
@@ -116,14 +118,18 @@ public class BookmarkController {
         }
 
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemediId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
-                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
-        bookmarkService.addOrUpdate(bookmarkDto);
+                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), bookmark.getQuizIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
+        try {
+            bookmarkService.addOrUpdate(bookmarkDto);
+        } catch (InvalidBookmarkException ex) {
+            return responseAfterLogging(callerId, uniqueId, sessionId, POST, INVALID_BOOKMARK);
+        }
         allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId, OK, POST, new BookmarkReport(bookmarkDto)));
         return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 
     private Bookmark mapToBookmark(BookmarkDto bookmarkDto) {
-        return new Bookmark(bookmarkDto.getCourse(), bookmarkDto.getModule(), bookmarkDto.getChapter(), bookmarkDto.getMessage(), bookmarkDto.getDateModified());
+        return new Bookmark(bookmarkDto.getCourse(), bookmarkDto.getModule(), bookmarkDto.getChapter(), bookmarkDto.getMessage(), bookmarkDto.getQuiz(), bookmarkDto.getDateModified());
     }
 
     private BookmarkDto getBookmark(String externalId) {

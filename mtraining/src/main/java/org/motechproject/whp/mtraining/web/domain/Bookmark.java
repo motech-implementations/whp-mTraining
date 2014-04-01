@@ -17,6 +17,10 @@ public class Bookmark {
     private ContentIdentifierDto chapterIdentifierDto;
     @JsonProperty("message")
     private ContentIdentifierDto messageIdentifierDto;
+
+    @JsonProperty("quiz")
+    private ContentIdentifierDto quizIdentifierDto;
+
     @JsonProperty
     private String dateModified;
 
@@ -24,20 +28,21 @@ public class Bookmark {
     public Bookmark() {
     }
 
-
-    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto, ContentIdentifierDto messageIdentifierDto) {
+    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto, ContentIdentifierDto messageIdentifierDto, ContentIdentifierDto quizIdentifierDto) {
         this.courseIdentifierDto = courseIdentifierDto;
         this.moduleIdentifierDto = moduleIdentifierDto;
         this.chapterIdentifierDto = chapterIdentifierDto;
         this.messageIdentifierDto = messageIdentifierDto;
+        this.quizIdentifierDto = quizIdentifierDto;
         this.dateModified = ISODateTimeUtil.nowAsStringInTimeZoneUTC();
     }
 
-    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto, ContentIdentifierDto messageIdentifierDto, String dateModified) {
+    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto, ContentIdentifierDto messageIdentifierDto, ContentIdentifierDto quizIdentifierDto, String dateModified) {
         this.courseIdentifierDto = courseIdentifierDto;
         this.moduleIdentifierDto = moduleIdentifierDto;
         this.chapterIdentifierDto = chapterIdentifierDto;
         this.messageIdentifierDto = messageIdentifierDto;
+        this.quizIdentifierDto = quizIdentifierDto;
         this.dateModified = dateModified;
     }
 
@@ -55,6 +60,10 @@ public class Bookmark {
 
     public ContentIdentifierDto getMessageIdentifierDto() {
         return messageIdentifierDto;
+    }
+
+    public ContentIdentifierDto getQuizIdentifierDto() {
+        return quizIdentifierDto;
     }
 
     public String getDateModified() {

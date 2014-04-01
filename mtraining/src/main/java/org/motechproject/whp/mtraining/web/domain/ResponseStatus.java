@@ -13,7 +13,8 @@ public enum ResponseStatus {
     MISSING_NODE(909, "Missing Node Id or Version"),
     MISSING_QUIZ(910, "Missing Quiz Id or Version"),
     INVALID_QUIZ(911, "Invalid Quiz Id or version"),
-    MISSING_QUESTION(912, "No Questions Available");
+    MISSING_QUESTION(912, "No Questions Available"),
+    INVALID_BOOKMARK(913, "Invalid bookmark");
 
     private int code;
     private String message;

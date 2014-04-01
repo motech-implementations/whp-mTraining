@@ -39,7 +39,7 @@ public class AllBookmarkRequestsIT {
         assertThat(all.size(), Is.is(0));
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, ISODateTimeUtil.nowInTimeZoneUTC());
+        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, contentIdentifierDto, ISODateTimeUtil.nowInTimeZoneUTC());
         allBookmarkRequests.add(new BookmarkRequest("rmd001", 1234567L, "UNQ1", "session01", ResponseStatus.OK, BookmarkRequestType.GET, new BookmarkReport(bookmarkDto)));
 
         List<BookmarkRequest> savedBookmarkRequestses = allBookmarkRequests.all();

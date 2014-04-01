@@ -32,6 +32,10 @@ public class BookmarkReport {
     private UUID messageId;
     @Persistent
     private Integer messageVersion;
+    @Persistent
+    private UUID quizId;
+    @Persistent
+    private Integer quizVersion;
 
     @Persistent
     @Temporal(TemporalType.TIMESTAMP)
@@ -43,6 +47,7 @@ public class BookmarkReport {
         setModule(bookmark.getModule());
         setChapter(bookmark.getChapter());
         setMessage(bookmark.getMessage());
+        setQuiz(bookmark.getQuiz());
         dateModified = ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified());
     }
 
@@ -54,9 +59,30 @@ public class BookmarkReport {
         return dateModified;
     }
 
+    public UUID getMessageId() {
+        return messageId;
+    }
+
+    public Integer getMessageVersion() {
+        return messageVersion;
+    }
+
+    public UUID getQuizId() {
+        return quizId;
+    }
+
+    public Integer getQuizVersion() {
+        return quizVersion;
+    }
+
     private void setMessage(ContentIdentifierDto message) {
-        this.messageId = message.getContentId();
-        this.messageVersion = message.getVersion();
+        if (message == null) {
+            this.messageId = null;
+            this.messageVersion = null;
+        } else {
+            this.messageId = message.getContentId();
+            this.messageVersion = message.getVersion();
+        }
     }
 
     private void setChapter(ContentIdentifierDto chapter) {
@@ -76,5 +102,15 @@ public class BookmarkReport {
 
     public boolean hasCourse(ContentIdentifierDto course) {
         return this.courseId.equals(course.getContentId()) && this.courseVersion.equals(course.getVersion());
+    }
+
+    private void setQuiz(ContentIdentifierDto quiz) {
+        if (quiz == null) {
+            this.quizId = null;
+            this.quizVersion = null;
+        } else {
+            this.quizId = quiz.getContentId();
+            this.quizVersion = quiz.getVersion();
+        }
     }
 }

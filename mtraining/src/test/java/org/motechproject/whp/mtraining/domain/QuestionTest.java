@@ -32,7 +32,7 @@ public class QuestionTest {
         QuestionDto questionDto = mock(QuestionDto.class);
 
         when(questionDto.getAnswer()).thenReturn(new AnswerDto("C", "answer-ext-id"));
-        when(questionDto.getOptions()).thenReturn(Collections.emptyList());
+        when(questionDto.getOptions()).thenReturn(Collections.<String>emptyList());
 
         Question question = new Question(questionDto);
 
