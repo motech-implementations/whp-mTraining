@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.apache.velocity.exception.ResourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,7 +79,7 @@ public class QuizControllerTest {
         int quizVersion = 1;
         when(providerService.validateProvider(callerId)).thenReturn(ResponseStatus.OK);
         ContentIdentifierDto quizIdentifier = new ContentIdentifierDto(quizId, quizVersion);
-        when(quizService.getQuestionsForQuiz(quizIdentifier)).thenThrow(new ResourceNotFoundException("Quiz not found"));
+        when(quizService.getQuestionsForQuiz(quizIdentifier)).thenReturn(null);
 
         BasicResponse response = (BasicResponse) quizController.getQuestionsForQuiz(callerId, "uuid", "sessionId", quizId, quizVersion).getBody();
 

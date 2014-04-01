@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.apache.velocity.exception.ResourceNotFoundException;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.service.QuizService;
 import org.motechproject.whp.mtraining.service.impl.ProviderServiceImpl;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.UUID;
 
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_QUIZ;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_QUESTION;
 import static org.springframework.http.HttpStatus.OK;
 
 @Controller
@@ -54,11 +55,11 @@ public class QuizController {
             return new ResponseEntity<>(basicResponse.withResponse(providerStatus), HttpStatus.OK);
         try {
             List<ContentIdentifierDto> questionsForQuiz = quizService.getQuestionsForQuiz(new ContentIdentifierDto(quizId, quizVersion));
-            return new ResponseEntity<>(new QuizResponse(callerId, sessionId, uniqueId, questionsForQuiz), OK);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.INVALID_QUIZ), OK);
-        } catch (IndexOutOfBoundsException e) {
-            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.MISSING_QUESTION), OK);
+            return questionsForQuiz == null ?
+                    new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, INVALID_QUIZ), OK) :
+                    new ResponseEntity<>(new QuizResponse(callerId, sessionId, uniqueId, questionsForQuiz), OK);
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, MISSING_QUESTION), OK);
         }
     }
 }
