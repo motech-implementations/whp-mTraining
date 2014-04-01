@@ -9,6 +9,7 @@ import java.util.UUID;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_NODE_TYPE;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_NODE;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
 
@@ -57,16 +58,18 @@ public class Node {
     }
 
     public ResponseStatus validate() {
-        if (contentId == null || version == null)
-            return ResponseStatus.MISSING_NODE;
+        String node = " for content: " + type;
+        if (contentId == null || version == null) {
+            return MISSING_NODE.appendMessage(node);
+        }
         if (NodeType.from(type) == null)
-            return INVALID_NODE_TYPE;
+            return INVALID_NODE_TYPE.appendMessage(node);
         if (isBlank(startTime) && isBlank(endTime))
-            return MISSING_TIME;
+            return MISSING_TIME.appendMessage(node);
         if (!isBlank(startTime) && !ISODateTimeUtil.validate(startTime))
-            return INVALID_DATE_TIME;
+            return INVALID_DATE_TIME.appendMessage(node);
         if (!isBlank(endTime) && !ISODateTimeUtil.validate(endTime))
-            return INVALID_DATE_TIME;
+            return INVALID_DATE_TIME.appendMessage(node);
         return OK;
     }
 }

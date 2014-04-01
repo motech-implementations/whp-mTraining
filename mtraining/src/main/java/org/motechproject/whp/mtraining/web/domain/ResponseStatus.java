@@ -15,8 +15,8 @@ public enum ResponseStatus {
     INVALID_QUIZ(911, "Invalid Quiz Id or version"),
     MISSING_QUESTION(912, "No Questions Available");
 
-    private final int code;
-    private final String message;
+    private int code;
+    private String message;
 
     private ResponseStatus(int code, String message) {
         this.code = code;
@@ -33,5 +33,10 @@ public enum ResponseStatus {
 
     public boolean isValid() {
         return OK.equals(this);
+    }
+
+    public ResponseStatus appendMessage(String message) {
+        this.message = this.getMessage().concat(message);
+        return this;
     }
 }
