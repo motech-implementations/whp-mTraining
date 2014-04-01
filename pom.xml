@@ -10,7 +10,6 @@
 
     <modules>
         <module>mtraining</module>
-        <module>ivr-stub</module>
     </modules>
 
 
