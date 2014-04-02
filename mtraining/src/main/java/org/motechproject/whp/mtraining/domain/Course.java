@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.domain;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @PersistenceCapable(table = "course", identityType = IdentityType.APPLICATION, detachable = "true")
-public class Course extends CourseContent implements CourseContentHolder{
+public class Course extends CourseContent implements CourseContentHolder {
 
     @Element(column = "course_id")
     @Order(column = "module_order")

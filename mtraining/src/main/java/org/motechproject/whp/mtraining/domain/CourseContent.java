@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 
@@ -11,7 +12,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+
+import static org.apache.commons.collections.CollectionUtils.find;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
@@ -65,8 +69,28 @@ public abstract class CourseContent {
         return CollectionUtils.isEmpty(contents);
     }
 
-    protected static <T> void filter(Collection<T> contents) {
+    public static <T> void filter(Collection<T> contents) {
         CollectionUtils.filter(contents, new ActiveContentPredicate());
     }
+
+    public static <T extends CourseContent> CourseContent getNextContent(List<T> contents, final UUID contentId) {
+        T content = (T) findContentByContentId(contents, contentId);
+        if (content == null) return null;
+        int currentModuleIndex = contents.indexOf(content);
+        if (currentModuleIndex < contents.size()-1)
+            return contents.get(currentModuleIndex+1);
+        return null;
+    }
+
+    public static <T extends CourseContent> Object findContentByContentId(List<T> contents, final UUID contentId) {
+        return find(contents, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                T question = (T) o;
+                return contentId.equals(question.getContentId());
+            }
+        });
+    }
+
 
 }

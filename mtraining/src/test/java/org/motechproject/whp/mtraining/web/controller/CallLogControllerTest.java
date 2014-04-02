@@ -94,4 +94,5 @@ public class CallLogControllerTest {
 
         assertTrue(ResponseStatus.OK.getCode().equals(response.getBody().getResponseCode()));
     }
+
 }

@@ -10,5 +10,5 @@ node_type varchar(20),
 start_time TIMESTAMP WITH TIME ZONE,
 end_time TIMESTAMP WITH TIME ZONE,
 status varchar(10),
-  PRIMARY KEY(id)
+ PRIMARY KEY(id)
 )
