@@ -81,7 +81,7 @@ public class Chapter extends CourseContent implements CourseContentHolder {
 
     public void removeInactiveContent() {
         filter(messages);
-        if (quiz.isActive()) {
+        if (quiz!=null && quiz.isActive()) {
             quiz.removeInactiveContent();
             return;
         }
