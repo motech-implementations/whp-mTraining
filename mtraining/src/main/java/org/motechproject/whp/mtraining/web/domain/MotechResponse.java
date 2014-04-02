@@ -13,7 +13,7 @@ public interface MotechResponse {
      */
     String getUniqueId();
 
-    int getResponseCode();
+    Integer getResponseCode();
 
     String getResponseMessage();
 }

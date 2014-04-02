@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
@@ -39,7 +40,7 @@ public class AllBookmarkRequestsIT {
         assertThat(all.size(), Is.is(0));
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, contentIdentifierDto, ISODateTimeUtil.nowInTimeZoneUTC());
+        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, contentIdentifierDto, ISODateTimeUtil.nowInTimeZoneUTC(), CourseStatus.ONGOING);
         allBookmarkRequests.add(new BookmarkRequest("rmd001", 1234567L, "UNQ1", "session01", ResponseStatus.OK, BookmarkRequestType.GET, new BookmarkReport(bookmarkDto)));
 
         List<BookmarkRequest> savedBookmarkRequestses = allBookmarkRequests.all();
@@ -48,6 +49,7 @@ public class AllBookmarkRequestsIT {
         assertThat(bookmarkRequest.getCallerId(), Is.is(1234567L));
         assertThat(bookmarkRequest.getSessionId(), Is.is("session01"));
         assertThat(bookmarkRequest.getUniqueId(), Is.is("UNQ1"));
+        assertThat(bookmarkRequest.getCourseStatus(), Is.is("ONGOING"));
     }
 
     @After

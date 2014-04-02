@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -49,7 +50,7 @@ public class CallLogControllerTest {
         ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);
 
         verify(callLogReporter, never()).validateAndAddLog(callLogRequest, new BasicResponse(callerId, uniqueId, sessionId));
-        assertTrue(ResponseStatus.OK.getCode() != response.getBody().getResponseCode());
+        assertFalse(ResponseStatus.OK.getCode().equals(response.getBody().getResponseCode()));
     }
 
     @Test
@@ -64,6 +65,6 @@ public class CallLogControllerTest {
 
         ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);
 
-        assertTrue(ResponseStatus.OK.getCode() == response.getBody().getResponseCode());
+        assertTrue(ResponseStatus.OK.getCode().equals(response.getBody().getResponseCode()));
     }
 }

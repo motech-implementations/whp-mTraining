@@ -46,7 +46,7 @@ public class BookmarkResponse implements MotechResponse {
     }
 
     @Override
-    public int getResponseCode() {
+    public Integer getResponseCode() {
         return responseCode;
     }
 

@@ -25,7 +25,7 @@ public enum ResponseStatus {
         this.message = message;
     }
 
-    public int getCode() {
+    public Integer getCode() {
         return code;
     }
 
@@ -40,5 +40,14 @@ public enum ResponseStatus {
     public ResponseStatus appendMessage(String message) {
         this.message = this.getMessage().concat(message);
         return this;
+    }
+
+    public static ResponseStatus statusFor(Integer code) {
+        for (ResponseStatus responseStatus : values()) {
+            if (responseStatus.getCode().equals(code)) {
+                return responseStatus;
+            }
+        }
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.reports.domain;
 import org.hamcrest.core.Is;
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
@@ -20,7 +21,7 @@ public class BookmarkReportTest {
     public void shouldCreateBookmarkReportFromBookmarkDto() {
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
         DateTime dateModified = ISODateTimeUtil.nowInTimeZoneUTC();
-        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, dateModified);
+        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, dateModified, CourseStatus.ONGOING);
         BookmarkReport bookmarkReport = new BookmarkReport(bookmarkDto);
         assertThat(bookmarkReport.getCourseId(), Is.is(bookmarkDto.getCourse().getContentId()));
         assertThat(bookmarkReport.getDateModified(), Is.is(dateModified));
@@ -30,7 +31,7 @@ public class BookmarkReportTest {
     public void shouldCreateBookmarkReportFromBookmarkDtoWithMessageAsNull() {
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
         DateTime dateModified = ISODateTimeUtil.nowInTimeZoneUTC();
-        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, contentIdentifierDto, dateModified);
+        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, contentIdentifierDto, dateModified, CourseStatus.ONGOING);
         BookmarkReport bookmarkReport = new BookmarkReport(bookmarkDto);
         assertThat(bookmarkReport.getCourseId(), Is.is(bookmarkDto.getCourse().getContentId()));
         assertThat(bookmarkReport.getDateModified(), Is.is(dateModified));
@@ -44,7 +45,7 @@ public class BookmarkReportTest {
     public void shouldCreateBookmarkReportFromBookmarkDtoWithQuizAsNull() {
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
         DateTime dateModified = ISODateTimeUtil.nowInTimeZoneUTC();
-        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, dateModified);
+        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, dateModified, CourseStatus.CLOSED);
         BookmarkReport bookmarkReport = new BookmarkReport(bookmarkDto);
         assertThat(bookmarkReport.getCourseId(), Is.is(bookmarkDto.getCourse().getContentId()));
         assertThat(bookmarkReport.getDateModified(), Is.is(dateModified));

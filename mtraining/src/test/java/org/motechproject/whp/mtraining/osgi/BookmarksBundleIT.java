@@ -150,7 +150,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         ContentIdentifierDto chapter = chapterDto.toContentIdentifierDto();
         ContentIdentifierDto message = messageDto.toContentIdentifierDto();
 
-        Bookmark bookmark = new Bookmark(courseIdentifier, module, chapter, message, null);
+        Bookmark bookmark = new Bookmark(courseIdentifier, module, chapter, message, null, "ONGOING");
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", bookmark);
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(bookmarkPostRequest);

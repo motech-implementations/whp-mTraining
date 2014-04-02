@@ -2,6 +2,8 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.exception.InvalidBookmarkException;
@@ -25,16 +28,19 @@ import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
+import org.motechproject.whp.mtraining.web.domain.BookmarkGetRequest;
 import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
+import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
+import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -81,7 +87,7 @@ public class BookmarkControllerTest {
         long callerId = 76465464L;
         when(providers.getByCallerId(callerId)).thenReturn(null);
 
-        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
+        MotechResponse response = bookmarkController.getBookmark(new BookmarkGetRequest(callerId, null, "uuid")).getBody();
 
         assertThat(response.getResponseCode(), is(UNKNOWN_PROVIDER.getCode()));
         verify(providers).getByCallerId(callerId);
@@ -97,10 +103,10 @@ public class BookmarkControllerTest {
         when(providers.getByCallerId(callerId)).thenReturn(provider);
         when(provider.getProviderStatus()).thenReturn(ProviderStatus.WORKING_PROVIDER.getStatus());
         ContentIdentifierDto contentId = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, contentId, ISODateTimeUtil.nowInTimeZoneUTC());
+        BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, contentId, ISODateTimeUtil.nowInTimeZoneUTC(), CourseStatus.ONGOING);
         when(bookmarkService.getBookmark(providerRemediId)).thenReturn(bookmarkDto);
 
-        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
+        MotechResponse response = bookmarkController.getBookmark(new BookmarkGetRequest(callerId, null, "uuid")).getBody();
 
         assertThat(response.getResponseCode(), is(ResponseStatus.OK.getCode()));
         verify(providers).getByCallerId(callerId);
@@ -114,7 +120,7 @@ public class BookmarkControllerTest {
         String uniqueId = "uuid";
         when(sessions.create()).thenReturn("7868jhgjg");
 
-        MotechResponse bookmark = bookmarkController.getBookmark(callerId, uniqueId, null).getBody();
+        MotechResponse bookmark = bookmarkController.getBookmark(new BookmarkGetRequest(callerId, null, uniqueId)).getBody();
 
         assertThat(StringUtils.isBlank(bookmark.getSessionId()), Is.is(false));
         verify(sessions).create();
@@ -123,13 +129,13 @@ public class BookmarkControllerTest {
 
     @Test
     public void shouldMarkErrorIfCallerIdIsMissing() {
-        MotechResponse response = bookmarkController.getBookmark(null, "uni", "ssn001").getBody();
+        MotechResponse response = bookmarkController.getBookmark(new BookmarkGetRequest(null, "ssn001", "uni")).getBody();
         assertThat(response.getResponseCode(), Is.is(MISSING_CALLER_ID.getCode()));
     }
 
     @Test
     public void shouldMarkErrorIfUniqueIdIsMissing() {
-        MotechResponse response = bookmarkController.getBookmark(123l, "", "ssn001").getBody();
+        MotechResponse response = bookmarkController.getBookmark(new BookmarkGetRequest(123l, "ssn001", "")).getBody();
         assertThat(response.getResponseCode(), Is.is(MISSING_UNIQUE_ID.getCode()));
     }
 
@@ -139,11 +145,51 @@ public class BookmarkControllerTest {
         Provider provider = new Provider("remediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
-        MotechResponse response = bookmarkController.getBookmark(callerId, "uuid", null).getBody();
+        MotechResponse response = bookmarkController.getBookmark(new BookmarkGetRequest(callerId, null, "uuid")).getBody();
 
         assertThat(response.getResponseCode(), is(ResponseStatus.NOT_WORKING_PROVIDER.getCode()));
         verify(providers).getByCallerId(callerId);
         verify(allBookmarkRequests).add(any(BookmarkRequest.class));
+    }
+
+
+    @Test
+    public void shouldReturnBookmarkRetrievedFromBookmarkService() {
+        Long callerId = 87676598l;
+        String uniqueId = "unk001";
+        String sessionId = "session001";
+        String remediId = "remediId";
+        ContentIdentifierDto course = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        ContentIdentifierDto module = new ContentIdentifierDto(UUID.randomUUID(), 2);
+        ContentIdentifierDto chapter = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        ContentIdentifierDto message = new ContentIdentifierDto(UUID.randomUUID(), 1);
+        DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
+
+        BookmarkDto bookmarkDto = new BookmarkDto(remediId, course, module, chapter, message, null, now, CourseStatus.STARTED);
+
+        Provider provider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
+        when(providers.getByCallerId(callerId)).thenReturn(provider);
+
+        when(bookmarkService.getBookmark(remediId)).thenReturn(bookmarkDto);
+
+        ResponseEntity<? extends MotechResponse> response = bookmarkController.getBookmark(new BookmarkGetRequest(callerId, sessionId, uniqueId));
+
+        assertThat(response.getStatusCode(), Is.is(HttpStatus.OK));
+
+        BookmarkResponse bookmarkResponse = (BookmarkResponse) response.getBody();
+
+        assertThat(bookmarkResponse.getCallerId(), Is.is(callerId));
+        assertThat(bookmarkResponse.getUniqueId(), Is.is(uniqueId));
+        assertThat(bookmarkResponse.getSessionId(), Is.is(sessionId));
+        Bookmark bookmark = bookmarkResponse.getBookmark();
+
+        assertThat(bookmark.getCourseStatus(), Is.is(CourseStatus.STARTED.value()));
+        assertThat(bookmark.getCourseIdentifierDto(), Is.is(course));
+        assertThat(bookmark.getModuleIdentifierDto(), Is.is(module));
+        assertThat(bookmark.getChapterIdentifierDto(), Is.is(chapter));
+        assertThat(bookmark.getMessageIdentifierDto(), Is.is(message));
+        assertThat(bookmark.getQuizIdentifierDto(), IsNull.nullValue());
+        assertThat(bookmark.getDateModified(), Is.is(now.toString()));
     }
 
     @Test
@@ -156,7 +202,10 @@ public class BookmarkControllerTest {
         ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         ContentIdentifierDto messageIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         ContentIdentifierDto quizIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier, quizIdentifier));
+
+        Bookmark bookmark = new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier, quizIdentifier, "COMPLETED");
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, bookmark);
+
         Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
 
@@ -171,6 +220,7 @@ public class BookmarkControllerTest {
         assertThat(postedBookmark.getModule(), Is.is(moduleIdentifier));
         assertThat(postedBookmark.getChapter(), Is.is(chapterIdentifier));
         assertThat(postedBookmark.getMessage(), Is.is(messageIdentifier));
+        assertThat(postedBookmark.getCourseStatus(), Is.is(CourseStatus.COMPLETED));
 
         ArgumentCaptor<BookmarkRequest> bookmarkRequestArgumentCaptor = ArgumentCaptor.forClass(BookmarkRequest.class);
         verify(allBookmarkRequests, times(1)).add(bookmarkRequestArgumentCaptor.capture());
@@ -188,7 +238,8 @@ public class BookmarkControllerTest {
         ContentIdentifierDto courseIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         ContentIdentifierDto moduleIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 2);
         ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, null, null));
+        Bookmark bookmark = new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, null, null, "ONGOING");
+        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, bookmark);
         Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
         ArgumentCaptor<BookmarkDto> bookmarkDtoArgumentCaptor = ArgumentCaptor.forClass(BookmarkDto.class);
@@ -269,7 +320,7 @@ public class BookmarkControllerTest {
         BookmarkDto bookmarkDTO = new BookmarkBuilder().withExternalId("r001").buildDTO();
         when(bookmarkService.getInitialBookmark("r001", new ContentIdentifierDto(lastCourseSuccessfulAttempt.getCourseId(), lastCourseSuccessfulAttempt.getVersion()))).thenReturn(bookmarkDTO);
 
-        bookmarkController.getBookmark(1l, "uk", "s001");
+        bookmarkController.getBookmark(new BookmarkGetRequest(1l, "uk", "s001"));
 
         verify(allCoursePublicationAttempts).getLastSuccessfulCoursePublicationAttempt();
     }

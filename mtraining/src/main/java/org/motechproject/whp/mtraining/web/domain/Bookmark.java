@@ -24,26 +24,31 @@ public class Bookmark {
     @JsonProperty
     private String dateModified;
 
+    @JsonProperty
+    private String courseStatus;
+
     //For JSON parsing
     public Bookmark() {
     }
 
-    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto, ContentIdentifierDto messageIdentifierDto, ContentIdentifierDto quizIdentifierDto) {
-        this.courseIdentifierDto = courseIdentifierDto;
-        this.moduleIdentifierDto = moduleIdentifierDto;
-        this.chapterIdentifierDto = chapterIdentifierDto;
-        this.messageIdentifierDto = messageIdentifierDto;
-        this.quizIdentifierDto = quizIdentifierDto;
-        this.dateModified = ISODateTimeUtil.nowAsStringInTimeZoneUTC();
-    }
-
-    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto, ContentIdentifierDto messageIdentifierDto, ContentIdentifierDto quizIdentifierDto, String dateModified) {
+    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto,
+                    ContentIdentifierDto messageIdentifierDto, ContentIdentifierDto quizIdentifierDto, String dateModified, String courseStatus) {
         this.courseIdentifierDto = courseIdentifierDto;
         this.moduleIdentifierDto = moduleIdentifierDto;
         this.chapterIdentifierDto = chapterIdentifierDto;
         this.messageIdentifierDto = messageIdentifierDto;
         this.quizIdentifierDto = quizIdentifierDto;
         this.dateModified = dateModified;
+        this.courseStatus = courseStatus;
+    }
+
+    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto,
+                    ContentIdentifierDto messageIdentifierDto, ContentIdentifierDto quizIdentifierDto, String courseStatus) {
+        this(courseIdentifierDto, moduleIdentifierDto, chapterIdentifierDto, messageIdentifierDto, quizIdentifierDto, now(), courseStatus);
+    }
+
+    private static String now() {
+        return ISODateTimeUtil.nowAsStringInTimeZoneUTC();
     }
 
     public ContentIdentifierDto getCourseIdentifierDto() {
@@ -75,5 +80,9 @@ public class Bookmark {
             return false;
         }
         return ISODateTimeUtil.validate(dateModified);
+    }
+
+    public String getCourseStatus() {
+        return courseStatus;
     }
 }

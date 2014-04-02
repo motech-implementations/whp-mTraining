@@ -53,6 +53,7 @@ public class BookmarkRequest {
             @Persistent(name = "quizId", columns = @Column(name = "quiz_id")),
             @Persistent(name = "quizVersion", columns = @Column(name = "quiz_version")),
             @Persistent(name = "dateModified", columns = @Column(name = "bookmark_modified_on")),
+            @Persistent(name = "courseStatus", columns = @Column(name = "course_status")),
     })
     @Persistent
     private BookmarkReport bookmarkReport;
@@ -85,6 +86,10 @@ public class BookmarkRequest {
         return sessionId;
     }
 
+
+    public String getCourseStatus() {
+        return bookmarkReport.getCourseStatus();
+    }
 
     public boolean hasBookmarkFor(ContentIdentifierDto course) {
         if (bookmarkReport == null) {

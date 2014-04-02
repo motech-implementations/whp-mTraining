@@ -41,6 +41,9 @@ public class BookmarkReport {
     @Temporal(TemporalType.TIMESTAMP)
     private DateTime dateModified;
 
+    @Persistent
+    private String courseStatus;
+
 
     public BookmarkReport(BookmarkDto bookmark) {
         setCourse(bookmark.getCourse());
@@ -49,6 +52,7 @@ public class BookmarkReport {
         setMessage(bookmark.getMessage());
         setQuiz(bookmark.getQuiz());
         dateModified = ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified());
+        courseStatus = bookmark.getCourseStatus().value();
     }
 
     public UUID getCourseId() {
@@ -112,5 +116,9 @@ public class BookmarkReport {
             this.quizId = quiz.getContentId();
             this.quizVersion = quiz.getVersion();
         }
+    }
+
+    public String getCourseStatus() {
+        return courseStatus;
     }
 }

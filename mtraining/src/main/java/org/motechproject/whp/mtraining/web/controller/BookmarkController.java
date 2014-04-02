@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.web.controller;
 
+import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.exception.InvalidBookmarkException;
@@ -16,10 +17,12 @@ import org.motechproject.whp.mtraining.repository.Providers;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
+import org.motechproject.whp.mtraining.web.domain.BookmarkGetRequest;
 import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
 import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.motechproject.whp.mtraining.web.domain.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +32,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.GET;
 import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.POST;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.isInvalid;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_UNIQUE_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.NOT_WORKING_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.statusFor;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @Controller
@@ -68,13 +70,20 @@ public class BookmarkController {
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<? extends MotechResponse> getBookmark(@RequestParam Long callerId, @RequestParam String uniqueId, @RequestParam(required = false) String sessionId) {
+    public ResponseEntity<? extends MotechResponse> getBookmark(final BookmarkGetRequest bookmarkGetRequest) {
+        String sessionId = bookmarkGetRequest.getSessionId();
+        Long callerId = bookmarkGetRequest.getCallerId();
+        String uniqueId = bookmarkGetRequest.getUniqueId();
+
         String currentSessionId = currentSession(sessionId);
+
         LOGGER.debug(String.format("Received bookmarkDto request for caller %s with session %s and uniqueId %s", callerId, sessionId, uniqueId));
-        if (callerId == null)
-            return responseAfterLogging(null, uniqueId, currentSessionId, GET, MISSING_CALLER_ID);
-        if (isBlank(uniqueId))
-            return responseAfterLogging(callerId, null, currentSessionId, GET, MISSING_UNIQUE_ID);
+        List<ValidationError> validationErrors = bookmarkGetRequest.validate();
+        if (!validationErrors.isEmpty()) {
+            ValidationError validationError = validationErrors.get(0);
+            return responseAfterLogging(callerId, uniqueId, sessionId, POST, statusFor(validationError.getErrorCode()));
+        }
+
 
         Provider provider = providers.getByCallerId(callerId);
         if (provider == null)
@@ -96,15 +105,12 @@ public class BookmarkController {
         String uniqueId = bookmarkPostRequest.getUniqueId();
         String sessionId = bookmarkPostRequest.getSessionId();
 
-        if (callerId == null) {
-            return responseAfterLogging(null, uniqueId, sessionId, POST, MISSING_CALLER_ID);
+        List<ValidationError> validationErrors = bookmarkPostRequest.validate();
+        if (!validationErrors.isEmpty()) {
+            ValidationError validationError = validationErrors.get(0);
+            return responseAfterLogging(callerId, uniqueId, sessionId, POST, statusFor(validationError.getErrorCode()));
         }
-        if (isBlank(uniqueId)) {
-            return responseAfterLogging(callerId, null, sessionId, POST, MISSING_UNIQUE_ID);
-        }
-        if (isBlank(sessionId)) {
-            return responseAfterLogging(callerId, uniqueId, null, POST, MISSING_SESSION_ID);
-        }
+
         Bookmark bookmark = bookmarkPostRequest.getBookmark();
 
         if (!bookmark.hasValidModifiedDate()) {
@@ -117,8 +123,9 @@ public class BookmarkController {
             return responseAfterLogging(callerId, uniqueId, sessionId, POST, UNKNOWN_PROVIDER);
         }
 
+        CourseStatus courseStatus = CourseStatus.enumFor(bookmark.getCourseStatus());
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemediId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
-                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), bookmark.getQuizIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
+                bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), bookmark.getQuizIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()), courseStatus);
         try {
             bookmarkService.addOrUpdate(bookmarkDto);
         } catch (InvalidBookmarkException ex) {
@@ -129,7 +136,8 @@ public class BookmarkController {
     }
 
     private Bookmark mapToBookmark(BookmarkDto bookmarkDto) {
-        return new Bookmark(bookmarkDto.getCourse(), bookmarkDto.getModule(), bookmarkDto.getChapter(), bookmarkDto.getMessage(), bookmarkDto.getQuiz(), bookmarkDto.getDateModified());
+        String courseStatus = bookmarkDto.getCourseStatus().value();
+        return new Bookmark(bookmarkDto.getCourse(), bookmarkDto.getModule(), bookmarkDto.getChapter(), bookmarkDto.getMessage(), bookmarkDto.getQuiz(), bookmarkDto.getDateModified(), courseStatus);
     }
 
     private BookmarkDto getBookmark(String externalId) {
