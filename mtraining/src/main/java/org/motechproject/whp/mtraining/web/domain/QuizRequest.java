@@ -2,11 +2,10 @@ package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.List;
 import java.util.UUID;
 
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_QUIZ;
-
-public class QuizRequest extends CallDetailsRequest {
+public class QuizRequest extends IVRRequest {
 
     @JsonProperty
     private UUID quizId;
@@ -17,17 +16,19 @@ public class QuizRequest extends CallDetailsRequest {
     }
 
     public QuizRequest(Long callerId, String uniqueId, String sessionId, UUID quizId, Integer quizVersion) {
-        super(callerId, uniqueId, sessionId);
+        super(callerId, sessionId, uniqueId);
         this.quizId = quizId;
         this.quizVersion = quizVersion;
     }
 
-    public ResponseStatus validate() {
-        ResponseStatus validationStatus = super.validate();
-        if (!validationStatus.isValid())
-            return validationStatus;
-        if (quizId == null || quizVersion == null)
-            return MISSING_QUIZ;
-        return ResponseStatus.OK;
+    public List<ValidationError> validate() {
+        List<ValidationError> validationErrors = super.validate();
+        if (!validationErrors.isEmpty()) {
+            return validationErrors;
+        }
+        if (quizId == null || quizVersion == null) {
+            validationErrors.add(new ValidationError(ResponseStatus.MISSING_QUIZ.getCode()));
+        }
+        return validationErrors;
     }
 }

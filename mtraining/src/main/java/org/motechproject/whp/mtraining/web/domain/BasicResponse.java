@@ -54,4 +54,10 @@ public class BasicResponse implements MotechResponse {
         this.responseMessage = status.getMessage();
         return this;
     }
+
+    public BasicResponse withResponse(Integer responseCode, String responseMessage) {
+        this.responseCode = responseCode;
+        this.responseMessage = responseMessage;
+        return this;
+    }
 }

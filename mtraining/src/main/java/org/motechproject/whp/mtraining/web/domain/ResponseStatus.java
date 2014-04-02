@@ -9,15 +9,17 @@ public enum ResponseStatus {
     MISSING_SESSION_ID(905, "Missing Session Id"),
     INVALID_DATE_TIME(906, "Missing or Invalid Date"),
     MISSING_TIME(907, "Start time or end time must be present"),
-    INVALID_NODE_TYPE(908, "Invalid node type"),
+    INVALID_CALL_LOG_TYPE(908, "Invalid call log type"),
     MISSING_NODE(909, "Missing Node Id or Version"),
     MISSING_QUIZ(910, "Missing Quiz Id or Version"),
     INVALID_QUIZ(911, "Invalid Quiz Id or version"),
     MISSING_QUESTION(912, "No Questions Available"),
     INVALID_BOOKMARK(913, "Invalid bookmark"),
-    INVALID_CALL_STATUS(914, "Restarted flag must be set to true or false");
-
+    INVALID_CALL_STATUS(914, "Restarted flag must be set to true or false"),
+    MISSING_CONTENT_ID(914, "Missing Content Id"),
+    MISSING_VERSION(915, "Missing Version");
     private int code;
+
     private String message;
 
     private ResponseStatus(int code, String message) {

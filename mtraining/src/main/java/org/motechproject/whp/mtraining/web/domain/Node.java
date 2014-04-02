@@ -2,14 +2,12 @@ package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
-import org.motechproject.whp.mtraining.csv.domain.NodeType;
 
 import java.util.UUID;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_CALL_STATUS;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_NODE_TYPE;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_NODE;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
@@ -70,8 +68,6 @@ public class Node {
         if (contentId == null || version == null) {
             return MISSING_NODE.appendMessage(node);
         }
-        if (NodeType.from(type) == null)
-            return INVALID_NODE_TYPE.appendMessage(node);
         if (isBlank(startTime) && isBlank(endTime))
             return MISSING_TIME.appendMessage(node);
         if (!isBlank(startTime) && !ISODateTimeUtil.validate(startTime))

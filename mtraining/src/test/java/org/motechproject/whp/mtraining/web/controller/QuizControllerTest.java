@@ -79,11 +79,42 @@ public class QuizControllerTest {
         int quizVersion = 1;
         when(providerService.validateProvider(callerId)).thenReturn(ResponseStatus.OK);
         ContentIdentifierDto quizIdentifier = new ContentIdentifierDto(quizId, quizVersion);
-        when(quizService.getQuestionsForQuiz(quizIdentifier)).thenReturn(null);
+
+        when(quizService.getQuestionsForQuiz(quizIdentifier)).thenThrow(new IllegalStateException());
 
         BasicResponse response = (BasicResponse) quizController.getQuestionsForQuiz(callerId, "uuid", "sessionId", quizId, quizVersion).getBody();
 
         verify(quizService).getQuestionsForQuiz(quizIdentifier);
         assertEquals(ResponseStatus.INVALID_QUIZ.getCode(), response.getResponseCode());
+    }
+
+    @Test
+    public void shouldMarkErrorWhenQuestionsAreInvalid() {
+        long callerId = 76465464L;
+        UUID quizId = UUID.randomUUID();
+        int quizVersion = 1;
+        when(providerService.validateProvider(callerId)).thenReturn(ResponseStatus.OK);
+        ContentIdentifierDto quizIdentifier = new ContentIdentifierDto(quizId, quizVersion);
+        when(quizService.getQuestionsForQuiz(quizIdentifier)).thenThrow(new IndexOutOfBoundsException());
+
+        BasicResponse response = (BasicResponse) quizController.getQuestionsForQuiz(callerId, "uuid", "sessionId", quizId, quizVersion).getBody();
+
+        verify(quizService).getQuestionsForQuiz(quizIdentifier);
+        assertEquals(ResponseStatus.MISSING_QUESTION.getCode(), response.getResponseCode());
+    }
+
+    @Test
+    public void shouldReturnMissingQuizErrorIfQuestionsNotFound() {
+        long callerId = 76465464L;
+        UUID quizId = UUID.randomUUID();
+        int quizVersion = 1;
+        when(providerService.validateProvider(callerId)).thenReturn(ResponseStatus.OK);
+        ContentIdentifierDto quizIdentifier = new ContentIdentifierDto(quizId, quizVersion);
+        when(quizService.getQuestionsForQuiz(quizIdentifier)).thenReturn(null);
+
+        BasicResponse response = (BasicResponse) quizController.getQuestionsForQuiz(callerId, "uuid", "sessionId", quizId, quizVersion).getBody();
+
+        verify(quizService).getQuestionsForQuiz(quizIdentifier);
+        assertEquals(ResponseStatus.MISSING_QUIZ.getCode(), response.getResponseCode());
     }
 }

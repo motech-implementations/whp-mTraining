@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
 import org.joda.time.DateTime;
-import org.motechproject.whp.mtraining.csv.domain.NodeType;
+import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -31,7 +31,7 @@ public class CallLog {
     @Persistent(column = "node_version")
     private Integer nodeVersion;
     @Persistent(column = "node_type")
-    private NodeType nodeType;
+    private CallLogRecordType callLogRecordType;
     @Persistent(column = "start_time")
     @Temporal(TemporalType.TIMESTAMP)
     private DateTime startTime;
@@ -43,16 +43,15 @@ public class CallLog {
     @Persistent(column = "restarted")
     private Boolean restarted;
 
-
-    public CallLog(String remedyId, Long callerId, String uniqueId, String sessionId, UUID nodeId, Integer nodeVersion,
-                   NodeType nodeType, DateTime startTime, DateTime endTime, String status, Boolean restarted) {
+    public CallLog(String remedyId, Long callerId, String uniqueId, String sessionId,
+                   UUID nodeId, Integer nodeVersion, CallLogRecordType callLogRecordType, DateTime startTime, DateTime endTime, String status) {
         this.remedyId = remedyId;
         this.callerId = callerId;
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
         this.nodeId = nodeId;
         this.nodeVersion = nodeVersion;
-        this.nodeType = nodeType;
+        this.callLogRecordType = callLogRecordType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
@@ -87,8 +86,8 @@ public class CallLog {
         return nodeVersion;
     }
 
-    public NodeType getNodeType() {
-        return nodeType;
+    public CallLogRecordType getCallLogRecordType() {
+        return callLogRecordType;
     }
 
     public DateTime getStartTime() {

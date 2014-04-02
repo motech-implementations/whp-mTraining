@@ -1,6 +1,6 @@
 package org.motechproject.whp.mtraining.csv.request;
 
-import org.motechproject.whp.mtraining.csv.domain.NodeType;
+import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
 
 import java.util.List;
 
@@ -74,7 +74,7 @@ public class CourseCsvRequest {
     }
 
     public boolean isCourse() {
-        return NodeType.isCourse(nodeType);
+        return CallLogRecordType.isCourse(nodeType);
     }
 
     public boolean hasParent() {
@@ -82,15 +82,15 @@ public class CourseCsvRequest {
     }
 
     public boolean isMessage() {
-        return NodeType.isMessage(nodeType);
+        return CallLogRecordType.isMessage(nodeType);
     }
 
     public boolean isQuestion() {
-        return NodeType.isQuestion(nodeType);
+        return CallLogRecordType.isQuestion(nodeType);
     }
 
     public boolean isChapter() {
-        return NodeType.isChapter(nodeType);
+        return CallLogRecordType.isChapter(nodeType);
     }
 
     public boolean hasFileName() {
@@ -102,13 +102,13 @@ public class CourseCsvRequest {
     }
 
     public boolean hasValidParentType(String parentNodeType) {
-        NodeType nodeType = NodeType.from(this.nodeType);
-        return nodeType.hasValidParentType(parentNodeType);
+        CallLogRecordType callLogRecordType = CallLogRecordType.from(this.nodeType);
+        return callLogRecordType.hasValidParentType(parentNodeType);
     }
 
     public String getChildNodeType() {
-        NodeType childNodeType = NodeType.getChildNodeType(nodeType);
-        return childNodeType != null ? childNodeType.name() : "";
+        CallLogRecordType childCallLogRecordType = CallLogRecordType.getChildNodeType(nodeType);
+        return childCallLogRecordType != null ? childCallLogRecordType.name() : "";
     }
 
     public boolean isValidStatus() {

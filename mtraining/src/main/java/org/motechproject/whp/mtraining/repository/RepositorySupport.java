@@ -62,6 +62,14 @@ abstract public class RepositorySupport<T> {
 
 
     @Transactional
+    public Collection<T> bulkAdd(List<T> persistentObjects) {
+        PersistenceManager persistenceManager = persistenceManagerFactory.getPersistenceManager();
+        Collection<T> savedObjects = persistenceManager.makePersistentAll(persistentObjects);
+        return persistenceManager.detachCopyAll(savedObjects);
+    }
+
+
+    @Transactional
     public void deleteAll() {
         PersistenceManager persistenceManager = getPersistenceManager();
         Query query = persistenceManager.newQuery(getType());

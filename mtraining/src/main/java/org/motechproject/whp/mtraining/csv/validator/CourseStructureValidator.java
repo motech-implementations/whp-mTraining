@@ -23,8 +23,8 @@ import static java.lang.Long.parseLong;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.motechproject.whp.mtraining.csv.domain.NodeType.QUESTION;
-import static org.motechproject.whp.mtraining.csv.domain.NodeType.from;
+import static org.motechproject.whp.mtraining.csv.domain.CallLogRecordType.QUESTION;
+import static org.motechproject.whp.mtraining.csv.domain.CallLogRecordType.from;
 
 @Component
 public class CourseStructureValidator {

@@ -8,6 +8,7 @@ import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.QuizRequest;
 import org.motechproject.whp.mtraining.web.domain.QuizResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.motechproject.whp.mtraining.web.domain.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.UUID;
 
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_QUIZ;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_QUESTION;
 import static org.springframework.http.HttpStatus.OK;
 
 @Controller
@@ -47,19 +46,27 @@ public class QuizController {
         LOGGER.debug(String.format("Received bookmarkDto request for caller %s with session %s and uniqueId %s", callerId, sessionId, uniqueId));
         QuizRequest quizRequest = new QuizRequest(callerId, uniqueId, sessionId, quizId, quizVersion);
         BasicResponse basicResponse = new BasicResponse(callerId, sessionId, uniqueId);
-        ResponseStatus validationStatus = quizRequest.validate();
-        if (!validationStatus.isValid())
-            return new ResponseEntity<>(basicResponse.withResponse(validationStatus), HttpStatus.OK);
+        List<ValidationError> validationErrors = quizRequest.validate();
+        if (!validationErrors.isEmpty()) {
+            ValidationError firstError = validationErrors.get(0);
+            ResponseStatus responseStatus = ResponseStatus.statusFor(firstError.getErrorCode());
+            return new ResponseEntity<>(basicResponse.withResponse(responseStatus), HttpStatus.OK);
+        }
+
         ResponseStatus providerStatus = providerService.validateProvider(callerId);
-        if (!providerStatus.isValid())
+        if (!providerStatus.isValid()) {
             return new ResponseEntity<>(basicResponse.withResponse(providerStatus), HttpStatus.OK);
+        }
         try {
             List<ContentIdentifierDto> questionsForQuiz = quizService.getQuestionsForQuiz(new ContentIdentifierDto(quizId, quizVersion));
-            return questionsForQuiz == null ?
-                    new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, INVALID_QUIZ), OK) :
-                    new ResponseEntity<>(new QuizResponse(callerId, sessionId, uniqueId, questionsForQuiz), OK);
+            if (questionsForQuiz == null) {
+                return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.MISSING_QUIZ), OK);
+            }
+            return new ResponseEntity<>(new QuizResponse(callerId, sessionId, uniqueId, questionsForQuiz), OK);
         } catch (IllegalStateException e) {
-            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, MISSING_QUESTION), OK);
+            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.INVALID_QUIZ), OK);
+        } catch (IndexOutOfBoundsException e) {
+            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.MISSING_QUESTION), OK);
         }
     }
 }
