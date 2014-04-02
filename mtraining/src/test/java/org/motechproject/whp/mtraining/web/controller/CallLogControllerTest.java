@@ -43,8 +43,8 @@ public class CallLogControllerTest {
         long callerId = 1234567890L;
         String uniqueId = "uniqueId";
         String sessionId = null;
-        Node course = new Node(UUID.randomUUID(), 1, NodeType.COURSE.name(), null, "2014-03-30T17:52:25.976Z");
-        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course));
+        Node course = new Node(UUID.randomUUID(), 1, NodeType.COURSE.name(), null, "2014-03-30T17:52:25.976Z", true);
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), null, null);
 
         ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);
 
@@ -57,8 +57,8 @@ public class CallLogControllerTest {
         long callerId = 1234567890L;
         String uniqueId = "uniqueId";
         String sessionId = "sessionId";
-        Node course = new Node(UUID.randomUUID(), 1, NodeType.COURSE.name(), null, "2014-03-30T17:52:25.976Z");
-        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course));
+        Node course = new Node(UUID.randomUUID(), 1, NodeType.COURSE.name(), null, "2014-03-30T17:52:25.976Z", true);
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), null, null);
         BasicResponse basicResponse = new BasicResponse(callerId, uniqueId, sessionId);
         when(callLogReporter.validateAndAddLog(eq(callLogRequest), any(BasicResponse.class))).thenReturn(new ResponseEntity<>(basicResponse.withResponse(ResponseStatus.OK), OK));
 

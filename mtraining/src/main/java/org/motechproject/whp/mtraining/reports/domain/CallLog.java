@@ -40,9 +40,12 @@ public class CallLog {
     private DateTime endTime;
     @Persistent(column = "status")
     private String status;
+    @Persistent(column = "restarted")
+    private Boolean restarted;
 
-    public CallLog(String remedyId, Long callerId, String uniqueId, String sessionId,
-                   UUID nodeId, Integer nodeVersion, NodeType nodeType, DateTime startTime, DateTime endTime, String status) {
+
+    public CallLog(String remedyId, Long callerId, String uniqueId, String sessionId, UUID nodeId, Integer nodeVersion,
+                   NodeType nodeType, DateTime startTime, DateTime endTime, String status, Boolean restarted) {
         this.remedyId = remedyId;
         this.callerId = callerId;
         this.uniqueId = uniqueId;
@@ -53,6 +56,7 @@ public class CallLog {
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
+        this.restarted = restarted;
     }
 
     public Long getId() {
@@ -97,5 +101,9 @@ public class CallLog {
 
     public String getStatus() {
         return status;
+    }
+
+    public Boolean getRestarted() {
+        return restarted;
     }
 }

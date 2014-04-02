@@ -7,6 +7,7 @@ import org.motechproject.whp.mtraining.csv.domain.NodeType;
 import java.util.UUID;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_CALL_STATUS;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_NODE_TYPE;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_NODE;
@@ -25,16 +26,19 @@ public class Node {
     private String startTime;
     @JsonProperty
     private String endTime;
+    @JsonProperty
+    private Boolean restarted;
 
     public Node() {
     }
 
-    public Node(UUID contentId, Integer version, String nodeType, String startTime, String endTime) {
+    public Node(UUID contentId, Integer version, String nodeType, String startTime, String endTime, Boolean restarted) {
         this.contentId = contentId;
         this.version = version;
         this.type = nodeType;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.restarted = restarted;
     }
 
     public UUID getContentId() {
@@ -57,6 +61,10 @@ public class Node {
         return endTime;
     }
 
+    public Boolean getRestarted() {
+        return restarted;
+    }
+
     public ResponseStatus validate() {
         String node = " for content: " + type;
         if (contentId == null || version == null) {
@@ -70,6 +78,8 @@ public class Node {
             return INVALID_DATE_TIME.appendMessage(node);
         if (!isBlank(endTime) && !ISODateTimeUtil.validate(endTime))
             return INVALID_DATE_TIME.appendMessage(node);
+        if (restarted == null)
+            return INVALID_CALL_STATUS;
         return OK;
     }
 }
