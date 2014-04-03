@@ -2,10 +2,10 @@ package org.motechproject.whp.mtraining.csv.web.controller;
 
 
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
-import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.service.impl.CourseImportService;
 import org.slf4j.Logger;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -45,7 +44,6 @@ public class CourseImportController {
         try {
             List<CourseCsvRequest> courseCsvRequests = csvParser.parse(multipartFile, CourseCsvRequest.class);
             List<CsvImportError> errors = courseStructureValidator.validate(courseCsvRequests);
-            List<String> errorMessages = new ArrayList<>();
             if (!errors.isEmpty()) {
                 return CsvImportResponse.failure(errors);
             }

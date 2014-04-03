@@ -314,6 +314,22 @@ public class CourseStructureValidatorTest {
     }
 
     @Test
+    public void shouldReturnErrorIfActiveChapterHasHasNoActiveChild() {
+        List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "0", "1"));
+        courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "inactive", "Chapter TB Symptoms", "Message Description", "FileName"));
+        courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms2", "Message", "inactive", "Chapter TB Symptoms", "Message Description", "FileName"));
+
+        errors = courseStructureValidator.validate(courseStructureCsvs);
+
+        assertEquals(1, errors.size());
+        assertEquals("A chapter should have at least one active message under it. Please add active messages under the chapter or mark the chapter as inactive and try importing it again.", errors.get(0).getMessage());
+    }
+
+
+    @Test
     public void shouldReturnErrorIfNoOfActiveQuestionsIsLessThanTheRequiredNoOfQuestionsToBeAnsweredForActiveChapter() {
         List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
         courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
