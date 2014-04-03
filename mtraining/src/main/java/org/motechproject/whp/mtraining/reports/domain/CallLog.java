@@ -44,7 +44,7 @@ public class CallLog {
     private Boolean restarted;
 
     public CallLog(String remedyId, Long callerId, String uniqueId, String sessionId,
-                   UUID nodeId, Integer nodeVersion, CallLogRecordType callLogRecordType, DateTime startTime, DateTime endTime, String status) {
+                   UUID nodeId, Integer nodeVersion, CallLogRecordType callLogRecordType, DateTime startTime, DateTime endTime, String status, boolean restarted) {
         this.remedyId = remedyId;
         this.callerId = callerId;
         this.uniqueId = uniqueId;

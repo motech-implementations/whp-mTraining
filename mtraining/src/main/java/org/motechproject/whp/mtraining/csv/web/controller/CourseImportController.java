@@ -1,4 +1,4 @@
-package org.motechproject.whp.mtraining.web.controller;
+package org.motechproject.whp.mtraining.csv.web.controller;
 
 
 import org.motechproject.mtraining.dto.ContentIdentifierDto;

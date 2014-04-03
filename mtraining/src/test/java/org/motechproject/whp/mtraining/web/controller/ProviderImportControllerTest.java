@@ -9,6 +9,7 @@ import org.motechproject.whp.mtraining.csv.request.ProviderCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.validator.ProviderStructureValidator;
+import org.motechproject.whp.mtraining.csv.web.controller.ProviderImportController;
 import org.motechproject.whp.mtraining.service.impl.ProviderImportService;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 

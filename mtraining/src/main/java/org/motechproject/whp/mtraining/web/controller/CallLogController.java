@@ -37,7 +37,7 @@ public class CallLogController {
         this.providerService = providerService;
     }
 
-    @RequestMapping(value = "/callLog", method = RequestMethod.POST)
+    @RequestMapping(value = "/callLog", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<? extends MotechResponse> postCallLog(@RequestBody CallLogRequest callLogRequest) {
         Long callerId = callLogRequest.getCallerId();

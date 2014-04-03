@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.web.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
@@ -27,6 +28,8 @@ public class CallLogRecord {
     private String startTime;
     @JsonProperty
     private String endTime;
+    @JsonProperty
+    private boolean restarted;
 
     public CallLogRecord() {
     }
@@ -80,6 +83,11 @@ public class CallLogRecord {
             validationErrors.add(new ValidationError(INVALID_DATE_TIME.getCode(), errorMessage()));
         }
         return validationErrors;
+    }
+
+    @JsonIgnore
+    public boolean isRestarted() {
+        return restarted;
     }
 
     private String errorMessage() {

@@ -48,8 +48,10 @@ public class CallLogControllerTest {
         long callerId = 1234567890L;
         String uniqueId = "uniqueId";
         String nullSessionId = null;
+
         CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.COURSE.name(), "2014-03-30T17:42:25.976Z", "2014-03-30T17:52:25.976Z");
-        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, nullSessionId, newArrayList(course), null, null);
+
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, nullSessionId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
 
         ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);
 
@@ -65,7 +67,7 @@ public class CallLogControllerTest {
         String invalidStartTime = "2014-33-30T17:52:25.976Z";
 
         CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.MESSAGE.name(), invalidStartTime, "2014-03-30T17:52:25.976Z");
-        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), null, null);
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
 
         when(providerService.byCallerId(callerId)).thenReturn(new Provider());
 
@@ -84,7 +86,7 @@ public class CallLogControllerTest {
         String uniqueId = "uniqueId";
         String sessionId = "sessionId";
         CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.COURSE.name(), null, "2014-03-30T17:52:25.976Z");
-        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), null, null);
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
 
         when(providerService.byCallerId(callerId)).thenReturn(new Provider());
 

@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.web.domain;
 
+import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.Is;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -22,10 +23,48 @@ public class CallLogRequestTest {
         CallLogRequest validCallLogRequest = new CallLogRequest(746l, "unk001", "ssn001", Collections.<CallLogRecord>emptyList(), now.toString(), tenMinutesAfterNow.toString());
         List<ValidationError> expectedEmptyErrors = validCallLogRequest.validate();
         assertThat(expectedEmptyErrors.size(), Is.is(0));
-
-        CallLogRequest invalidCallLogRequest = new CallLogRequest(null, null, "", Collections.<CallLogRecord>emptyList(), now.toString(), tenMinutesAfterNow.toString());
-        assertThat(invalidCallLogRequest.validate().size(), Is.is(3));
     }
+
+    @Test
+    public void shouldReturnErrorsForMissingIdsOnly() {
+        Long nullCallerId = null;
+        String blankSessionId = null;
+        String blankUniqueId = StringUtils.EMPTY;
+        DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
+        String nullCallCompletionDate = null;
+
+        CallLogRequest callLogRequest = new CallLogRequest(nullCallerId, blankUniqueId, blankSessionId,
+                Collections.<CallLogRecord>emptyList(), now.toString(), nullCallCompletionDate);
+        List<ValidationError> validationErrors = callLogRequest.validate();
+        assertThat(validationErrors.size(), Is.is(3));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_CALLER_ID.getCode())));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_UNIQUE_ID.getCode())));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_SESSION_ID.getCode())));
+    }
+
+    @Test
+    public void shouldReturnErrorsForMissingDate() {
+        DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
+
+        CallLogRequest callLogRequest = new CallLogRequest(12234l, "UniqueId", "sessionId",
+                Collections.<CallLogRecord>emptyList(), now.toString(), null);
+        List<ValidationError> validationErrors = callLogRequest.validate();
+        assertThat(validationErrors.size(), Is.is(1));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_TIME.getCode())));
+    }
+
+
+    @Test
+    public void shouldReturnErrorsForInvalidDate() {
+        DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
+
+        CallLogRequest callLogRequest = new CallLogRequest(12234l, "UniqueId", "sessionId",
+                Collections.<CallLogRecord>emptyList(), "2001-32-12T00:00:00.000Z", now.toString());
+        List<ValidationError> validationErrors = callLogRequest.validate();
+        assertThat(validationErrors.size(), Is.is(1));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME.getCode())));
+    }
+
 
     @Test
     public void shouldReturnOnlyCallLogRequestValidationFailuresWhenCallLogRequestIsInvalid() {

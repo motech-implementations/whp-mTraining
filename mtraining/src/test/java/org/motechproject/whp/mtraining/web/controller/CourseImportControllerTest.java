@@ -11,6 +11,7 @@ import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
+import org.motechproject.whp.mtraining.csv.web.controller.CourseImportController;
 import org.motechproject.whp.mtraining.service.impl.CourseImportService;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;

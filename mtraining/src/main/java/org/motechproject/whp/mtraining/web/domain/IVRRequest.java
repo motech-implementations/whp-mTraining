@@ -1,5 +1,7 @@
 package org.motechproject.whp.mtraining.web.domain;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +11,11 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_UNIQUE_ID;
 
 public class IVRRequest {
+    @JsonProperty
     private Long callerId;
+    @JsonProperty
     private String sessionId;
+    @JsonProperty
     private String uniqueId;
 
     public IVRRequest() {

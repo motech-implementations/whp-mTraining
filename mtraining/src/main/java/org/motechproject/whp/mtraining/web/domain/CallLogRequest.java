@@ -1,8 +1,12 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class CallLogRequest extends IVRRequest {
 
@@ -36,6 +40,16 @@ public class CallLogRequest extends IVRRequest {
             return validationErrors;
         }
 
+        if (isBlank(callStartTime) || isBlank(callEndTime)) {
+            validationErrors.add(new ValidationError(ResponseStatus.MISSING_TIME.getCode()));
+            return validationErrors;
+        }
+
+        if (isCallStartTimeInvalid() || isCallEndTimeInvalid()) {
+            validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME.getCode()));
+            return validationErrors;
+        }
+
         for (CallLogRecord callLogRecord : callLogRecords) {
             List<ValidationError> errors = callLogRecord.validate();
             if (!errors.isEmpty()) {
@@ -49,15 +63,16 @@ public class CallLogRequest extends IVRRequest {
         return callStartTime;
     }
 
-    public void setCallStartTime(String callStartTime) {
-        this.callStartTime = callStartTime;
-    }
-
     public String getCallEndTime() {
         return callEndTime;
     }
 
-    public void setCallEndTime(String callEndTime) {
-        this.callEndTime = callEndTime;
+    private boolean isCallEndTimeInvalid() {
+        return isNotBlank(callEndTime) && !ISODateTimeUtil.validate(callEndTime);
     }
+
+    private boolean isCallStartTimeInvalid() {
+        return isNotBlank(callStartTime) && !ISODateTimeUtil.validate(callStartTime);
+    }
+
 }
