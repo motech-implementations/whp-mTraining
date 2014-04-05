@@ -15,7 +15,6 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-
     <bean id="persistenceManagerFactoryBean" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean">
         <property name="configLocation" value="classpath:test-datanucleus.properties"/>
     </bean>

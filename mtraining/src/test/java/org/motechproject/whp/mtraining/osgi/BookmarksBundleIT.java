@@ -31,7 +31,6 @@ import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,6 +169,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         return String.format(BOOKMARK_QUERY_WITHOUT_SESSION_ID, TestContext.getJettyPort(), callerId, uniqueId);
     }
 
+    @Override
     protected List<String> getImports() {
         List<String> imports = new ArrayList<>();
         imports.add("org.motechproject.commons.api");
@@ -181,6 +181,9 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         imports.add("org.apache.commons.io");
         imports.add("org.motechproject.whp.mtraining.domain");
         imports.add("org.motechproject.whp.mtraining.web.domain");
+        imports.add("org.jasypt.encryption.pbe.config");
+        imports.add("org.jasypt.encryption.pbe");
+        imports.add("org.jasypt.spring.properties");
         return imports;
     }
 

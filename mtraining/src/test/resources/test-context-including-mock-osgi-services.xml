@@ -94,14 +94,14 @@
         </property>
     </bean>
 
-    <bean id="emailSenderService" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <bean id="emailService" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">
             <bean class="org.mockito.Mockito" factory-method="mock">
-                <constructor-arg value="org.motechproject.email.service.EmailSenderService"/>
+                <constructor-arg value="org.motechproject.whp.mtraining.service.EmailService"/>
             </bean>
         </property>
         <property name="proxyInterfaces">
-            <value>org.motechproject.email.service.EmailSenderService</value>
+            <value>org.motechproject.whp.mtraining.service.EmailService</value>
         </property>
     </bean>
 

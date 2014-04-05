@@ -1,9 +1,9 @@
 package org.motechproject.whp.mtraining;
 
-import org.motechproject.email.model.Mail;
-import org.motechproject.email.service.EmailSenderService;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.ivr.IVRResponse;
+import org.motechproject.whp.mtraining.mail.Mail;
+import org.motechproject.whp.mtraining.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,21 +20,23 @@ public class CourseAdmin {
 
 
     private final Properties properties;
-    private EmailSenderService emailSenderService;
+
+    @Autowired
+    private EmailService emailService;
 
 
     @Autowired
-    public CourseAdmin(EmailSenderService emailSenderService, SettingsFacade settingsFacade) {
-        this.emailSenderService = emailSenderService;
-        this.properties = settingsFacade.getProperties("mtraining.properties");
+    public CourseAdmin(EmailService emailService, SettingsFacade settingsFacade) {
+        this.emailService = emailService;
+        this.properties = settingsFacade.asProperties();
     }
 
     public void notifyCoursePublished(String courseName, Integer version) {
-        emailSenderService.send(new Mail(fromAddress(), toAddress(), format(SUCCESS_SUBJECT_FORMAT, courseName, version), format(SUCCESS_SUBJECT_FORMAT, courseName, version)));
+        emailService.send(new Mail(fromAddress(), toAddress(), format(SUCCESS_SUBJECT_FORMAT, courseName, version), format(SUCCESS_SUBJECT_FORMAT, courseName, version)));
     }
 
     public void notifyCoursePublishFailure(String courseName, Integer version, IVRResponse ivrResponse) {
-        emailSenderService.send(new Mail(fromAddress(), toAddress(), format(FAILURE_SUBJECT_FORMAT, courseName), format(FAILURE_MESSAGE_FORMAT, courseName, version, ivrResponse.getResponseMessage())));
+        emailService.send(new Mail(fromAddress(), toAddress(), format(FAILURE_SUBJECT_FORMAT, courseName), format(FAILURE_MESSAGE_FORMAT, courseName, version, ivrResponse.getResponseMessage())));
     }
 
     private String toAddress() {

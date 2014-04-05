@@ -9,7 +9,9 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+
+        ">
 
     <context:annotation-config/>
     <context:component-scan base-package="org.motechproject.whp.mtraining"/>
@@ -18,7 +20,6 @@
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <aop:aspectj-autoproxy/>
-
 
     <bean id="mtrainingSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="moduleName" value="whp-mtraining"/>
@@ -64,7 +65,6 @@
     </bean>
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <!-- one of the properties available; the maximum file size in bytes -->
         <property name="maxUploadSize" value="15000000"/>
     </bean>
 

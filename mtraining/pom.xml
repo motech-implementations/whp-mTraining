@@ -38,11 +38,6 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
-            <artifactId>motech-email-bundle</artifactId>
-            <version>${motech.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-web-security</artifactId>
             <version>${motech.version}</version>
         </dependency>
@@ -61,9 +56,14 @@
             <artifactId>org.motechproject.org.codehaus.jackson</artifactId>
             <version>1.9.7-r027</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
+            <version>1.7_3</version>
+        </dependency>
 
         <!--AspectJ AOP dependencies -->
+
 
         <dependency>
             <groupId>org.springframework</groupId>

@@ -83,7 +83,6 @@ public class AuthenticationAwareIT extends BaseOsgiIT {
             ++tries;
             Thread.sleep(2000);
         } while (serviceReference == null && tries < TRIES_COUNT);
-
         assertNotNull(String.format("Not found service reference for %s", clazz.getName()), serviceReference);
 
         return serviceReference;

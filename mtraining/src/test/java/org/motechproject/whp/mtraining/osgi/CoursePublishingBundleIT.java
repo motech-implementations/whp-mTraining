@@ -34,10 +34,8 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
     public void testThatCourseIsPublishedToIVR() throws IOException, InterruptedException {
         CourseService courseService = (CourseService) getApplicationContext().getBean("courseService");
         assertNotNull(courseService);
-
         CourseDto cs001 = buildCourse();
         courseService.addOrUpdateCourse(cs001);
-
         new Wait(new WaitCondition() {
             @Override
             public boolean needsToWait() {
@@ -57,7 +55,6 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
         assertTrue(coursesPublished.get(0).contains("CS001"));
         assertTrue(coursesPublished.get(0).contains("msg001"));
         assertFalse(coursesPublished.get(0).contains("msg002"));
-
     }
 
     @Override
@@ -76,7 +73,11 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
         imports.add("javax.servlet.http");
         imports.add("org.apache.commons.io");
         imports.add("org.motechproject.whp.mtraining.service");
+        imports.add("org.jasypt.encryption.pbe.config");
+        imports.add("org.jasypt.encryption.pbe");
+        imports.add("org.jasypt.spring.properties");
         return imports;
+
     }
 
     @Override

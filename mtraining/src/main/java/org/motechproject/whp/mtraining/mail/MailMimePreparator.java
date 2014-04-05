@@ -1,0 +1,55 @@
+package org.motechproject.whp.mtraining.mail;
+
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.util.Objects;
+
+public class MailMimePreparator implements MimeMessagePreparator {
+
+    Mail mail;
+
+    public MailMimePreparator(Mail mail) {
+        this.mail = mail;
+    }
+
+    @Override
+    public void prepare(MimeMessage mimeMessage) throws MessagingException {
+        MimeMessageHelper message = getMimeMessageHelper(mimeMessage);
+        message.setTo(mail.getToAddress());
+        message.setFrom(mail.getFromAddress());
+        message.setSubject(mail.getSubject());
+        message.setText(mail.getMessage(), true);
+    }
+
+    private MimeMessageHelper getMimeMessageHelper(MimeMessage mimeMessage) {
+        return new MimeMessageHelper(mimeMessage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mail);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final MailMimePreparator other = (MailMimePreparator) obj;
+
+        return Objects.equals(this.mail, other.mail);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("MimecConverter{mail=%s}", mail);
+    }
+}
