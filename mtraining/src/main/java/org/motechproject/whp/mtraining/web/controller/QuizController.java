@@ -70,13 +70,24 @@ public class QuizController {
         try {
             List<ContentIdentifierDto> questionsForQuiz = quizService.getQuestionsForQuiz(new ContentIdentifierDto(quizId, quizVersion));
             if (questionsForQuiz == null) {
+<<<<<<< HEAD
                 return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, MISSING_QUIZ), OK);
+=======
+                LOGGER.error(String.format("No quiz found for quizId %s and version %s", quizId, quizVersion));
+                return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.MISSING_QUIZ), OK);
+>>>>>>> Roy|000|Added logging
             }
+            LOGGER.debug(String.format("Questions found for quizId %s and version %s - %s", quizId, quizVersion, questionsForQuiz));
             return new ResponseEntity<>(new QuizResponse(callerId, sessionId, uniqueId, questionsForQuiz), OK);
         } catch (IllegalStateException e) {
+<<<<<<< HEAD
             return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, INVALID_QUIZ), OK);
         } catch (IndexOutOfBoundsException e) {
             return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, MISSING_QUESTION), OK);
+=======
+            LOGGER.error(String.format("Invalid quiz with quizId %s and version %s.Not enough questions found", quizId, quizVersion));
+            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.INVALID_QUIZ), OK);
+>>>>>>> Roy|000|Added logging
         }
     }
 
