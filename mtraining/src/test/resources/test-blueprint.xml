@@ -13,22 +13,15 @@
 
     <osgi:reference interface="org.motechproject.mtraining.service.BookmarkService" id="bookmarkService"/>
 
-    <osgi:reference id="emailService" interface="org.motechproject.whp.mtraining.service.EmailService"/>
+    <osgi:reference interface="org.motechproject.whp.mtraining.service.EmailService" id="emailService"/>
 
     <!--Osgi Services end-->
 
+    <!--Mail Configuration Here-->
 
-    <!--Mail Configuration Starts here-->
+    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
+          factory-bean="EncryptorFactory" factory-method="createInstance"/>
 
-    <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
-        <property name="algorithm" value="PBEWithMD5AndDES"/>
-        <property name="passwordEnvName" value="WHP_KEY"/>
-    </bean>
-
-
-    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
-        <property name="config" ref="environmentVariablesConfiguration"/>
-    </bean>
 
     <bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
         <constructor-arg ref="configurationEncryptor"/>
@@ -47,6 +40,11 @@
                 <prop key="mail.smtp.starttls.enable">true</prop>
             </props>
         </property>
+    </bean>
+
+    <bean id="EncryptorFactory" class="org.motechproject.whp.mtraining.mail.EncryptorFactory" init-method="initialize">
+        <property name="source" value="test-mtraining.properties"/>
+        <property name="key" value="whp.key.source"/>
     </bean>
 
     <!--Mail Configuration End-->

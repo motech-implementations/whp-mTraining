@@ -34,5 +34,36 @@
                   interface="org.motechproject.whp.mtraining.service.EmailService"
                   auto-export="interfaces"/>
 
+    <!--Mail Configuration-->
+
+    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
+          factory-bean="EncryptorFactory" factory-method="createInstance"/>
+
+
+    <bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+        <constructor-arg ref="configurationEncryptor"/>
+        <property name="location" value="classpath:email.properties"/>
+    </bean>
+
+    <bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl" scope="bundle"
+          autowire="byName">
+        <property name="host" value="${host}"/>
+        <property name="port" value="${port}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="EncryptorFactory" class="org.motechproject.whp.mtraining.mail.EncryptorFactory" init-method="initialize">
+        <property name="source" value="mtraining.properties"/>
+        <property name="key" value="whp.key.source"/>
+    </bean>
+
+    <!--Mail Configuration End-->
 
 </beans>

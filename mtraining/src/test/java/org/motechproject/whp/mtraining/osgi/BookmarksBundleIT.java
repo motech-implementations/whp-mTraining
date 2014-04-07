@@ -31,6 +31,7 @@ import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -184,6 +185,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         imports.add("org.jasypt.encryption.pbe.config");
         imports.add("org.jasypt.encryption.pbe");
         imports.add("org.jasypt.spring.properties");
+        imports.add("org.motechproject.whp.mtraining.mail");
         return imports;
     }
 

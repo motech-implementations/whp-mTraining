@@ -76,6 +76,7 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
         imports.add("org.jasypt.encryption.pbe.config");
         imports.add("org.jasypt.encryption.pbe");
         imports.add("org.jasypt.spring.properties");
+        imports.add("org.motechproject.whp.mtraining.mail");
         return imports;
 
     }
