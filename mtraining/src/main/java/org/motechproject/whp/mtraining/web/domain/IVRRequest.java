@@ -42,13 +42,13 @@ public class IVRRequest {
     public List<ValidationError> validate() {
         List<ValidationError> validationErrors = new ArrayList<>();
         if (isCallerIdMissing()) {
-            validationErrors.add(new ValidationError(MISSING_CALLER_ID.getCode()));
+            validationErrors.add(new ValidationError(MISSING_CALLER_ID));
         }
         if (isSessionIdMissing()) {
-            validationErrors.add(new ValidationError(MISSING_SESSION_ID.getCode()));
+            validationErrors.add(new ValidationError(MISSING_SESSION_ID));
         }
         if (isUniqueIdMissing()) {
-            validationErrors.add(new ValidationError(MISSING_UNIQUE_ID.getCode()));
+            validationErrors.add(new ValidationError(MISSING_UNIQUE_ID));
         }
         return validationErrors;
     }

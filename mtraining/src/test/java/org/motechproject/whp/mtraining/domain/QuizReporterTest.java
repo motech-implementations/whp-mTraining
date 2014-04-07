@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.domain;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -39,7 +38,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.motechproject.mtraining.util.ISODateTimeUtil.nowInTimeZoneUTC;
+import static org.motechproject.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
 
 public class QuizReporterTest {
 
@@ -68,15 +67,15 @@ public class QuizReporterTest {
     private List<ChapterDto> chapters;
     private List<ModuleDto> modules;
     private UUID newModuleContentId;
-    private DateTime startTime;
-    private DateTime endTime;
+    private String startTime;
+    private String endTime;
 
     @Before
     public void setUp() {
         initMocks(this);
         questionId = UUID.randomUUID();
-        startTime = nowInTimeZoneUTC();
-        endTime = nowInTimeZoneUTC();
+        startTime = nowAsStringInTimeZoneUTC();
+        endTime = nowAsStringInTimeZoneUTC();
         quizReporter = new QuizReporter(providerService, courseService, bookmarkService, allQuestionHistories);
         courseContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         moduleContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);

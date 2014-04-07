@@ -9,6 +9,7 @@ import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.QuizDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.mtraining.service.QuizService;
+import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
 import org.motechproject.whp.mtraining.service.impl.ProviderServiceImpl;
 import org.motechproject.whp.mtraining.web.Sessions;
@@ -32,7 +33,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.motechproject.mtraining.util.ISODateTimeUtil.nowInTimeZoneUTC;
+import static org.motechproject.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
+import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QuizControllerTest {
@@ -122,15 +124,16 @@ public class QuizControllerTest {
         long callerId = 76465464L;
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
         QuizReportRequest quizReportRequest = new QuizReportRequest(callerId, "someId", "sessionId", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto,
-                newArrayList(new QuestionRequest(UUID.randomUUID(), Collections.<String>emptyList(), "a", false, false)), nowInTimeZoneUTC(), nowInTimeZoneUTC());
+                newArrayList(new QuestionRequest(UUID.randomUUID(), Collections.<String>emptyList(), "a", false, false)), nowAsStringInTimeZoneUTC(), nowAsStringInTimeZoneUTC());
         QuizDto quizDto = new QuizDto();
         QuizReportResponse quizReportResponse = new QuizReportResponse(callerId, "someId", "sessionId", null, null, ResponseStatus.OK);
         when(quizService.getQuiz(contentIdentifierDto)).thenReturn(quizDto);
         when(quizReporter.validateAndProcessQuiz(quizDto, quizReportRequest)).thenReturn(quizReportResponse);
+        when(providerService.byCallerId(callerId)).thenReturn(new Provider("remediId", callerId, WORKING_PROVIDER, null));
 
         ResponseEntity<? extends MotechResponse> response = quizController.submitQuizResults(quizReportRequest);
 
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(response.getBody().getResponseCode(), ResponseStatus.OK.getCode());
+        assertEquals(ResponseStatus.OK.getCode(), response.getBody().getResponseCode());
     }
 }

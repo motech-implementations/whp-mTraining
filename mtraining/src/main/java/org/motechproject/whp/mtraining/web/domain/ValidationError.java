@@ -1,13 +1,11 @@
 package org.motechproject.whp.mtraining.web.domain;
 
-import org.apache.commons.lang.StringUtils;
-
 public class ValidationError {
     private Integer errorCode;
     private String message;
 
-    public ValidationError(Integer errorCode) {
-        this(errorCode, StringUtils.EMPTY);
+    public ValidationError(ResponseStatus status) {
+        this(status.getCode(), status.getMessage());
     }
 
     public ValidationError(Integer errorCode, String message) {

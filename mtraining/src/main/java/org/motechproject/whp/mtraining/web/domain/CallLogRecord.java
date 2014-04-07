@@ -65,22 +65,22 @@ public class CallLogRecord {
     public List<ValidationError> validate() {
         List<ValidationError> validationErrors = new ArrayList<>();
         if (contentId == null) {
-            validationErrors.add(new ValidationError(MISSING_CONTENT_ID.getCode(), errorMessage()));
+            validationErrors.add(errorMessage(MISSING_CONTENT_ID));
         }
         if (version == null) {
-            validationErrors.add(new ValidationError(MISSING_VERSION.getCode(), errorMessage()));
+            validationErrors.add(errorMessage(MISSING_VERSION));
         }
         if (CallLogRecordType.from(type) == null) {
-            validationErrors.add(new ValidationError(INVALID_CALL_LOG_TYPE.getCode(), errorMessage()));
+            validationErrors.add(errorMessage(INVALID_CALL_LOG_TYPE));
         }
         if (isBlank(startTime) && isBlank(endTime)) {
-            validationErrors.add(new ValidationError(MISSING_TIME.getCode(), errorMessage()));
+            validationErrors.add(errorMessage(MISSING_TIME));
         }
         if (!isBlank(startTime) && !ISODateTimeUtil.validate(startTime)) {
-            validationErrors.add(new ValidationError(INVALID_DATE_TIME.getCode(), errorMessage()));
+            validationErrors.add(errorMessage(INVALID_DATE_TIME));
         }
         if (!isBlank(endTime) && !ISODateTimeUtil.validate(endTime)) {
-            validationErrors.add(new ValidationError(INVALID_DATE_TIME.getCode(), errorMessage()));
+            validationErrors.add(errorMessage(INVALID_DATE_TIME));
         }
         return validationErrors;
     }
@@ -90,7 +90,9 @@ public class CallLogRecord {
         return restarted;
     }
 
-    private String errorMessage() {
-        return String.format("Invalid %s Call Log", this.type);
+    private ValidationError errorMessage(ResponseStatus status) {
+        String content = contentId != null ? contentId.toString() : type;
+        String message = status.getMessage().concat(" for " + content);
+        return new ValidationError(status.getCode(), message);
     }
 }

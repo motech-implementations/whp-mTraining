@@ -20,7 +20,7 @@ public enum ResponseStatus {
     MISSING_CONTENT_ID(916, "Missing Content Id"),
     MISSING_VERSION(917, "Missing Version"),
     MISSING_QUESTION_ID(918, "Missing Question Id"),
-    INVALID_QUESTION(919, "invalid question");
+    INVALID_QUESTION(919, "Could not find some of the questions");
 
     private int code;
     private String message;
@@ -40,11 +40,6 @@ public enum ResponseStatus {
 
     public boolean isValid() {
         return OK.equals(this);
-    }
-
-    public ResponseStatus appendMessage(String message) {
-        this.message = this.getMessage().concat(message);
-        return this;
     }
 
     public static ResponseStatus statusFor(Integer code) {

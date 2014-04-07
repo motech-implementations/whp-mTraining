@@ -30,11 +30,11 @@ public class CallLogReporter {
 
     public void report(CallLogRequest callLogRequest, Provider provider) {
         List<CallLog> callLogs = new ArrayList<>();
-        String remediId = provider.getRemediId();
+        String remedyId = provider.getRemediId();
         Long callerId = callLogRequest.getCallerId();
         String uniqueId = callLogRequest.getUniqueId();
         String sessionId = callLogRequest.getSessionId();
-        allCallDurations.add(new CallDuration(remediId, callerId, uniqueId, sessionId,
+        allCallDurations.add(new CallDuration(remedyId, callerId, uniqueId, sessionId,
                 parse(callLogRequest.getCallStartTime()),
                 parse(callLogRequest.getCallEndTime())));
         for (CallLogRecord callLogRecord : callLogRequest.getCallLogRecords()) {

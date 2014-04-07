@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.web.controller;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.QuizDto;
 import org.motechproject.mtraining.service.QuizService;
+import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
 import org.motechproject.whp.mtraining.service.impl.ProviderServiceImpl;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_QUIZ;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.statusFor;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -86,12 +88,18 @@ public class QuizController {
         Long callerId = quizReportRequest.getCallerId();
         String sessionId = quizReportRequest.getSessionId();
         String uniqueId = quizReportRequest.getUniqueId();
-        ResponseStatus validationResponse = quizReportRequest.validate();
-        if (!validationResponse.isValid())
-            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, validationResponse), OK);
+        List<ValidationError> validationErrors = quizReportRequest.validate();
+        BasicResponse basicResponse = new BasicResponse(callerId, uniqueId, sessionId);
+        if (!validationErrors.isEmpty()) {
+            ValidationError firstValidationError = validationErrors.get(0);
+            return new ResponseEntity<>(basicResponse.withResponse(firstValidationError.getErrorCode(), firstValidationError.getMessage()), OK);
+        }
+        Provider provider = providerService.byCallerId(quizReportRequest.getCallerId());
+        if (provider == null)
+            return new ResponseEntity<>(basicResponse.withResponse(UNKNOWN_PROVIDER), OK);
         QuizDto quiz = quizService.getQuiz(quizReportRequest.getQuizDto());
         return quiz == null ?
-                new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, INVALID_QUIZ), OK) :
+                new ResponseEntity<>(basicResponse.withResponse(INVALID_QUIZ), OK) :
                 new ResponseEntity<>(quizReporter.validateAndProcessQuiz(quiz, quizReportRequest), OK);
     }
 }

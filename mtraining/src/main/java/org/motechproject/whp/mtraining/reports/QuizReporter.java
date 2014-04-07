@@ -35,6 +35,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.motechproject.mtraining.util.ISODateTimeUtil.nowInTimeZoneUTC;
+import static org.motechproject.mtraining.util.ISODateTimeUtil.parse;
 import static org.motechproject.whp.mtraining.domain.CourseContent.filter;
 import static org.motechproject.whp.mtraining.domain.CourseContent.findContentByContentId;
 import static org.motechproject.whp.mtraining.domain.CourseContent.getNextContent;
@@ -80,7 +81,7 @@ public class QuizReporter {
         Boolean result = actualPercentage >= quiz.getPassPercentage();
         Provider provider = providerService.byCallerId(quizReportRequest.getCallerId());
         QuizHistory quizHistory = new QuizHistory(provider.getRemediId(), quizReportRequest.getCallerId(), quizReportRequest.getUniqueId(), quizReportRequest.getSessionId(),
-                quizDto.getContentId(), quizDto.getVersion(), quizReportRequest.getStartTime(), quizReportRequest.getEndTime(), result, actualPercentage);
+                quizDto.getContentId(), quizDto.getVersion(), parse(quizReportRequest.getStartTime()), parse(quizReportRequest.getEndTime()), result, actualPercentage);
         for (QuestionHistory questionHistory : questionHistoryList) {
             questionHistory.setQuizHistoryId(quizHistory);
         }

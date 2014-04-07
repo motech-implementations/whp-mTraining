@@ -37,9 +37,9 @@ public class CallLogRequestTest {
                 Collections.<CallLogRecord>emptyList(), now.toString(), nullCallCompletionDate);
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(3));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_CALLER_ID.getCode())));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_UNIQUE_ID.getCode())));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_SESSION_ID.getCode())));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_CALLER_ID)));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_UNIQUE_ID)));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_SESSION_ID)));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class CallLogRequestTest {
                 Collections.<CallLogRecord>emptyList(), now.toString(), null);
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(1));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_TIME.getCode())));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_TIME)));
     }
 
 
@@ -62,7 +62,7 @@ public class CallLogRequestTest {
                 Collections.<CallLogRecord>emptyList(), "2001-32-12T00:00:00.000Z", now.toString());
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(1));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME.getCode())));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME)));
     }
 
 
@@ -88,8 +88,8 @@ public class CallLogRequestTest {
 
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(2));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_CONTENT_ID.getCode())));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.INVALID_CALL_LOG_TYPE.getCode())));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_CONTENT_ID)));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.INVALID_CALL_LOG_TYPE)));
     }
 
 }

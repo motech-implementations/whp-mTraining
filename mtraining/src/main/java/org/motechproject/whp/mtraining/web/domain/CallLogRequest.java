@@ -41,12 +41,12 @@ public class CallLogRequest extends IVRRequest {
         }
 
         if (isBlank(callStartTime) || isBlank(callEndTime)) {
-            validationErrors.add(new ValidationError(ResponseStatus.MISSING_TIME.getCode()));
+            validationErrors.add(new ValidationError(ResponseStatus.MISSING_TIME));
             return validationErrors;
         }
 
         if (isCallStartTimeInvalid() || isCallEndTimeInvalid()) {
-            validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME.getCode()));
+            validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME));
             return validationErrors;
         }
 

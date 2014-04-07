@@ -1,15 +1,17 @@
 package org.motechproject.whp.mtraining.web.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.joda.time.DateTime;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_NODE;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
 
-public class QuizReportRequest extends CallDetailsRequest {
+public class QuizReportRequest extends IVRRequest {
 
     @JsonProperty("course")
     private ContentIdentifierDto courseDto;
@@ -22,14 +24,15 @@ public class QuizReportRequest extends CallDetailsRequest {
     @JsonProperty("questions")
     private List<QuestionRequest> questionRequests;
     @JsonProperty
-    private DateTime startTime;
+    private String startTime;
     @JsonProperty
-    private DateTime endTime;
+    private String endTime;
 
     public QuizReportRequest() {
     }
 
-    public QuizReportRequest(Long callerId, String uniqueId, String sessionId, ContentIdentifierDto courseDto, ContentIdentifierDto moduleDto, ContentIdentifierDto chapterDto, ContentIdentifierDto quizDto, List<QuestionRequest> questionRequests, DateTime startTime, DateTime endTime) {
+    public QuizReportRequest(Long callerId, String uniqueId, String sessionId, ContentIdentifierDto courseDto, ContentIdentifierDto moduleDto, ContentIdentifierDto chapterDto, ContentIdentifierDto quizDto,
+                             List<QuestionRequest> questionRequests, String startTime, String endTime) {
         super(callerId, uniqueId, sessionId);
         this.courseDto = courseDto;
         this.moduleDto = moduleDto;
@@ -40,25 +43,32 @@ public class QuizReportRequest extends CallDetailsRequest {
         this.endTime = endTime;
     }
 
-    public ResponseStatus validate() {
-        ResponseStatus validationStatus = super.validate();
-        if (!validationStatus.isValid())
-            return validationStatus;
+    public List<ValidationError> validate() {
+        List<ValidationError> validationErrors = super.validate();
+        if (CollectionUtils.isNotEmpty(validationErrors))
+            return validationErrors;
         if (courseDto.getContentId() == null || courseDto.getVersion() == null)
-            return MISSING_NODE.appendMessage("for content: Course");
+            validationErrors.add(errorMessage(MISSING_NODE, "Course"));
         if (moduleDto.getContentId() == null || moduleDto.getVersion() == null)
-            return MISSING_NODE.appendMessage("for content: Module");
+            validationErrors.add(errorMessage(MISSING_NODE, "Module"));
         if (chapterDto.getContentId() == null || chapterDto.getVersion() == null)
-            return MISSING_NODE.appendMessage("for content: Chapter");
+            validationErrors.add(errorMessage(MISSING_NODE, "Chapter"));
         if (quizDto.getContentId() == null || quizDto.getVersion() == null)
-            return MISSING_NODE.appendMessage("for content: Quiz");
-        if (questionRequests.isEmpty())
-            return ResponseStatus.MISSING_QUESTION;
-        for (QuestionRequest questionRequest : questionRequests) {
-            ResponseStatus validate = questionRequest.validate();
-            if (!validate.isValid()) return validate;
+            validationErrors.add(errorMessage(MISSING_NODE, "Quiz"));
+        if (isBlank(startTime) || !ISODateTimeUtil.validate(startTime))
+            validationErrors.add(errorMessage(INVALID_DATE_TIME, "Start Time"));
+        if (isBlank(endTime) || !ISODateTimeUtil.validate(endTime))
+            validationErrors.add(errorMessage(INVALID_DATE_TIME, "End Time"));
+
+        if (CollectionUtils.isEmpty(questionRequests)) {
+            validationErrors.add(new ValidationError(ResponseStatus.MISSING_QUESTION));
+            return validationErrors;
         }
-        return OK;
+        for (QuestionRequest questionRequest : questionRequests) {
+            List<ValidationError> errors = questionRequest.validate();
+            validationErrors.addAll(errors);
+        }
+        return validationErrors;
     }
 
     public ContentIdentifierDto getCourseDto() {
@@ -81,11 +91,16 @@ public class QuizReportRequest extends CallDetailsRequest {
         return questionRequests;
     }
 
-    public DateTime getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public DateTime getEndTime() {
+    public String getEndTime() {
         return endTime;
+    }
+
+    private ValidationError errorMessage(ResponseStatus status, String content) {
+        String message = status.getMessage().concat(" for: " + content);
+        return new ValidationError(status.getCode(), message);
     }
 }

@@ -65,18 +65,16 @@ public class CallLogControllerTest {
         String uniqueId = "uniqueId";
         String sessionId = "ssn001";
         String invalidStartTime = "2014-33-30T17:52:25.976Z";
-
-        CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.MESSAGE.name(), invalidStartTime, "2014-03-30T17:52:25.976Z");
+        UUID contentId = UUID.randomUUID();
+        CallLogRecord course = new CallLogRecord(contentId, 1, CallLogRecordType.MESSAGE.name(), invalidStartTime, "2014-03-30T17:52:25.976Z");
         CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
-
         when(providerService.byCallerId(callerId)).thenReturn(new Provider());
 
         ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);
 
         MotechResponse motechResponse = response.getBody();
         assertThat(motechResponse.getResponseCode(), Is.is(ResponseStatus.INVALID_DATE_TIME.getCode()));
-        assertThat(motechResponse.getResponseMessage(), Is.is("Invalid MESSAGE Call Log"));
-
+        assertThat(motechResponse.getResponseMessage(), Is.is("Missing or Invalid Date for " + contentId));
         verify(callLogReporter, never()).report(any(CallLogRequest.class), any(Provider.class));
     }
 

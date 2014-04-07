@@ -27,7 +27,7 @@ public class QuizRequest extends IVRRequest {
             return validationErrors;
         }
         if (quizId == null || quizVersion == null) {
-            validationErrors.add(new ValidationError(ResponseStatus.MISSING_QUIZ.getCode()));
+            validationErrors.add(new ValidationError(ResponseStatus.MISSING_QUIZ));
         }
         return validationErrors;
     }
