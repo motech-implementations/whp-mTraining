@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_QUIZ;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_QUESTION;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_QUIZ;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.statusFor;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -70,24 +68,14 @@ public class QuizController {
         try {
             List<ContentIdentifierDto> questionsForQuiz = quizService.getQuestionsForQuiz(new ContentIdentifierDto(quizId, quizVersion));
             if (questionsForQuiz == null) {
-<<<<<<< HEAD
-                return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, MISSING_QUIZ), OK);
-=======
                 LOGGER.error(String.format("No quiz found for quizId %s and version %s", quizId, quizVersion));
                 return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.MISSING_QUIZ), OK);
->>>>>>> Roy|000|Added logging
             }
             LOGGER.debug(String.format("Questions found for quizId %s and version %s - %s", quizId, quizVersion, questionsForQuiz));
             return new ResponseEntity<>(new QuizResponse(callerId, sessionId, uniqueId, questionsForQuiz), OK);
         } catch (IllegalStateException e) {
-<<<<<<< HEAD
-            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, INVALID_QUIZ), OK);
-        } catch (IndexOutOfBoundsException e) {
-            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, MISSING_QUESTION), OK);
-=======
             LOGGER.error(String.format("Invalid quiz with quizId %s and version %s.Not enough questions found", quizId, quizVersion));
             return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.INVALID_QUIZ), OK);
->>>>>>> Roy|000|Added logging
         }
     }
 
