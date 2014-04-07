@@ -7,6 +7,7 @@ import org.motechproject.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_NODE;
@@ -45,7 +46,7 @@ public class QuizReportRequest extends IVRRequest {
 
     public List<ValidationError> validate() {
         List<ValidationError> validationErrors = super.validate();
-        if (CollectionUtils.isNotEmpty(validationErrors))
+        if (isNotEmpty(validationErrors))
             return validationErrors;
         if (courseDto.getContentId() == null || courseDto.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Course"));

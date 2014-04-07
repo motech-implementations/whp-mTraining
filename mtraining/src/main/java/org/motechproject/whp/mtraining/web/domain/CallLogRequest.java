@@ -41,7 +41,7 @@ public class CallLogRequest extends IVRRequest {
         }
 
         if (isBlank(callStartTime) || isBlank(callEndTime)) {
-            validationErrors.add(new ValidationError(ResponseStatus.MISSING_TIME));
+            validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME));
             return validationErrors;
         }
 

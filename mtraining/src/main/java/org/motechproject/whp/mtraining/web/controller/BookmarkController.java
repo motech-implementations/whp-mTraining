@@ -100,11 +100,9 @@ public class BookmarkController {
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<MotechResponse> postBookmark(@RequestBody BookmarkPostRequest bookmarkPostRequest) {
         LOGGER.debug(String.format("Received bookmark update request for %s with bookmark %s", bookmarkPostRequest.getCallerId(), bookmarkPostRequest));
-
         Long callerId = bookmarkPostRequest.getCallerId();
         String uniqueId = bookmarkPostRequest.getUniqueId();
         String sessionId = bookmarkPostRequest.getSessionId();
-
         List<ValidationError> validationErrors = bookmarkPostRequest.validate();
         if (!validationErrors.isEmpty()) {
             ValidationError validationError = validationErrors.get(0);
@@ -112,10 +110,6 @@ public class BookmarkController {
         }
 
         Bookmark bookmark = bookmarkPostRequest.getBookmark();
-
-        if (!bookmark.hasValidModifiedDate()) {
-            return responseAfterLogging(callerId, uniqueId, sessionId, BookmarkRequestType.POST, ResponseStatus.INVALID_DATE_TIME);
-        }
 
         Provider provider = providers.getByCallerId(callerId);
 

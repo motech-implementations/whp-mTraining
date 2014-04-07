@@ -9,7 +9,7 @@ public enum ResponseStatus {
     MISSING_SESSION_ID(905, "Missing Session Id"),
     INVALID_DATE_TIME(906, "Missing or Invalid Date"),
     MISSING_TIME(907, "Start time or end time must be present"),
-    INVALID_CALL_LOG_TYPE(908, "Invalid call log type"),
+    INVALID_CALL_LOG_TYPE(908, "Invalid content type"),
     INVALID_NODE_TYPE(909, "Invalid node type"),
     MISSING_NODE(910, "Missing Content Id or Version"),
     MISSING_QUIZ(911, "Missing Quiz Id or Version"),
@@ -20,7 +20,8 @@ public enum ResponseStatus {
     MISSING_CONTENT_ID(916, "Missing Content Id"),
     MISSING_VERSION(917, "Missing Version"),
     MISSING_QUESTION_ID(918, "Missing Question Id"),
-    INVALID_QUESTION(919, "Could not find some of the questions");
+    INVALID_QUESTION(919, "Could not find some of the questions"),
+    INVALID_COURSE_STATUS(920, "Invalid course status");
 
     private int code;
     private String message;

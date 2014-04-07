@@ -237,8 +237,9 @@ public class BookmarkControllerTest {
         String sessionId = "session001";
         ContentIdentifierDto courseIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         ContentIdentifierDto moduleIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 2);
+        ContentIdentifierDto messageIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 2);
         ContentIdentifierDto chapterIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        Bookmark bookmark = new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, null, null, "ONGOING");
+        Bookmark bookmark = new Bookmark(courseIdentifier, moduleIdentifier, chapterIdentifier, messageIdentifier, null, "ONGOING");
         BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(callerId, uniqueId, sessionId, bookmark);
         Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
         when(providers.getByCallerId(callerId)).thenReturn(provider);

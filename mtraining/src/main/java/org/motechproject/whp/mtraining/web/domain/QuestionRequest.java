@@ -1,14 +1,11 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.whp.mtraining.service.ProviderService;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_QUESTION_ID;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
 
 public class QuestionRequest {
     @JsonProperty

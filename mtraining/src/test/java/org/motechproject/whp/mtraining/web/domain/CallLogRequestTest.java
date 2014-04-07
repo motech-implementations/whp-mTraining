@@ -50,7 +50,7 @@ public class CallLogRequestTest {
                 Collections.<CallLogRecord>emptyList(), now.toString(), null);
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(1));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_TIME)));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME)));
     }
 
 
