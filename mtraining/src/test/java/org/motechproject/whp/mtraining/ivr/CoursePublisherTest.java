@@ -4,6 +4,7 @@ import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.ModuleDto;
@@ -20,6 +21,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -62,12 +64,23 @@ public class CoursePublisherTest {
         ArgumentCaptor<Course> courseArgumentCaptor = ArgumentCaptor.forClass(Course.class);
         verify(ivrGateway).postCourse(courseArgumentCaptor.capture());
 
+        ArgumentCaptor<CoursePublicationAttempt> coursePublicationAttemptArgumentCaptor = ArgumentCaptor.forClass(CoursePublicationAttempt.class);
+
+        InOrder inOrder = inOrder(courseService, allCoursePublicationAttempts);
+
+        inOrder.verify(courseService).publish(contentIdentifierDto);
+        inOrder.verify(allCoursePublicationAttempts).add(coursePublicationAttemptArgumentCaptor.capture());
+
         Course publishedCourse = courseArgumentCaptor.getValue();
 
         assertThat(publishedCourse.getName(), Is.is("NA001"));
         assertThat(publishedCourse.getVersion(), Is.is(3));
         assertThat(publishedCourse.getDescription(), Is.is("This is a test course"));
         assertThat(publishedCourse.getModules().isEmpty(), Is.is(true));
+
+        CoursePublicationAttempt coursePublicationAttempt = coursePublicationAttemptArgumentCaptor.getValue();
+        assertThat(coursePublicationAttempt.getCourseId(), Is.is(cs001));
+        assertThat(coursePublicationAttempt.isPublishedToIvr(), Is.is(true));
     }
 
 

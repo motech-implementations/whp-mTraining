@@ -58,8 +58,8 @@ public class CoursePublisher {
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, currentDateTime(), course.getName(), courseId, version));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
+        courseService.publish(new ContentIdentifierDto(courseId, version));
         allCoursePublicationStatus.add(new CoursePublicationAttempt(courseId, version, ivrResponse.isSuccess()));
-
         try {
             notifyCourseAdmin(course.getName(), version, ivrResponse);
             if (ivrResponse.isNetworkFailure()) {
