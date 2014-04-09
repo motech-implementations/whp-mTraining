@@ -8,14 +8,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.MessageDto;
-import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.dto.QuestionDto;
 import org.motechproject.mtraining.dto.QuestionResultDto;
 import org.motechproject.mtraining.dto.QuizAnswerSheetDto;
-import org.motechproject.mtraining.dto.QuizDto;
 import org.motechproject.mtraining.dto.QuizResultSheetDto;
 import org.motechproject.mtraining.exception.InvalidQuestionException;
 import org.motechproject.mtraining.exception.InvalidQuizException;
@@ -37,8 +32,10 @@ import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,13 +60,6 @@ public class QuizReporterTest {
     private ContentIdentifierDto messageContentIdentifier;
     private ContentIdentifierDto quizContentIdentifier;
     private ContentIdentifierDto moduleContentIdentifier;
-    private List<QuestionDto> questions;
-    private QuizDto quizDto;
-    private UUID newChapterContentId;
-    private List<MessageDto> messageDto;
-    private List<ChapterDto> chapters;
-    private List<ModuleDto> modules;
-    private UUID newModuleContentId;
     private String startTime;
     private String endTime;
     @Rule
@@ -89,14 +79,14 @@ public class QuizReporterTest {
     }
 
     @Test
-    public void shouldLogInQuestionAttemptsAfterGettingResultFromQuizService() {
+    public void shouldLogInQuestionAttemptsAfterGettingResultFromQuizServiceAndUpdateToFirstActiveMessageOfNextChapterIfPassed() {
         List<QuestionRequest> questionRequests = newArrayList(new QuestionRequest(questionId, 1, newArrayList("a", "b"), "c", false, false));
         QuizReportRequest quizReportRequest = new QuizReportRequest(1L, "someId", "sessionId", courseContentIdentifier,
-                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime);
+                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, false);
         QuestionResultDto questionResultDto = new QuestionResultDto(questionId, 1, "c", true);
         QuizResultSheetDto quizResultSheetDto = new QuizResultSheetDto("externalId", quizContentIdentifier, newArrayList(questionResultDto), 100.0, true);
         QuizHistory quizHistory = new QuizHistory("externalId", 1L, "someId", "sessionId", courseContentIdentifier.getContentId(),
-                courseContentIdentifier.getVersion(), null, null, true, 100.0);
+                courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
         QuestionHistory questionHistory = new QuestionHistory(quizHistory, questionId, 1, "a;b", "c", true, false, false);
         when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
 
@@ -111,6 +101,61 @@ public class QuizReporterTest {
         assertEquals(questionHistory.getInvalidInputs(), questionHistoryListCaptureValue.get(0).getInvalidInputs());
         assertTrue(questionHistoryListCaptureValue.get(0).getStatus());
         assertEquals("OK", response.getResponseMessage());
+        verify(bookmarkService).setToNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+
+    }
+
+    @Test
+    public void shouldLogInQuestionAttemptsAfterGettingResultFromQuizServiceAndResetToQuizOfChapterIfIncompleteAttempt() {
+        List<QuestionRequest> questionRequests = newArrayList(new QuestionRequest(questionId, 1, newArrayList("a", "b"), "c", false, false));
+        QuizReportRequest quizReportRequest = new QuizReportRequest(1L, "someId", "sessionId", courseContentIdentifier,
+                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, true);
+        QuestionResultDto questionResultDto = new QuestionResultDto(questionId, 1, "c", true);
+        QuizResultSheetDto quizResultSheetDto = new QuizResultSheetDto("externalId", quizContentIdentifier, newArrayList(questionResultDto), 100.0, false);
+        QuizHistory quizHistory = new QuizHistory("externalId", 1L, "someId", "sessionId", courseContentIdentifier.getContentId(),
+                courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
+        QuestionHistory questionHistory = new QuestionHistory(quizHistory, questionId, 1, "a;b", "c", true, false, false);
+        when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+
+        QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
+
+        assertFalse(response.getPassed());
+        assertEquals(Double.valueOf(100.0), response.getQuizScore());
+        Class<List<QuestionHistory>> listOfQuestionHistoryClass = (Class<List<QuestionHistory>>) (Class) ArrayList.class;
+        ArgumentCaptor<List<QuestionHistory>> argument = ArgumentCaptor.forClass(listOfQuestionHistoryClass);
+        verify(allQuestionHistories).bulkAdd(argument.capture());
+        List<QuestionHistory> questionHistoryListCaptureValue = argument.getValue();
+        assertEquals(questionHistory.getInvalidInputs(), questionHistoryListCaptureValue.get(0).getInvalidInputs());
+        assertTrue(questionHistoryListCaptureValue.get(0).getStatus());
+        assertEquals("OK", response.getResponseMessage());
+        verify(bookmarkService).resetBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+
+    }
+
+    @Test
+    public void shouldLogInQuestionAttemptsAfterGettingResultFromQuizServiceAndUpdateToFirstActiveMessageOfChapterIfFailed() {
+        List<QuestionRequest> questionRequests = newArrayList(new QuestionRequest(questionId, 1, newArrayList("a", "b"), "c", false, false));
+        QuizReportRequest quizReportRequest = new QuizReportRequest(1L, "someId", "sessionId", courseContentIdentifier,
+                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, false);
+        QuestionResultDto questionResultDto = new QuestionResultDto(questionId, 1, "c", true);
+        QuizResultSheetDto quizResultSheetDto = new QuizResultSheetDto("externalId", quizContentIdentifier, newArrayList(questionResultDto), 40.0, false);
+        QuizHistory quizHistory = new QuizHistory("externalId", 1L, "someId", "sessionId", courseContentIdentifier.getContentId(),
+                courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
+        QuestionHistory questionHistory = new QuestionHistory(quizHistory, questionId, 1, "a;b", "c", true, false, false);
+        when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+
+        QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
+
+        assertFalse(response.getPassed());
+        assertEquals(Double.valueOf(40.0), response.getQuizScore());
+        Class<List<QuestionHistory>> listOfQuestionHistoryClass = (Class<List<QuestionHistory>>) (Class) ArrayList.class;
+        ArgumentCaptor<List<QuestionHistory>> argument = ArgumentCaptor.forClass(listOfQuestionHistoryClass);
+        verify(allQuestionHistories).bulkAdd(argument.capture());
+        List<QuestionHistory> questionHistoryListCaptureValue = argument.getValue();
+        assertEquals(questionHistory.getInvalidInputs(), questionHistoryListCaptureValue.get(0).getInvalidInputs());
+        assertTrue(questionHistoryListCaptureValue.get(0).getStatus());
+        assertEquals("OK", response.getResponseMessage());
+        verify(bookmarkService).resetBookmarkToFirstMessageOfAChapter(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
 
     }
 
@@ -119,7 +164,7 @@ public class QuizReporterTest {
         ArgumentCaptor<QuizAnswerSheetDto> quizAnswerSheetDtoArgumentCaptor = ArgumentCaptor.forClass(QuizAnswerSheetDto.class);
         List<QuestionRequest> questionRequests = newArrayList(new QuestionRequest(questionId, 1, newArrayList("a", "b"), "c", false, false));
         QuizReportRequest quizReportRequest = new QuizReportRequest(1L, "someId", "sessionId", courseContentIdentifier,
-                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime);
+                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, false);
 
         doThrow(new InvalidQuizException(UUID.randomUUID())).when(quizService).getResult(quizAnswerSheetDtoArgumentCaptor.capture());
 
@@ -133,7 +178,7 @@ public class QuizReporterTest {
         ArgumentCaptor<QuizAnswerSheetDto> quizAnswerSheetDtoArgumentCaptor = ArgumentCaptor.forClass(QuizAnswerSheetDto.class);
         List<QuestionRequest> questionRequests = newArrayList(new QuestionRequest(questionId, 1, newArrayList("a", "b"), "c", false, false));
         QuizReportRequest quizReportRequest = new QuizReportRequest(1L, "someId", "sessionId", courseContentIdentifier,
-                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime);
+                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, false);
 
         doThrow(new InvalidQuestionException(UUID.randomUUID(), UUID.randomUUID())).when(quizService).getResult(quizAnswerSheetDtoArgumentCaptor.capture());
 

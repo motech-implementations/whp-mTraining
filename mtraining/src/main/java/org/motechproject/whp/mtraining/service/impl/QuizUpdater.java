@@ -13,13 +13,13 @@ public class QuizUpdater extends Updater<QuizDto> {
 
     private QuizService quizService;
     private QuestionUpdater questionUpdater;
-    private List<QuizDto> existingQuizes;
+    private List<QuizDto> existingQuizzes;
 
     @Autowired
     public QuizUpdater(QuizService quizService, QuestionUpdater questionUpdater) {
         this.quizService = quizService;
         this.questionUpdater = questionUpdater;
-        this.existingQuizes = new ArrayList<>();
+        this.existingQuizzes = new ArrayList<>();
     }
 
     @Override
@@ -34,10 +34,10 @@ public class QuizUpdater extends Updater<QuizDto> {
 
     @Override
     protected List<QuizDto> getExistingContents() {
-        if (existingQuizes.isEmpty()) {
-            existingQuizes = quizService.getAllQuizes();
+        if (existingQuizzes.isEmpty()) {
+            existingQuizzes = quizService.getAllQuizes();
         }
-        return existingQuizes;
+        return existingQuizzes;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class QuizUpdater extends Updater<QuizDto> {
     }
 
     public void invalidateCache() {
-        existingQuizes.clear();
+        existingQuizzes.clear();
         questionUpdater.invalidateCache();
     }
 }

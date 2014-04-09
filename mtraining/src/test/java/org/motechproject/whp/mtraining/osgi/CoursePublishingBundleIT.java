@@ -48,7 +48,7 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
                 coursesPublished.add(postContent);
                 return false;
             }
-        }, 20000).start();
+        }, 30000).start();
 
         assertFalse(coursesPublished.isEmpty());
         System.out.println(coursesPublished.get(0));

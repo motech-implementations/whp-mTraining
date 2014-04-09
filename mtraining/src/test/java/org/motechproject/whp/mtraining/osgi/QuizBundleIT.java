@@ -163,7 +163,7 @@ public class QuizBundleIT extends AuthenticationAwareIT {
         QuestionRequest questionRequest2 = new QuestionRequest(questionId2, 1, newArrayList("8", "6"), "2", false, false);
         List<QuestionRequest> questions = newArrayList(questionRequest, questionRequest2);
         return new QuizReportRequest(provider.getCallerId(), "unk001", "ssn001", courseDto.toContentIdentifierDto(),
-                module, chapter, quiz, questions, startTime, endTime);
+                module, chapter, quiz, questions, startTime, endTime, false);
     }
 
     private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {

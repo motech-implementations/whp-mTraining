@@ -127,7 +127,7 @@ public class QuizControllerTest {
         Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, new Location());
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
         QuizReportRequest quizReportRequest = new QuizReportRequest(callerId, "someId", "sessionId", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto,
-                newArrayList(new QuestionRequest(UUID.randomUUID(), 1, Collections.<String>emptyList(), "a", false, false)), startTime, endTime);
+                newArrayList(new QuestionRequest(UUID.randomUUID(), 1, Collections.<String>emptyList(), "a", false, false)), startTime, endTime, false);
         QuizReportResponse quizReportResponse = new QuizReportResponse(callerId, "sessionId", "someId", 100.0, true, ResponseStatus.OK);
 
         when(providerService.byCallerId(callerId)).thenReturn(provider);

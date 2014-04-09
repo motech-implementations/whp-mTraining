@@ -39,9 +39,11 @@ public class QuizHistory {
     private Boolean status;
     @Persistent
     private Double score;
+    @Persistent(column = "incomplete_attempt")
+    private Boolean incompleteAttempt;
 
     public QuizHistory(String remedyId, Long callerId, String uniqueId, String sessionId, UUID quizId,
-                       Integer quizVersion, DateTime startTime, DateTime endTime, Boolean status, Double score) {
+                       Integer quizVersion, DateTime startTime, DateTime endTime, Boolean status, Double score, Boolean incompleteAttempt) {
         this.remedyId = remedyId;
         this.callerId = callerId;
         this.uniqueId = uniqueId;
@@ -52,6 +54,7 @@ public class QuizHistory {
         this.endTime = endTime;
         this.status = status;
         this.score = score;
+        this.incompleteAttempt = incompleteAttempt;
     }
 
     public Long getId() {

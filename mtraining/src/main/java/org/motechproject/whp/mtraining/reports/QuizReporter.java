@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.reports;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.mtraining.dto.AnswerSheetDto;
+import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.QuestionResultDto;
 import org.motechproject.mtraining.dto.QuizAnswerSheetDto;
 import org.motechproject.mtraining.dto.QuizResultSheetDto;
@@ -52,6 +53,7 @@ public class QuizReporter {
         } catch (InvalidQuizException ex) {
             return new BasicResponse(quizReportRequest.getCallerId(), quizReportRequest.getSessionId(), quizReportRequest.getUniqueId(), ResponseStatus.INVALID_QUIZ);
         }
+        updateBookmark(remediId, quizResult, quizReportRequest);
         return new QuizReportResponse(quizReportRequest.getCallerId(), quizReportRequest.getSessionId(), quizReportRequest.getUniqueId(),
                 quizResult.getScore(), quizResult.isPassed(), ResponseStatus.OK);
 
@@ -59,18 +61,28 @@ public class QuizReporter {
 
     private void logQuizResult(String remediId, QuizReportRequest quizReportRequest, QuizResultSheetDto quizResult) {
         QuizHistory quizHistory = new QuizHistory(remediId, quizReportRequest.getCallerId(), quizReportRequest.getUniqueId(), quizReportRequest.getSessionId(),
-                quizReportRequest.getQuizDto().getContentId(), quizReportRequest.getQuizDto().getVersion(), parse(quizReportRequest.getStartTime()), parse(quizReportRequest.getEndTime()), quizResult.isPassed(), quizResult.getScore());
+                quizReportRequest.getQuizDto().getContentId(), quizReportRequest.getQuizDto().getVersion(), parse(quizReportRequest.getStartTime()), parse(quizReportRequest.getEndTime()), quizResult.isPassed(), quizResult.getScore(), quizReportRequest.IsIncompleteAttempt());
         List<QuestionHistory> questionHistories = new ArrayList<>();
         for (QuestionResultDto questionResultDto : quizResult.getQuestionResultDtos()) {
             QuestionRequest questionRequest = (QuestionRequest) findContentByContentId(quizReportRequest.getQuestionRequests(), questionResultDto.getQuestionId());
             questionHistories.add(new QuestionHistory(quizHistory, questionResultDto.getQuestionId(), questionResultDto.getVersion(),
-                    StringUtils.join(questionRequest.getInvalidInputs(), ';'), questionRequest.getSelectedOption(), questionResultDto.isCorrect(), questionRequest.getInvalidAttempt(),questionRequest.getTimeOut()));
+                    StringUtils.join(questionRequest.getInvalidInputs(), ';'), questionRequest.getSelectedOption(), questionResultDto.isCorrect(), questionRequest.getInvalidAttempt(), questionRequest.getTimeOut()));
         }
         allQuestionHistories.bulkAdd(questionHistories);
-        if (quizResult.isPassed()) {
-            bookmarkService.setToNextBookmark(remediId);
+    }
+
+    private void updateBookmark(String remediId, QuizResultSheetDto quizResult, QuizReportRequest quizReportRequest) {
+        ContentIdentifierDto courseDto = quizReportRequest.getCourseDto();
+        ContentIdentifierDto moduleDto = quizReportRequest.getModuleDto();
+        ContentIdentifierDto chapterDto = quizReportRequest.getChapterDto();
+        if (quizReportRequest.IsIncompleteAttempt()) {
+            bookmarkService.resetBookmark(remediId, courseDto, moduleDto, chapterDto);
         } else {
-            bookmarkService.resetBookmark(remediId);
+            if (quizResult.isPassed()) {
+                bookmarkService.setToNextBookmark(remediId, courseDto, moduleDto, chapterDto);
+            } else {
+                bookmarkService.resetBookmarkToFirstMessageOfAChapter(remediId, courseDto, moduleDto, chapterDto);
+            }
         }
     }
 

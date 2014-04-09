@@ -28,12 +28,14 @@ public class QuizReportRequest extends IVRRequest {
     private String startTime;
     @JsonProperty
     private String endTime;
+    @JsonProperty
+    private Boolean incompleteAttempt;
 
     public QuizReportRequest() {
     }
 
     public QuizReportRequest(Long callerId, String uniqueId, String sessionId, ContentIdentifierDto courseDto, ContentIdentifierDto moduleDto, ContentIdentifierDto chapterDto, ContentIdentifierDto quizDto,
-                             List<QuestionRequest> questionRequests, String startTime, String endTime) {
+                             List<QuestionRequest> questionRequests, String startTime, String endTime, Boolean incompleteAttempt) {
         super(callerId, uniqueId, sessionId);
         this.courseDto = courseDto;
         this.moduleDto = moduleDto;
@@ -42,6 +44,7 @@ public class QuizReportRequest extends IVRRequest {
         this.questionRequests = questionRequests;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.incompleteAttempt = incompleteAttempt;
     }
 
     public List<ValidationError> validate() {
@@ -105,4 +108,7 @@ public class QuizReportRequest extends IVRRequest {
         return new ValidationError(status.getCode(), message);
     }
 
+    public Boolean IsIncompleteAttempt() {
+        return incompleteAttempt;
+    }
 }
