@@ -61,7 +61,7 @@ public class CourseBuilder {
     private Quiz buildQuiz(String quizName) {
         List<Question> questions = new ArrayList<>();
         questions.add(buildQuestion("Test Question 1"));
-        Quiz quiz = new Quiz(quizName, contentId, version, createdBy, createdOn, passPercentage, isActive, questions);
+        Quiz quiz = new Quiz(quizName, contentId, version, createdBy, createdOn, passPercentage, isActive, questions, questions.size());
         quiz.addQuestion(buildQuestion("Test Question 2"));
         return quiz;
     }

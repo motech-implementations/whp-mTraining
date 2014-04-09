@@ -29,17 +29,17 @@ public class Quiz extends CourseContent implements CourseContentHolder {
     @Persistent(column = "number_of_questions")
     private Integer numberOfQuestions = 0;
 
-    public Quiz(String name, UUID contentId, Integer version, String createdBy, DateTime createdOn, Double passPercentage, boolean isActive, List<Question> questions) {
+    public Quiz(String name, UUID contentId, Integer version, String createdBy, DateTime createdOn, Double passPercentage, boolean isActive, List<Question> questions, Integer numberOfQuestions) {
         super(name, contentId, version, createdBy, createdOn, isActive);
         this.passPercentage = passPercentage;
         this.questions = questions;
-        this.numberOfQuestions = (questions == null) ? 0 : questions.size();
+        this.numberOfQuestions = numberOfQuestions;
     }
 
     public Quiz(QuizDto quizDto) {
         this(quizDto.getName(), quizDto.getContentId(), quizDto.getVersion(), quizDto.getCreatedBy(), quizDto.getCreatedOn(), quizDto.getPassPercentage(),
                 quizDto.isActive(),
-                mapToQuestions(quizDto.getQuestions()));
+                mapToQuestions(quizDto.getQuestions()), quizDto.getNoOfQuestionsToBePlayed());
     }
 
     public void addQuestion(Question question) {
