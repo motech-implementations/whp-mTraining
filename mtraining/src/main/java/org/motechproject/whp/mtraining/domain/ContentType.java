@@ -16,21 +16,21 @@ public enum ContentType {
     COURSE {
         @Override
         public CourseDto toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
-                               List<String> options, String correctAnswer, String correctAnswerFileName, Long passPercentage, List<Object> childDtos, String contentAuthor) {
+                               List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
             return new CourseDto(isActive, nodeName, description, contentAuthor, (List<ModuleDto>) (Object) childDtos);
         }
     },
     MODULE {
         @Override
         public ModuleDto toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
-                               List<String> options, String correctAnswer, String correctAnswerFileName, Long passPercentage, List<Object> childDtos, String contentAuthor) {
+                               List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
             return new ModuleDto(isActive, nodeName, description, contentAuthor, (List<ChapterDto>) (Object) childDtos);
         }
     },
     CHAPTER {
         @Override
         public ChapterDto toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
-                                List<String> options, String correctAnswer, String correctAnswerFileName, Long passPercentage, List<Object> childDtos, String contentAuthor) {
+                                List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
             List<QuestionDto> questions = filterChildNodesOfType(childDtos, QuestionDto.class);
             List<MessageDto> messages = filterChildNodesOfType(childDtos, MessageDto.class);
             QuizDto quizDto = new QuizDto(true, nodeName, questions, numberOfQuizQuestions, passPercentage, contentAuthor);
@@ -51,14 +51,14 @@ public enum ContentType {
     MESSAGE {
         @Override
         public MessageDto toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
-                                List<String> options, String correctAnswer, String correctAnswerFileName, Long passPercentage, List<Object> childDtos, String contentAuthor) {
+                                List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
             return new MessageDto(isActive, nodeName, fileName, description, contentAuthor);
         }
     },
     QUESTION {
         @Override
         public QuestionDto toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
-                                 List<String> options, String correctAnswer, String correctAnswerFileName, Long passPercentage, List<Object> childDtos, String contentAuthor) {
+                                 List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
             return new QuestionDto(isActive, nodeName, description, fileName, new AnswerDto(correctAnswer, correctAnswerFileName), options, contentAuthor);
         }
     };
@@ -68,5 +68,5 @@ public enum ContentType {
     }
 
     public abstract Object toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
-                                 List<String> options, String correctAnswer, String correctAnswerFileName, Long passPercentage, List<Object> childDtos, String contentAuthor);
+                                 List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor);
 }

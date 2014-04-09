@@ -186,6 +186,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         imports.add("org.jasypt.encryption.pbe");
         imports.add("org.jasypt.spring.properties");
         imports.add("org.motechproject.whp.mtraining.mail");
+        imports.add("com.google.common.collect");
         return imports;
     }
 

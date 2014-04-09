@@ -25,19 +25,33 @@ public class QuestionHistory {
     private String selectedOption;
     @Persistent
     private Boolean status;
+    @Persistent(column = "invalid_attempt")
+    private Boolean invalidAttempt;
+    @Persistent(column = "time_out")
+    private Boolean timeOut;
 
     public QuestionHistory(QuizHistory quizHistoryId, UUID questionId, Integer questionVersion,
-                           String invalidInputs, String selectedOption, Boolean status) {
+                           String invalidInputs, String selectedOption, Boolean status, Boolean invalidAttempt, Boolean timeOut) {
         this.quizHistoryId = quizHistoryId;
         this.questionId = questionId;
         this.questionVersion = questionVersion;
         this.invalidInputs = invalidInputs;
         this.selectedOption = selectedOption;
         this.status = status;
+        this.invalidAttempt = invalidAttempt;
+        this.timeOut = timeOut;
     }
 
-    public void setQuizHistoryId(QuizHistory quizHistoryId) {
-        this.quizHistoryId = quizHistoryId;
+    public Long getId() {
+        return id;
+    }
+
+    public String getInvalidInputs() {
+        return invalidInputs;
+    }
+
+    public Boolean getStatus() {
+        return status;
     }
 }
 

@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class CourseBuilder {
 
-    private final long passPercentage = 100l;
+    private final Double passPercentage = 100.0;
     private UUID contentId = UUID.randomUUID();
     private String courseName = "CS001";
     private Integer version = 1;

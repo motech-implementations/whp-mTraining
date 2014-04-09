@@ -97,7 +97,7 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
         QuestionDto questionDto = new QuestionDto(true, "Q001", "ques desc", "ques-aud.wav", new AnswerDto("C", "correct-answer.wav"),
                 Arrays.asList("A", "B", "C"), createdBy);
 
-        QuizDto quiz001 = new QuizDto(true, "Quiz001", Arrays.asList(questionDto), 1, 85l, createdBy);
+        QuizDto quiz001 = new QuizDto(true, "Quiz001", Arrays.asList(questionDto), 1, 85.0, createdBy);
 
         ChapterDto ch001 = new ChapterDto(true, "ch001", "chapter description", createdBy, Arrays.asList(activeMessage, inactiveMessage), quiz001);
 

@@ -6,15 +6,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.QuizDto;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.mtraining.service.QuizService;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
 import org.motechproject.whp.mtraining.service.impl.ProviderServiceImpl;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
+import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.QuestionRequest;
 import org.motechproject.whp.mtraining.web.domain.QuizReportRequest;
 import org.motechproject.whp.mtraining.web.domain.QuizReportResponse;
@@ -34,7 +35,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.motechproject.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
-import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QuizControllerTest {
@@ -121,15 +121,17 @@ public class QuizControllerTest {
 
     @Test
     public void shouldSubmitQuizResults() {
+        String startTime = nowAsStringInTimeZoneUTC();
+        String endTime = nowAsStringInTimeZoneUTC();
         long callerId = 76465464L;
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, new Location());
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
         QuizReportRequest quizReportRequest = new QuizReportRequest(callerId, "someId", "sessionId", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, contentIdentifierDto,
-                newArrayList(new QuestionRequest(UUID.randomUUID(), Collections.<String>emptyList(), "a", false, false)), nowAsStringInTimeZoneUTC(), nowAsStringInTimeZoneUTC());
-        QuizDto quizDto = new QuizDto();
-        QuizReportResponse quizReportResponse = new QuizReportResponse(callerId, "someId", "sessionId", null, null, ResponseStatus.OK);
-        when(quizService.getQuiz(contentIdentifierDto)).thenReturn(quizDto);
-        when(quizReporter.validateAndProcessQuiz(quizDto, quizReportRequest)).thenReturn(quizReportResponse);
-        when(providerService.byCallerId(callerId)).thenReturn(new Provider("remediId", callerId, WORKING_PROVIDER, null));
+                newArrayList(new QuestionRequest(UUID.randomUUID(), 1, Collections.<String>emptyList(), "a", false, false)), startTime, endTime);
+        QuizReportResponse quizReportResponse = new QuizReportResponse(callerId, "sessionId", "someId", 100.0, true, ResponseStatus.OK);
+
+        when(providerService.byCallerId(callerId)).thenReturn(provider);
+        when(quizReporter.processAndLogQuiz("remediId", quizReportRequest)).thenReturn(quizReportResponse);
 
         ResponseEntity<? extends MotechResponse> response = quizController.submitQuizResults(quizReportRequest);
 

@@ -104,8 +104,8 @@ public class CourseTest {
                 Arrays.asList("A", "B", "C"), createdBy);
 
 
-        QuizDto quiz001 = new QuizDto(true, "quiz001", Arrays.asList(q002, q001), 1, 85l, createdBy);
-        QuizDto inactiveQuiz = new QuizDto(false, "quiz002", Collections.<QuestionDto>emptyList(), 1, 85l, createdBy);
+        QuizDto quiz001 = new QuizDto(true, "quiz001", Arrays.asList(q002, q001), 1, 85.0, createdBy);
+        QuizDto inactiveQuiz = new QuizDto(false, "quiz002", Collections.<QuestionDto>emptyList(), 1, 85.0, createdBy);
 
         ChapterDto ch001 = new ChapterDto(false, "ch001", "chapter description", createdBy, Arrays.asList(activeMessage), quiz001);
         ChapterDto ch002 = new ChapterDto(true, "ch002", "chapter description", createdBy, Arrays.asList(inactiveMessage), quiz001);

@@ -52,7 +52,7 @@ public class CourseImportService {
             String noOfQuizQuestions = request.getNoOfQuizQuestions();
 
             Integer numberOfQuizQuestions = isBlank(noOfQuizQuestions) ? 0 : Integer.parseInt(noOfQuizQuestions);
-            Long passPercentage = isBlank(request.getPassPercentage()) ? null : Long.parseLong(request.getPassPercentage());
+            Double passPercentage = isBlank(request.getPassPercentage()) ? null : Double.parseDouble(request.getPassPercentage());
 
             Content content = new Content(request.getNodeName(), request.getNodeType(), request.getStatus(), request.getDescription(),
                     request.getFileName(), numberOfQuizQuestions, request.getOptionsAsList(),

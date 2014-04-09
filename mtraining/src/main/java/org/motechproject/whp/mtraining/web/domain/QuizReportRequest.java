@@ -104,4 +104,5 @@ public class QuizReportRequest extends IVRRequest {
         String message = status.getMessage().concat(" for: " + content);
         return new ValidationError(status.getCode(), message);
     }
+
 }

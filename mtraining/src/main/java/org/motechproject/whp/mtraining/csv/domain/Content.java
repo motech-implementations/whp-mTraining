@@ -1,4 +1,4 @@
-package org.motechproject.whp.mtraining.csv.domain;
+ package org.motechproject.whp.mtraining.csv.domain;
 
 import org.motechproject.whp.mtraining.domain.ContentType;
 
@@ -18,13 +18,13 @@ public class Content {
     private List<String> options;
     private String correctAnswer;
     private String correctAnswerFileName;
-    private Long passPercentage;
+    private Double passPercentage;
 
     private List<Content> childContents;
 
     public Content(String name, String contentType, String status, String description, String fileName,
                    Integer numberOfQuizQuestions, List<String> options, String correctAnswer,
-                   String correctAnswerFileName, Long passPercentage, String contentAuthor) {
+                   String correctAnswerFileName, Double passPercentage, String contentAuthor) {
         this.name = name;
         this.passPercentage = passPercentage;
         this.contentType = ContentType.from(contentType);

@@ -1,7 +1,6 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.QuizDto;
 import org.motechproject.mtraining.service.QuizService;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.UUID;
 
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_QUIZ;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.statusFor;
 import static org.springframework.http.HttpStatus.OK;
@@ -97,9 +95,7 @@ public class QuizController {
         Provider provider = providerService.byCallerId(quizReportRequest.getCallerId());
         if (provider == null)
             return new ResponseEntity<>(basicResponse.withResponse(UNKNOWN_PROVIDER), OK);
-        QuizDto quiz = quizService.getQuiz(quizReportRequest.getQuizDto());
-        return quiz == null ?
-                new ResponseEntity<>(basicResponse.withResponse(INVALID_QUIZ), OK) :
-                new ResponseEntity<>(quizReporter.validateAndProcessQuiz(quiz, quizReportRequest), OK);
+
+        return new ResponseEntity<>(quizReporter.processAndLogQuiz(provider.getRemediId(), quizReportRequest), OK);
     }
 }

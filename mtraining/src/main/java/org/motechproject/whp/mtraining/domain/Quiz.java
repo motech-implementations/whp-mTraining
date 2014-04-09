@@ -24,12 +24,12 @@ public class Quiz extends CourseContent implements CourseContentHolder {
     private List<Question> questions = new ArrayList<>();
 
     @Persistent(column = "pass_percentage")
-    private Long passPercentage;
+    private Double passPercentage;
 
     @Persistent(column = "number_of_questions")
     private Integer numberOfQuestions = 0;
 
-    public Quiz(String name, UUID contentId, Integer version, String createdBy, DateTime createdOn, Long passPercentage, boolean isActive, List<Question> questions) {
+    public Quiz(String name, UUID contentId, Integer version, String createdBy, DateTime createdOn, Double passPercentage, boolean isActive, List<Question> questions) {
         super(name, contentId, version, createdBy, createdOn, isActive);
         this.passPercentage = passPercentage;
         this.questions = questions;
@@ -62,7 +62,7 @@ public class Quiz extends CourseContent implements CourseContentHolder {
         return questions;
     }
 
-    public Long getPassPercentage() {
+    public Double getPassPercentage() {
         return passPercentage;
     }
 
