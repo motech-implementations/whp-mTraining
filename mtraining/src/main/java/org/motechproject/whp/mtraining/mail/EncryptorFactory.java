@@ -2,7 +2,10 @@ package org.motechproject.whp.mtraining.mail;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class EncryptorFactory {
@@ -26,7 +29,14 @@ public class EncryptorFactory {
 
     private Properties getPropertiesFromFile(String source) throws IOException {
         Properties properties = new Properties();
-        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(source));
+        InputStream inputStream=null;
+        try {
+            inputStream = new FileInputStream(source);
+        } catch (FileNotFoundException e) {
+            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(source);
+        } finally {
+            properties.load(inputStream);
+        }
         return properties;
     }
 
