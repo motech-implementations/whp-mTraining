@@ -29,7 +29,7 @@ public class QuizReportRequest extends IVRRequest {
     @JsonProperty
     private String endTime;
     @JsonProperty
-    private Boolean incompleteAttempt;
+    private Boolean incompleteAttempt=false;
 
     public QuizReportRequest() {
     }

@@ -16,9 +16,9 @@ public class QuestionRequest {
     @JsonProperty
     private String selectedOption;
     @JsonProperty
-    private Boolean timeOut;
+    private Boolean timeOut = false;
     @JsonProperty
-    private Boolean invalidAttempt;
+    private Boolean invalidAttempt = false;
 
     public QuestionRequest() {
     }
