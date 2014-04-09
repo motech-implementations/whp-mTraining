@@ -26,11 +26,11 @@ public class CallLog {
     private String uniqueId;
     @Persistent(column = "session_id")
     private String sessionId;
-    @Persistent(column = "node_id")
+    @Persistent(column = "content_id")
     private UUID nodeId;
-    @Persistent(column = "node_version")
+    @Persistent(column = "content_version")
     private Integer nodeVersion;
-    @Persistent(column = "node_type")
+    @Persistent(column = "content_type")
     private CallLogRecordType callLogRecordType;
     @Persistent(column = "start_time")
     @Temporal(TemporalType.TIMESTAMP)
