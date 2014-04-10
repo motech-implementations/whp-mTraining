@@ -21,7 +21,8 @@ public enum ResponseStatus {
     MISSING_VERSION(917, "Missing Version"),
     MISSING_QUESTION_ID(918, "Missing Question Id"),
     INVALID_QUESTION(919, "Could not find some of the questions"),
-    INVALID_COURSE_STATUS(920, "Invalid course status");
+    INVALID_COURSE_STATUS(920, "Invalid course status"),
+    MISSING_CALL_LOG_CONTENT(921, "Missing contents for call log");
 
     private int code;
     private String message;

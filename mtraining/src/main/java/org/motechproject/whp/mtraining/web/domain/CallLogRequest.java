@@ -5,6 +5,7 @@ import org.motechproject.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -49,6 +50,10 @@ public class CallLogRequest extends IVRRequest {
             validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME));
             return validationErrors;
         }
+        if (isEmpty(callLogRecords)) {
+            validationErrors.add(new ValidationError(ResponseStatus.MISSING_CALL_LOG_CONTENT));
+            return validationErrors;
+        }
 
         for (CallLogRecord callLogRecord : callLogRecords) {
             List<ValidationError> errors = callLogRecord.validate();
@@ -74,5 +79,4 @@ public class CallLogRequest extends IVRRequest {
     private boolean isCallStartTimeInvalid() {
         return isNotBlank(callStartTime) && !ISODateTimeUtil.validate(callStartTime);
     }
-
 }

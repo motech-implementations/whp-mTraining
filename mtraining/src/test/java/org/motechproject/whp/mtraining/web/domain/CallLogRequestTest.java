@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -20,9 +22,20 @@ public class CallLogRequestTest {
     public void shouldValidateCallLog() {
         DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
         DateTime tenMinutesAfterNow = now.plusMinutes(10);
-        CallLogRequest validCallLogRequest = new CallLogRequest(746l, "unk001", "ssn001", Collections.<CallLogRecord>emptyList(), now.toString(), tenMinutesAfterNow.toString());
+        CallLogRequest validCallLogRequest = new CallLogRequest(746l, "unk001", "ssn001", newArrayList(new CallLogRecord(UUID.randomUUID(), 1, "COURSE", now.toString(), now.toString())),
+                now.toString(), tenMinutesAfterNow.toString());
         List<ValidationError> expectedEmptyErrors = validCallLogRequest.validate();
         assertThat(expectedEmptyErrors.size(), Is.is(0));
+    }
+
+    @Test
+    public void shouldReturnErrorWhenCallLogContentIsEmpty() {
+        DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
+        DateTime tenMinutesAfterNow = now.plusMinutes(10);
+        CallLogRequest validCallLogRequest = new CallLogRequest(746l, "unk001", "ssn001", Collections.EMPTY_LIST, now.toString(), tenMinutesAfterNow.toString());
+        List<ValidationError> validationErrors = validCallLogRequest.validate();
+        assertThat(validationErrors.size(), Is.is(1));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_CALL_LOG_CONTENT)));
     }
 
     @Test
