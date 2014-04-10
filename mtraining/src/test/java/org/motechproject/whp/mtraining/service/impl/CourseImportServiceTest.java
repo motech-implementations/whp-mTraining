@@ -11,6 +11,7 @@ import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
+import org.motechproject.mtraining.service.ConfigurationService;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.service.MotechUserService;
@@ -32,9 +33,10 @@ public class CourseImportServiceTest {
 
     @Mock
     private CourseService courseService;
-
     @Mock
     private MotechUserService motechUserService;
+    @Mock
+    private ConfigurationService courseConfigService;
 
     private TestCourseUpdater testCourseUpdater;
 
@@ -42,7 +44,7 @@ public class CourseImportServiceTest {
     public void setUp() throws Exception {
         ModuleUpdater moduleUpdater = mock(ModuleUpdater.class);
         testCourseUpdater = new TestCourseUpdater(courseService, moduleUpdater);
-        courseImportService = new CourseImportService(courseService, testCourseUpdater, motechUserService);
+        courseImportService = new CourseImportService(courseService, testCourseUpdater, motechUserService, courseConfigService);
     }
 
     @Test

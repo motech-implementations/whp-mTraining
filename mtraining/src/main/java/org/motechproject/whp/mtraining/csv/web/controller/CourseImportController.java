@@ -1,9 +1,11 @@
 package org.motechproject.whp.mtraining.csv.web.controller;
 
 
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
+import org.motechproject.whp.mtraining.csv.request.CourseConfigRequest;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
 import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
@@ -20,8 +22,10 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.motechproject.whp.mtraining.csv.response.CsvImportResponse.failure;
 
 @Controller
 public class CourseImportController {
@@ -45,7 +49,7 @@ public class CourseImportController {
             List<CourseCsvRequest> courseCsvRequests = csvParser.parse(multipartFile, CourseCsvRequest.class);
             List<CsvImportError> errors = courseStructureValidator.validate(courseCsvRequests);
             if (!errors.isEmpty()) {
-                return CsvImportResponse.failure(errors);
+                return failure(errors);
             }
             ContentIdentifierDto importedCourseIdentifier = courseImportService.importCourse(courseCsvRequests);
             return CsvImportResponse.success(format("Course: %s with version %s has been imported successfully",
@@ -53,7 +57,29 @@ public class CourseImportController {
                     importedCourseIdentifier.getVersion()));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            return CsvImportResponse.failure(asList(new CsvImportError(ex.getMessage())));
+            return failure(asList(new CsvImportError(ex.getMessage())));
+        }
+    }
+
+    @RequestMapping(value = "/course-config/import", method = RequestMethod.POST)
+    @ResponseBody
+    public CsvImportResponse importCourseConfigs(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) {
+        try {
+            List<CourseConfigRequest> courseConfigRequests = csvParser.parse(multipartFile, CourseConfigRequest.class);
+            List<CsvImportError> errors = newArrayList();
+            for (CourseConfigRequest courseConfigRequest : courseConfigRequests) {
+                errors.addAll(courseConfigRequest.validate());
+            }
+            if (!errors.isEmpty()) {
+                return failure(errors);
+            }
+            courseImportService.importCourseConfig(courseConfigRequests);
+            return CsvImportResponse.success("Configuration for courses have been imported successfully");
+        } catch (ResourceNotFoundException e) {
+            return failure(asList(new CsvImportError("CourseName", "-", e.getMessage() + " is not available")));
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage());
+            return failure(asList(new CsvImportError(ex.getMessage())));
         }
     }
 }

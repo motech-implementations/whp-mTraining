@@ -6,7 +6,6 @@ import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_NODE;
 
 public class BookmarkPostRequest extends IVRRequest {
 

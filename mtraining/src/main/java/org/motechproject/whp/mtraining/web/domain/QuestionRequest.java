@@ -34,7 +34,7 @@ public class QuestionRequest {
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
-        if (questionId == null)
+        if (questionId == null || questionVersion == null)
             errors.add(new ValidationError(ResponseStatus.MISSING_QUESTION_ID));
         return errors;
     }

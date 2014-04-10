@@ -5,25 +5,28 @@ mtrainingModule.controller('fileUploadController', ['$scope', 'fileUpload', func
     $scope.uploadedProvider = false;
     $scope.uploadingCourse = false;
     $scope.uploadingProvider = false;
+    $scope.uploadingCourseConfig = false;
     $scope.response = undefined;
 
     $scope.uploadCourse = function () {
         $scope.uploadedCourse = true;
         $scope.uploadingCourse = true;
-        var uploadUrl = "../mtraining/web-api/course-structure/import";
-        fileUpload.uploadFileToUrl($scope.multipartFile, uploadUrl,
-            function success(data) {
-                $scope.response = data;
-                clearFileName();
-            }, function () {
-                clearFileName();
-            });
+        upload("../mtraining/web-api/course-structure/import");
     };
 
     $scope.uploadProvider = function () {
         $scope.uploadingProvider = true;
         $scope.uploadedProvider = true;
-        var uploadUrl = "../mtraining/web-api/provider/import";
+        upload("../mtraining/web-api/provider/import");
+    };
+
+    $scope.uploadCourseConfig = function () {
+        $scope.uploadedCourse = true;
+        $scope.uploadingCourseConfig = true;
+        upload("../mtraining/web-api/course-config/import");
+    };
+
+    var upload = function (uploadUrl) {
         fileUpload.uploadFileToUrl($scope.multipartFile, uploadUrl,
             function success(data) {
                 $scope.response = data;
@@ -36,6 +39,7 @@ mtrainingModule.controller('fileUploadController', ['$scope', 'fileUpload', func
     var clearFileName = function () {
         $scope.uploadingCourse = false;
         $scope.uploadingProvider = false;
+        $scope.uploadingCourseConfig = false;
         $scope.multipartFile = undefined;
         $scope.provider = undefined;
         angular.forEach(

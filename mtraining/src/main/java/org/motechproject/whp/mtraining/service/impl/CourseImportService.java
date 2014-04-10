@@ -1,11 +1,14 @@
 package org.motechproject.whp.mtraining.service.impl;
 
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.dto.CourseConfigDto;
 import org.motechproject.mtraining.dto.CourseDto;
+import org.motechproject.mtraining.service.ConfigurationService;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.domain.Content;
+import org.motechproject.whp.mtraining.csv.request.CourseConfigRequest;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Integer.valueOf;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -27,12 +31,14 @@ public class CourseImportService {
     private CourseService courseService;
     private CourseUpdater courseUpdater;
     private MotechUserService motechUserService;
+    private ConfigurationService courseConfigService;
 
     @Autowired
-    public CourseImportService(CourseService courseService, CourseUpdater courseUpdater, MotechUserService motechUserService) {
+    public CourseImportService(CourseService courseService, CourseUpdater courseUpdater, MotechUserService motechUserService, ConfigurationService courseConfigService) {
         this.courseService = courseService;
         this.courseUpdater = courseUpdater;
         this.motechUserService = motechUserService;
+        this.courseConfigService = courseConfigService;
     }
 
 
@@ -44,6 +50,12 @@ public class CourseImportService {
         courseUpdater.update(asList(courseDto));
 
         return courseService.addOrUpdateCourse(courseDto);
+    }
+
+    public void importCourseConfig(List<CourseConfigRequest> requests) {
+        for (CourseConfigRequest request : requests) {
+            courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigDto(request.getCourseName(), valueOf(request.getCourseDurationInDays())));
+        }
     }
 
     private Map<String, Content> formContents(List<CourseCsvRequest> requests, String contentAuthor) {

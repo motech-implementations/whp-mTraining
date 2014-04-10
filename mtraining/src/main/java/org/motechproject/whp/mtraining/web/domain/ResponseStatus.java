@@ -19,7 +19,7 @@ public enum ResponseStatus {
     INVALID_CALL_STATUS(915, "Restarted flag must be set to true or false"),
     MISSING_CONTENT_ID(916, "Missing Content Id"),
     MISSING_VERSION(917, "Missing Version"),
-    MISSING_QUESTION_ID(918, "Missing Question Id"),
+    MISSING_QUESTION_ID(918, "Missing Question Id or version"),
     INVALID_QUESTION(919, "Could not find some of the questions"),
     INVALID_COURSE_STATUS(920, "Invalid course status"),
     MISSING_CALL_LOG_CONTENT(921, "Missing contents for call log");
