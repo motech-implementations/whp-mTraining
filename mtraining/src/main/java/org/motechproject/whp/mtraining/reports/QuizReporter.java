@@ -94,7 +94,7 @@ public class QuizReporter {
 
         List<AnswerSheetDto> answerSheetDtos = new ArrayList<>();
         for (QuestionRequest questionRequest : questionRequests) {
-            answerSheetDtos.add(new AnswerSheetDto(questionRequest.getQuestionId(), questionRequest.getQuestionVersion(), questionRequest.getSelectedOption()));
+            answerSheetDtos.add(new AnswerSheetDto(questionRequest.getQuestionId(), questionRequest.getVersion(), questionRequest.getSelectedOption()));
         }
         return answerSheetDtos;
     }

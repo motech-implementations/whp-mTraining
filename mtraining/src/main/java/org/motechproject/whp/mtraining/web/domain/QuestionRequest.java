@@ -10,7 +10,7 @@ public class QuestionRequest {
     @JsonProperty
     private UUID questionId;
     @JsonProperty
-    private Integer questionVersion;
+    private Integer version;
     @JsonProperty
     private List<String> invalidInputs;
     @JsonProperty
@@ -23,9 +23,9 @@ public class QuestionRequest {
     public QuestionRequest() {
     }
 
-    public QuestionRequest(UUID questionId, Integer questionVersion, List<String> invalidInputs, String selectedOption, Boolean timeOut, Boolean invalidAttempt) {
+    public QuestionRequest(UUID questionId, Integer version, List<String> invalidInputs, String selectedOption, Boolean timeOut, Boolean invalidAttempt) {
         this.questionId = questionId;
-        this.questionVersion = questionVersion;
+        this.version = version;
         this.invalidInputs = invalidInputs;
         this.selectedOption = selectedOption;
         this.timeOut = timeOut;
@@ -34,7 +34,7 @@ public class QuestionRequest {
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
-        if (questionId == null || questionVersion == null)
+        if (questionId == null || version == null)
             errors.add(new ValidationError(ResponseStatus.MISSING_QUESTION_ID));
         return errors;
     }
@@ -51,8 +51,8 @@ public class QuestionRequest {
         return invalidInputs;
     }
 
-    public Integer getQuestionVersion() {
-        return questionVersion;
+    public Integer getVersion() {
+        return version;
     }
 
     public Boolean getTimeOut() {

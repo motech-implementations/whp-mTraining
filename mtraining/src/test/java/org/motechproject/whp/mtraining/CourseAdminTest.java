@@ -43,7 +43,7 @@ public class CourseAdminTest {
         properties.put("course.admin.email.from", "motech@email.com");
         properties.put("course.admin.email.to", "admin@email.com");
         properties.put("course.admin.email.subject.validation.failure", "Course Validation Failed");
-        properties.put("course.admin.email.validation.failure.message.format", "Course %s failed with reason : %s");
+        properties.put("course.admin.email.validation.failure.message.format", "Course %s (version %s) failed with reason : %s");
         when(settingsFacade.asProperties()).thenReturn(properties);
 
         IVRResponse response = new IVRResponse(IVRResponseCodes.MISSING_FILES, "hello.wav");
@@ -51,7 +51,7 @@ public class CourseAdminTest {
         CourseAdmin courseAdmin = new CourseAdmin(emailService, settingsFacade);
         courseAdmin.notifyCoursePublishFailure("CS001", 1, response);
 
-        Mail mail = new Mail("motech@email.com", "admin@email.com", format(CourseAdmin.FAILURE_SUBJECT_FORMAT, "CS001"), format(CourseAdmin.FAILURE_MESSAGE_FORMAT, "CS001", 1, response.getResponseMessage()));
+        Mail mail = new Mail("motech@email.com", "admin@email.com", format(CourseAdmin.FAILURE_SUBJECT_FORMAT, "CS001",1), format(CourseAdmin.FAILURE_MESSAGE_FORMAT, "CS001", 1, response.getResponseMessage()));
         verify(emailService).send(mail);
     }
 

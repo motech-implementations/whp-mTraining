@@ -14,9 +14,9 @@ import static java.lang.String.format;
 @Component
 public class CourseAdmin {
 
-    public static final String SUCCESS_SUBJECT_FORMAT = "Course %s Published with version %s";
-    public static final String FAILURE_SUBJECT_FORMAT = "Course %s could not be published";
-    public static final String FAILURE_MESSAGE_FORMAT = "Course %s with version %s could not be published because of %s";
+    public static final String SUCCESS_SUBJECT_FORMAT = "Course %s (version %s) Published";
+    public static final String FAILURE_SUBJECT_FORMAT = "Course %s (version %s) could not be published";
+    public static final String FAILURE_MESSAGE_FORMAT = "Course %s (version %s) could not be published because: %s";
 
 
     private final Properties properties;
@@ -36,7 +36,7 @@ public class CourseAdmin {
     }
 
     public void notifyCoursePublishFailure(String courseName, Integer version, IVRResponse ivrResponse) {
-        emailService.send(new Mail(fromAddress(), toAddress(), format(FAILURE_SUBJECT_FORMAT, courseName), format(FAILURE_MESSAGE_FORMAT, courseName, version, ivrResponse.getResponseMessage())));
+        emailService.send(new Mail(fromAddress(), toAddress(), format(FAILURE_SUBJECT_FORMAT, courseName,version), format(FAILURE_MESSAGE_FORMAT, courseName, version, ivrResponse.getResponseMessage())));
     }
 
     private String toAddress() {

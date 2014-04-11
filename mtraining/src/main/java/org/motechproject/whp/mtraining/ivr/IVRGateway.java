@@ -52,7 +52,7 @@ public class IVRGateway {
             return ivrResponseParser.parse(response);
         } catch (IOException ex) {
             LOGGER.error(ex.getMessage(), ex);
-            return new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
+            return new IVRResponse(IVRResponseCodes.NETWORK_FAILURE, "Network Failure while trying to connect to " + getIVRUrl() + ".");
         }
     }
 
