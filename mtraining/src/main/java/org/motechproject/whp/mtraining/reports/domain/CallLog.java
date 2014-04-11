@@ -26,6 +26,8 @@ public class CallLog {
     private String uniqueId;
     @Persistent(column = "session_id")
     private String sessionId;
+    @Persistent(column = "course_id")
+    private UUID courseId;
     @Persistent(column = "content_id")
     private UUID nodeId;
     @Persistent(column = "content_version")
@@ -44,11 +46,12 @@ public class CallLog {
     private Boolean restarted;
 
     public CallLog(String remedyId, Long callerId, String uniqueId, String sessionId,
-                   UUID nodeId, Integer nodeVersion, CallLogRecordType callLogRecordType, DateTime startTime, DateTime endTime, String status, boolean restarted) {
+                   UUID courseId, UUID nodeId, Integer nodeVersion, CallLogRecordType callLogRecordType, DateTime startTime, DateTime endTime, String status, boolean restarted) {
         this.remedyId = remedyId;
         this.callerId = callerId;
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
+        this.courseId = courseId;
         this.nodeId = nodeId;
         this.nodeVersion = nodeVersion;
         this.callLogRecordType = callLogRecordType;

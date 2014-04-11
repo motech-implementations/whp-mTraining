@@ -40,7 +40,7 @@ public class CallLogReporter {
         for (CallLogRecord callLogRecord : callLogRequest.getCallLogRecords()) {
             String status = callLogRecord.getEndTime() != null ? "Completed" : "Started";
             CallLog callLog = new CallLog(provider.getRemediId(), callLogRequest.getCallerId(), callLogRequest.getUniqueId(),
-                    callLogRequest.getSessionId(), callLogRecord.getContentId(), callLogRecord.getVersion(),
+                    callLogRequest.getSessionId(), callLogRequest.getCourseId(), callLogRecord.getContentId(), callLogRecord.getVersion(),
                     from(callLogRecord.getType()), parse(callLogRecord.getStartTime()), parse(callLogRecord.getEndTime()), status, callLogRecord.isRestarted());
             callLogs.add(callLog);
         }

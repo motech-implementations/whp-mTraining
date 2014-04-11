@@ -37,10 +37,12 @@ public class CallLogControllerTest {
     private ProviderService providerService;
 
     private CallLogController callLogController;
+    private UUID courseId;
 
     @Before
     public void setUp() {
         callLogController = new CallLogController(callLogReporter, providerService);
+        courseId = UUID.randomUUID();
     }
 
     @Test
@@ -51,7 +53,7 @@ public class CallLogControllerTest {
 
         CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.COURSE.name(), "2014-03-30T17:42:25.976Z", "2014-03-30T17:52:25.976Z");
 
-        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, nullSessionId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, nullSessionId, courseId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
 
         ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);
 
@@ -67,7 +69,7 @@ public class CallLogControllerTest {
         String invalidStartTime = "2014-33-30T17:52:25.976Z";
         UUID contentId = UUID.randomUUID();
         CallLogRecord course = new CallLogRecord(contentId, 1, CallLogRecordType.MESSAGE.name(), invalidStartTime, "2014-03-30T17:52:25.976Z");
-        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, courseId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
         when(providerService.byCallerId(callerId)).thenReturn(new Provider());
 
         ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);
@@ -84,7 +86,7 @@ public class CallLogControllerTest {
         String uniqueId = "uniqueId";
         String sessionId = "sessionId";
         CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.COURSE.name(), null, "2014-03-30T17:52:25.976Z");
-        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, courseId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
 
         when(providerService.byCallerId(callerId)).thenReturn(new Provider());
 

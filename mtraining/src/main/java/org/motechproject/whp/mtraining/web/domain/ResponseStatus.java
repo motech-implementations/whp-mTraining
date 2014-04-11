@@ -10,7 +10,7 @@ public enum ResponseStatus {
     INVALID_DATE_TIME(906, "Missing or Invalid Date"),
     MISSING_TIME(907, "Start time or end time must be present"),
     INVALID_CALL_LOG_TYPE(908, "Invalid content type"),
-    INVALID_NODE_TYPE(909, "Invalid node type"),
+    MISSING_COURSE_ID(909, "Missing Course Id"),
     MISSING_NODE(910, "Missing Content Id or Version"),
     MISSING_QUIZ(911, "Missing Quiz Id or Version"),
     INVALID_QUIZ(912, "Invalid Quiz Id or version"),

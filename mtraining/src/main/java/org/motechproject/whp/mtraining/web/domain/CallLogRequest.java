@@ -4,6 +4,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -11,6 +12,8 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class CallLogRequest extends IVRRequest {
 
+    @JsonProperty
+    private UUID courseId;
     @JsonProperty
     private String callStartTime;
     @JsonProperty
@@ -22,8 +25,9 @@ public class CallLogRequest extends IVRRequest {
     public CallLogRequest() {
     }
 
-    public CallLogRequest(Long callerId, String uniqueId, String sessionId, List<CallLogRecord> callLogRecords, String callStartTime, String callEndTime) {
+    public CallLogRequest(Long callerId, String uniqueId, String sessionId, UUID courseId, List<CallLogRecord> callLogRecords, String callStartTime, String callEndTime) {
         super(callerId, uniqueId, sessionId);
+        this.courseId = courseId;
         this.callLogRecords = callLogRecords;
         this.callStartTime = callStartTime;
         this.callEndTime = callEndTime;
@@ -38,6 +42,11 @@ public class CallLogRequest extends IVRRequest {
 
         // when callerId or sessionId or uniqueId is missing then no need to validate records,return error straight away
         if (!validationErrors.isEmpty()) {
+            return validationErrors;
+        }
+
+        if (courseId == null) {
+            validationErrors.add(new ValidationError(ResponseStatus.MISSING_COURSE_ID));
             return validationErrors;
         }
 
@@ -62,6 +71,10 @@ public class CallLogRequest extends IVRRequest {
             }
         }
         return validationErrors;
+    }
+
+    public UUID getCourseId() {
+        return courseId;
     }
 
     public String getCallStartTime() {
