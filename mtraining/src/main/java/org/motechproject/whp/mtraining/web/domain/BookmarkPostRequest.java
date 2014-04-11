@@ -5,6 +5,7 @@ import org.motechproject.whp.mtraining.util.JSONUtil;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_NODE;
 
 public class BookmarkPostRequest extends IVRRequest {
@@ -28,7 +29,7 @@ public class BookmarkPostRequest extends IVRRequest {
         if (isNotEmpty(validationErrors))
             return validationErrors;
         if (bookmark == null) {
-            validationErrors.add(new ValidationError(MISSING_NODE.getCode(), MISSING_NODE.getMessage().concat(" for: Bookmark")));
+            validationErrors.add(new ValidationError(INVALID_BOOKMARK));
             return validationErrors;
         }
         validationErrors.addAll(bookmark.validate());
