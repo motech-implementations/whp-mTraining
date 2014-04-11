@@ -12,7 +12,7 @@
                         <input type="button" class="form-control btn btn-default" value="Upload & Publish to IVR"
                                ng-click="uploadCourse()" ng-disabled="uploadingCourse || !multipartFile"/>
                     </div>
-                    <div class="mtrain-spinner" ng-show="uploading"></div>
+                    <img src="/motech-platform-server/module/mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingCourse"/>
                 </form>
             </div>
         </div>
@@ -29,7 +29,7 @@
                         <input type="button" class="form-control btn btn-default" value="Upload Provider"
                                ng-click="uploadProvider()" ng-disabled="uploadingProvider || !multipartFile"/>
                     </div>
-                    <div class="mtrain-spinner" ng-show="uploading"></div>
+                    <img src="/motech-platform-server/module/mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingProvider"/>
                 </form>
             </div>
         </div>

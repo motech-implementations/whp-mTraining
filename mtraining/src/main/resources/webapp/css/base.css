@@ -13,7 +13,6 @@ main, .providerUpload, .response {
 .mtrain-spinner {
     height: 32px;
     width: 32px;
-    background: url('../images/spinner.gif') center no-repeat;
     display: inline-block;
     float: left;
     margin-left: 20px;
