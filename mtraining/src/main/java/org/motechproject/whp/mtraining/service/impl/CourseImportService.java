@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.service.impl;
 
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.CourseConfigDto;
+import org.motechproject.mtraining.dto.CourseConfigurationDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.service.ConfigurationService;
 import org.motechproject.mtraining.service.CourseService;
@@ -54,7 +54,7 @@ public class CourseImportService {
 
     public void importCourseConfig(List<CourseConfigRequest> requests) {
         for (CourseConfigRequest request : requests) {
-            courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigDto(request.getCourseName(), valueOf(request.getCourseDurationInDays())));
+            courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(request.getCourseName(), valueOf(request.getCourseDurationInDays())));
         }
     }
 
@@ -85,7 +85,6 @@ public class CourseImportService {
 
     private String contentAuthor() {
         UserDto currentUser = motechUserService.getCurrentUser();
-        LOGGER.error("CURRENT USER IS " + currentUser.getUserName());
         return currentUser == null ? null : currentUser.getUserName();
     }
 }
