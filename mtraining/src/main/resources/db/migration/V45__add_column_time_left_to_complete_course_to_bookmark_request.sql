@@ -1,0 +1,1 @@
+ALTER TABLE mtraining.bookmark_request ADD COLUMN time_left_to_complete_course bigint ;

@@ -18,6 +18,8 @@
     <osgi:reference interface="org.motechproject.mtraining.service.QuizService" id="quizService"/>
 
     <osgi:reference interface="org.motechproject.mtraining.service.CourseConfigurationService" id="courseConfigService"/>
+
+    <osgi:reference interface="org.motechproject.mtraining.service.CourseProgressService" id="courseProgressService"/>
     <!--Osgi Services end-->
 
     <!--Mail Configuration Here-->

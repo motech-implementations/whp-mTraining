@@ -6,7 +6,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
@@ -98,7 +97,7 @@ public class QuizBundleIT extends AuthenticationAwareIT {
         ChapterDto chapterDto = moduleDto.findFirstActiveChapter();
         BookmarkDto bookmarkDto = new BookmarkDto("remediId23", courseDto.toContentIdentifierDto(), moduleDto.toContentIdentifierDto(),
                 chapterDto.toContentIdentifierDto(), chapterDto.findFirstActiveMessage().toContentIdentifierDto(), null,
-                ISODateTimeUtil.nowInTimeZoneUTC(), CourseStatus.ONGOING);
+                ISODateTimeUtil.nowInTimeZoneUTC());
         bookmarkService.addOrUpdate(bookmarkDto);
         startTime = nowAsStringInTimeZoneUTC();
         endTime = nowAsStringInTimeZoneUTC();

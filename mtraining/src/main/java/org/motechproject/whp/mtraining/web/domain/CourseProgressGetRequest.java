@@ -1,11 +1,11 @@
 package org.motechproject.whp.mtraining.web.domain;
 
-public class BookmarkGetRequest extends IVRRequest {
+public class CourseProgressGetRequest extends IVRRequest {
 
-    public BookmarkGetRequest() {
+    public CourseProgressGetRequest() {
     }
 
-    public BookmarkGetRequest(Long callerId, String sessionId, String uniqueId) {
+    public CourseProgressGetRequest(Long callerId, String sessionId, String uniqueId) {
         super(callerId, sessionId, uniqueId);
     }
 

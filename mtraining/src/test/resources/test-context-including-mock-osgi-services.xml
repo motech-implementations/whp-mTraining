@@ -94,6 +94,17 @@
         </property>
     </bean>
 
+    <bean id="courseProgressService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.mtraining.service.CourseProgressService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.mtraining.service.CourseProgressService</value>
+        </property>
+    </bean>
+
     <bean id="emailService" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">
             <bean class="org.mockito.Mockito" factory-method="mock">

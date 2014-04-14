@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.web.domain;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.motechproject.whp.mtraining.domain.Location;
 
-public class BookmarkResponse implements MotechResponse {
+public class CourseProgressResponse implements MotechResponse {
 
     private Long callerId;
     private String sessionId;
@@ -12,19 +12,19 @@ public class BookmarkResponse implements MotechResponse {
     private String responseMessage;
     private int responseCode;
     @JsonProperty
-    private Bookmark bookmark;
+    private CourseProgress courseProgress;
 
     //For JSON parsing
-    public BookmarkResponse() {
+    public CourseProgressResponse() {
 
     }
 
-    public BookmarkResponse(Long callerId, String sessionId, String uniqueId, Location location, Bookmark bookmark) {
+    public CourseProgressResponse(Long callerId, String sessionId, String uniqueId, Location location, CourseProgress courseProgress) {
         this.callerId = callerId;
         this.sessionId = sessionId;
         this.uniqueId = uniqueId;
         this.location = location;
-        this.bookmark = bookmark;
+        this.courseProgress = courseProgress;
         this.responseCode = ResponseStatus.OK.getCode();
         this.responseMessage = ResponseStatus.OK.getMessage();
     }
@@ -55,7 +55,7 @@ public class BookmarkResponse implements MotechResponse {
         return responseMessage;
     }
 
-    public Bookmark getBookmark() {
-        return bookmark;
+    public CourseProgress getCourseProgress() {
+        return courseProgress;
     }
 }

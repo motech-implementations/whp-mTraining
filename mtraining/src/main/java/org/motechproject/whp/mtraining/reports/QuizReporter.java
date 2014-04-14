@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.reports;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.mtraining.dto.AnswerSheetDto;
+import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.QuestionResultDto;
 import org.motechproject.mtraining.dto.QuizAnswerSheetDto;
@@ -10,6 +11,7 @@ import org.motechproject.mtraining.dto.QuizResultSheetDto;
 import org.motechproject.mtraining.exception.InvalidQuestionException;
 import org.motechproject.mtraining.exception.InvalidQuizException;
 import org.motechproject.mtraining.service.BookmarkService;
+import org.motechproject.mtraining.service.CourseProgressService;
 import org.motechproject.mtraining.service.QuizService;
 import org.motechproject.whp.mtraining.reports.domain.QuestionHistory;
 import org.motechproject.whp.mtraining.reports.domain.QuizHistory;
@@ -33,12 +35,14 @@ import static org.motechproject.mtraining.util.ISODateTimeUtil.parse;
 @Component
 public class QuizReporter {
     private BookmarkService bookmarkService;
+    private CourseProgressService courseProgressService;
     private QuizService quizService;
     private AllQuestionHistories allQuestionHistories;
 
     @Autowired
-    public QuizReporter(BookmarkService bookmarkService, QuizService quizService, AllQuestionHistories allQuestionHistories) {
+    public QuizReporter(BookmarkService bookmarkService, CourseProgressService courseProgressService, QuizService quizService, AllQuestionHistories allQuestionHistories) {
         this.bookmarkService = bookmarkService;
+        this.courseProgressService = courseProgressService;
         this.quizService = quizService;
         this.allQuestionHistories = allQuestionHistories;
     }
@@ -76,12 +80,15 @@ public class QuizReporter {
         ContentIdentifierDto moduleDto = quizReportRequest.getModuleDto();
         ContentIdentifierDto chapterDto = quizReportRequest.getChapterDto();
         if (quizReportRequest.IsIncompleteAttempt()) {
-            bookmarkService.resetBookmark(remediId, courseDto, moduleDto, chapterDto);
+            bookmarkService.setBookmarkToQuizOfAChapter(remediId, courseDto, moduleDto, chapterDto);
         } else {
             if (quizResult.isPassed()) {
-                bookmarkService.setToNextBookmark(remediId, courseDto, moduleDto, chapterDto);
+                BookmarkDto nextBookmark = bookmarkService.getNextBookmark(remediId, courseDto, moduleDto, chapterDto);
+                if (nextBookmark.getModule() == null && nextBookmark.getChapter() == null) {
+                    courseProgressService.markCourseAsComplete(remediId, quizReportRequest.getStartTime(), courseDto);
+                }
             } else {
-                bookmarkService.resetBookmarkToFirstMessageOfAChapter(remediId, courseDto, moduleDto, chapterDto);
+                bookmarkService.setBookmarkToFirstActiveContentOfAChapter(remediId, courseDto, moduleDto, chapterDto);
             }
         }
     }

@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.repository;
 
 import org.hamcrest.core.Is;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,8 +41,8 @@ public class AllBookmarkRequestsIT {
         assertThat(all.size(), Is.is(0));
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, contentIdentifierDto, ISODateTimeUtil.nowInTimeZoneUTC(), CourseStatus.ONGOING);
-        allBookmarkRequests.add(new BookmarkRequest("rmd001", 1234567L, "UNQ1", "session01", ResponseStatus.OK, BookmarkRequestType.GET, new BookmarkReport(bookmarkDto)));
+        BookmarkDto bookmarkDto = new BookmarkDto("rmd001", contentIdentifierDto, contentIdentifierDto, contentIdentifierDto, null, contentIdentifierDto, ISODateTimeUtil.nowInTimeZoneUTC());
+        allBookmarkRequests.add(new BookmarkRequest("rmd001", 1234567L, "UNQ1", "session01", ResponseStatus.OK, BookmarkRequestType.GET, DateTime.now().toString(), 60, CourseStatus.ONGOING.value(), new BookmarkReport(bookmarkDto)));
 
         List<BookmarkRequest> savedBookmarkRequestses = allBookmarkRequests.all();
         assertThat(savedBookmarkRequestses.size(), Is.is(1));

@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.QuestionResultDto;
 import org.motechproject.mtraining.dto.QuizAnswerSheetDto;
@@ -15,6 +17,7 @@ import org.motechproject.mtraining.dto.QuizResultSheetDto;
 import org.motechproject.mtraining.exception.InvalidQuestionException;
 import org.motechproject.mtraining.exception.InvalidQuizException;
 import org.motechproject.mtraining.service.BookmarkService;
+import org.motechproject.mtraining.service.CourseProgressService;
 import org.motechproject.mtraining.service.QuizService;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
 import org.motechproject.whp.mtraining.reports.domain.QuestionHistory;
@@ -48,16 +51,17 @@ public class QuizReporterTest {
     private QuizReporter quizReporter;
 
     @Mock
-    private BookmarkService bookmarkService;
+    private CourseProgressService courseProgressService;
     @Mock
     private AllQuestionHistories allQuestionHistories;
     @Mock
     private QuizService quizService;
+    @Mock
+    private BookmarkService bookmarkService;
 
     private UUID questionId;
     private ContentIdentifierDto courseContentIdentifier;
     private ContentIdentifierDto chapterContentIdentifier;
-    private ContentIdentifierDto messageContentIdentifier;
     private ContentIdentifierDto quizContentIdentifier;
     private ContentIdentifierDto moduleContentIdentifier;
     private String startTime;
@@ -71,7 +75,7 @@ public class QuizReporterTest {
         questionId = UUID.randomUUID();
         startTime = nowAsStringInTimeZoneUTC();
         endTime = nowAsStringInTimeZoneUTC();
-        quizReporter = new QuizReporter(bookmarkService, quizService, allQuestionHistories);
+        quizReporter = new QuizReporter(bookmarkService, courseProgressService, quizService, allQuestionHistories);
         courseContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         moduleContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         chapterContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
@@ -88,7 +92,9 @@ public class QuizReporterTest {
         QuizHistory quizHistory = new QuizHistory("externalId", 1L, "someId", "sessionId", courseContentIdentifier.getContentId(),
                 courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
         QuestionHistory questionHistory = new QuestionHistory(quizHistory, questionId, 1, "a;b", "c", true, false, false);
+        BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, DateTime.now());
         when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+        when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
 
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
@@ -101,7 +107,37 @@ public class QuizReporterTest {
         assertEquals(questionHistory.getInvalidInputs(), questionHistoryListCaptureValue.get(0).getInvalidInputs());
         assertTrue(questionHistoryListCaptureValue.get(0).getStatus());
         assertEquals("OK", response.getResponseMessage());
-        verify(bookmarkService).setToNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+        verify(bookmarkService).getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+
+    }
+
+    @Test
+    public void shouldLogInQuestionAttemptsAfterGettingResultAndUpdateToMarkCompletionIfNoNextActiveChapterFoundWhenPassed() {
+        List<QuestionRequest> questionRequests = newArrayList(new QuestionRequest(questionId, 1, newArrayList("a", "b"), "c", false, false));
+        QuizReportRequest quizReportRequest = new QuizReportRequest(1L, "someId", "sessionId", courseContentIdentifier,
+                moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, false);
+        QuestionResultDto questionResultDto = new QuestionResultDto(questionId, 1, "c", true);
+        QuizResultSheetDto quizResultSheetDto = new QuizResultSheetDto("externalId", quizContentIdentifier, newArrayList(questionResultDto), 100.0, true);
+        QuizHistory quizHistory = new QuizHistory("externalId", 1L, "someId", "sessionId", courseContentIdentifier.getContentId(),
+                courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
+        QuestionHistory questionHistory = new QuestionHistory(quizHistory, questionId, 1, "a;b", "c", true, false, false);
+        BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, null, null, null, courseContentIdentifier, DateTime.now());
+        when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+        when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
+
+        QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
+
+        assertTrue(response.getPassed());
+        assertEquals(Double.valueOf(100.0), response.getQuizScore());
+        Class<List<QuestionHistory>> listOfQuestionHistoryClass = (Class<List<QuestionHistory>>) (Class) ArrayList.class;
+        ArgumentCaptor<List<QuestionHistory>> argument = ArgumentCaptor.forClass(listOfQuestionHistoryClass);
+        verify(allQuestionHistories).bulkAdd(argument.capture());
+        List<QuestionHistory> questionHistoryListCaptureValue = argument.getValue();
+        assertEquals(questionHistory.getInvalidInputs(), questionHistoryListCaptureValue.get(0).getInvalidInputs());
+        assertTrue(questionHistoryListCaptureValue.get(0).getStatus());
+        assertEquals("OK", response.getResponseMessage());
+        verify(bookmarkService).getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+        verify(courseProgressService).markCourseAsComplete(anyString(), any(String.class), any(ContentIdentifierDto.class));
 
     }
 
@@ -128,7 +164,7 @@ public class QuizReporterTest {
         assertEquals(questionHistory.getInvalidInputs(), questionHistoryListCaptureValue.get(0).getInvalidInputs());
         assertTrue(questionHistoryListCaptureValue.get(0).getStatus());
         assertEquals("OK", response.getResponseMessage());
-        verify(bookmarkService).resetBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+        verify(bookmarkService).setBookmarkToQuizOfAChapter(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
 
     }
 
@@ -155,7 +191,7 @@ public class QuizReporterTest {
         assertEquals(questionHistory.getInvalidInputs(), questionHistoryListCaptureValue.get(0).getInvalidInputs());
         assertTrue(questionHistoryListCaptureValue.get(0).getStatus());
         assertEquals("OK", response.getResponseMessage());
-        verify(bookmarkService).resetBookmarkToFirstMessageOfAChapter(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+        verify(bookmarkService).setBookmarkToFirstActiveContentOfAChapter(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
 
     }
 

@@ -40,6 +40,15 @@ public class BookmarkRequest {
     @Persistent(column = "request_type")
     private BookmarkRequestType requestType;
 
+    @Persistent(column = "course_start_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private DateTime courseStartTime;
+
+    @Persistent(column = "time_left_to_complete_course")
+    private Integer timeLeftToCompleteCourse;
+
+    @Persistent(column = "course_status")
+    private String courseStatus;
 
     @Embedded(members = {
             @Persistent(name = "courseId", columns = @Column(name = "course_id")),
@@ -53,7 +62,6 @@ public class BookmarkRequest {
             @Persistent(name = "quizId", columns = @Column(name = "quiz_id")),
             @Persistent(name = "quizVersion", columns = @Column(name = "quiz_version")),
             @Persistent(name = "dateModified", columns = @Column(name = "bookmark_modified_on")),
-            @Persistent(name = "courseStatus", columns = @Column(name = "course_status")),
     })
     @Persistent
     private BookmarkReport bookmarkReport;
@@ -68,10 +76,13 @@ public class BookmarkRequest {
         this.createdOn = ISODateTimeUtil.nowInTimeZoneUTC();
     }
 
-    public BookmarkRequest(String remediId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, BookmarkReport bookmarkReport) {
+    public BookmarkRequest(String remediId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, String courseStartTime, Integer timeLeftToCompleteCourse, String courseStatus, BookmarkReport bookmarkReport) {
         this(callerId, uniqueId, sessionId, responseStatus, requestType);
         this.remediId = remediId;
         this.bookmarkReport = bookmarkReport;
+        this.courseStartTime = ISODateTimeUtil.parseWithTimeZoneUTC(courseStartTime);
+        this.timeLeftToCompleteCourse = timeLeftToCompleteCourse;
+        this.courseStatus = courseStatus;
     }
 
     public Long getCallerId() {
@@ -86,15 +97,14 @@ public class BookmarkRequest {
         return sessionId;
     }
 
-
-    public String getCourseStatus() {
-        return bookmarkReport.getCourseStatus();
-    }
-
     public boolean hasBookmarkFor(ContentIdentifierDto course) {
         if (bookmarkReport == null) {
             return false;
         }
         return bookmarkReport.hasCourse(course);
+    }
+
+    public String getCourseStatus() {
+        return courseStatus;
     }
 }

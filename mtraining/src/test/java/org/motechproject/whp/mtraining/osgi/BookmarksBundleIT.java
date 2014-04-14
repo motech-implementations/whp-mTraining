@@ -1,5 +1,7 @@
 package org.motechproject.whp.mtraining.osgi;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
@@ -9,11 +11,18 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.DateTime;
+import org.motechproject.mtraining.constants.CourseStatus;
+import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.dto.CourseConfigurationDto;
 import org.motechproject.mtraining.dto.CourseDto;
+import org.motechproject.mtraining.dto.CourseProgressDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
+import org.motechproject.mtraining.service.CourseConfigurationService;
+import org.motechproject.mtraining.service.CourseProgressService;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
@@ -26,8 +35,9 @@ import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
-import org.motechproject.whp.mtraining.web.domain.BookmarkPostRequest;
-import org.motechproject.whp.mtraining.web.domain.BookmarkResponse;
+import org.motechproject.whp.mtraining.web.domain.CourseProgress;
+import org.motechproject.whp.mtraining.web.domain.CourseProgressPostRequest;
+import org.motechproject.whp.mtraining.web.domain.CourseProgressResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
@@ -53,10 +63,12 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     private CourseService courseService;
 
     private ProviderService providerService;
+    private CourseConfigurationService courseConfigService;
+    private CourseProgressService courseProgressService;
 
-    private ContentIdentifierDto courseIdentifier;
     private Provider activeProvider;
     protected IVRServer ivrServer;
+    private CourseDto course002;
 
 
     @Override
@@ -69,9 +81,40 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         providerService = (ProviderService) getApplicationContext().getBean("providerService");
         assertNotNull(providerService);
 
-        courseIdentifier = courseService.addOrUpdateCourse(new CourseDTOBuilder().build());
+        courseConfigService = (CourseConfigurationService) getApplicationContext().getBean("courseConfigService");
+        assertNotNull(courseConfigService);
+
+        courseProgressService = (CourseProgressService) getApplicationContext().getBean("courseProgressService");
+        assertNotNull(courseProgressService);
+
+
+        course002 = courseService.getCourse(createCourseIfNotExists("CS002"));
+        courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(course002.getName(), 60));
+
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);
+
+
+        ModuleDto moduleDto = course002.firstActiveModule();
+        BookmarkDto bookmarkDto = new BookmarkDto("remediId1", course002.toContentIdentifierDto(), moduleDto.toContentIdentifierDto(), moduleDto.findFirstActiveChapter().toContentIdentifierDto(), moduleDto.findFirstActiveChapter().findFirstActiveMessage().toContentIdentifierDto(), null, DateTime.now());
+        CourseProgressDto courseProgressDto = new CourseProgressDto("remediId1", DateTime.now(), bookmarkDto, CourseStatus.ONGOING);
+        courseProgressService.addOrUpdateCourseProgress(courseProgressDto);
+
+    }
+
+    private ContentIdentifierDto createCourseIfNotExists(final String courseName) {
+        List<CourseDto> allCourses = courseService.getAllCourses();
+        CourseDto cs002 = (CourseDto) CollectionUtils.find(allCourses, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                CourseDto course = (CourseDto) object;
+                return courseName.equalsIgnoreCase(course.getName());
+            }
+        });
+        if (cs002 == null) {
+            return courseService.addOrUpdateCourse(new CourseDTOBuilder().withName("CS002").build());
+        }
+        return new ContentIdentifierDto(cs002.getContentId(), cs002.getVersion());
     }
 
 
@@ -84,7 +127,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     public void testThatResponseIs800WhenProviderIsKnown() throws IOException, InterruptedException {
         String bookmarkRequestURLForAKnownUser = getBookmarkRequestUrlWith(activeProvider.getCallerId(), "un1qId", "s001");
         CustomHttpResponse responseForKnownUser = httpClient.execute(httpRequestWithAuthHeaders(bookmarkRequestURLForAKnownUser, "Get"), new CustomHttpResponseHandler());
-        BookmarkResponse bookmarkForKnownUser = (BookmarkResponse) responseToJson(responseForKnownUser.getContent(), BookmarkResponse.class);
+        CourseProgressResponse bookmarkForKnownUser = (CourseProgressResponse) responseToJson(responseForKnownUser.getContent(), CourseProgressResponse.class);
 
         assertEquals(HttpStatus.SC_OK, responseForKnownUser.getStatusCode());
         assertEquals(ResponseStatus.OK.getCode(), bookmarkForKnownUser.getResponseCode());
@@ -135,14 +178,13 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     public void testThatInitialBookmarkIsReturnedIfBookmarkForExternalIdDoesNotExist() throws IOException, InterruptedException {
         String bookmarkRequestURLForAKnownUser = getBookmarkRequestUrlWith(activeProvider.getCallerId(), "un1qId", "s001");
         CustomHttpResponse responseForKnownUser = httpClient.execute(httpRequestWithAuthHeaders(bookmarkRequestURLForAKnownUser, "Get"), new CustomHttpResponseHandler());
-        BookmarkResponse bookmarkForKnownUser = (BookmarkResponse) responseToJson(responseForKnownUser.getContent(), BookmarkResponse.class);
-        assertNotNull(bookmarkForKnownUser.getBookmark());
+        CourseProgressResponse courseProgressResponseForKnownUser = (CourseProgressResponse) responseToJson(responseForKnownUser.getContent(), CourseProgressResponse.class);
+        assertNotNull(courseProgressResponseForKnownUser.getCourseProgress());
     }
 
     private String getBookmarkAsJSON() throws IOException {
-        CourseDto courseDto = courseService.getCourse(courseIdentifier);
 
-        ModuleDto moduleDto = courseDto.getModules().get(0);
+        ModuleDto moduleDto = course002.getModules().get(0);
         ChapterDto chapterDto = moduleDto.getChapters().get(0);
         MessageDto messageDto = chapterDto.getMessages().get(0);
 
@@ -150,10 +192,11 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         ContentIdentifierDto chapter = chapterDto.toContentIdentifierDto();
         ContentIdentifierDto message = messageDto.toContentIdentifierDto();
 
-        Bookmark bookmark = new Bookmark(courseIdentifier, module, chapter, message, null, "ONGOING");
-        BookmarkPostRequest bookmarkPostRequest = new BookmarkPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", bookmark);
+        Bookmark bookmark = new Bookmark(new ContentIdentifierDto(course002.getContentId(), course002.getVersion()), module, chapter, message, null, DateTime.now().toString());
+        CourseProgress courseProgress = new CourseProgress(DateTime.now().toString(), bookmark, 2, "ONGOING");
+        CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", courseProgress);
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(bookmarkPostRequest);
+        return objectMapper.writeValueAsString(courseProgressPostRequest);
     }
 
     private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {
