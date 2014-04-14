@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.service.impl;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseConfigurationDto;
 import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.service.ConfigurationService;
+import org.motechproject.mtraining.service.CourseConfigurationService;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.service.MotechUserService;
@@ -31,10 +31,10 @@ public class CourseImportService {
     private CourseService courseService;
     private CourseUpdater courseUpdater;
     private MotechUserService motechUserService;
-    private ConfigurationService courseConfigService;
+    private CourseConfigurationService courseConfigService;
 
     @Autowired
-    public CourseImportService(CourseService courseService, CourseUpdater courseUpdater, MotechUserService motechUserService, ConfigurationService courseConfigService) {
+    public CourseImportService(CourseService courseService, CourseUpdater courseUpdater, MotechUserService motechUserService, CourseConfigurationService courseConfigService) {
         this.courseService = courseService;
         this.courseUpdater = courseUpdater;
         this.motechUserService = motechUserService;

@@ -1,8 +1,8 @@
 package org.motechproject.whp.mtraining.csv.web.controller;
 
 
-import org.apache.velocity.exception.ResourceNotFoundException;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.exception.CourseNotFoundException;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
 import org.motechproject.whp.mtraining.csv.request.CourseConfigRequest;
@@ -75,8 +75,8 @@ public class CourseImportController {
             }
             courseImportService.importCourseConfig(courseConfigRequests);
             return CsvImportResponse.success("Configuration for courses have been imported successfully");
-        } catch (ResourceNotFoundException e) {
-            return failure(asList(new CsvImportError("CourseName", "-", e.getMessage() + " is not available")));
+        } catch (CourseNotFoundException courseNotFoundException) {
+            return failure(asList(new CsvImportError("CourseName", "-", String.format("Course : %s could not be found.Please verify course name in the CSV file.", courseNotFoundException.getCourseName()))));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             return failure(asList(new CsvImportError(ex.getMessage())));

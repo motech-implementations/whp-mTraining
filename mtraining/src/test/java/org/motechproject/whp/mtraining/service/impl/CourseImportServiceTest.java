@@ -11,7 +11,7 @@ import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.service.ConfigurationService;
+import org.motechproject.mtraining.service.CourseConfigurationService;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.service.MotechUserService;
@@ -36,7 +36,7 @@ public class CourseImportServiceTest {
     @Mock
     private MotechUserService motechUserService;
     @Mock
-    private ConfigurationService courseConfigService;
+    private CourseConfigurationService courseConfigService;
 
     private TestCourseUpdater testCourseUpdater;
 

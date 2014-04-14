@@ -24,7 +24,7 @@
 
     <osgi:reference interface="org.motechproject.mtraining.service.QuestionService" id="questionService"/>
 
-    <osgi:reference interface="org.motechproject.mtraining.service.ConfigurationService" id="courseConfigService"/>
+    <osgi:reference interface="org.motechproject.mtraining.service.CourseConfigurationService" id="courseConfigService"/>
 
     <osgi:reference interface="org.motechproject.mtraining.service.QuizService" id="quizService"/>
 
