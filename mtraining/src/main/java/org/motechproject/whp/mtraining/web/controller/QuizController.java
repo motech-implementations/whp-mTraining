@@ -75,7 +75,7 @@ public class QuizController {
             return new ResponseEntity<>(new QuizResponse(callerId, sessionId, uniqueId, questionsForQuiz), OK);
         } catch (IllegalStateException e) {
             LOGGER.error(String.format("Invalid quiz with quizId %s and version %s.Not enough questions found", quizId, quizVersion));
-            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.INVALID_QUIZ), OK);
+            return new ResponseEntity<>(new BasicResponse(callerId, sessionId, uniqueId, ResponseStatus.QUIZ_NOT_FOUND), OK);
         }
     }
 

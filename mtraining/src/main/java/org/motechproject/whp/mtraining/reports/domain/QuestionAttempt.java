@@ -7,14 +7,14 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import java.util.UUID;
 
-@PersistenceCapable(table = "question_history", identityType = IdentityType.APPLICATION)
-public class QuestionHistory {
+@PersistenceCapable(table = "question_attempt", identityType = IdentityType.APPLICATION)
+public class QuestionAttempt {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
     @PrimaryKey
     private Long id;
-    @Persistent(column = "quiz_history_id")
-    private QuizHistory quizHistoryId;
+    @Persistent(column = "quiz_attempt_id")
+    private QuizAttempt quizAttemptId;
     @Persistent(column = "question_id")
     private UUID questionId;
     @Persistent(column = "question_version")
@@ -23,21 +23,21 @@ public class QuestionHistory {
     private String invalidInputs;
     @Persistent(column = "selected_option")
     private String selectedOption;
-    @Persistent
-    private Boolean status;
+    @Persistent(column = "valid_answer")
+    private Boolean isValidAnswer;
     @Persistent(column = "invalid_attempt")
     private Boolean invalidAttempt;
     @Persistent(column = "time_out")
     private Boolean timeOut;
 
-    public QuestionHistory(QuizHistory quizHistoryId, UUID questionId, Integer questionVersion,
-                           String invalidInputs, String selectedOption, Boolean status, Boolean invalidAttempt, Boolean timeOut) {
-        this.quizHistoryId = quizHistoryId;
+    public QuestionAttempt(QuizAttempt quizAttemptId, UUID questionId, Integer questionVersion,
+                           String invalidInputs, String selectedOption, Boolean isValidAnswer, Boolean invalidAttempt, Boolean timeOut) {
+        this.quizAttemptId = quizAttemptId;
         this.questionId = questionId;
         this.questionVersion = questionVersion;
         this.invalidInputs = invalidInputs;
         this.selectedOption = selectedOption;
-        this.status = status;
+        this.isValidAnswer = isValidAnswer;
         this.invalidAttempt = invalidAttempt;
         this.timeOut = timeOut;
     }
@@ -50,8 +50,8 @@ public class QuestionHistory {
         return invalidInputs;
     }
 
-    public Boolean getStatus() {
-        return status;
+    public Boolean getIsValidAnswer() {
+        return isValidAnswer;
     }
 }
 

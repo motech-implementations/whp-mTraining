@@ -101,7 +101,7 @@ public class QuizControllerTest {
         BasicResponse response = (BasicResponse) quizController.getQuestionsForQuiz(callerId, "uuid", "sessionId", quizId, quizVersion).getBody();
 
         verify(quizService).getQuestionsForQuiz(quizIdentifier);
-        assertEquals(ResponseStatus.INVALID_QUIZ.getCode(), response.getResponseCode());
+        assertEquals(ResponseStatus.QUIZ_NOT_FOUND.getCode(), response.getResponseCode());
     }
 
     @Test

@@ -93,8 +93,8 @@ public class QuizBundleIT extends AuthenticationAwareIT {
         provider = addProvider("remediId23", 222292L, WORKING_PROVIDER);
         courseIdentifier = courseService.addOrUpdateCourse(new CourseDTOBuilder().build());
         courseDto = courseService.getCourse(courseIdentifier);
-        ModuleDto moduleDto = courseDto.firstActiveModule();
-        ChapterDto chapterDto = moduleDto.findFirstActiveChapter();
+        moduleDto = courseDto.firstActiveModule();
+        chapterDto = moduleDto.findFirstActiveChapter();
         BookmarkDto bookmarkDto = new BookmarkDto("remediId23", courseDto.toContentIdentifierDto(), moduleDto.toContentIdentifierDto(),
                 chapterDto.toContentIdentifierDto(), chapterDto.findFirstActiveMessage().toContentIdentifierDto(), null,
                 ISODateTimeUtil.nowInTimeZoneUTC());
@@ -111,7 +111,6 @@ public class QuizBundleIT extends AuthenticationAwareIT {
     }
 
     public void testShouldReturnQuizResultResponseForQuizRequest() throws IOException, InterruptedException {
-        System.out.println("in quiz bundle");
         HttpPost httpPost = (HttpPost) httpRequestWithAuthHeaders(String.format("http://localhost:%s/mtraining/web-api/quiz", TestContext.getJettyPort()), "POST");
         QuizReportRequest quizReportRequest = getQuizReportRequestforQuizIdAndQuestionId(quiz, quizDto.getQuestions().get(0).getContentId(), quizDto.getQuestions().get(1).getContentId());
         String quizReportAsJSON = getQuizReportAsJSON(quizReportRequest);
@@ -125,7 +124,6 @@ public class QuizBundleIT extends AuthenticationAwareIT {
     }
 
     public void testShouldReturnQuizResultResponseAsInvalidQuizForQuizRequestWithInvalidQuizId() throws IOException, InterruptedException {
-        System.out.println("in quiz bundle");
         HttpPost httpPost = (HttpPost) httpRequestWithAuthHeaders(String.format("http://localhost:%s/mtraining/web-api/quiz", TestContext.getJettyPort()), "POST");
         QuizReportRequest quizReportRequest = getQuizReportRequestforQuizIdAndQuestionId(new ContentIdentifierDto(UUID.randomUUID(), 1), quizDto.getQuestions().get(0).getContentId(), quizDto.getQuestions().get(1).getContentId());
         String quizReportAsJSON = getQuizReportAsJSON(quizReportRequest);
@@ -134,11 +132,10 @@ public class QuizBundleIT extends AuthenticationAwareIT {
         CustomHttpResponse response = httpClient.execute(httpPost, new CustomHttpResponseHandler());
         QuizReportResponse quizReportResponse = (QuizReportResponse) responseToJson(response.getContent(), QuizReportResponse.class);
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-        assertEquals(ResponseStatus.INVALID_QUIZ.getCode(), quizReportResponse.getResponseCode());
+        assertEquals(ResponseStatus.QUIZ_NOT_FOUND.getCode(), quizReportResponse.getResponseCode());
     }
 
     public void testShouldReturnQuizResultResponseAsInvalidQuestionForQuizRequestWithInvalidQuestionId() throws IOException, InterruptedException {
-        System.out.println("in quiz bundle");
         HttpPost httpPost = (HttpPost) httpRequestWithAuthHeaders(String.format("http://localhost:%s/mtraining/web-api/quiz", TestContext.getJettyPort()), "POST");
         QuizReportRequest quizReportRequest = getQuizReportRequestforQuizIdAndQuestionId(quiz, UUID.randomUUID(), quizDto.getQuestions().get(1).getContentId());
         String quizReportAsJSON = getQuizReportAsJSON(quizReportRequest);

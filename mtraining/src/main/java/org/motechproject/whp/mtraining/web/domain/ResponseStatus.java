@@ -13,7 +13,7 @@ public enum ResponseStatus {
     MISSING_COURSE_ID(909, "Missing Course Id"),
     MISSING_NODE(910, "Missing Content Id or Version"),
     MISSING_QUIZ(911, "Missing Quiz Id or Version"),
-    INVALID_QUIZ(912, "Invalid Quiz Id or version"),
+    QUIZ_NOT_FOUND(912, "Invalid Quiz Id or version"),
     MISSING_QUESTION(913, "No Questions Available"),
     INVALID_BOOKMARK(914, "Invalid bookmark"),
     INVALID_CALL_STATUS(915, "Restarted flag must be set to true or false"),
@@ -22,7 +22,11 @@ public enum ResponseStatus {
     MISSING_QUESTION_ID(918, "Missing Question Id or version"),
     INVALID_QUESTION(919, "Could not find some of the questions"),
     INVALID_COURSE_STATUS(920, "Invalid course status"),
-    MISSING_CALL_LOG_CONTENT(921, "Missing contents for call log");
+    MISSING_CALL_LOG_CONTENT(921, "Missing contents for call log"),
+    INVALID_COURSE(922,"Invalid Course Id or version"),
+    INVALID_MODULE(923, "Invalid Module Id or version"),
+    INVALID_CHAPTER(924, "Invalid Chapter Id or version");
+
 
     private int code;
     private String message;
