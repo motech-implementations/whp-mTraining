@@ -104,17 +104,17 @@ public class CourseTest {
                 Arrays.asList("A", "B", "C"), createdBy);
 
 
-        QuizDto quiz001 = new QuizDto(true, "quiz001", Arrays.asList(q002, q001), 1, 85.0, createdBy);
-        QuizDto inactiveQuiz = new QuizDto(false, "quiz002", Collections.<QuestionDto>emptyList(), 1, 85.0, createdBy);
+        QuizDto quiz001 = new QuizDto(true, "quiz001", "quiz file", Arrays.asList(q002, q001), 1, 85.0, createdBy);
+        QuizDto inactiveQuiz = new QuizDto(false, "quiz002", "quiz file", Collections.<QuestionDto>emptyList(), 1, 85.0, createdBy);
 
-        ChapterDto ch001 = new ChapterDto(false, "ch001", "chapter description", createdBy, Arrays.asList(activeMessage), quiz001);
-        ChapterDto ch002 = new ChapterDto(true, "ch002", "chapter description", createdBy, Arrays.asList(inactiveMessage), quiz001);
-        ChapterDto ch003 = new ChapterDto(true, "ch003", "chapter description", createdBy, Arrays.asList(activeMessage), inactiveQuiz);
+        ChapterDto ch001 = new ChapterDto(false, "ch001", "chapter description", "chapter file", createdBy, Arrays.asList(activeMessage), quiz001);
+        ChapterDto ch002 = new ChapterDto(true, "ch002", "chapter description", "chapter file", createdBy, Arrays.asList(inactiveMessage), quiz001);
+        ChapterDto ch003 = new ChapterDto(true, "ch003", "chapter description", "chapter file", createdBy, Arrays.asList(activeMessage), inactiveQuiz);
 
-        ModuleDto mod001 = new ModuleDto(true, "m001", "module desc", createdBy, Arrays.asList(ch001, ch002, ch003));
-        ModuleDto mod002 = new ModuleDto(false, "m002", "module desc", createdBy, Collections.<ChapterDto>emptyList());
+        ModuleDto mod001 = new ModuleDto(true, "m001", "module desc", "module file", createdBy, Arrays.asList(ch001, ch002, ch003));
+        ModuleDto mod002 = new ModuleDto(false, "m002", "module desc", "module file", createdBy, Collections.<ChapterDto>emptyList());
 
-        CourseDto cs001 = new CourseDto(true, "cs001", "Course Desc", createdBy, Arrays.asList(mod001, mod002));
+        CourseDto cs001 = new CourseDto(true, "cs001", "Course Desc", "course file", createdBy, Arrays.asList(mod001, mod002));
 
         return new Course(cs001);
     }

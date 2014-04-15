@@ -16,14 +16,15 @@ public class UpdaterTest {
 
     public static final String CONTENT_AUTHOR = "createdBy";
     public static final String DESCRIPTION = "Some description";
+    public static final String FILENAME = "Some file";
 
     @Test
     public void shouldUpdateAContentAndItsChildContents() {
-        ChapterDto chapterWithSameNameAsExistingChapter = new ChapterDto(true, "chapter1", DESCRIPTION, CONTENT_AUTHOR, Collections.EMPTY_LIST, null);
-        ModuleDto moduleWithNameSameAsExistingModule = new ModuleDto(true, "module1", DESCRIPTION, CONTENT_AUTHOR, asList(chapterWithSameNameAsExistingChapter));
-        ChapterDto chapterToBeUpdatedForNotExistingModule = new ChapterDto(true, "chapter2", DESCRIPTION, CONTENT_AUTHOR, Collections.EMPTY_LIST, null);
-        ModuleDto newModuleWithExistingChapter = new ModuleDto(true, "module2", DESCRIPTION, CONTENT_AUTHOR, asList(chapterToBeUpdatedForNotExistingModule));
-        ModuleDto newModule = new ModuleDto(true, "module3", DESCRIPTION, CONTENT_AUTHOR, Collections.EMPTY_LIST);
+        ChapterDto chapterWithSameNameAsExistingChapter = new ChapterDto(true, "chapter1", DESCRIPTION, FILENAME, CONTENT_AUTHOR, Collections.EMPTY_LIST, null);
+        ModuleDto moduleWithNameSameAsExistingModule = new ModuleDto(true, "module1", DESCRIPTION, FILENAME, CONTENT_AUTHOR, asList(chapterWithSameNameAsExistingChapter));
+        ChapterDto chapterToBeUpdatedForNotExistingModule = new ChapterDto(true, "chapter2", DESCRIPTION, FILENAME, CONTENT_AUTHOR, Collections.EMPTY_LIST, null);
+        ModuleDto newModuleWithExistingChapter = new ModuleDto(true, "module2", DESCRIPTION, FILENAME, CONTENT_AUTHOR, asList(chapterToBeUpdatedForNotExistingModule));
+        ModuleDto newModule = new ModuleDto(true, "module3", DESCRIPTION, FILENAME, CONTENT_AUTHOR, Collections.EMPTY_LIST);
         UUID expectedModuleId = UUID.randomUUID();
         UUID expectedChapterId = UUID.randomUUID();
         Updater<ModuleDto> updater = new TestUpdater(moduleWithNameSameAsExistingModule, chapterToBeUpdatedForNotExistingModule, expectedModuleId, expectedChapterId);
@@ -74,10 +75,10 @@ public class UpdaterTest {
         @Override
         protected List<ModuleDto> getExistingContents() {
             ChapterDto chapterDto = moduleToUpdate.getChapters().get(0);
-            ChapterDto chapterInDb = new ChapterDto(chapterId, 1, true, chapterDto.getName(), chapterDto.getDescription(), CONTENT_AUTHOR, Collections.EMPTY_LIST, null);
-            ModuleDto moduleInDb = new ModuleDto(moduleId, 2, true, moduleToUpdate.getName(), moduleToUpdate.getDescription(), CONTENT_AUTHOR, asList(chapterInDb));
-            ChapterDto chapterForOrphanModule = new ChapterDto(chapterId, 1, true, chapterToUpdate.getName(), chapterToUpdate.getDescription(), CONTENT_AUTHOR, Collections.EMPTY_LIST, null);
-            ModuleDto orphanModule = new ModuleDto(true, "some_name", "some_desc", CONTENT_AUTHOR, asList(chapterForOrphanModule));
+            ChapterDto chapterInDb = new ChapterDto(chapterId, 1, true, chapterDto.getName(), chapterDto.getDescription(), FILENAME, CONTENT_AUTHOR, Collections.EMPTY_LIST, null);
+            ModuleDto moduleInDb = new ModuleDto(moduleId, 2, true, moduleToUpdate.getName(), moduleToUpdate.getDescription(), FILENAME, CONTENT_AUTHOR, asList(chapterInDb));
+            ChapterDto chapterForOrphanModule = new ChapterDto(chapterId, 1, true, chapterToUpdate.getName(), chapterToUpdate.getDescription(), FILENAME, CONTENT_AUTHOR, Collections.EMPTY_LIST, null);
+            ModuleDto orphanModule = new ModuleDto(true, "some_name", "some_desc", FILENAME, CONTENT_AUTHOR, asList(chapterForOrphanModule));
             return asList(moduleInDb, orphanModule);
         }
 

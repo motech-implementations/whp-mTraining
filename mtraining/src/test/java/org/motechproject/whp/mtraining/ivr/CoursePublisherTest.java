@@ -52,7 +52,7 @@ public class CoursePublisherTest {
     @Test
     public void shouldPostTheCorrectCourse() {
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 3);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "NA001", "This is a test course", "Test Author", null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "NA001", "This is a test course", "Course file name", "Test Author", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
 
@@ -90,7 +90,7 @@ public class CoursePublisherTest {
 
         List<ModuleDto> modules = Collections.emptyList();
         int courseVersion = 2;
-        CourseDto courseDto = new CourseDto(true, "CS001", "CS Course", "Created By", modules);
+        CourseDto courseDto = new CourseDto(true, "CS001", "CS Course", "Course file name", "Created By", modules);
 
         when(courseService.getCourse(new ContentIdentifierDto(courseId, courseVersion))).thenReturn(courseDto);
 
@@ -108,7 +108,7 @@ public class CoursePublisherTest {
     public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() {
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Created By", null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Course file name", "Created By", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         when(ivrGateway.postCourse(any(Course.class))).thenReturn(new IVRResponse(800, "OK"));
@@ -123,7 +123,7 @@ public class CoursePublisherTest {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.MISSING_FILES, "file1,file2");
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Created By", null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Course file name", "Created By", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         given(ivrGateway.postCourse(any(Course.class))).willReturn(ivrResponse);
@@ -139,7 +139,7 @@ public class CoursePublisherTest {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
 
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Created By", null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Course file name", "Created By", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         given(ivrGateway.postCourse(any(Course.class))).willReturn(ivrResponse);
@@ -153,7 +153,7 @@ public class CoursePublisherTest {
     @Test
     public void shouldNotPublishInactiveCourse() {
         ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), false, "CS001", "", "Created By", null);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), false, "CS001", "", "Course file name", "Created By", null);
         when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
 
         coursePublisher.publish(cs001, 2);

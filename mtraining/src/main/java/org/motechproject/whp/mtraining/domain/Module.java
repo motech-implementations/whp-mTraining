@@ -16,24 +16,24 @@ import java.util.UUID;
 @PersistenceCapable(table = "module", identityType = IdentityType.APPLICATION)
 public class Module extends CourseContent implements CourseContentHolder {
 
-
     @Element(column = "module_id")
     @Order(column = "chapter_order")
     @Persistent(dependentElement = "true")
     private List<Chapter> chapters = new ArrayList<>();
-
     @Persistent
     private String description;
+    @Persistent(column = "audio_file_name")
+    private String externalId;
 
-
-    public Module(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, List<Chapter> chapters, boolean isActive) {
+    public Module(String name, UUID contentId, Integer version, String description, String externalId, String createdBy, DateTime createdOn, List<Chapter> chapters, boolean isActive) {
         super(name, contentId, version, createdBy, createdOn, isActive);
+        this.externalId = externalId;
         this.chapters = chapters;
         this.description = description;
     }
 
     public Module(ModuleDto moduleDto) {
-        this(moduleDto.getName(), moduleDto.getContentId(), moduleDto.getVersion(), moduleDto.getDescription(), moduleDto.getCreatedBy(), moduleDto.getCreatedOn(),
+        this(moduleDto.getName(), moduleDto.getContentId(), moduleDto.getVersion(), moduleDto.getDescription(), moduleDto.getExternalId(), moduleDto.getCreatedBy(), moduleDto.getCreatedOn(),
                 mapToChapters(moduleDto.getChapters()), moduleDto.isActive());
     }
 

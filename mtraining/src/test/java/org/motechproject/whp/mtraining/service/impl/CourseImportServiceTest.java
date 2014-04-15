@@ -50,11 +50,11 @@ public class CourseImportServiceTest {
     @Test
     public void shouldInvokeCourseServiceToAddACourseEventuallyByConstructingContentTree() {
         List<CourseCsvRequest> requests = asList(
-                new CourseCsvRequest("course1", "course", "active", null, "course description", null),
-                new CourseCsvRequest("module1", "module", "active", "course1", "module1 description", null),
-                new CourseCsvRequest("module2", "Module", "active", "course1", "module2 description", null),
-                new CourseCsvRequest("chapter1", "CHAPTER", "active", "module1", "chapter1 description", null),
-                new CourseCsvRequest("chapter2", "CHAPTER", "active", "module2", "chapter2 description", null),
+                new CourseCsvRequest("course1", "course", "active", null, "course description", "courseFileName"),
+                new CourseCsvRequest("module1", "module", "active", "course1", "module1 description", "module1FileName"),
+                new CourseCsvRequest("module2", "Module", "active", "course1", "module2 description", "module2FileName"),
+                new CourseCsvRequest("chapter1", "CHAPTER", "active", "module1", "chapter1 description", "chapter1FileName"),
+                new CourseCsvRequest("chapter2", "CHAPTER", "active", "module2", "chapter2 description", "chapter2FileName"),
                 new CourseCsvRequest("message1", "message", "active", "chapter1", "message1 description", "filename1"),
                 new CourseCsvRequest("message2", "message", "active", "chapter1", "message2 description", "filename2"),
                 new CourseCsvRequest("message3", "message", "active", "chapter2", "message3 description", "filename3"),

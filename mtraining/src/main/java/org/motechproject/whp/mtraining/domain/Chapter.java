@@ -22,24 +22,24 @@ public class Chapter extends CourseContent implements CourseContentHolder {
     @Order(column = "message_order")
     @Persistent(defaultFetchGroup = "true", dependentElement = "true")
     private List<Message> messages = new ArrayList<>();
-
     @Persistent(defaultFetchGroup = "true", dependentElement = "true")
     @Column(name = "quiz_id")
     private Quiz quiz;
-
     @Persistent
     private String description;
+    @Persistent(column = "audio_file_name")
+    private String externalId;
 
-
-    public Chapter(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, List<Message> messages, Quiz quiz, boolean isActive) {
+    public Chapter(String name, UUID contentId, Integer version, String description, String externalId, String createdBy, DateTime createdOn, List<Message> messages, Quiz quiz, boolean isActive) {
         super(name, contentId, version, createdBy, createdOn, isActive);
+        this.externalId = externalId;
         this.messages = messages;
         this.description = description;
         this.quiz = quiz;
     }
 
     public Chapter(ChapterDto chapterDto) {
-        this(chapterDto.getName(), chapterDto.getContentId(), chapterDto.getVersion(), chapterDto.getDescription(), chapterDto.getCreatedBy(), chapterDto.getCreatedOn(),
+        this(chapterDto.getName(), chapterDto.getContentId(), chapterDto.getVersion(), chapterDto.getDescription(), chapterDto.getExternalId(), chapterDto.getCreatedBy(), chapterDto.getCreatedOn(),
                 mapToMessages(chapterDto.getMessages()),
                 mapToQuiz(chapterDto.getQuiz()),
                 chapterDto.isActive());

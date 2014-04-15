@@ -17,14 +17,14 @@ public enum ContentType {
         @Override
         public CourseDto toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
                                List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
-            return new CourseDto(isActive, nodeName, description, contentAuthor, (List<ModuleDto>) (Object) childDtos);
+            return new CourseDto(isActive, nodeName, description, fileName, contentAuthor, (List<ModuleDto>) (Object) childDtos);
         }
     },
     MODULE {
         @Override
         public ModuleDto toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
                                List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
-            return new ModuleDto(isActive, nodeName, description, contentAuthor, (List<ChapterDto>) (Object) childDtos);
+            return new ModuleDto(isActive, nodeName, description, fileName, contentAuthor, (List<ChapterDto>) (Object) childDtos);
         }
     },
     CHAPTER {
@@ -33,9 +33,9 @@ public enum ContentType {
                                 List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
             List<QuestionDto> questions = filterChildNodesOfType(childDtos, QuestionDto.class);
             List<MessageDto> messages = filterChildNodesOfType(childDtos, MessageDto.class);
-            QuizDto quizDto = new QuizDto(true, nodeName, questions, numberOfQuizQuestions, passPercentage, contentAuthor);
-            return numberOfQuizQuestions > 0 ? new ChapterDto(isActive, nodeName, description, contentAuthor, messages, quizDto) :
-                    new ChapterDto(isActive, nodeName, description, contentAuthor, messages, null);
+            QuizDto quizDto = new QuizDto(true, nodeName, null, questions, numberOfQuizQuestions, passPercentage, contentAuthor);
+            return numberOfQuizQuestions > 0 ? new ChapterDto(isActive, nodeName, description, fileName, contentAuthor, messages, quizDto) :
+                    new ChapterDto(isActive, nodeName, description, fileName, contentAuthor, messages, null);
         }
 
         private <T> List<T> filterChildNodesOfType(List<Object> childDtos, Class<T> classType) {
@@ -52,7 +52,7 @@ public enum ContentType {
         @Override
         public MessageDto toDto(String nodeName, String description, String fileName, boolean isActive, Integer numberOfQuizQuestions,
                                 List<String> options, String correctAnswer, String correctAnswerFileName, Double passPercentage, List<Object> childDtos, String contentAuthor) {
-            return new MessageDto(isActive, nodeName, fileName, description, contentAuthor);
+            return new MessageDto(isActive, nodeName, description, fileName, contentAuthor);
         }
     },
     QUESTION {

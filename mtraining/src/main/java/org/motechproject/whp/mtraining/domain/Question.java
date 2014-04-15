@@ -27,10 +27,8 @@ public class Question extends CourseContent {
     })
     @Persistent
     private Answer answer;
-
     @Persistent
     private String description;
-
 
     /**
      * This is a comma separated list of valid answer options
@@ -38,7 +36,7 @@ public class Question extends CourseContent {
     @Persistent(column = "valid_answer_options")
     private String answerOptions;
 
-    public Question(String name, UUID contentId, Integer version, String description, String createdBy, DateTime createdOn, String externalId, List<String> answerOptions, Answer answer, boolean isActive) {
+    public Question(String name, UUID contentId, Integer version, String description, String externalId, String createdBy, DateTime createdOn, List<String> answerOptions, Answer answer, boolean isActive) {
         super(name, contentId, version, createdBy, createdOn, isActive);
         this.externalId = externalId;
         this.answer = answer;
@@ -47,8 +45,7 @@ public class Question extends CourseContent {
     }
 
     public Question(QuestionDto questionDto) {
-        this(questionDto.getName(), questionDto.getContentId(), questionDto.getVersion(), questionDto.getDescription(), questionDto.getCreatedBy(), questionDto.getCreatedOn(),
-                questionDto.getExternalId(),
+        this(questionDto.getName(), questionDto.getContentId(), questionDto.getVersion(), questionDto.getDescription(), questionDto.getExternalId(), questionDto.getCreatedBy(), questionDto.getCreatedOn(),
                 questionDto.getOptions(),
                 mapToAnswer(questionDto.getAnswer()),
                 questionDto.isActive());

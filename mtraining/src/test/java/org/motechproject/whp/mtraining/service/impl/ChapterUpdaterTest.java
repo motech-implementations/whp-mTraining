@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChapterUpdaterTest {
+    public static final String FILENAME = "file name";
+
     @Mock
     private ChapterService chapterService;
     @Mock
@@ -41,9 +43,9 @@ public class ChapterUpdaterTest {
 
     @Test
     public void shouldUpdateContentId() {
-        ChapterDto chapterDtoToBeUpdated = new ChapterDto(true, "chapter1", "some description", "Created By", Collections.EMPTY_LIST, null);
+        ChapterDto chapterDtoToBeUpdated = new ChapterDto(true, "chapter1", "some description", FILENAME, "Created By", Collections.EMPTY_LIST, null);
         UUID chapterContentId = UUID.randomUUID();
-        ChapterDto chapterDtoFromDb = new ChapterDto(chapterContentId, 1, true, "chapter1", "some description", "Created By", Collections.EMPTY_LIST, null);
+        ChapterDto chapterDtoFromDb = new ChapterDto(chapterContentId, 1, true, "chapter1", "some description", FILENAME, "Created By", Collections.EMPTY_LIST, null);
 
         chapterUpdater.updateContentId(chapterDtoToBeUpdated, chapterDtoFromDb);
 
@@ -53,7 +55,7 @@ public class ChapterUpdaterTest {
     @Test
     public void shouldUpdateChildContents() throws Exception {
         List<MessageDto> messages = asList(new MessageDto());
-        ChapterDto chapterDto = new ChapterDto(true, "chapter1", "some description", "Created By", messages, null);
+        ChapterDto chapterDto = new ChapterDto(true, "chapter1", "some description", FILENAME, "Created By", messages, null);
 
         chapterUpdater.updateChildContents(chapterDto);
 
@@ -62,7 +64,7 @@ public class ChapterUpdaterTest {
 
     @Test
     public void shouldGetExistingChaptersFromDbOnlyFirstTime() throws Exception {
-        ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", "Created By", Collections.EMPTY_LIST, null);
+        ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", FILENAME, "Created By", Collections.EMPTY_LIST, null);
         when(chapterService.getAllChapters()).thenReturn(asList(chapterDtoFromDb));
 
         List<ChapterDto> existingContents1 = chapterUpdater.getExistingContents();
@@ -80,17 +82,17 @@ public class ChapterUpdaterTest {
 
     @Test
     public void shouldEquateChaptersByName() throws Exception {
-        ChapterDto chapter1 = new ChapterDto(true, "chapter1", "old description", "Created By", Collections.EMPTY_LIST, null);
-        ChapterDto chapter2 = new ChapterDto(UUID.randomUUID(), 1, true, "chapter1", "new description", "Created By", Collections.EMPTY_LIST, null);
+        ChapterDto chapter1 = new ChapterDto(true, "chapter1", "old description", FILENAME, "Created By", Collections.EMPTY_LIST, null);
+        ChapterDto chapter2 = new ChapterDto(UUID.randomUUID(), 1, true, "chapter1", "new description", FILENAME, "Created By", Collections.EMPTY_LIST, null);
         assertTrue(chapterUpdater.isEqual(chapter1, chapter2));
 
-        ChapterDto chapter3 = new ChapterDto(true, "chapter2", "old description", "Created By", Collections.EMPTY_LIST, null);
+        ChapterDto chapter3 = new ChapterDto(true, "chapter2", "old description", FILENAME, "Created By", Collections.EMPTY_LIST, null);
         assertFalse(chapterUpdater.isEqual(chapter1, chapter3));
     }
 
     @Test
     public void shouldInvalidateExistingContentCache() {
-        final ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", "Created By", Collections.EMPTY_LIST, null);
+        final ChapterDto chapterDtoFromDb = new ChapterDto(true, "chapter1", "some description", FILENAME, "Created By", Collections.EMPTY_LIST, null);
         when(chapterService.getAllChapters()).thenReturn(new ArrayList<ChapterDto>() {{
             add(chapterDtoFromDb);
         }});

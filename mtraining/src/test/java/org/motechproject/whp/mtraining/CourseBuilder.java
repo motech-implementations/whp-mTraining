@@ -40,22 +40,22 @@ public class CourseBuilder {
     }
 
     public Course build() {
-        return new Course(courseName, contentId, version, description, createdBy, createdOn, Arrays.asList(buildModule("MOD001")), isActive);
+        return new Course(courseName, contentId, version, description, audioFileName, createdBy, createdOn, Arrays.asList(buildModule("MOD001")), isActive);
     }
 
 
     private Module buildModule(String moduleName) {
-        return new Module(moduleName, contentId, version, description, createdBy, createdOn, Arrays.asList(buildChapter("CH001")), isActive);
+        return new Module(moduleName, contentId, version, description, audioFileName, createdBy, createdOn, Arrays.asList(buildChapter("CH001")), isActive);
     }
 
     private Chapter buildChapter(String chapterName) {
-        Chapter chapter = new Chapter(chapterName, contentId, version, description, createdBy, createdOn, Arrays.asList(buildMessage("MSG001")), buildQuiz("Test Quiz"), isActive);
+        Chapter chapter = new Chapter(chapterName, contentId, version, description, audioFileName, createdBy, createdOn, Arrays.asList(buildMessage("MSG001")), buildQuiz("Test Quiz"), isActive);
         chapter.setQuiz(buildQuiz("Test Quiz"));
         return chapter;
     }
 
     private Message buildMessage(String messageName) {
-        return new Message(messageName, contentId, version, description, createdBy, createdOn, audioFileName, isActive);
+        return new Message(messageName, contentId, version, description, audioFileName, createdBy, createdOn, isActive);
     }
 
     private Quiz buildQuiz(String quizName) {
@@ -67,7 +67,7 @@ public class CourseBuilder {
     }
 
     private Question buildQuestion(String questionName) {
-        return new Question(questionName, contentId, version, description, createdBy, createdOn, questionAudioFileName, Arrays.asList("A", "B"), new Answer(answerAudioFileName, "A"), isActive);
+        return new Question(questionName, contentId, version, description, questionAudioFileName, createdBy, createdOn, Arrays.asList("A", "B"), new Answer(answerAudioFileName, "A"), isActive);
     }
 
     public CourseBuilder withMessageAudioFile(String audioFileName) {

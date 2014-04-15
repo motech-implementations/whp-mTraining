@@ -88,12 +88,12 @@ public class QuizReporterTest {
         moduleContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         chapterContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         quizContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
-        QuizDto quizDto = new QuizDto(quizContentIdentifier.getContentId(),1,true,"quiz",newArrayList(new QuestionDto()),2,60.0,null);
+        QuizDto quizDto = new QuizDto(quizContentIdentifier.getContentId(), 1, true, "quiz", "externalId", newArrayList(new QuestionDto()), 2, 60.0, null);
 
-        ChapterDto chapterDto = new ChapterDto(chapterContentIdentifier.getContentId(), 1, true, "chapter1", "desc", null, null, quizDto);
+        ChapterDto chapterDto = new ChapterDto(chapterContentIdentifier.getContentId(), 1, true, "chapter1", "desc", "externalId", null, null, quizDto);
 
-        ModuleDto moduleDto = new ModuleDto(moduleContentIdentifier.getContentId(), 1, true, "module1", "desc", null, newArrayList(chapterDto));
-        CourseDto courseDto = new CourseDto(courseContentIdentifier.getContentId(), 1, true, "course1", "desc", null, newArrayList(moduleDto));
+        ModuleDto moduleDto = new ModuleDto(moduleContentIdentifier.getContentId(), 1, true, "module1", "desc", "externalId", null, newArrayList(chapterDto));
+        CourseDto courseDto = new CourseDto(courseContentIdentifier.getContentId(), 1, true, "course1", "desc", "externalId", null, newArrayList(moduleDto));
         when(courseService.getCourse(courseContentIdentifier)).thenReturn(courseDto);
     }
 
@@ -167,7 +167,7 @@ public class QuizReporterTest {
                 moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, true);
         QuestionResultDto questionResultDto = new QuestionResultDto(questionId, 1, "c", true);
         QuizResultSheetDto quizResultSheetDto = new QuizResultSheetDto("externalId", quizContentIdentifier, newArrayList(questionResultDto), 100.0, false);
-        QuizAttempt quizAttempt = new QuizAttempt("externalId", 1L, "someId", "sessionId",courseContentIdentifier.getContentId(),
+        QuizAttempt quizAttempt = new QuizAttempt("externalId", 1L, "someId", "sessionId", courseContentIdentifier.getContentId(),
                 courseContentIdentifier.getVersion(), moduleContentIdentifier.getContentId(), moduleContentIdentifier.getVersion(),
                 chapterContentIdentifier.getContentId(), chapterContentIdentifier.getVersion(), courseContentIdentifier.getContentId(),
                 courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
