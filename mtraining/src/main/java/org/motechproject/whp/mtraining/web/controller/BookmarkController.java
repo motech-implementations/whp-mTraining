@@ -95,13 +95,13 @@ public class BookmarkController {
         CourseProgressDto courseProgressDto = getEnrolleeCourseProgress(provider.getRemediId());
         CourseProgress courseProgress = mapToCourseProgress(courseProgressDto);
         BookmarkDto bookmarkDto = courseProgressDto.getBookmarkDto();
-        allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET, courseProgressDto.getCourseStartTime(), courseProgressDto.getTimeLeftToCompleteCourse(), courseProgressDto.getCourseStatus().value(), new BookmarkReport(bookmarkDto)));
+        allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET, courseProgressDto.getCourseStartTime(), courseProgressDto.getTimeLeftToCompleteCourseInHrs(), courseProgressDto.getCourseStatus().value(), new BookmarkReport(bookmarkDto)));
         return new ResponseEntity<>(new CourseProgressResponse(callerId, currentSessionId, uniqueId,
                 provider.getLocation(), courseProgress), HttpStatus.OK);
     }
 
     private CourseProgress mapToCourseProgress(CourseProgressDto courseProgressDto) {
-        return new CourseProgress(courseProgressDto.getCourseStartTime(), mapToBookmark(courseProgressDto.getBookmarkDto()), courseProgressDto.getTimeLeftToCompleteCourse(), courseProgressDto.getCourseStatus().value());
+        return new CourseProgress(courseProgressDto.getCourseStartTime(), mapToBookmark(courseProgressDto.getBookmarkDto()), courseProgressDto.getTimeLeftToCompleteCourseInHrs(), courseProgressDto.getCourseStatus().value());
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")

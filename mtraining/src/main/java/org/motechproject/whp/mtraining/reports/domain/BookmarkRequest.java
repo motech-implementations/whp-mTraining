@@ -45,7 +45,7 @@ public class BookmarkRequest {
     private DateTime courseStartTime;
 
     @Persistent(column = "time_left_to_complete_course")
-    private Integer timeLeftToCompleteCourse;
+    private Integer timeLeftToCompleteCourseInHrs;
 
     @Persistent(column = "course_status")
     private String courseStatus;
@@ -76,12 +76,12 @@ public class BookmarkRequest {
         this.createdOn = ISODateTimeUtil.nowInTimeZoneUTC();
     }
 
-    public BookmarkRequest(String remediId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, String courseStartTime, Integer timeLeftToCompleteCourse, String courseStatus, BookmarkReport bookmarkReport) {
+    public BookmarkRequest(String remediId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, String courseStartTime, Integer timeLeftToCompleteCourseInHrs, String courseStatus, BookmarkReport bookmarkReport) {
         this(callerId, uniqueId, sessionId, responseStatus, requestType);
         this.remediId = remediId;
         this.bookmarkReport = bookmarkReport;
         this.courseStartTime = ISODateTimeUtil.parseWithTimeZoneUTC(courseStartTime);
-        this.timeLeftToCompleteCourse = timeLeftToCompleteCourse;
+        this.timeLeftToCompleteCourseInHrs = timeLeftToCompleteCourseInHrs;
         this.courseStatus = courseStatus;
     }
 
