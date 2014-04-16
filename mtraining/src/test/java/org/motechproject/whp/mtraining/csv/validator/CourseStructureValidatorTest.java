@@ -35,8 +35,8 @@ public class CourseStructureValidatorTest {
     public void setUp() throws Exception {
         courseStructureValidator = new CourseStructureValidator(courseService);
         courseStructureCsvs = new ArrayList<>();
-        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "Active", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", "filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "Active", "Basic TB Symptoms", "Message Description", "filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", "fileName"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
 
@@ -60,7 +60,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldReturnErrorIfCSVHasMoreThanOneCourse() {
-        courseStructureCsvs.add(new CourseCsvRequest("Basic Malaria Symptoms", "Course", "Active", null, "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic Malaria Symptoms", "Course", "Active", null, "Message Description", "filename"));
         errors = courseStructureValidator.validate(courseStructureCsvs);
         assertThat(errors.size(), is(1));
         assertEquals("There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.", errors.get(0).getMessage());
@@ -90,7 +90,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldReturnErrorWhenParentNodeIsAbsent() {
-        courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms New", "Message", "Active", null, "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms New", "Message", "Active", null, "Message Description", "filename"));
         errors = courseStructureValidator.validate(courseStructureCsvs);
         assertEquals(1, errors.size());
         assertEquals("All nodes other than course should have a parent node. Please ensure a parent node is specified and try importing again.", errors.get(0).getMessage());
@@ -118,13 +118,13 @@ public class CourseStructureValidatorTest {
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms Version 2", "Message", "Active", "Chapter TB Symptoms", "Message Description", null));
         errors = courseStructureValidator.validate(courseStructureCsvs);
         assertEquals(1, errors.size());
-        assertEquals("A message and question should have the name of the audio file. Please add the filename to CSV and try importing it again.", errors.get(0).getMessage());
+        assertEquals("Missing audio filename. Please add the filename to CSV and try importing it again.", errors.get(0).getMessage());
     }
 
     @Test
     public void shouldAddErrorWhenNonMessageNodeDoesNotHaveChild() throws Exception {
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "Active", "Basic TB Symptoms", "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms2", "Chapter", "Active", "Module TB Symptoms2", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "Active", "Basic TB Symptoms", "Message Description", "filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms2", "Chapter", "Active", "Module TB Symptoms2", "Message Description", "filename"));
         errors = courseStructureValidator.validate(courseStructureCsvs);
         assertEquals(1, errors.size());
         assertEquals("A chapter should have at least one message under it. Please check if the parent node name is correctly specified for modules in the CSV and try importing it again.", errors.get(0).getMessage());
@@ -133,13 +133,13 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldReturnErrorForChildStateIfParentIsInvalid() throws Exception {
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "Active", "Basic TB Symptoms1-parent", "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms Version 2", "Chapter", "Active", "Module TB Symptoms2", "description Module TB Symptoms2", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "Active", "Basic TB Symptoms1-parent", "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms Version 2", "Chapter", "Active", "Module TB Symptoms2", "description Module TB Symptoms2", "Filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms Version 2", "Message", "Active", "Chapter TB Symptoms Version 2", "Message Description", ""));
         errors = courseStructureValidator.validate(courseStructureCsvs);
         assertEquals(2, errors.size());
         assertEquals("Could not find the parent node specified in the CSV. Please check the parent node name for spelling and try importing again.", errors.get(0).getMessage());
-        assertEquals("A message and question should have the name of the audio file. Please add the filename to CSV and try importing it again.", errors.get(1).getMessage());
+        assertEquals("Missing audio filename. Please add the filename to CSV and try importing it again.", errors.get(1).getMessage());
     }
 
     @Test
@@ -213,7 +213,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldReturnErrorIfNoOfQuestionsIsLessThanTheRequiredNoOfQuestionsToBeAnswered() {
-        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms1", "Chapter", "inactive", "Module TB Symptoms", "Message Description", null, null, null, null, "2", "60"));
+        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms1", "Chapter", "inactive", "Module TB Symptoms", "Message Description", "Filename", null, null, null, "2", "60"));
         courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms1", "Question", "Active", "Chapter TB Symptoms1", "Message Description", "FileName", "1;2", "1", "CorrectAnswer", null, null));
 
         errors = courseStructureValidator.validate(courseStructureCsvs);
@@ -224,7 +224,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldReturnErrorIfNoOfQuestionsIsGreaterThanZeroAndPassPercentageIsNotValid() {
-        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms1", "Chapter", "Active", "Module TB Symptoms", "Message Description", null, null, null, null, "2", "200"));
+        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms1", "Chapter", "Active", "Module TB Symptoms", "Message Description", "Filename", null, null, null, "2", "200"));
         courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms1", "Question", "Active", "Chapter TB Symptoms1", "Message Description", "FileName", "1;2", "1", "CorrectAnswer", null, null));
 
         errors = courseStructureValidator.validate(courseStructureCsvs);
@@ -235,7 +235,7 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldThrowNumberFormatExceptionWhenNoOfQuestionsIsNonNumeric() {
-        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms1", "Chapter", "Active", "Module TB Symptoms", "Message Description", null, null, null, null, "*", ""));
+        courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms1", "Chapter", "Active", "Module TB Symptoms", "Message Description", "Filename", null, null, null, "*", ""));
         courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms1", "Question", "Active", "Chapter TB Symptoms1", "Message Description", "FileName", "1;2", "1", "CorrectAnswer", null, null));
 
         errors = courseStructureValidator.validate(courseStructureCsvs);
@@ -247,8 +247,8 @@ public class CourseStructureValidatorTest {
     @Test
     public void shouldThrowErrorWhenChapterDoesNotSpecifyQuestionsButQuestionsForTheChapterAreAvailable() {
         List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
-        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "Active", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "Active", "Basic TB Symptoms", "Message Description", "Filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "", "50"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
         courseStructureCsvs.add(new CourseCsvRequest("Question TB Symptoms", "Question", "Active", "Chapter TB Symptoms", "Message Description", "FileName", "1;2", "1", "CorrectAnswer", "", ""));
@@ -262,9 +262,9 @@ public class CourseStructureValidatorTest {
     @Test
     public void shouldReturnErrorIfActiveCourseHasNoActiveChild() {
         List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
-        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "inactive", "Basic TB Symptoms", "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "inactive", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "inactive", "Basic TB Symptoms", "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "inactive", "Basic TB Symptoms", "Message Description", "Filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "1", "1"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms2", "Chapter", "Active", "Module TB Symptoms2", "Message Description", "fileName", null, null, null, "0", "0"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
@@ -280,9 +280,9 @@ public class CourseStructureValidatorTest {
     @Test
     public void shouldNotReturnErrorIfInActiveCourseHasHasNoActiveChild() {
         List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
-        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "inActive", null, "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "inactive", "Basic TB Symptoms", "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "inactive", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "inActive", null, "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "inactive", "Basic TB Symptoms", "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "inactive", "Basic TB Symptoms", "Message Description", "Filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "1", "1"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms2", "Chapter", "Active", "Module TB Symptoms2", "Message Description", "fileName", null, null, null, "0", "0"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
@@ -298,9 +298,9 @@ public class CourseStructureValidatorTest {
     @Test
     public void shouldReturnErrorIfActiveModuleHasHasNoActiveChild() {
         List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
-        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "inactive", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "inactive", "Basic TB Symptoms", "Message Description", "Filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "inactive", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "1", "1"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms2", "Chapter", "inactive", "Module TB Symptoms2", "Message Description", "fileName", null, null, null, "0", "0"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
@@ -316,8 +316,8 @@ public class CourseStructureValidatorTest {
     @Test
     public void shouldReturnErrorIfActiveChapterHasHasNoActiveChild() {
         List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
-        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", "Filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "Active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "0", "1"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "inactive", "Chapter TB Symptoms", "Message Description", "FileName"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms2", "Message", "inactive", "Chapter TB Symptoms", "Message Description", "FileName"));
@@ -328,13 +328,12 @@ public class CourseStructureValidatorTest {
         assertEquals("A chapter should have at least one active message under it. Please add active messages under the chapter or mark the chapter as inactive and try importing it again.", errors.get(0).getMessage());
     }
 
-
     @Test
     public void shouldReturnErrorIfNoOfActiveQuestionsIsLessThanTheRequiredNoOfQuestionsToBeAnsweredForActiveChapter() {
         List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
-        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "inactive", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms2", "Module", "inactive", "Basic TB Symptoms", "Message Description", "Filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "2", "1"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms2", "Chapter", "inactive", "Module TB Symptoms2", "Message Description", "fileName", null, null, null, "0", "0"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
@@ -351,8 +350,8 @@ public class CourseStructureValidatorTest {
     @Test
     public void shouldNotReturnErrorIfNoOfActiveQuestionsIsLessThanTheRequiredNoOfQuestionsToBeAnsweredForInActiveChapter() {
         List<CourseCsvRequest> courseStructureCsvs = new ArrayList<>();
-        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", null));
-        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", null));
+        courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", "Filename"));
+        courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "active", "Basic TB Symptoms", "Message Description", "Filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms", "Chapter", "inactive", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "2", "1"));
         courseStructureCsvs.add(new CourseCsvRequest("Chapter TB Symptoms2", "Chapter", "active", "Module TB Symptoms", "Message Description", "fileName", null, null, null, "0", "0"));
         courseStructureCsvs.add(new CourseCsvRequest("Message TB Symptoms", "Message", "Active", "Chapter TB Symptoms", "Message Description", "FileName"));
