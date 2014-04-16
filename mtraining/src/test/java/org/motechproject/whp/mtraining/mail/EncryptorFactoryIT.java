@@ -8,14 +8,11 @@ import java.io.IOException;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-public class EncryptorFactoryTest {
+public class EncryptorFactoryIT {
 
     @Test
     public void shouldReturnEncrpytorForClassPathBasedFile() throws IOException {
-        EncryptorFactory encryptorFactory = new EncryptorFactory();
-        encryptorFactory.setSource("test-mtraining.properties");
-        encryptorFactory.setKey("whp.key.source");
-        encryptorFactory.initialize();
+        EncryptorFactory encryptorFactory = new EncryptorFactory("test-mtraining.properties", "whp.key.source");
         StandardPBEStringEncryptor instance = encryptorFactory.createInstance();
         assertNotNull(instance);
         String encryptedPassword = "gxSVqAPcsRGAeZj9aus0/3SmMg5Ll03h";
@@ -25,10 +22,7 @@ public class EncryptorFactoryTest {
 
     @Test
     public void shouldReturnEncrpytorForAbsolutePathBasedFile() throws IOException {
-        EncryptorFactory encryptorFactory = new EncryptorFactory();
-        encryptorFactory.setSource("test-mtraining.properties");
-        encryptorFactory.setKey("whp.key.remote.source");
-        encryptorFactory.initialize();
+        EncryptorFactory encryptorFactory = new EncryptorFactory("test-mtraining.properties", "whp.key.remote.source");
         StandardPBEStringEncryptor instance = encryptorFactory.createInstance();
         assertNotNull(instance);
         String encryptedPassword = "gxSVqAPcsRGAeZj9aus0/3SmMg5Ll03h";

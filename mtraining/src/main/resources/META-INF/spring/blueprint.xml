@@ -41,7 +41,7 @@
     <!--Mail Configuration-->
 
     <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
-          factory-bean="EncryptorFactory" factory-method="createInstance"/>
+          factory-bean="encryptorFactory" factory-method="createInstance"/>
 
 
     <bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
@@ -63,9 +63,9 @@
         </property>
     </bean>
 
-    <bean id="EncryptorFactory" class="org.motechproject.whp.mtraining.mail.EncryptorFactory" init-method="initialize">
-        <property name="source" value="mtraining.properties"/>
-        <property name="key" value="whp.key.source"/>
+    <bean id="encryptorFactory" class="org.motechproject.whp.mtraining.mail.EncryptorFactory">
+        <constructor-arg name="propertiesFileName" value="/Users/sroy/mtraining.properties"/>
+        <constructor-arg name="key" value="whp.key.source"/>
     </bean>
 
     <!--Mail Configuration End-->
