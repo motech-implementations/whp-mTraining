@@ -23,21 +23,21 @@ public class QuestionAttempt {
     private String invalidInputs;
     @Persistent(column = "selected_option")
     private String selectedOption;
-    @Persistent(column = "valid_answer")
-    private Boolean isValidAnswer;
+    @Persistent(column = "correct_answer")
+    private Boolean isCorrectAnswer;
     @Persistent(column = "invalid_attempt")
     private Boolean invalidAttempt;
     @Persistent(column = "time_out")
     private Boolean timeOut;
 
     public QuestionAttempt(QuizAttempt quizAttemptId, UUID questionId, Integer questionVersion,
-                           String invalidInputs, String selectedOption, Boolean isValidAnswer, Boolean invalidAttempt, Boolean timeOut) {
+                           String invalidInputs, String selectedOption, Boolean isCorrectAnswer, Boolean invalidAttempt, Boolean timeOut) {
         this.quizAttemptId = quizAttemptId;
         this.questionId = questionId;
         this.questionVersion = questionVersion;
         this.invalidInputs = invalidInputs;
         this.selectedOption = selectedOption;
-        this.isValidAnswer = isValidAnswer;
+        this.isCorrectAnswer = isCorrectAnswer;
         this.invalidAttempt = invalidAttempt;
         this.timeOut = timeOut;
     }
@@ -50,8 +50,8 @@ public class QuestionAttempt {
         return invalidInputs;
     }
 
-    public Boolean getIsValidAnswer() {
-        return isValidAnswer;
+    public Boolean isCorrectAnswer() {
+        return isCorrectAnswer;
     }
 }
 

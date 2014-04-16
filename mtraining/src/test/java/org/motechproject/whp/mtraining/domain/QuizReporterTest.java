@@ -122,7 +122,7 @@ public class QuizReporterTest {
         verify(allQuestionAttempts).bulkAdd(argument.capture());
         List<QuestionAttempt> questionAttemptListCaptureValue = argument.getValue();
         assertEquals(questionAttempt.getInvalidInputs(), questionAttemptListCaptureValue.get(0).getInvalidInputs());
-        assertTrue(questionAttemptListCaptureValue.get(0).getIsValidAnswer());
+        assertTrue(questionAttemptListCaptureValue.get(0).isCorrectAnswer());
         assertEquals("OK", response.getResponseMessage());
         verify(bookmarkService).getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
 
@@ -153,7 +153,7 @@ public class QuizReporterTest {
         verify(allQuestionAttempts).bulkAdd(argument.capture());
         List<QuestionAttempt> questionAttemptListCaptureValue = argument.getValue();
         assertEquals(questionAttempt.getInvalidInputs(), questionAttemptListCaptureValue.get(0).getInvalidInputs());
-        assertTrue(questionAttemptListCaptureValue.get(0).getIsValidAnswer());
+        assertTrue(questionAttemptListCaptureValue.get(0).isCorrectAnswer());
         assertEquals("OK", response.getResponseMessage());
         verify(bookmarkService).getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
         verify(courseProgressService).markCourseAsComplete(anyString(), any(String.class), any(ContentIdentifierDto.class));
@@ -183,7 +183,7 @@ public class QuizReporterTest {
         verify(allQuestionAttempts).bulkAdd(argument.capture());
         List<QuestionAttempt> questionAttemptListCaptureValue = argument.getValue();
         assertEquals(questionAttempt.getInvalidInputs(), questionAttemptListCaptureValue.get(0).getInvalidInputs());
-        assertTrue(questionAttemptListCaptureValue.get(0).getIsValidAnswer());
+        assertTrue(questionAttemptListCaptureValue.get(0).isCorrectAnswer());
         assertEquals("OK", response.getResponseMessage());
         verify(bookmarkService).setBookmarkToQuizOfAChapter(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
 
@@ -212,7 +212,7 @@ public class QuizReporterTest {
         verify(allQuestionAttempts).bulkAdd(argument.capture());
         List<QuestionAttempt> questionAttemptListCaptureValue = argument.getValue();
         assertEquals(questionAttempt.getInvalidInputs(), questionAttemptListCaptureValue.get(0).getInvalidInputs());
-        assertTrue(questionAttemptListCaptureValue.get(0).getIsValidAnswer());
+        assertTrue(questionAttemptListCaptureValue.get(0).isCorrectAnswer());
         assertEquals("OK", response.getResponseMessage());
         verify(bookmarkService).setBookmarkToFirstActiveContentOfAChapter(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
 
