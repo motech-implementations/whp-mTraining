@@ -1,24 +1,29 @@
 {
-    "callerId": 9999999999,
-    "sessionId": "ssn001",
-    "uniqueId": "unk001",
-    "bookmark": {
-        "dateModified": "2014-03-21T09:22:43.106Z",
-        "course": {
-            "contentId": "91de8862-31c2-4124-aac7-e9212828d968",
-            "version": 1
-        },
-        "module": {
-            "contentId": "d898437e-8dcb-4a0e-9d4e-4cd6ef08b296",
-            "version": 0
-        },
-        "chapter": {
-            "contentId": "e7c7f467-7b43-4223-9348-7e03d57fd435",
-            "version": 2
-        },
-        "message": {
-            "contentId": "e72b3681-50c6-4e61-97de-d2b20ace720f",
-            "version": 1
-        }
-    }
+"callerId":9934793809,
+"sessionId":"1554ba7c-b729-4dc5-9dd2-c48e2b275c3f",
+"uniqueId":"some",
+"courseProgress":{
+"bookmark":{
+"dateModified":"2014-04-16T07:09:57.277Z",
+"course":{
+"contentId":"aec4b2c5-6766-4d51-80ac-8fdc61f465ed",
+"version":1
+},
+"module":{
+"contentId":"53c29e00-cee2-4e2d-bb29-8447b079fdc7",
+"version":1
+},
+"chapter":{
+"contentId":"fbe0cb4e-d0d3-4b1b-949d-a18899dbd467",
+"version":1
+},
+"message":{
+"contentId":"7bb60eba-3417-4c45-ab38-57439238741b",
+"version":1
+},
+"quiz":null
+},
+"courseStartTime":"2014-04-16T07:09:57.277Z",
+"courseStatus":"STARTED"
+}
 }
