@@ -12,7 +12,7 @@ import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSendException;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -58,15 +58,20 @@ public class CoursePublisher {
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, currentDateTime(), course.getName(), courseId, version));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
-        courseService.publish(new ContentIdentifierDto(courseId, version));
         allCoursePublicationStatus.add(new CoursePublicationAttempt(courseId, version, ivrResponse.isSuccess()));
+
+        if (ivrResponse.isSuccess()) {
+            courseService.publish(new ContentIdentifierDto(courseId, version));
+        }
+
+        if (ivrResponse.isNetworkFailure()) {
+            retryPublishing(courseId, version);
+        }
+
         try {
             notifyCourseAdmin(course.getName(), version, ivrResponse);
-            if (ivrResponse.isNetworkFailure()) {
-                retryPublishing(courseId, version);
-            }
-        } catch (MailSendException ex) {
-            LOGGER.error("Could not send mail", ex);
+        } catch (MailException ex) {
+            LOGGER.error("Could not send mail because: ", ex);
         }
     }
 

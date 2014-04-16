@@ -21,12 +21,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CoursePublisherTest {
 
@@ -68,8 +63,8 @@ public class CoursePublisherTest {
 
         InOrder inOrder = inOrder(courseService, allCoursePublicationAttempts);
 
-        inOrder.verify(courseService).publish(contentIdentifierDto);
         inOrder.verify(allCoursePublicationAttempts).add(coursePublicationAttemptArgumentCaptor.capture());
+        inOrder.verify(courseService).publish(contentIdentifierDto);
 
         Course publishedCourse = courseArgumentCaptor.getValue();
 
@@ -159,8 +154,20 @@ public class CoursePublisherTest {
         coursePublisher.publish(cs001, 2);
 
         verify(ivrGateway, never()).postCourse(any(Course.class));
-
     }
 
 
+    @Test
+    public void shouldNotPublishToMTrainingIfCourseIsNotPublishedToIVR() throws Exception {
+        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
+        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Course file name", "Created By", null);
+        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
+        when(ivrGateway.postCourse(any(Course.class))).thenReturn(new IVRResponse(1001, "Missing Files"));
+
+        coursePublisher.publish(cs001, 2);
+
+        verify(allCoursePublicationAttempts).add(new CoursePublicationAttempt(cs001, 2, false));
+        verify(courseService).getCourse(contentIdentifierDto);
+        verifyNoMoreInteractions(courseService);
+    }
 }
