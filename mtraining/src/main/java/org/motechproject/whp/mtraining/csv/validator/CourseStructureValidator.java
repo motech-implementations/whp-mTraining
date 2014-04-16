@@ -74,6 +74,14 @@ public class CourseStructureValidator {
             return;
         }
         validateStatus(request, errors);
+
+        if (!request.hasFileName()) {
+            CsvImportError error = new CsvImportError(request.getNodeName(), request.getNodeType(), "Missing audio file name. Please add the filename to CSV and try importing it again.");
+            errors.add(error);
+            logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
+            return;
+        }
+
         if (!request.isCourse()) {
             if (hasNoParent(request, errors)) {
                 return;
@@ -107,17 +115,9 @@ public class CourseStructureValidator {
                 logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
                 return;
             }
-
         }
 
         if (!(request.isMessage() || request.isQuestion()) && (hasNoChild(request, parentNamesMap, errors) || hasNoActiveChild(request, requests, errors))) {
-            return;
-        }
-
-        if ((request.isMessage() || request.isQuestion()) && !request.hasFileName()) {
-            CsvImportError error = new CsvImportError(request.getNodeName(), request.getNodeType(), "A message and question should have the name of the audio file. Please add the filename to CSV and try importing it again.");
-            errors.add(error);
-            logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
             return;
         }
 
