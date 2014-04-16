@@ -1,14 +1,6 @@
 package org.motechproject.whp.mtraining.ivr;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 public class IVRResponse {
-
-    public static final String MISSING_FILES_DELIMITER = ",";
 
     private Integer responseCode;
 
@@ -35,18 +27,6 @@ public class IVRResponse {
         return IVRResponseCodes.OK.equals(responseCode);
     }
 
-    public List<String> getMissingFiles() {
-        List<String> missingFiles = new ArrayList<>();
-
-        if (isBlank(responseMessage)) {
-            return missingFiles;
-        }
-
-        List<String> fileNames = Arrays.asList(responseMessage.split(MISSING_FILES_DELIMITER));
-        missingFiles.addAll(fileNames);
-        return missingFiles;
-    }
-
     public Boolean hasValidationErrors() {
         return IVRResponseCodes.MISSING_FILES.equals(responseCode);
     }
@@ -59,4 +39,5 @@ public class IVRResponse {
     public String getResponseMessage() {
         return responseMessage;
     }
+
 }

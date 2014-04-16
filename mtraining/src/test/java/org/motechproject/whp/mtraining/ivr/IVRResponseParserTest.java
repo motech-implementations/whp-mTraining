@@ -6,7 +6,6 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -36,9 +35,6 @@ public class IVRResponseParserTest {
         IVRResponse response = new IVRResponseParser().parse(httpResponse);
         assertFalse(response.isSuccess());
         assertThat(response.hasValidationErrors(), Is.is(true));
-        List<String> missingFiles = response.getMissingFiles();
-        assertThat(missingFiles.size(), Is.is(2));
-        assertThat(missingFiles.get(0), Is.is("hello.wav"));
-        assertThat(missingFiles.get(1), Is.is("ch01.wav"));
+        assertThat(response.getResponseMessage(), Is.is("hello.wav,ch01.wav"));
     }
 }
