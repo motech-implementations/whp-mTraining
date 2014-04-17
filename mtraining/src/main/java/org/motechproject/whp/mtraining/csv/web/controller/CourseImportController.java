@@ -5,7 +5,7 @@ import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.exception.CourseNotFoundException;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
-import org.motechproject.whp.mtraining.csv.request.CourseConfigRequest;
+import org.motechproject.whp.mtraining.csv.request.CourseConfigurationRequest;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
 import org.motechproject.whp.mtraining.csv.validator.CourseStructureValidator;
@@ -65,15 +65,15 @@ public class CourseImportController {
     @ResponseBody
     public CsvImportResponse importCourseConfigs(@RequestParam("multipartFile") CommonsMultipartFile multipartFile) {
         try {
-            List<CourseConfigRequest> courseConfigRequests = csvParser.parse(multipartFile, CourseConfigRequest.class);
+            List<CourseConfigurationRequest> courseConfigurationRequests = csvParser.parse(multipartFile, CourseConfigurationRequest.class);
             List<CsvImportError> errors = newArrayList();
-            for (CourseConfigRequest courseConfigRequest : courseConfigRequests) {
-                errors.addAll(courseConfigRequest.validate());
+            for (CourseConfigurationRequest courseConfigurationRequest : courseConfigurationRequests) {
+                errors.addAll(courseConfigurationRequest.validate());
             }
             if (!errors.isEmpty()) {
                 return failure(errors);
             }
-            courseImportService.importCourseConfig(courseConfigRequests);
+            courseImportService.importCourseConfig(courseConfigurationRequests);
             return CsvImportResponse.success("Configuration for courses have been imported successfully");
         } catch (CourseNotFoundException courseNotFoundException) {
             return failure(asList(new CsvImportError("CourseName", "-", String.format("Course : %s could not be found.Please verify course name in the CSV file.", courseNotFoundException.getCourseName()))));

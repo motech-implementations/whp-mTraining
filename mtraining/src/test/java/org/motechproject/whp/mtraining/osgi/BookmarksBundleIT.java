@@ -89,7 +89,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
 
         course002 = courseService.getCourse(createCourseIfNotExists("CS002"));
-        courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(course002.getName(), 60));
+        courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(course002.getName(), 60, "block", "district", "state"));
 
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);

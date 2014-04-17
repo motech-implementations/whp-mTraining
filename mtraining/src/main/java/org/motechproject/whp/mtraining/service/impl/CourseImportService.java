@@ -8,7 +8,7 @@ import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.domain.Content;
-import org.motechproject.whp.mtraining.csv.request.CourseConfigRequest;
+import org.motechproject.whp.mtraining.csv.request.CourseConfigurationRequest;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +52,10 @@ public class CourseImportService {
         return courseService.addOrUpdateCourse(courseDto);
     }
 
-    public void importCourseConfig(List<CourseConfigRequest> requests) {
-        for (CourseConfigRequest request : requests) {
-            courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(request.getCourseName(), valueOf(request.getCourseDurationInDays())));
+    public void importCourseConfig(List<CourseConfigurationRequest> requests) {
+        for (CourseConfigurationRequest request : requests) {
+            courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(request.getCourseName(),
+                    valueOf(request.getCourseDurationInDays()), request.getBlock(), request.getDistrict(), request.getState()));
         }
     }
 

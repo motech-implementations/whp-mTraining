@@ -117,27 +117,24 @@ public class CourseStructureValidator {
         List<String> statusList = newArrayList(ACTIVE_STATUS, INACTIVE_STATUS, BLANK_STATUS);
         if (!chapterRequest.isInActive()) {
             statusList.remove(INACTIVE_STATUS);
-            CsvImportError errorForActiveChapter = new CsvImportError(chapterRequest.getNodeName(), chapterRequest.getNodeType(),
-                    "Number of active questions available in the CSV for this active chapter is less than number of quiz questions specified for the chapter." +
-                            " Please add more active questions for the chapter or  and try importing again.");
-            addErrorIfNoOfQuestionsIsNotSufficient(quizQuestions, requests, chapterRequest, errors, statusList, errorForActiveChapter);
+            String errorMessage = "Number of active questions available in the CSV for this active chapter is less than number of quiz questions specified for the chapter." +
+                    " Please add more active questions for the chapter or  and try importing again.";
+            addErrorIfNoOfQuestionsIsNotSufficient(quizQuestions, requests, chapterRequest, errors, statusList, errorMessage);
         } else {
-            CsvImportError errorForInActiveChapter = new CsvImportError(chapterRequest.getNodeName(), chapterRequest.getNodeType(),
-                    "Number of questions available in the CSV for this chapter is less than number of quiz questions specified for the chapter. " +
-                            "Please add more questions for the chapter and try importing again.");
-            addErrorIfNoOfQuestionsIsNotSufficient(quizQuestions, requests, chapterRequest, errors, statusList, errorForInActiveChapter);
+            String errorMessage = "Number of questions available in the CSV for this chapter is less than number of quiz questions specified for the chapter. " +
+                    "Please add more questions for the chapter and try importing again.";
+            addErrorIfNoOfQuestionsIsNotSufficient(quizQuestions, requests, chapterRequest, errors, statusList, errorMessage);
         }
     }
 
-    private void addErrorIfNoOfQuestionsIsNotSufficient(Integer quizQuestions, List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest, List<CsvImportError> errors, List<String> status, CsvImportError error) {
+    private void addErrorIfNoOfQuestionsIsNotSufficient(Integer quizQuestions, List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest, List<CsvImportError> errors, List<String> status, String errorMessage) {
         int noOfQuestions = 0;
         for (CourseCsvRequest request : requests) {
             if (QUESTION.equals(from(request.getNodeType())) && chapterRequest.getNodeName().equalsIgnoreCase(request.getParentNode()) && status.contains(request.getStatus().toLowerCase()))
                 noOfQuestions++;
         }
         if (noOfQuestions < quizQuestions) {
-            errors.add(error);
-            logger.info(String.format("Validation error for node %s with node type %s: %s", error.getNodeName(), error.getNodeType(), error.getMessage()));
+            createErrorResponse(chapterRequest, errors, errorMessage);
         }
     }
 
