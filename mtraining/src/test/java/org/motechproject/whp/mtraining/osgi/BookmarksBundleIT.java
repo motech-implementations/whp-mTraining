@@ -19,6 +19,7 @@ import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseConfigurationDto;
 import org.motechproject.mtraining.dto.CourseDto;
 import org.motechproject.mtraining.dto.CourseProgressDto;
+import org.motechproject.mtraining.dto.LocationDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.service.CourseConfigurationService;
@@ -89,7 +90,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
 
         course002 = courseService.getCourse(createCourseIfNotExists("CS002"));
-        courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(course002.getName(), 60, "block", "district", "state"));
+        courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(course002.getName(), 60, new LocationDto("block", "district", "state")));
 
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);

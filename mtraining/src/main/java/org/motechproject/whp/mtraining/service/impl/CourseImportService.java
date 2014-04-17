@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.service.impl;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseConfigurationDto;
 import org.motechproject.mtraining.dto.CourseDto;
+import org.motechproject.mtraining.dto.LocationDto;
 import org.motechproject.mtraining.service.CourseConfigurationService;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.security.model.UserDto;
@@ -55,7 +56,7 @@ public class CourseImportService {
     public void importCourseConfig(List<CourseConfigurationRequest> requests) {
         for (CourseConfigurationRequest request : requests) {
             courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(request.getCourseName(),
-                    valueOf(request.getCourseDurationInDays()), request.getBlock(), request.getDistrict(), request.getState()));
+                    valueOf(request.getCourseDurationInDays()), new LocationDto(request.getBlock(), request.getDistrict(), request.getState())));
         }
     }
 
