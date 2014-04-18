@@ -29,11 +29,37 @@ public class BookmarkBuilder {
         return this;
     }
 
+
     public Bookmark build() {
         return new Bookmark(course, module, chapter, message, quiz, dateModified);
     }
 
     public BookmarkDto buildDTO() {
         return new BookmarkDto(externalId, course, module, chapter, message, quiz, DateTime.now());
+    }
+
+    public BookmarkBuilder withCourse(ContentIdentifierDto course) {
+        this.course = course;
+        return this;
+    }
+
+    public BookmarkBuilder withModule(ContentIdentifierDto module) {
+        this.module = module;
+        return this;
+    }
+
+    public BookmarkBuilder withChapter(ContentIdentifierDto chapter) {
+        this.chapter = chapter;
+        return this;
+    }
+
+    public BookmarkBuilder withMessage(ContentIdentifierDto message) {
+        this.message = message;
+        return this;
+    }
+
+    public BookmarkBuilder withQuiz(ContentIdentifierDto quiz) {
+        this.quiz = quiz;
+        return this;
     }
 }

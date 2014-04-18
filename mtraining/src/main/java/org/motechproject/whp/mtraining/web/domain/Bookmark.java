@@ -68,7 +68,7 @@ public class Bookmark {
 
     public List<ValidationError> validate() {
         List<ValidationError> validationErrors = newArrayList();
-        if (courseIdentifierDto == null || courseIdentifierDto.getContentId() == null || chapterIdentifierDto.getVersion() == null)
+        if (courseIdentifierDto == null || courseIdentifierDto.getContentId() == null || courseIdentifierDto.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Course"));
         if (moduleIdentifierDto == null || moduleIdentifierDto.getContentId() == null || moduleIdentifierDto.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Module"));
