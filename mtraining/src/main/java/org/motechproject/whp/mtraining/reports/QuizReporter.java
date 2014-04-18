@@ -155,6 +155,10 @@ public class QuizReporter {
     private CourseProgressDto getEnrolleeCourseProgress(String externalId) {
         CourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
         if (enrolleeCourseProgressDto == null) {
+            // In Scenarios where A Quiz Report is posted before any bookmark post. We need to create a new Course Progress for the Enrollee.
+            // Also a situation may arise where a Quiz Report may be posted by the IVR but the post may not be followed by the corresponding Bookmark post.
+            // This may lead to invalid start time and course status being stored in the database.
+            // So we set the Start Time and the Course Status when creating a course progress here.
             enrolleeCourseProgressDto = new CourseProgressDto(externalId, ISODateTimeUtil.nowInTimeZoneUTC(), null, CourseStatus.ONGOING);
         }
         return enrolleeCourseProgressDto;

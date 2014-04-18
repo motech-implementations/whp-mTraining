@@ -1,16 +1,16 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.mtraining.constants.CourseStatus.UNKNOWN;
 import static org.motechproject.mtraining.constants.CourseStatus.enumFor;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_COURSE_STATUS;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_NODE;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_TIME;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.*;
 
 public class CourseProgress {
     @JsonProperty
@@ -50,15 +50,21 @@ public class CourseProgress {
     }
 
     public Collection<? extends ValidationError> validate() {
-        List<ValidationError> validationErrors = bookmark.validate();
-        if (isBlank(courseStatus) || enumFor(courseStatus).equals(UNKNOWN))
+        List<ValidationError> validationErrors = new ArrayList<>();
+        if (isBlank(courseStatus) || enumFor(courseStatus).equals(UNKNOWN)) {
             validationErrors.add(new ValidationError(INVALID_COURSE_STATUS));
-        if (isBlank(courseStartTime))
-            validationErrors.add(new ValidationError(MISSING_TIME.getCode(), MISSING_TIME.getMessage().concat(" for: Course Start Time")));
+        }
+        if (isBlank(courseStartTime)) {
+            validationErrors.add(new ValidationError(MISSING_COURSE_START_TIME.getCode(), MISSING_COURSE_START_TIME.getMessage()));
+        }
+        if (!ISODateTimeUtil.validate(courseStartTime)) {
+            validationErrors.add(new ValidationError(INVALID_DATE_TIME.getCode(), INVALID_DATE_TIME.getMessage().concat(" for: Course Start Time")));
+        }
         if (bookmark == null) {
-            validationErrors.add(new ValidationError(MISSING_NODE.getCode(), MISSING_NODE.getMessage().concat(" for: Bookmark")));
+            validationErrors.add(new ValidationError(INVALID_BOOKMARK));
             return validationErrors;
         }
+        validationErrors.addAll(bookmark.validate());
         return validationErrors;
 
     }

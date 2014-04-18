@@ -76,7 +76,7 @@ public class CallLogControllerTest {
 
         MotechResponse motechResponse = response.getBody();
         assertThat(motechResponse.getResponseCode(), Is.is(ResponseStatus.INVALID_DATE_TIME.getCode()));
-        assertThat(motechResponse.getResponseMessage(), Is.is("Missing or Invalid Date for " + contentId));
+        assertThat(motechResponse.getResponseMessage(), Is.is("Invalid Date specified for " + contentId));
         verify(callLogReporter, never()).report(any(CallLogRequest.class), any(Provider.class));
     }
 
