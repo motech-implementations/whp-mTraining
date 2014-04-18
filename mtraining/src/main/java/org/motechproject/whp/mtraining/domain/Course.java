@@ -57,6 +57,10 @@ public class Course extends CourseContent implements CourseContentHolder {
         return description;
     }
 
+    public String getExternalId() {
+        return externalId;
+    }
+
     @Override
     public void removeInactiveContent() {
         filter(modules);

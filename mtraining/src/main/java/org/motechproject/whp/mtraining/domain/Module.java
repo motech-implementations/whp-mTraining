@@ -48,6 +48,10 @@ public class Module extends CourseContent implements CourseContentHolder {
         return chapters;
     }
 
+    public String getExternalId() {
+        return externalId;
+    }
+
     public List<Chapter> getChapters() {
         return chapters;
     }

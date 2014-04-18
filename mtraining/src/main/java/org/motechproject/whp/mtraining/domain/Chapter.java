@@ -71,6 +71,10 @@ public class Chapter extends CourseContent implements CourseContentHolder {
         return messages;
     }
 
+    public String getExternalId() {
+        return externalId;
+    }
+
     public Quiz getQuiz() {
         return quiz;
     }
