@@ -2,11 +2,13 @@ package org.motechproject.whp.mtraining.reports;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.AnswerSheetDto;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
+import org.motechproject.mtraining.dto.CourseProgressDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.dto.QuestionResultDto;
 import org.motechproject.mtraining.dto.QuizAnswerSheetDto;
@@ -17,8 +19,10 @@ import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.service.CourseProgressService;
 import org.motechproject.mtraining.service.CourseService;
 import org.motechproject.mtraining.service.QuizService;
+import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.reports.domain.QuestionAttempt;
 import org.motechproject.whp.mtraining.reports.domain.QuizAttempt;
+import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.motechproject.whp.mtraining.repository.AllQuestionAttempts;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
@@ -47,15 +51,17 @@ public class QuizReporter {
     private QuizService quizService;
     private AllQuestionAttempts allQuestionAttempts;
     private CourseService courseService;
+    private AllCoursePublicationAttempts allCoursePublicationAttempts;
     private Logger LOGGER = LoggerFactory.getLogger(QuizReporter.class);
 
     @Autowired
-    public QuizReporter(BookmarkService bookmarkService, CourseProgressService courseProgressService, QuizService quizService, AllQuestionAttempts allQuestionAttempts, CourseService courseService) {
+    public QuizReporter(BookmarkService bookmarkService, CourseProgressService courseProgressService, QuizService quizService, AllQuestionAttempts allQuestionAttempts, CourseService courseService, AllCoursePublicationAttempts allCoursePublicationAttempts) {
         this.bookmarkService = bookmarkService;
         this.courseProgressService = courseProgressService;
         this.quizService = quizService;
         this.allQuestionAttempts = allQuestionAttempts;
         this.courseService = courseService;
+        this.allCoursePublicationAttempts = allCoursePublicationAttempts;
     }
 
     public MotechResponse processAndLogQuiz(String remediId, QuizReportRequest quizReportRequest) {
@@ -89,11 +95,11 @@ public class QuizReporter {
             return new ValidationError(ResponseStatus.INVALID_MODULE);
         }
         ChapterDto chapter = module.getChapter(quizReportRequest.getChapterDto().getContentId());
-        if (chapter == null){
+        if (chapter == null) {
             LOGGER.error(String.format("No chapter found for chapterId %s and version %s", quizReportRequest.getChapterDto().getContentId(), quizReportRequest.getChapterDto().getVersion()));
             return new ValidationError(ResponseStatus.INVALID_CHAPTER);
         }
-        if (!chapter.getQuiz().getContentId().equals(quizReportRequest.getQuizDto().getContentId())){
+        if (!chapter.getQuiz().getContentId().equals(quizReportRequest.getQuizDto().getContentId())) {
             LOGGER.error(String.format("No quiz found for quizId %s and version %s", quizReportRequest.getQuizDto().getContentId(), quizReportRequest.getQuizDto().getVersion()));
             return new ValidationError(ResponseStatus.QUIZ_NOT_FOUND);
         }
@@ -116,21 +122,42 @@ public class QuizReporter {
     }
 
     private void updateBookmark(String remediId, QuizResultSheetDto quizResult, QuizReportRequest quizReportRequest) {
+        CourseProgressDto courseProgressForEnrollee;
         ContentIdentifierDto courseDto = quizReportRequest.getCourseDto();
         ContentIdentifierDto moduleDto = quizReportRequest.getModuleDto();
         ContentIdentifierDto chapterDto = quizReportRequest.getChapterDto();
         if (quizReportRequest.IsIncompleteAttempt()) {
-            bookmarkService.setBookmarkToQuizOfAChapter(remediId, courseDto, moduleDto, chapterDto);
-        } else {
-            if (quizResult.isPassed()) {
-                BookmarkDto nextBookmark = bookmarkService.getNextBookmark(remediId, courseDto, moduleDto, chapterDto);
-                if (nextBookmark.getModule() == null && nextBookmark.getChapter() == null) {
-                    courseProgressService.markCourseAsComplete(remediId, quizReportRequest.getStartTime(), courseDto);
-                }
-            } else {
-                bookmarkService.setBookmarkToFirstActiveContentOfAChapter(remediId, courseDto, moduleDto, chapterDto);
-            }
+            BookmarkDto bookmarkForQuizOfAChapter = bookmarkService.getBookmarkForQuizOfAChapter(remediId, courseDto, moduleDto, chapterDto);
+            courseProgressForEnrollee = getEnrolleeCourseProgress(remediId);
+            courseProgressForEnrollee.setBookmarkDto(bookmarkForQuizOfAChapter);
+            courseProgressService.addOrUpdateCourseProgress(courseProgressForEnrollee);
+            LOGGER.info("Quiz Result Request posted with an incomplete attempt. Hence Adding/Updating Course Progress.");
+            return;
         }
+        if (quizResult.isPassed()) {
+            BookmarkDto nextBookmark = bookmarkService.getNextBookmark(remediId, courseDto, moduleDto, chapterDto);
+            if (nextBookmark.getModule() == null && nextBookmark.getChapter() == null) {
+                courseProgressService.markCourseAsComplete(remediId, quizReportRequest.getStartTime(), courseDto);
+                LOGGER.info("Quiz Result Request posted with a passed attempt on last quiz of course. Hence marking Course Progress as complete.");
+                return;
+            }
+            courseProgressForEnrollee = getEnrolleeCourseProgress(remediId);
+            courseProgressForEnrollee.setBookmarkDto(nextBookmark);
+            courseProgressService.addOrUpdateCourseProgress(courseProgressForEnrollee);
+            LOGGER.info("Quiz Result Request posted with a passed attempt. Hence setting to next Bookmark in Course Progress.");
+            return;
+        }
+        bookmarkService.setBookmarkToFirstActiveContentOfAChapter(remediId, courseDto, moduleDto, chapterDto);
+        LOGGER.info("Quiz Result Request posted with a failed attempt. Hence setting to first content of chapter in Bookmark.");
+
+    }
+
+    private CourseProgressDto getEnrolleeCourseProgress(String externalId) {
+        CourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
+        if (enrolleeCourseProgressDto == null) {
+            enrolleeCourseProgressDto = new CourseProgressDto(externalId, ISODateTimeUtil.nowInTimeZoneUTC(), null, CourseStatus.ONGOING);
+        }
+        return enrolleeCourseProgressDto;
     }
 
     private QuizAnswerSheetDto toQuizAnswerSheetDto(String remediId, QuizReportRequest quizReportRequest) {

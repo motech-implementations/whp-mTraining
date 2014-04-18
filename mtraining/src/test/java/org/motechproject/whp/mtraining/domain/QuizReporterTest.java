@@ -9,10 +9,12 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
+import org.motechproject.mtraining.dto.CourseProgressDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.dto.QuestionDto;
 import org.motechproject.mtraining.dto.QuestionResultDto;
@@ -28,6 +30,7 @@ import org.motechproject.mtraining.service.QuizService;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
 import org.motechproject.whp.mtraining.reports.domain.QuestionAttempt;
 import org.motechproject.whp.mtraining.reports.domain.QuizAttempt;
+import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.motechproject.whp.mtraining.repository.AllQuestionAttempts;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.QuestionRequest;
@@ -40,14 +43,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.motechproject.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
 
@@ -66,6 +65,8 @@ public class QuizReporterTest {
     private BookmarkService bookmarkService;
     @Mock
     private CourseService courseService;
+    @Mock
+    private AllCoursePublicationAttempts allCoursePublicationAttempts;
 
     private UUID questionId;
     private ContentIdentifierDto courseContentIdentifier;
@@ -83,7 +84,7 @@ public class QuizReporterTest {
         questionId = UUID.randomUUID();
         startTime = nowAsStringInTimeZoneUTC();
         endTime = nowAsStringInTimeZoneUTC();
-        quizReporter = new QuizReporter(bookmarkService, courseProgressService, quizService, allQuestionAttempts, courseService);
+        quizReporter = new QuizReporter(bookmarkService, courseProgressService, quizService, allQuestionAttempts, courseService, allCoursePublicationAttempts);
         courseContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         moduleContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         chapterContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
@@ -112,6 +113,8 @@ public class QuizReporterTest {
         BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, DateTime.now());
         when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
+        CourseProgressDto courseProgressDto = new CourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
+        when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(courseProgressDto);
 
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
@@ -125,7 +128,7 @@ public class QuizReporterTest {
         assertTrue(questionAttemptListCaptureValue.get(0).isCorrectAnswer());
         assertEquals("OK", response.getResponseMessage());
         verify(bookmarkService).getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
-
+        verify(courseProgressService).addOrUpdateCourseProgress(courseProgressDto);
     }
 
     @Test
@@ -143,7 +146,7 @@ public class QuizReporterTest {
         BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, null, null, null, courseContentIdentifier, DateTime.now());
         when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
-
+        when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(new CourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING));
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
         assertTrue(response.getPassed());
@@ -173,6 +176,8 @@ public class QuizReporterTest {
                 courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
         QuestionAttempt questionAttempt = new QuestionAttempt(quizAttempt, questionId, 1, "a;b", "c", true, false, false);
         when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+        CourseProgressDto courseProgressDto = new CourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
+        when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(courseProgressDto);
 
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
@@ -185,7 +190,8 @@ public class QuizReporterTest {
         assertEquals(questionAttempt.getInvalidInputs(), questionAttemptListCaptureValue.get(0).getInvalidInputs());
         assertTrue(questionAttemptListCaptureValue.get(0).isCorrectAnswer());
         assertEquals("OK", response.getResponseMessage());
-        verify(bookmarkService).setBookmarkToQuizOfAChapter(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+        verify(bookmarkService).getBookmarkForQuizOfAChapter(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class));
+        verify(courseProgressService).addOrUpdateCourseProgress(courseProgressDto);
 
     }
 
