@@ -76,7 +76,7 @@ public class CourseImportController {
             courseImportService.importCourseConfig(courseConfigurationRequests);
             return CsvImportResponse.success("Configuration for courses have been imported successfully");
         } catch (CourseNotFoundException courseNotFoundException) {
-            return failure(asList(new CsvImportError("CourseName", "-", String.format("Course : %s could not be found.Please verify course name in the CSV file.", courseNotFoundException.getCourseName()))));
+            return failure(asList(new CsvImportError(courseNotFoundException.getCourseName(), "Course", "Course could not be found in the CSV file." )));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             return failure(asList(new CsvImportError(ex.getMessage())));
