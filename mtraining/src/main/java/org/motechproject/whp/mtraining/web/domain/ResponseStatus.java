@@ -26,7 +26,8 @@ public enum ResponseStatus {
     INVALID_COURSE(922, "Invalid Course Id or version"),
     INVALID_MODULE(923, "Invalid Module Id or version"),
     INVALID_CHAPTER(924, "Invalid Chapter Id or version"),
-    MISSING_COURSE_START_TIME(925, "Course Start Time must be present");
+    MISSING_COURSE_START_TIME(925, "Course Start Time must be present"),
+    COURSE_NOT_FOUND(926, "No course available");
 
 
     private int code;

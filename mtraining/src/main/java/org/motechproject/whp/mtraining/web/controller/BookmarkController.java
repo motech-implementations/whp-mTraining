@@ -4,6 +4,7 @@ import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseProgressDto;
+import org.motechproject.mtraining.exception.CourseNotFoundException;
 import org.motechproject.mtraining.exception.InvalidBookmarkException;
 import org.motechproject.mtraining.service.CourseProgressService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
@@ -93,6 +94,9 @@ public class BookmarkController {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER);
 
         CourseProgressDto courseProgressDto = getEnrolleeCourseProgress(provider.getRemediId());
+        if(courseProgressDto == null){
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, ResponseStatus.COURSE_NOT_FOUND);
+        }
         CourseProgress courseProgress = mapToCourseProgress(courseProgressDto);
         BookmarkDto bookmarkDto = courseProgressDto.getBookmarkDto();
         allBookmarkRequests.add(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET, courseProgressDto.getCourseStartTime(), courseProgressDto.getTimeLeftToCompleteCourseInHrs(), courseProgressDto.getCourseStatus().value(), new BookmarkReport(bookmarkDto)));
@@ -148,8 +152,14 @@ public class BookmarkController {
         CourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
         if (enrolleeCourseProgressDto == null) {
             CoursePublicationAttempt latestCoursePublicationAttempt = allCoursePublicationAttempts.getLastSuccessfulCoursePublicationAttempt();
+            if(latestCoursePublicationAttempt == null)
+                return null;
             ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(latestCoursePublicationAttempt.getCourseId(), latestCoursePublicationAttempt.getVersion());
+            try{
             enrolleeCourseProgressDto = courseProgressService.getInitialCourseProgressForEnrollee(externalId, contentIdentifierDto);
+            }catch (CourseNotFoundException ex){
+                return null;
+            }
         }
         return enrolleeCourseProgressDto;
     }

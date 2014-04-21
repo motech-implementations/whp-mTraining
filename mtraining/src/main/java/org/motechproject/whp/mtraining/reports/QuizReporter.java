@@ -22,7 +22,6 @@ import org.motechproject.mtraining.service.QuizService;
 import org.motechproject.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.reports.domain.QuestionAttempt;
 import org.motechproject.whp.mtraining.reports.domain.QuizAttempt;
-import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.motechproject.whp.mtraining.repository.AllQuestionAttempts;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
@@ -51,21 +50,19 @@ public class QuizReporter {
     private QuizService quizService;
     private AllQuestionAttempts allQuestionAttempts;
     private CourseService courseService;
-    private AllCoursePublicationAttempts allCoursePublicationAttempts;
     private Logger LOGGER = LoggerFactory.getLogger(QuizReporter.class);
 
     @Autowired
-    public QuizReporter(BookmarkService bookmarkService, CourseProgressService courseProgressService, QuizService quizService, AllQuestionAttempts allQuestionAttempts, CourseService courseService, AllCoursePublicationAttempts allCoursePublicationAttempts) {
+    public QuizReporter(BookmarkService bookmarkService, CourseProgressService courseProgressService, QuizService quizService, AllQuestionAttempts allQuestionAttempts, CourseService courseService) {
         this.bookmarkService = bookmarkService;
         this.courseProgressService = courseProgressService;
         this.quizService = quizService;
         this.allQuestionAttempts = allQuestionAttempts;
         this.courseService = courseService;
-        this.allCoursePublicationAttempts = allCoursePublicationAttempts;
     }
 
     public MotechResponse processAndLogQuiz(String remediId, QuizReportRequest quizReportRequest) {
-        QuizResultSheetDto quizResult = null;
+        QuizResultSheetDto quizResult;
         ValidationError error = validateQuizReportRequest(quizReportRequest);
         if (error != null)
             return new BasicResponse(quizReportRequest.getCallerId(), quizReportRequest.getSessionId(), quizReportRequest.getUniqueId(), statusFor(error.getErrorCode()));

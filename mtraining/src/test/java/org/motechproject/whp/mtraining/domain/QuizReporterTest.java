@@ -30,7 +30,6 @@ import org.motechproject.mtraining.service.QuizService;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
 import org.motechproject.whp.mtraining.reports.domain.QuestionAttempt;
 import org.motechproject.whp.mtraining.reports.domain.QuizAttempt;
-import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.motechproject.whp.mtraining.repository.AllQuestionAttempts;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.QuestionRequest;
@@ -43,10 +42,14 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.motechproject.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
 
@@ -65,8 +68,6 @@ public class QuizReporterTest {
     private BookmarkService bookmarkService;
     @Mock
     private CourseService courseService;
-    @Mock
-    private AllCoursePublicationAttempts allCoursePublicationAttempts;
 
     private UUID questionId;
     private ContentIdentifierDto courseContentIdentifier;
@@ -84,7 +85,7 @@ public class QuizReporterTest {
         questionId = UUID.randomUUID();
         startTime = nowAsStringInTimeZoneUTC();
         endTime = nowAsStringInTimeZoneUTC();
-        quizReporter = new QuizReporter(bookmarkService, courseProgressService, quizService, allQuestionAttempts, courseService, allCoursePublicationAttempts);
+        quizReporter = new QuizReporter(bookmarkService, courseProgressService, quizService, allQuestionAttempts, courseService);
         courseContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         moduleContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);
         chapterContentIdentifier = new ContentIdentifierDto(UUID.randomUUID(), 1);

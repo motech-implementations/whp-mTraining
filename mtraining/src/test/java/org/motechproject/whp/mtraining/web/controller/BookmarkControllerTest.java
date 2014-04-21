@@ -16,6 +16,7 @@ import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseProgressDto;
+import org.motechproject.mtraining.exception.CourseNotFoundException;
 import org.motechproject.mtraining.exception.InvalidBookmarkException;
 import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.mtraining.service.CourseProgressService;
@@ -201,6 +202,43 @@ public class BookmarkControllerTest {
         assertThat(bookmark.getMessageIdentifierDto(), Is.is(message));
         assertThat(bookmark.getQuizIdentifierDto(), IsNull.nullValue());
         assertThat(bookmark.getDateModified(), Is.is(now.toString()));
+    }
+
+    @Test
+    public void shouldMarkErrorIfNoCourseIsAvailable() {
+        Long callerId = 87676598l;
+        String remediId = "remediId";
+        ContentIdentifierDto course = new ContentIdentifierDto(UUID.randomUUID(), 1);
+
+        Provider provider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
+        when(providers.getByCallerId(callerId)).thenReturn(provider);
+        CoursePublicationAttempt lastCourseSuccessfulAttempt = new CoursePublicationAttempt(UUID.randomUUID(), 1, true);
+        when(allCoursePublicationAttempts.getLastSuccessfulCoursePublicationAttempt()).thenReturn(lastCourseSuccessfulAttempt);
+
+        when(courseProgressService.getCourseProgressForEnrollee(remediId)).thenReturn(null);
+        doThrow(new CourseNotFoundException()).when(courseProgressService).getInitialCourseProgressForEnrollee(provider.getRemediId(),course);
+
+        MotechResponse response = bookmarkController.getBookmark(new CourseProgressGetRequest(callerId, null, "uuid")).getBody();
+
+        assertThat(response.getResponseCode(), is(ResponseStatus.COURSE_NOT_FOUND.getCode()));
+        verify(providers).getByCallerId(callerId);
+        verify(allBookmarkRequests).add(any(BookmarkRequest.class));
+    }
+
+    @Test
+    public void shouldMarkErrorIfNoLastSuccessfulCoursePublicationAttemptIsFound() {
+        Long callerId = 87676598l;
+        String remediId = "remediId";
+
+        Provider provider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
+        when(providers.getByCallerId(callerId)).thenReturn(provider);
+        when(allCoursePublicationAttempts.getLastSuccessfulCoursePublicationAttempt()).thenReturn(null);
+
+        MotechResponse response = bookmarkController.getBookmark(new CourseProgressGetRequest(callerId, null, "uuid")).getBody();
+
+        assertThat(response.getResponseCode(), is(ResponseStatus.COURSE_NOT_FOUND.getCode()));
+        verify(providers).getByCallerId(callerId);
+        verify(allBookmarkRequests).add(any(BookmarkRequest.class));
     }
 
     @Test
