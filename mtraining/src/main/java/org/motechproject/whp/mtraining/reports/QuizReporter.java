@@ -8,7 +8,7 @@ import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.CourseProgressDto;
+import org.motechproject.mtraining.dto.EnrolleeCourseProgressDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.dto.QuestionResultDto;
 import org.motechproject.mtraining.dto.QuizAnswerSheetDto;
@@ -119,7 +119,7 @@ public class QuizReporter {
     }
 
     private void updateBookmark(String remediId, QuizResultSheetDto quizResult, QuizReportRequest quizReportRequest) {
-        CourseProgressDto courseProgressForEnrollee;
+        EnrolleeCourseProgressDto courseProgressForEnrollee;
         ContentIdentifierDto courseDto = quizReportRequest.getCourseDto();
         ContentIdentifierDto moduleDto = quizReportRequest.getModuleDto();
         ContentIdentifierDto chapterDto = quizReportRequest.getChapterDto();
@@ -149,14 +149,14 @@ public class QuizReporter {
 
     }
 
-    private CourseProgressDto getEnrolleeCourseProgress(String externalId) {
-        CourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
+    private EnrolleeCourseProgressDto getEnrolleeCourseProgress(String externalId) {
+        EnrolleeCourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
         if (enrolleeCourseProgressDto == null) {
             // In Scenarios where A Quiz Report is posted before any bookmark post. We need to create a new Course Progress for the Enrollee.
             // Also a situation may arise where a Quiz Report may be posted by the IVR but the post may not be followed by the corresponding Bookmark post.
             // This may lead to invalid start time and course status being stored in the database.
             // So we set the Start Time and the Course Status when creating a course progress here.
-            enrolleeCourseProgressDto = new CourseProgressDto(externalId, ISODateTimeUtil.nowInTimeZoneUTC(), null, CourseStatus.ONGOING);
+            enrolleeCourseProgressDto = new EnrolleeCourseProgressDto(externalId, ISODateTimeUtil.nowInTimeZoneUTC(), null, CourseStatus.ONGOING);
         }
         return enrolleeCourseProgressDto;
     }

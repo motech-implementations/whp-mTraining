@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.web.controller;
 import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.CourseProgressDto;
+import org.motechproject.mtraining.dto.EnrolleeCourseProgressDto;
 import org.motechproject.mtraining.exception.CourseNotFoundException;
 import org.motechproject.mtraining.exception.InvalidBookmarkException;
 import org.motechproject.mtraining.service.CourseProgressService;
@@ -93,7 +93,7 @@ public class BookmarkController {
         if (isInvalid(provider.getProviderStatus()))
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER);
 
-        CourseProgressDto courseProgressDto = getEnrolleeCourseProgress(provider.getRemediId());
+        EnrolleeCourseProgressDto courseProgressDto = getEnrolleeCourseProgress(provider.getRemediId());
         if(courseProgressDto == null){
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, ResponseStatus.COURSE_NOT_FOUND);
         }
@@ -104,7 +104,7 @@ public class BookmarkController {
                 provider.getLocation(), courseProgress), HttpStatus.OK);
     }
 
-    private CourseProgress mapToCourseProgress(CourseProgressDto courseProgressDto) {
+    private CourseProgress mapToCourseProgress(EnrolleeCourseProgressDto courseProgressDto) {
         return new CourseProgress(courseProgressDto.getCourseStartTime(), mapToBookmark(courseProgressDto.getBookmarkDto()), courseProgressDto.getTimeLeftToCompleteCourseInHrs(), courseProgressDto.getCourseStatus().value());
     }
 
@@ -133,7 +133,7 @@ public class BookmarkController {
 
         BookmarkDto bookmarkDto = new BookmarkDto(provider.getRemediId(), bookmark.getCourseIdentifierDto(), bookmark.getModuleIdentifierDto(),
                 bookmark.getChapterIdentifierDto(), bookmark.getMessageIdentifierDto(), bookmark.getQuizIdentifierDto(), ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified()));
-        CourseProgressDto courseProgressDto = new CourseProgressDto(provider.getRemediId(), ISODateTimeUtil.parseWithTimeZoneUTC(courseProgress.getCourseStartTime()), bookmarkDto, courseStatus);
+        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto(provider.getRemediId(), ISODateTimeUtil.parseWithTimeZoneUTC(courseProgress.getCourseStartTime()), bookmarkDto, courseStatus);
 
         try {
             courseProgressService.addOrUpdateCourseProgress(courseProgressDto);
@@ -148,8 +148,8 @@ public class BookmarkController {
         return new Bookmark(bookmarkDto.getCourse(), bookmarkDto.getModule(), bookmarkDto.getChapter(), bookmarkDto.getMessage(), bookmarkDto.getQuiz(), bookmarkDto.getDateModified());
     }
 
-    private CourseProgressDto getEnrolleeCourseProgress(String externalId) {
-        CourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
+    private EnrolleeCourseProgressDto getEnrolleeCourseProgress(String externalId) {
+        EnrolleeCourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
         if (enrolleeCourseProgressDto == null) {
             CoursePublicationAttempt latestCoursePublicationAttempt = allCoursePublicationAttempts.getLastSuccessfulCoursePublicationAttempt();
             if(latestCoursePublicationAttempt == null)

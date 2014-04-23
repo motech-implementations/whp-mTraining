@@ -15,7 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.constants.CourseStatus;
 import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.CourseProgressDto;
+import org.motechproject.mtraining.dto.EnrolleeCourseProgressDto;
 import org.motechproject.mtraining.exception.CourseNotFoundException;
 import org.motechproject.mtraining.exception.InvalidBookmarkException;
 import org.motechproject.mtraining.service.BookmarkService;
@@ -112,7 +112,7 @@ public class BookmarkControllerTest {
         when(provider.getProviderStatus()).thenReturn(ProviderStatus.WORKING_PROVIDER.getStatus());
         ContentIdentifierDto contentId = new ContentIdentifierDto(UUID.randomUUID(), 1);
         BookmarkDto bookmarkDto = new BookmarkDto(callerId.toString(), contentId, contentId, contentId, contentId, contentId, ISODateTimeUtil.nowInTimeZoneUTC());
-        CourseProgressDto courseProgressDto = new CourseProgressDto(providerRemediId, null, bookmarkDto, CourseStatus.STARTED);
+        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto(providerRemediId, null, bookmarkDto, CourseStatus.STARTED);
         when(courseProgressService.getCourseProgressForEnrollee(providerRemediId)).thenReturn(courseProgressDto);
 
         MotechResponse response = bookmarkController.getBookmark(new CourseProgressGetRequest(callerId, null, "uuid")).getBody();
@@ -175,7 +175,7 @@ public class BookmarkControllerTest {
         DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
 
         BookmarkDto bookmarkDto = new BookmarkDto(remediId, course, module, chapter, message, null, now);
-        CourseProgressDto courseProgressDto = new CourseProgressDto(remediId, null, bookmarkDto, CourseStatus.STARTED);
+        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto(remediId, null, bookmarkDto, CourseStatus.STARTED);
         Provider provider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
         CoursePublicationAttempt lastCourseSuccessfulAttempt = new CoursePublicationAttempt(UUID.randomUUID(), 1, true);
@@ -262,10 +262,10 @@ public class BookmarkControllerTest {
 
         bookmarkController.postBookmark(courseProgressPostRequest);
 
-        ArgumentCaptor<CourseProgressDto> courseProgressDtoArgumentCaptor = ArgumentCaptor.forClass(CourseProgressDto.class);
+        ArgumentCaptor<EnrolleeCourseProgressDto> courseProgressDtoArgumentCaptor = ArgumentCaptor.forClass(EnrolleeCourseProgressDto.class);
         verify(courseProgressService).addOrUpdateCourseProgress(courseProgressDtoArgumentCaptor.capture());
 
-        CourseProgressDto courseProgressDto = courseProgressDtoArgumentCaptor.getValue();
+        EnrolleeCourseProgressDto courseProgressDto = courseProgressDtoArgumentCaptor.getValue();
         assertThat(courseProgressDto.getExternalId(), Is.is(provider.getRemediId()));
         assertThat(courseProgressDto.getBookmarkDto().getCourse(), Is.is(courseIdentifier));
         assertThat(courseProgressDto.getBookmarkDto().getModule(), Is.is(moduleIdentifier));
@@ -295,7 +295,7 @@ public class BookmarkControllerTest {
         CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(callerId, uniqueId, sessionId, courseProgress);
         Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION);
         when(providers.getByCallerId(callerId)).thenReturn(provider);
-        ArgumentCaptor<CourseProgressDto> courseProgressDtoArgumentCaptor = ArgumentCaptor.forClass(CourseProgressDto.class);
+        ArgumentCaptor<EnrolleeCourseProgressDto> courseProgressDtoArgumentCaptor = ArgumentCaptor.forClass(EnrolleeCourseProgressDto.class);
         doThrow(new InvalidBookmarkException("")).when(courseProgressService).addOrUpdateCourseProgress(courseProgressDtoArgumentCaptor.capture());
         ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(courseProgressPostRequest);
 
@@ -376,7 +376,7 @@ public class BookmarkControllerTest {
         when(providers.getByCallerId(1l)).thenReturn(new Provider("r001", 1l, ProviderStatus.WORKING_PROVIDER, DEFAULT_PROVIDER_LOCATION));
 
         BookmarkDto bookmarkDTO = new BookmarkBuilder().withExternalId("r001").buildDTO();
-        CourseProgressDto courseProgressDto = new CourseProgressDto("r001", null, bookmarkDTO, CourseStatus.STARTED);
+        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("r001", null, bookmarkDTO, CourseStatus.STARTED);
         when(courseProgressService.getInitialCourseProgressForEnrollee("r001", new ContentIdentifierDto(lastCourseSuccessfulAttempt.getCourseId(), lastCourseSuccessfulAttempt.getVersion()))).thenReturn(courseProgressDto);
 
         bookmarkController.getBookmark(new CourseProgressGetRequest(1l, "uk", "s001"));

@@ -18,7 +18,7 @@ import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseConfigurationDto;
 import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.CourseProgressDto;
+import org.motechproject.mtraining.dto.EnrolleeCourseProgressDto;
 import org.motechproject.mtraining.dto.LocationDto;
 import org.motechproject.mtraining.dto.MessageDto;
 import org.motechproject.mtraining.dto.ModuleDto;
@@ -98,7 +98,7 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
         ModuleDto moduleDto = course002.firstActiveModule();
         BookmarkDto bookmarkDto = new BookmarkDto("remediId1", course002.toContentIdentifierDto(), moduleDto.toContentIdentifierDto(), moduleDto.findFirstActiveChapter().toContentIdentifierDto(), moduleDto.findFirstActiveChapter().findFirstActiveMessage().toContentIdentifierDto(), null, DateTime.now());
-        CourseProgressDto courseProgressDto = new CourseProgressDto("remediId1", DateTime.now(), bookmarkDto, CourseStatus.ONGOING);
+        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("remediId1", DateTime.now(), bookmarkDto, CourseStatus.ONGOING);
         courseProgressService.addOrUpdateCourseProgress(courseProgressDto);
 
     }
@@ -119,10 +119,9 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     }
 
 
-    public void testThatStatusUrlIsAccessible() throws IOException, InterruptedException {
-        HttpUriRequest httpRequestWithAuthHeaders = httpRequestWithAuthHeaders(String.format("http://localhost:%s/mtraining/web-api/status", TestContext.getJettyPort()), "Get");
-        HttpResponse httpResponse = httpClient.execute(httpRequestWithAuthHeaders);
-        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
+    public void testThatStatusURLDoesIsAvailableWithoutAuthentication() throws IOException, InterruptedException {
+        HttpResponse response = httpClient.get(String.format("http://localhost:%s/mtraining/web-api/status", TestContext.getJettyPort()));
+        assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
     }
 
     public void testThatResponseIs800WhenProviderIsKnown() throws IOException, InterruptedException {
@@ -183,10 +182,6 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         assertNotNull(courseProgressResponseForKnownUser.getCourseProgress());
     }
 
-    public void testThatStatusURLDoesNotRequireAuthentication() throws IOException, InterruptedException {
-        HttpResponse response = httpClient.get("http://localhost:%s/mtraining/web-api/status");
-        assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
-    }
 
     private String getBookmarkAsJSON() throws IOException {
 

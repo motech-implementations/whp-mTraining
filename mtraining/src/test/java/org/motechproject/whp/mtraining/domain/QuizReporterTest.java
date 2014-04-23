@@ -14,7 +14,7 @@ import org.motechproject.mtraining.dto.BookmarkDto;
 import org.motechproject.mtraining.dto.ChapterDto;
 import org.motechproject.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.CourseProgressDto;
+import org.motechproject.mtraining.dto.EnrolleeCourseProgressDto;
 import org.motechproject.mtraining.dto.ModuleDto;
 import org.motechproject.mtraining.dto.QuestionDto;
 import org.motechproject.mtraining.dto.QuestionResultDto;
@@ -114,7 +114,7 @@ public class QuizReporterTest {
         BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, DateTime.now());
         when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
-        CourseProgressDto courseProgressDto = new CourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
+        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
         when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(courseProgressDto);
 
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
@@ -147,7 +147,7 @@ public class QuizReporterTest {
         BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, null, null, null, courseContentIdentifier, DateTime.now());
         when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
-        when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(new CourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING));
+        when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING));
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
         assertTrue(response.getPassed());
@@ -177,7 +177,7 @@ public class QuizReporterTest {
                 courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
         QuestionAttempt questionAttempt = new QuestionAttempt(quizAttempt, questionId, 1, "a;b", "c", true, false, false);
         when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
-        CourseProgressDto courseProgressDto = new CourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
+        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
         when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(courseProgressDto);
 
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
