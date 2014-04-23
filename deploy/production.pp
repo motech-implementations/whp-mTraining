@@ -4,8 +4,8 @@
 
 ##--------------------------------SETTINGS--------------------------------------------
 ## Operating System
-$os = "centos5" ## [centos5 | centos6]
-$word = "32b" ## [32b,64b]
+$os = "centos6" ## [centos5 | centos6]
+$word = "64b" ## [32b,64b]
 $arch = "x64" ## [x64|i586]
 
 ## User
@@ -43,7 +43,7 @@ $couchReplicationSourceMachine = "127.0.0.1"
 $couchBindAddress = "127.0.0.1"
 $couchDbs = "tama-web ananya"
 
-$couchdbClusteringEnabled = true
+$couchdbClusteringEnabled = false
 $couchdbClusterPort = 8181
 $couchdbPrimaryIp = "192.168.42.51"
 $couchdbSecondaryIp = "192.168.42.52"
@@ -71,10 +71,12 @@ $postgresPassword = "\$1\$RMKdhrMV\$9N5AExEDLC5sG.T4NxH.J/"
 $postgresMachine = "master" ## [master | slave]
 $postgresMaster = "127.0.0.1"
 $postgresSlave = "127.0.0.1"
-$changeDefaultEncodingToUTF8 = false
+$changeDefaultEncodingToUTF8 = true
 
-# Rep Manager
+# postgres version used for repmgr as well
 $postgresVersion = "9.3"
+$pgPackVersion="93" ##used to ensure that postgres packs like postgresql91-contrib are present [91|93, default is 91]
+# Rep Manager version
 $repmgrVersion = "1.2.0"
 
 ## Data Backup
@@ -223,7 +225,8 @@ class { ant: version => "${antVersion}" }
 
 ## Sample logrotate class declaration. For all possible arguments, look at rule.pp of logrotate module.
 ## logrotate timing for a day is based on the cron job defined in /etc/crontab or /etc/anacrontab.
-logrotate::rule { "${logRotateConfigFileName}" : path => "${logFilePath}", rotate => 30, rotate_every => "day", copytruncate => true, dateext => true, compress => true, delaycompress => true, ifempty => false, missingok => true }
+logrotate::rule { "motech" : path => "/var/log/motech/Motech.log", rotate => 30, rotate_every => "day", copytruncate => true, dateext => true, compress => true, delaycompress => true, ifempty => false, missingok => true }
+logrotate::rule { "catalina" : path => "/home/${motechUser}/apache-tomcat-7.0.22/logs/catalina.out", rotate => 30, rotate_every => "day", copytruncate => true, dateext => true, compress => true, delaycompress => true, ifempty => false, missingok => true }
 
 ## GlusterFS setup - Find README in glusterfs module for details
 #class { "glusterfs::server" : peers => "${peer}" }
@@ -243,14 +246,14 @@ logrotate::rule { "${logRotateConfigFileName}" : path => "${logFilePath}", rotat
 # include ssh
 # include phantomjs
 
-include git
-include ant
-#include logroate
-include tomcat
-include activemq
-include couchdb
-include postgres
-include couchdblucene
+#include git
+#include ant
+#include tomcat
+#include activemq
+#include couchdb
+#include postgres
+#include couchdblucene
+#include logrotate
 
 ## nscd is name service caching daemon. It provides caching for many service requests, mainly dns lookup.
 # include nscd

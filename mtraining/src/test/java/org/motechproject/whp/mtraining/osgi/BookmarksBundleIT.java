@@ -183,6 +183,11 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         assertNotNull(courseProgressResponseForKnownUser.getCourseProgress());
     }
 
+    public void testThatStatusURLDoesNotRequireAuthentication() throws IOException, InterruptedException {
+        HttpResponse response = httpClient.get("http://localhost:%s/mtraining/web-api/status");
+        assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+    }
+
     private String getBookmarkAsJSON() throws IOException {
 
         ModuleDto moduleDto = course002.getModules().get(0);
