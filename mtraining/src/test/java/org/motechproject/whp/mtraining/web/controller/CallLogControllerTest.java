@@ -16,6 +16,7 @@ import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -88,6 +89,19 @@ public class CallLogControllerTest {
         CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.COURSE.name(), null, "2014-03-30T17:52:25.976Z");
         CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, courseId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
 
+        when(providerService.byCallerId(callerId)).thenReturn(new Provider());
+
+        ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);
+
+        assertTrue(ResponseStatus.OK.getCode().equals(response.getBody().getResponseCode()));
+    }
+
+    @Test
+    public void shouldNotReturnErrorsIfCallLogContentIsEmpty() {
+        long callerId = 1234567890L;
+        String uniqueId = "uniqueId";
+        String sessionId = "ssn001";
+        CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, courseId, new ArrayList<CallLogRecord>(), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
         when(providerService.byCallerId(callerId)).thenReturn(new Provider());
 
         ResponseEntity<? extends MotechResponse> response = callLogController.postCallLog(callLogRequest);

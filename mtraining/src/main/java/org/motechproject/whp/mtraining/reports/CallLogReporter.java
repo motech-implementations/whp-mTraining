@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.motechproject.mtraining.util.ISODateTimeUtil.parse;
 import static org.motechproject.whp.mtraining.csv.domain.CallLogRecordType.from;
 
@@ -44,6 +45,7 @@ public class CallLogReporter {
                     from(callLogRecord.getType()), parse(callLogRecord.getStartTime()), parse(callLogRecord.getEndTime()), status, callLogRecord.isRestarted());
             callLogs.add(callLog);
         }
-        allCallLogs.addAll(callLogs);
+        if (isNotEmpty(callLogs))
+            allCallLogs.addAll(callLogs);
     }
 }

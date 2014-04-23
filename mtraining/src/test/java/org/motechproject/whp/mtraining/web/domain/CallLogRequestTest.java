@@ -29,16 +29,6 @@ public class CallLogRequestTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenCallLogContentIsEmpty() {
-        DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
-        DateTime tenMinutesAfterNow = now.plusMinutes(10);
-        CallLogRequest validCallLogRequest = new CallLogRequest(746l, "unk001", "ssn001", UUID.randomUUID(), Collections.EMPTY_LIST, now.toString(), tenMinutesAfterNow.toString());
-        List<ValidationError> validationErrors = validCallLogRequest.validate();
-        assertThat(validationErrors.size(), Is.is(1));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_CALL_LOG_CONTENT)));
-    }
-
-    @Test
     public void shouldReturnErrorsForMissingIdsOnly() {
         Long nullCallerId = null;
         String blankSessionId = null;

@@ -64,7 +64,7 @@
     </bean>
 
     <bean id="encryptorFactory" class="org.motechproject.whp.mtraining.mail.EncryptorFactory">
-        <constructor-arg name="propertiesFileName" value="/Users/sroy/mtraining.properties"/>
+        <constructor-arg name="propertiesFileName" value="mtraining.properties"/>
         <constructor-arg name="key" value="whp.key.source"/>
     </bean>
 
