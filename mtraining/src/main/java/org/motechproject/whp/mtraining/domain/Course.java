@@ -34,7 +34,7 @@ public class Course extends CourseContent implements CourseContentHolder {
     }
 
     public Course(CourseDto courseDto) {
-        this(courseDto.getName(), courseDto.getContentId(), courseDto.getVersion(), courseDto.getDescription(), courseDto.getExternalId(), courseDto.getCreatedBy(), courseDto.getCreatedOn(),
+        this(courseDto.getName(), courseDto.getContentId(), courseDto.getVersion(), courseDto.getDescription(), courseDto.getExternalContentId(), courseDto.getCreatedBy(), courseDto.getCreatedOn(),
                 mapToModules(courseDto.getModules()), courseDto.isActive());
     }
 

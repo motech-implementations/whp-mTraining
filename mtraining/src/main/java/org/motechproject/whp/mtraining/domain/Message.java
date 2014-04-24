@@ -24,7 +24,7 @@ public class Message extends CourseContent {
     }
 
     public Message(MessageDto messageDto) {
-        this(messageDto.getName(), messageDto.getContentId(), messageDto.getVersion(), messageDto.getDescription(), messageDto.getExternalId(), messageDto.getCreatedBy(), messageDto.getCreatedOn(), messageDto.isActive());
+        this(messageDto.getName(), messageDto.getContentId(), messageDto.getVersion(), messageDto.getDescription(), messageDto.getExternalContentId(), messageDto.getCreatedBy(), messageDto.getCreatedOn(), messageDto.isActive());
     }
 
     public String getExternalId() {

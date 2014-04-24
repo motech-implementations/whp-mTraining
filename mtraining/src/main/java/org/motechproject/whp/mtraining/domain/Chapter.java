@@ -39,7 +39,7 @@ public class Chapter extends CourseContent implements CourseContentHolder {
     }
 
     public Chapter(ChapterDto chapterDto) {
-        this(chapterDto.getName(), chapterDto.getContentId(), chapterDto.getVersion(), chapterDto.getDescription(), chapterDto.getExternalId(), chapterDto.getCreatedBy(), chapterDto.getCreatedOn(),
+        this(chapterDto.getName(), chapterDto.getContentId(), chapterDto.getVersion(), chapterDto.getDescription(), chapterDto.getExternalContentId(), chapterDto.getCreatedBy(), chapterDto.getCreatedOn(),
                 mapToMessages(chapterDto.getMessages()),
                 mapToQuiz(chapterDto.getQuiz()),
                 chapterDto.isActive());

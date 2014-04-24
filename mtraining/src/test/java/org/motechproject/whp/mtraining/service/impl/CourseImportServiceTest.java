@@ -140,7 +140,7 @@ public class CourseImportServiceTest {
     private void assertMessageDetailss(MessageDto messageDto, String expectedName, String expectedDescription, String expectedFileName, boolean expectedStatus) {
         assertEquals(expectedName, messageDto.getName());
         assertEquals(expectedDescription, messageDto.getDescription());
-        assertEquals(expectedFileName, messageDto.getExternalId());
+        assertEquals(expectedFileName, messageDto.getExternalContentId());
         assertEquals(expectedStatus, messageDto.isActive());
     }
 

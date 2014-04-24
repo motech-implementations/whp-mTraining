@@ -45,7 +45,7 @@ public class Question extends CourseContent {
     }
 
     public Question(QuestionDto questionDto) {
-        this(questionDto.getName(), questionDto.getContentId(), questionDto.getVersion(), questionDto.getDescription(), questionDto.getExternalId(), questionDto.getCreatedBy(), questionDto.getCreatedOn(),
+        this(questionDto.getName(), questionDto.getContentId(), questionDto.getVersion(), questionDto.getDescription(), questionDto.getExternalContentId(), questionDto.getCreatedBy(), questionDto.getCreatedOn(),
                 questionDto.getOptions(),
                 mapToAnswer(questionDto.getAnswer()),
                 questionDto.isActive());

@@ -67,7 +67,7 @@ public class QuizReporter {
         if (error != null)
             return new BasicResponse(quizReportRequest.getCallerId(), quizReportRequest.getSessionId(), quizReportRequest.getUniqueId(), statusFor(error.getErrorCode()));
         try {
-            quizResult = quizService.getResult(toQuizAnswerSheetDto(remediId, quizReportRequest));
+            quizResult = quizService.gradeQuiz(toQuizAnswerSheetDto(remediId, quizReportRequest));
             logQuizResult(remediId, quizReportRequest, quizResult);
         } catch (InvalidQuestionException ex) {
             return new BasicResponse(quizReportRequest.getCallerId(), quizReportRequest.getSessionId(), quizReportRequest.getUniqueId(), ResponseStatus.INVALID_QUESTION);

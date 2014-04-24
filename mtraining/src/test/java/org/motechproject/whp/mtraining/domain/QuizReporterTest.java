@@ -112,7 +112,7 @@ public class QuizReporterTest {
                 courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
         QuestionAttempt questionAttempt = new QuestionAttempt(quizAttempt, questionId, 1, "a;b", "c", true, false, false);
         BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, courseContentIdentifier, DateTime.now());
-        when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+        when(quizService.gradeQuiz(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
         EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
         when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(courseProgressDto);
@@ -145,7 +145,7 @@ public class QuizReporterTest {
                 courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
         QuestionAttempt questionAttempt = new QuestionAttempt(quizAttempt, questionId, 1, "a;b", "c", true, false, false);
         BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, null, null, null, courseContentIdentifier, DateTime.now());
-        when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+        when(quizService.gradeQuiz(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
         when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING));
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
@@ -176,7 +176,7 @@ public class QuizReporterTest {
                 chapterContentIdentifier.getContentId(), chapterContentIdentifier.getVersion(), courseContentIdentifier.getContentId(),
                 courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
         QuestionAttempt questionAttempt = new QuestionAttempt(quizAttempt, questionId, 1, "a;b", "c", true, false, false);
-        when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+        when(quizService.gradeQuiz(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
         when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(courseProgressDto);
 
@@ -208,7 +208,7 @@ public class QuizReporterTest {
                 chapterContentIdentifier.getContentId(), chapterContentIdentifier.getVersion(), courseContentIdentifier.getContentId(),
                 courseContentIdentifier.getVersion(), null, null, true, 100.0, false);
         QuestionAttempt questionAttempt = new QuestionAttempt(quizAttempt, questionId, 1, "a;b", "c", true, false, false);
-        when(quizService.getResult(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
+        when(quizService.gradeQuiz(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
 
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
@@ -232,7 +232,7 @@ public class QuizReporterTest {
         QuizReportRequest quizReportRequest = new QuizReportRequest(1L, "someId", "sessionId", courseContentIdentifier,
                 moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, false);
 
-        doThrow(new InvalidQuizException(UUID.randomUUID())).when(quizService).getResult(quizAnswerSheetDtoArgumentCaptor.capture());
+        doThrow(new InvalidQuizException(UUID.randomUUID())).when(quizService).gradeQuiz(quizAnswerSheetDtoArgumentCaptor.capture());
 
         MotechResponse response = quizReporter.processAndLogQuiz("remediId", quizReportRequest);
         assertEquals(ResponseStatus.QUIZ_NOT_FOUND.getCode(), response.getResponseCode());
@@ -246,7 +246,7 @@ public class QuizReporterTest {
         QuizReportRequest quizReportRequest = new QuizReportRequest(1L, "someId", "sessionId", courseContentIdentifier,
                 moduleContentIdentifier, chapterContentIdentifier, quizContentIdentifier, questionRequests, startTime, endTime, false);
 
-        doThrow(new InvalidQuestionException(UUID.randomUUID(), UUID.randomUUID())).when(quizService).getResult(quizAnswerSheetDtoArgumentCaptor.capture());
+        doThrow(new InvalidQuestionException(UUID.randomUUID(), UUID.randomUUID())).when(quizService).gradeQuiz(quizAnswerSheetDtoArgumentCaptor.capture());
 
         MotechResponse response = quizReporter.processAndLogQuiz("remediId", quizReportRequest);
         assertEquals(ResponseStatus.INVALID_QUESTION.getCode(), response.getResponseCode());
