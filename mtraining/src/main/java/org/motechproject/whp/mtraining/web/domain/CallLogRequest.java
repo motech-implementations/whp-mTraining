@@ -33,10 +33,6 @@ public class CallLogRequest extends IVRRequest {
         this.callEndTime = callEndTime;
     }
 
-    public List<CallLogRecord> getCallLogRecords() {
-        return callLogRecords;
-    }
-
     public List<ValidationError> validate() {
         List<ValidationError> validationErrors = super.validate();
 
@@ -68,6 +64,10 @@ public class CallLogRequest extends IVRRequest {
             }
         }
         return validationErrors;
+    }
+
+    public List<CallLogRecord> getCallLogRecords() {
+        return callLogRecords;
     }
 
     public UUID getCourseId() {
