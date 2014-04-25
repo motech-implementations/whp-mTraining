@@ -23,10 +23,8 @@ public class ProviderImportService {
     }
 
     public void importProviders(List<ProviderCsvRequest> providerCsvRequests) {
-        if (isNotEmpty(providers.all()))
-            throw new RuntimeException("Providers already exist in the database");
         for (ProviderCsvRequest providerCsvRequest : providerCsvRequests) {
-            providers.add(createProvider(providerCsvRequest));
+            providers.addOrUpdate(createProvider(providerCsvRequest));
         }
     }
 

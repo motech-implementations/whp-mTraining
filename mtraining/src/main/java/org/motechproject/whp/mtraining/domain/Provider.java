@@ -68,4 +68,24 @@ public class Provider {
     public Location getLocation() {
         return location;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCallerId(Long callerId) {
+        this.callerId = callerId;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setProviderStatus(String providerStatus) {
+        this.providerStatus = providerStatus;
+    }
+
+    public void setRemediId(String remediId) {
+        this.remediId = remediId;
+    }
 }

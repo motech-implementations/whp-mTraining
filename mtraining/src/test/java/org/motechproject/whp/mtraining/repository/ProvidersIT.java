@@ -33,12 +33,29 @@ public class ProvidersIT {
         assertThat(providers.getByCallerId(callerId), IsNull.nullValue());
         Provider provider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
 
-        providers.add(provider);
+        providers.addOrUpdate(provider);
 
         Provider savedProvider = providers.getByCallerId(callerId);
         assertThat(savedProvider, IsNull.notNullValue());
         assertThat(savedProvider.getCallerId(), Is.is(callerId));
     }
+
+    @Test
+    public void shouldUpdateAndRetrieveAProvider() {
+        long callerId = 7657667L;
+        Provider oldProvider = new Provider("remediId", callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        providers.add(oldProvider);
+
+        Provider newProvider = new Provider("remediIdNew", callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        providers.addOrUpdate(newProvider);
+
+        Provider savedProvider = providers.getByCallerId(callerId);
+        assertThat(savedProvider, IsNull.notNullValue());
+        assertThat(savedProvider.getCallerId(), Is.is(callerId));
+        assertThat(savedProvider.getRemediId(), Is.is("remediIdNew"));
+    }
+
+
 
     @After
     public void after() {
