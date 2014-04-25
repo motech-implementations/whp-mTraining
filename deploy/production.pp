@@ -48,13 +48,19 @@ $couchdbClusterPort = 8181
 $couchdbPrimaryIp = "192.168.42.51"
 $couchdbSecondaryIp = "192.168.42.52"
 
+## CouchDB Authentication setup. Add an unencrpted password here or a couchdb pre-hashed password in the form '-hashed-439caa2d8d8240e6bb089e4d2fab5d706575fbe6,acd17db4ae20583a376a1f8086f0841f'
+## Set requireCouchAuth true only if you want to disable unauhenticated access.
+$couchdbUser = "user"
+$couchdbPassword = "password"
+$requireCouchAuth = "false"
+
 ## CouchDb-Lucene
 $couchDbURL = "http://localhost:5984/"
 $couchdbLuceneVersion = "0.9.0-SNAPSHOT"
 
 ## Postgres
 $postgresUser = "postgres"
-$postgresTimeZone = "UTC"
+
 
 ## **************************************************************************************
 ## To generate password hash use [[echo "password" | openssl passwd -1 -stdin] OR [echo "password" | openssl passwd -1 -stdin | sed 's/\$/\\\$/g']]
@@ -67,14 +73,43 @@ $postgresTimeZone = "UTC"
 ## $motechPassword = '$1$IW4OvlrH$Kui/55oif8W3VZIrnX6jL1'
 ## **************************************************************************************
 
-$postgresPassword = "\$1\$RMKdhrMV\$9N5AExEDLC5sG.T4NxH.J/"
+$postgresUserPassword = '$1$PVBSWp2F$NqIMInkmxh2b9hN7cNgwb1'
+
+
+## **************************************************************************************
+## You may give an md5-encrypted or unencrypted password here.
+## To generate md5 password, run the following on tour terminal.
+##
+## USER=...
+## PASS=...
+## MD5=`echo $PASS$USER | md5sum | cut -d' ' -f1`
+## echo "md5$MD5"
+## Please ensure md5 encrypted password is preceded by 'md5'
+## **************************************************************************************
+
+$postgresDBPassword = 'md532e12f215ba27cb750c9e093ce4b5127'
+
+$postgresTimeZone = "UTC"
 $postgresMachine = "master" ## [master | slave]
 $postgresMaster = "127.0.0.1"
 $postgresSlave = "127.0.0.1"
-$changeDefaultEncodingToUTF8 = true
+$changeDefaultEncodingToUTF8 = false
+## ***************************************************************************************
+## After setting up postgresql on both master and slave, the following command is needed to be executed on the master.
+##
+##      psql --username=$POSTGRES_SYSTEM_USER -c "select pg_start_backup('backup_start');"
+##      rsync -cva --inplace --exclude=*.conf --exclude=*pg_xlog* $MASTER_DATA_FOLDER $SLAVE_POSTGRES_SYSTEM_USER@$SLAVE_IP_ADDRESS:$SLAVE_DATA_FOLDER
+##      psql --username=$POSTGRES_SYSTEM_USER -c "select pg_stop_backup();"
+##
+## ****************************************************************************************
+##      Also add the password in the $SLAVE_DATA_FOLDER/recovery.conf in the line :
+##
+##         primary_conninfo = 'host=master_IP_address port=5432 user=user password=yourpassword'
+##
+
 
 # postgres version used for repmgr as well
-$postgresVersion = "9.3"
+$postgresMajorVersion = "9.3"
 $pgPackVersion="93" ##used to ensure that postgres packs like postgresql91-contrib are present [91|93, default is 91]
 # Rep Manager version
 $repmgrVersion = "1.2.0"
@@ -205,8 +240,8 @@ $antVersion = "1.8.2"
 
 class { users : userName => "${motechUser}", password => "${motechPassword}" }
 # class { keepalived : machine_type => "${machine_type}", check_services_script_path => "${check_services_script_path}", interface => "${interface}", priority => "${priority}", virtual_ipaddress => "${virtual_ipaddress}" }
-class { couchdb : couchdbPackageName => "${couchdbPackageName}", couchReplicationSourceMachine => "${couchReplicationSourceMachine}", couchDbs => "${couchDbs}", couchInstallationMode => "${couchInstallationMode}", couchVersion => "${couchVersion}", couchDatabaseDir => "${couchDatabaseDir}", couchBindAddress => "${couchBindAddress}" }
-class { postgres : postgresUser => "${postgresUser}", postgresPassword => "${postgresPassword}", postgresMachine => "${postgresMachine}", postgresMaster => "${postgresMaster}", postgresSlave => "${postgresSlave}", os => "${os}", wordsize => "${word}", changeDefaultEncodingToUTF8 => "${changeDefaultEncodingToUTF8}" ,postgresTimeZone => "${postgresTimeZone}" }
+class { couchdb : couchdbPackageName => "${couchdbPackageName}", couchReplicationSourceMachine => "${couchReplicationSourceMachine}", couchDbs => "${couchDbs}", couchInstallationMode => "${couchInstallationMode}", couchVersion => "${couchVersion}", couchDatabaseDir => "${couchDatabaseDir}", couchBindAddress => "${couchBindAddress}", couchdbUser =>"${couchdbUser}", couchdbPassword => "${couchdbPassword}", requireAuth => "${requireCouchAuth}" }
+class { postgres : postgresUser => "${postgresUser}", postgresUserPassword => "${postgresUserPassword}", postgresDBPassword => "${postgresDBPassword}", postgresMachine => "${postgresMachine}", postgresMaster => "${postgresMaster}", postgresSlave => "${postgresSlave}", os => "${os}", wordsize => "${word}", changeDefaultEncodingToUTF8 => "${changeDefaultEncodingToUTF8}" ,postgresTimeZone => "${postgresTimeZone}",pgPackVersion => "${pgPackVersion}",postgresMajorVersion => "${postgresMajorVersion}" }
 class { databackup : couchDbBackupLink => "${couchDbBackupLink}", postgresBackupLink => "${postgresBackupLink}", dataBackupDir => "${dataBackupDir}", machineType => "${machineType}" }
 class { activemq : version => "${activemqVersion}", activemqMachine => "${activemqMachine}", activemqMasterHost => "${activemqMasterHost}", activemqMasterPort => "${activemqMasterPort}", activemqDataDir => "${activemqDataDir}", memoryLimit => "${activemqMemoryLimit}" }
 # class { iptables : admin_access_ips => "${admin_access_ips}", ssh_allowed_ips => "${ssh_allowed_ips}", tcp_ports_open => "${tcp_ports_open}", ssh_port => "${ssh_port}" }
@@ -217,7 +252,7 @@ class { tomcat : version => "${tomcatVersion}", userName => "${motechUser}", tom
 class { couchdblucene : version => "${couchdbLuceneVersion}" }
 # class { repmgr : postgresVersion => "${postgresVersion}", repmgrVersion => "${repmgrVersion}" }
 # class { scripts : urlOfScriptsJar => "your project scripts jar" }
-class { nagios : nagios_config_url => "${nagios_config_url}", nagios_objects_path => "${nagios_objects_path}", nagios_plugins_path => "${nagios_plugins_path}", host_file_path => "${host_file_path}" }
+# class { nagios : nagios_config_url => "${nagios_config_url}", nagios_objects_path => "${nagios_objects_path}", nagios_plugins_path => "${nagios_plugins_path}", host_file_path => "${host_file_path}" }
 # class { faketime : javaHome => "path/to/java/home" , sunBootLibraryPath => "sun.boot.library.path"}
 # class { phantomjs }
 # class { maven: version => "${mavenVersion}" }
