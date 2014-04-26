@@ -149,12 +149,12 @@ public class BookmarkController {
     }
 
     private EnrolleeCourseProgressDto getEnrolleeCourseProgress(String externalId) {
-        EnrolleeCourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
+        CoursePublicationAttempt latestCoursePublicationAttempt = allCoursePublicationAttempts.getLastSuccessfulCoursePublicationAttempt();
+        if(latestCoursePublicationAttempt == null)
+            return null;
+        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(latestCoursePublicationAttempt.getCourseId(), latestCoursePublicationAttempt.getVersion());
+        EnrolleeCourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId, contentIdentifierDto.getContentId());
         if (enrolleeCourseProgressDto == null) {
-            CoursePublicationAttempt latestCoursePublicationAttempt = allCoursePublicationAttempts.getLastSuccessfulCoursePublicationAttempt();
-            if(latestCoursePublicationAttempt == null)
-                return null;
-            ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(latestCoursePublicationAttempt.getCourseId(), latestCoursePublicationAttempt.getVersion());
             try{
             enrolleeCourseProgressDto = courseProgressService.getInitialCourseProgressForEnrollee(externalId, contentIdentifierDto);
             }catch (CourseNotFoundException ex){

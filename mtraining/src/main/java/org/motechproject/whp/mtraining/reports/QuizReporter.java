@@ -125,7 +125,7 @@ public class QuizReporter {
         ContentIdentifierDto chapterDto = quizReportRequest.getChapterDto();
         if (quizReportRequest.IsIncompleteAttempt()) {
             BookmarkDto bookmarkForQuizOfAChapter = bookmarkService.getBookmarkForQuizOfAChapter(remediId, courseDto, moduleDto, chapterDto);
-            courseProgressForEnrollee = getEnrolleeCourseProgress(remediId);
+            courseProgressForEnrollee = getEnrolleeCourseProgress(remediId, quizReportRequest.getCourseDto().getContentId());
             courseProgressForEnrollee.setBookmarkDto(bookmarkForQuizOfAChapter);
             courseProgressService.addOrUpdateCourseProgress(courseProgressForEnrollee);
             LOGGER.info("Quiz Result Request posted with an incomplete attempt. Hence Adding/Updating Course Progress.");
@@ -138,7 +138,7 @@ public class QuizReporter {
                 LOGGER.info("Quiz Result Request posted with a passed attempt on last quiz of course. Hence marking Course Progress as complete.");
                 return;
             }
-            courseProgressForEnrollee = getEnrolleeCourseProgress(remediId);
+            courseProgressForEnrollee = getEnrolleeCourseProgress(remediId, quizReportRequest.getCourseDto().getContentId());
             courseProgressForEnrollee.setBookmarkDto(nextBookmark);
             courseProgressService.addOrUpdateCourseProgress(courseProgressForEnrollee);
             LOGGER.info("Quiz Result Request posted with a passed attempt. Hence setting to next Bookmark in Course Progress.");
@@ -149,8 +149,8 @@ public class QuizReporter {
 
     }
 
-    private EnrolleeCourseProgressDto getEnrolleeCourseProgress(String externalId) {
-        EnrolleeCourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId);
+    private EnrolleeCourseProgressDto getEnrolleeCourseProgress(String externalId, UUID courseContentId) {
+        EnrolleeCourseProgressDto enrolleeCourseProgressDto = courseProgressService.getCourseProgressForEnrollee(externalId, courseContentId);
         if (enrolleeCourseProgressDto == null) {
             // In Scenarios where A Quiz Report is posted before any bookmark post. We need to create a new Course Progress for the Enrollee.
             // Also a situation may arise where a Quiz Report may be posted by the IVR but the post may not be followed by the corresponding Bookmark post.

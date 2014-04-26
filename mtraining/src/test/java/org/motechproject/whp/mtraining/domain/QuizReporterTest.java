@@ -115,7 +115,7 @@ public class QuizReporterTest {
         when(quizService.gradeQuiz(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
         EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
-        when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(courseProgressDto);
+        when(courseProgressService.getCourseProgressForEnrollee("remediId", quizReportRequest.getCourseDto().getContentId())).thenReturn(courseProgressDto);
 
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
@@ -147,7 +147,7 @@ public class QuizReporterTest {
         BookmarkDto nextBookmark = new BookmarkDto("remediId", courseContentIdentifier, null, null, null, courseContentIdentifier, DateTime.now());
         when(quizService.gradeQuiz(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         when(bookmarkService.getNextBookmark(anyString(), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class), any(ContentIdentifierDto.class))).thenReturn(nextBookmark);
-        when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING));
+        when(courseProgressService.getCourseProgressForEnrollee("remediId", UUID.randomUUID())).thenReturn(new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING));
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
         assertTrue(response.getPassed());
@@ -178,7 +178,7 @@ public class QuizReporterTest {
         QuestionAttempt questionAttempt = new QuestionAttempt(quizAttempt, questionId, 1, "a;b", "c", true, false, false);
         when(quizService.gradeQuiz(any(QuizAnswerSheetDto.class))).thenReturn(quizResultSheetDto);
         EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("someId", DateTime.now(), null, CourseStatus.ONGOING);
-        when(courseProgressService.getCourseProgressForEnrollee("remediId")).thenReturn(courseProgressDto);
+        when(courseProgressService.getCourseProgressForEnrollee("remediId", quizReportRequest.getCourseDto().getContentId())).thenReturn(courseProgressDto);
 
         QuizReportResponse response = (QuizReportResponse) quizReporter.processAndLogQuiz("remediId", quizReportRequest);
 
