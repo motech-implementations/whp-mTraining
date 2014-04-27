@@ -2,11 +2,16 @@ package org.motechproject.whp.mtraining.csv.validator;
 
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.request.ProviderCsvRequest;
+import org.motechproject.whp.mtraining.domain.Provider;
+import org.motechproject.whp.mtraining.repository.Providers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -15,6 +20,14 @@ import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.from;
 
 @Component
 public class ProviderStructureValidator {
+
+
+    private Providers providers;
+
+    @Autowired
+    public ProviderStructureValidator(Providers providers) {
+        this.providers = providers;
+    }
 
     public List<CsvImportError> validate(List<ProviderCsvRequest> providerCsvRequests) {
         ArrayList<CsvImportError> errors = new ArrayList<>();
@@ -38,7 +51,27 @@ public class ProviderStructureValidator {
                 errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "State is blank for Remedi Id: " + remediId + "."));
 
         }
+        validateFromDB(providerCsvRequests, errors);
         return errors;
+    }
+
+    private void validateFromDB(List<ProviderCsvRequest> providerCsvRequests, ArrayList<CsvImportError> errors) {
+        List<Provider> allProvidersFromDB = providers.all();
+
+        Map<String, Long> providersMap = new HashMap<>();
+        for (Provider provider : allProvidersFromDB) {
+            providersMap.put(provider.getRemediId(), provider.getCallerId());
+        }
+
+        for (ProviderCsvRequest providerCsvRequest : providerCsvRequests) {
+            Long callerIdForCurrentProvider = providersMap.get(providerCsvRequest.getRemedi_id());
+            if (callerIdForCurrentProvider != null) {
+                if (!callerIdForCurrentProvider.equals(Long.valueOf(providerCsvRequest.getPrimary_contact()))) {
+                    errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "Database has a different contact number: "+callerIdForCurrentProvider+" for Remedi Id: " + providerCsvRequest.getRemedi_id() + "."));
+                }
+            }
+        }
+
     }
 
     private void validatePrimaryContactNumber(ArrayList<CsvImportError> errors, ProviderCsvRequest providerCsvRequest, Set<String> contactNumbers) {

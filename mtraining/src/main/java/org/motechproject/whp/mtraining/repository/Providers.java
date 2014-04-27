@@ -8,12 +8,10 @@ import javax.jdo.PersistenceManager;
 @Repository
 public class Providers extends RepositorySupport<Provider> {
 
-
     @Transactional
     public Provider getByCallerId(Long callerId) {
         return filterByField("callerId", Long.class, callerId);
     }
-
 
     public Class getType() {
         return Provider.class;
@@ -21,12 +19,17 @@ public class Providers extends RepositorySupport<Provider> {
 
     @Transactional
     public void addOrUpdate(Provider provider) {
-        Provider providerFromDb = getByCallerId(provider.getCallerId());
+        Provider providerFromDb = getByRemediId(provider.getRemediId());
         if (providerFromDb != null) {
             update(providerFromDb.getId(), provider);
         } else {
             add(provider);
         }
+    }
+
+    @Transactional
+    public Provider getByRemediId(String remediId) {
+        return filterByField("remediId", String.class, remediId);
     }
 
     @Transactional
@@ -38,7 +41,7 @@ public class Providers extends RepositorySupport<Provider> {
     }
 
     private void updateValues(Provider oldProvider, Provider newProvider) {
-        oldProvider.setRemediId(newProvider.getRemediId());
+        oldProvider.setCallerId(newProvider.getCallerId());
         oldProvider.setLocation(newProvider.getLocation());
         oldProvider.setProviderStatus(newProvider.getProviderStatus());
     }
