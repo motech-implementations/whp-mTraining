@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
  * The main purpose of the <code>ServiceAspect</code> class is change class loader for
  * current thread while methods inside service classes are executed. After performing
  * a service method, the old class loader is restored to current thread.
+ * Class loader change is required so that dataNucleus framework has visibility into all the required jars
  *
  * @see org.aspectj.lang.annotation.Aspect
  * @see org.motechproject.whp.mtraining.repository.RepositorySupport
@@ -23,7 +24,6 @@ public class ServiceAspect {
     public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
         checkTarget(joinPoint.getTarget());
         ClassLoader webAppClassLoader = Thread.currentThread().getContextClassLoader();
-        System.out.println(joinPoint.toLongString());
         try {
             Thread.currentThread().setContextClassLoader(PersistenceClassLoader.INSTANCE);
 
