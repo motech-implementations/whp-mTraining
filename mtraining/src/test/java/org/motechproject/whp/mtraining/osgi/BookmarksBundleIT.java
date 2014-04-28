@@ -95,18 +95,16 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);
 
-
         ModuleDto moduleDto = course002.firstActiveModule();
         BookmarkDto bookmarkDto = new BookmarkDto("remediId1", course002.toContentIdentifierDto(), moduleDto.toContentIdentifierDto(), moduleDto.findFirstActiveChapter().toContentIdentifierDto(), moduleDto.findFirstActiveChapter().findFirstActiveMessage().toContentIdentifierDto(), null, DateTime.now());
         EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("remediId1", DateTime.now(), bookmarkDto, CourseStatus.ONGOING);
         courseProgressService.addOrUpdateCourseProgress(courseProgressDto);
-
     }
+
 
     private ContentIdentifierDto createCourse(final String courseName) {
         return courseService.addOrUpdateCourse(new CourseDTOBuilder().withName(courseName).build());
     }
-
 
     public void testThatStatusURLDoesIsAvailableWithoutAuthentication() throws IOException, InterruptedException {
         HttpResponse response = httpClient.get(String.format("http://localhost:%s/mtraining/web-api/status", TestContext.getJettyPort()));

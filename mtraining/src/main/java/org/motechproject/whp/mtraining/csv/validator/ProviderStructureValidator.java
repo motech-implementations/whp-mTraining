@@ -51,23 +51,23 @@ public class ProviderStructureValidator {
                 errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "State is blank for Remedi Id: " + remediId + "."));
 
         }
-        validateFromDB(providerCsvRequests, errors);
+        if (errors.isEmpty())
+            validateFromDB(providerCsvRequests, errors);
         return errors;
     }
 
     private void validateFromDB(List<ProviderCsvRequest> providerCsvRequests, ArrayList<CsvImportError> errors) {
         List<Provider> allProvidersFromDB = providers.all();
 
-        Map<String, Long> providersMap = new HashMap<>();
+        Map<Long, String> providersMap = new HashMap<>();
         for (Provider provider : allProvidersFromDB) {
-            providersMap.put(provider.getRemediId(), provider.getCallerId());
+            providersMap.put(provider.getCallerId(), provider.getRemediId());
         }
-
         for (ProviderCsvRequest providerCsvRequest : providerCsvRequests) {
-            Long callerIdForCurrentProvider = providersMap.get(providerCsvRequest.getRemedi_id());
-            if (callerIdForCurrentProvider != null) {
-                if (!callerIdForCurrentProvider.equals(Long.valueOf(providerCsvRequest.getPrimary_contact()))) {
-                    errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "Database has a different contact number: "+callerIdForCurrentProvider+" for Remedi Id: " + providerCsvRequest.getRemedi_id() + "."));
+            String remediIdForCurrentProvider = providersMap.get(Long.valueOf(providerCsvRequest.getPrimary_contact()));
+            if (remediIdForCurrentProvider != null) {
+                if (!remediIdForCurrentProvider.equals(providerCsvRequest.getRemedi_id())) {
+                    errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "Database contains the given contact number associated with Remedi Id: " + remediIdForCurrentProvider + "."));
                 }
             }
         }

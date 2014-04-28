@@ -152,8 +152,19 @@ public class ProviderStructureValidatorTest {
 
         List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest));
 
+        assertEquals(0, errors.size());
+
+    }
+
+    @Test
+    public void shouldVerifyForSameContactNumberForDifferentRemediId() {
+        ProviderCsvRequest providerCsvRequest = new ProviderCsvRequest("RemediX", "1234567890", "working provider", "state", "block", "district");
+        when(providers.all()).thenReturn(asList(new Provider("RemediY", 1234567890L, ProviderStatus.NOT_WORKING_PROVIDER,new Location("state2","block2","district2"))));
+
+        List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest));
+
         assertEquals(1, errors.size());
-        assertEquals("Database has a different contact number: 1234567891 for Remedi Id: RemediX.", errors.get(0).getMessage());
+        assertEquals("Database contains the given contact number associated with Remedi Id: RemediY.", errors.get(0).getMessage());
     }
 
     @Test
