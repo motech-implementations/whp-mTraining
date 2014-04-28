@@ -1,7 +1,5 @@
 package org.motechproject.whp.mtraining.osgi;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
@@ -46,6 +44,7 @@ import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.NOT_WORKING_PROVIDER;
@@ -89,7 +88,8 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         assertNotNull(courseProgressService);
 
 
-        course002 = courseService.getCourse(createCourseIfNotExists("CS002"));
+        String courseName = String.format("CS002-%s", UUID.randomUUID());
+        course002 = courseService.getCourse(createCourse(courseName));
         courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(course002.getName(), 60, new LocationDto("block", "district", "state")));
 
         removeAllProviders();
@@ -103,19 +103,8 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     }
 
-    private ContentIdentifierDto createCourseIfNotExists(final String courseName) {
-        List<CourseDto> allCourses = courseService.getAllCourses();
-        CourseDto cs002 = (CourseDto) CollectionUtils.find(allCourses, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                CourseDto course = (CourseDto) object;
-                return courseName.equalsIgnoreCase(course.getName());
-            }
-        });
-        if (cs002 == null) {
-            return courseService.addOrUpdateCourse(new CourseDTOBuilder().withName("CS002").build());
-        }
-        return new ContentIdentifierDto(cs002.getContentId(), cs002.getVersion());
+    private ContentIdentifierDto createCourse(final String courseName) {
+        return courseService.addOrUpdateCourse(new CourseDTOBuilder().withName(courseName).build());
     }
 
 
