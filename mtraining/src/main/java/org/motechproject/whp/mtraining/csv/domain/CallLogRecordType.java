@@ -7,7 +7,8 @@ public enum CallLogRecordType {
     MODULE(COURSE),
     CHAPTER(MODULE),
     MESSAGE(CHAPTER),
-    QUESTION(CHAPTER);
+    QUESTION(CHAPTER),
+    QUIZ(CHAPTER);
 
     private CallLogRecordType parent;
 

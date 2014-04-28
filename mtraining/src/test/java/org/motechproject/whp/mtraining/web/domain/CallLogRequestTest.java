@@ -46,18 +46,6 @@ public class CallLogRequestTest {
     }
 
     @Test
-    public void shouldReturnErrorsForMissingDate() {
-        DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
-
-        CallLogRequest callLogRequest = new CallLogRequest(12234l, "UniqueId", "sessionId",
-                UUID.randomUUID(), Collections.<CallLogRecord>emptyList(), now.toString(), null);
-        List<ValidationError> validationErrors = callLogRequest.validate();
-        assertThat(validationErrors.size(), Is.is(1));
-        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_TIME)));
-    }
-
-
-    @Test
     public void shouldReturnErrorsForInvalidDate() {
         DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
 
@@ -66,6 +54,17 @@ public class CallLogRequestTest {
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(1));
         assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME)));
+    }
+
+    @Test
+    public void shouldReturnErrorsIfBothCallStartTimeAndCallEndTimeIsNull() {
+        CallLogRequest callLogRequest = new CallLogRequest(12234l, "UniqueId", "sessionId",
+                UUID.randomUUID(), Collections.<CallLogRecord>emptyList(), null, null);
+
+        List<ValidationError> validationErrors = callLogRequest.validate();
+
+        assertThat(validationErrors.size(), Is.is(1));
+        assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_TIME)));
     }
 
 
