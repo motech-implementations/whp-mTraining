@@ -41,8 +41,8 @@ public class IVRGateway {
             LOGGER.info(String.format("Publishing Course to IVR Course name %s and version %s", course.getName(),
                     course.getVersion()));
             String courseToPublish = toJson(course);
-            LOGGER.debug("Publishing course ...");
-            LOGGER.debug(courseToPublish);
+            LOGGER.info("Publishing course ...");
+            LOGGER.info(courseToPublish);
             HttpResponse response = webClient.post(getIVRUrl(), courseToPublish, getHeaders());
             StatusLine statusLine = response.getStatusLine();
             LOGGER.info(String.format("Course publish response status : %s", statusLine.getStatusCode()));
