@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.motechproject.mtraining.util.ISODateTimeUtil.parse;
+import static org.motechproject.whp.mtraining.util.ISODateTimeUtil.parse;
 import static org.motechproject.whp.mtraining.csv.domain.CallLogRecordType.from;
+import static org.motechproject.whp.mtraining.util.ISODateTimeUtil.parse;
 
 @Component
 public class CallLogReporter {

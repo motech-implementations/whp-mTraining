@@ -6,16 +6,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.motechproject.mtraining.dto.BookmarkDto;
-import org.motechproject.mtraining.dto.ChapterDto;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.dto.QuizDto;
-import org.motechproject.mtraining.service.BookmarkService;
-import org.motechproject.mtraining.service.CourseService;
-import org.motechproject.mtraining.service.QuizService;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.dto.BookmarkDto;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.whp.mtraining.dto.CourseDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
+import org.motechproject.whp.mtraining.service.BookmarkService;
+import org.motechproject.whp.mtraining.service.CourseService;
+import org.motechproject.whp.mtraining.service.QuizService;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
 import org.motechproject.whp.mtraining.CourseDTOBuilder;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.motechproject.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
+import static org.motechproject.whp.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
 
 

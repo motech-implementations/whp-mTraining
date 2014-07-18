@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -20,9 +20,8 @@ public class CoursePublicationAttempt {
     private Long id;
 
     @Persistent(column = "course_id")
-    private UUID courseId;
-    @Persistent
-    private Integer version;
+    private Long courseId;
+
     @Persistent(column = "published_to_ivr")
     private boolean publishedToIvr;
 
@@ -31,9 +30,8 @@ public class CoursePublicationAttempt {
     private DateTime publishAttemptedOn;
 
 
-    public CoursePublicationAttempt(UUID courseId, Integer version, boolean publishedToIvr) {
+    public CoursePublicationAttempt(Long courseId,boolean publishedToIvr) {
         this.courseId = courseId;
-        this.version = version;
         this.publishedToIvr = publishedToIvr;
         this.publishAttemptedOn = ISODateTimeUtil.nowInTimeZoneUTC();
     }
@@ -47,7 +45,6 @@ public class CoursePublicationAttempt {
 
         if (publishedToIvr != coursePublicationAttempt.publishedToIvr) return false;
         if (courseId != null ? !courseId.equals(coursePublicationAttempt.courseId) : coursePublicationAttempt.courseId != null) return false;
-        if (version != null ? !version.equals(coursePublicationAttempt.version) : coursePublicationAttempt.version != null) return false;
         return true;
     }
 
@@ -55,17 +52,12 @@ public class CoursePublicationAttempt {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (courseId != null ? courseId.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (publishedToIvr ? 1 : 0);
         return result;
     }
 
-    public UUID getCourseId() {
+    public Long getCourseId() {
         return courseId;
-    }
-
-    public Integer getVersion() {
-        return version;
     }
 
     public boolean isPublishedToIvr() {

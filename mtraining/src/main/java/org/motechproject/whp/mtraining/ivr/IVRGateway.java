@@ -6,7 +6,7 @@ import org.apache.http.StatusLine;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.WebClient;
-import org.motechproject.whp.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.exception.MTrainingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +38,7 @@ public class IVRGateway {
 
     public IVRResponse postCourse(Course course) {
         try {
-            LOGGER.info(String.format("Publishing Course to IVR Course name %s and version %s", course.getName(),
-                    course.getVersion()));
+            LOGGER.info(String.format("Publishing Course to IVR Course name %s and version %s", course.getName()));
             String courseToPublish = toJson(course);
             LOGGER.info("Publishing course ...");
             LOGGER.info(courseToPublish);

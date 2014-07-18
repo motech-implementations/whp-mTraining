@@ -3,9 +3,9 @@ package org.motechproject.whp.mtraining.reports.domain;
 import org.hamcrest.core.Is;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.motechproject.mtraining.dto.BookmarkDto;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.dto.BookmarkDto;
+import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import java.util.UUID;
 

@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.web.domain;
 import org.hamcrest.core.Is;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
 
 import java.util.List;

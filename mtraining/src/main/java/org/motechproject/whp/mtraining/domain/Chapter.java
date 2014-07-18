@@ -1,9 +1,9 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.dto.ChapterDto;
-import org.motechproject.mtraining.dto.MessageDto;
-import org.motechproject.mtraining.dto.QuizDto;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.MessageDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
 
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.Element;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @PersistenceCapable(table = "chapter", identityType = IdentityType.APPLICATION)
-public class Chapter extends CourseContent implements CourseContentHolder {
+public class Chapter extends CourseContent {
 
     @Element(column = "chapter_id")
     @Order(column = "message_order")
@@ -60,7 +60,9 @@ public class Chapter extends CourseContent implements CourseContentHolder {
         if (quizDto == null) {
             return null;
         }
-        return new Quiz(quizDto);
+        // todo
+        return new Quiz(quizDto.isActive(), quizDto.getName(), quizDto.getExternalContentId(), null,
+                quizDto.getNoOfQuestionsToBePlayed(), quizDto.getPassPercentage(), quizDto.getCreatedBy());
     }
 
     public void setQuiz(Quiz quiz) {
@@ -81,14 +83,5 @@ public class Chapter extends CourseContent implements CourseContentHolder {
 
     public String getDescription() {
         return description;
-    }
-
-    public void removeInactiveContent() {
-        filter(messages);
-        if (quiz != null && quiz.isActive()) {
-            quiz.removeInactiveContent();
-            return;
-        }
-        quiz = null;
     }
 }

@@ -3,8 +3,8 @@ package org.motechproject.whp.mtraining.domain;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.Test;
-import org.motechproject.mtraining.dto.AnswerDto;
-import org.motechproject.mtraining.dto.QuestionDto;
+import org.motechproject.whp.mtraining.dto.AnswerDto;
+import org.motechproject.whp.mtraining.dto.QuestionDto;
 
 import java.util.Arrays;
 import java.util.Collections;

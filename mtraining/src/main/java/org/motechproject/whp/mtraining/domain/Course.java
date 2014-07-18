@@ -1,8 +1,8 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.CourseDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
 
 import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdentityType;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @PersistenceCapable(table = "course", identityType = IdentityType.APPLICATION, detachable = "true")
-public class Course extends CourseContent implements CourseContentHolder {
+public class Course extends CourseContent {
 
     @Element(column = "course_id")
     @Order(column = "module_order")
@@ -61,11 +61,4 @@ public class Course extends CourseContent implements CourseContentHolder {
         return externalId;
     }
 
-    @Override
-    public void removeInactiveContent() {
-        filter(modules);
-        for (Module module : modules) {
-            module.removeInactiveContent();
-        }
-    }
 }

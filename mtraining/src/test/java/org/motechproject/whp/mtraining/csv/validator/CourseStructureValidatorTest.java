@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.service.CourseService;
+import org.motechproject.whp.mtraining.dto.CourseDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.service.CourseService;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 
@@ -27,13 +27,13 @@ public class CourseStructureValidatorTest {
     @Mock
     private CourseService courseService;
 
-    private CourseStructureValidator courseStructureValidator;
+    private CourseCsvStructureValidator courseStructureValidator;
     private List<CourseCsvRequest> courseStructureCsvs;
     private List<CsvImportError> errors;
 
     @Before
     public void setUp() throws Exception {
-        courseStructureValidator = new CourseStructureValidator(courseService);
+        courseStructureValidator = new CourseCsvStructureValidator(courseService);
         courseStructureCsvs = new ArrayList<>();
         courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Course", "Active", null, "Message Description", "filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Module TB Symptoms", "Module", "Active", "Basic TB Symptoms", "Message Description", "filename"));

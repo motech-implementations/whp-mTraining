@@ -19,7 +19,7 @@ import static org.apache.commons.collections.CollectionUtils.find;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
-public abstract class CourseContent {
+public abstract class CourseContent extends Content {
 
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
     @PrimaryKey
@@ -82,7 +82,7 @@ public abstract class CourseContent {
         return null;
     }
 
-    public static <T extends CourseContent> Object findContentByContentId(List<T> contents, final UUID contentId) {
+    public static <T extends CourseContent> Object findCourseContentByContentId(List<T> contents, final UUID contentId) {
         return find(contents, new Predicate() {
             @Override
             public boolean evaluate(Object o) {

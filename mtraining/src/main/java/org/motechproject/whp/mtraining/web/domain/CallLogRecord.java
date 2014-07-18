@@ -2,7 +2,7 @@ package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
 
 import java.util.ArrayList;

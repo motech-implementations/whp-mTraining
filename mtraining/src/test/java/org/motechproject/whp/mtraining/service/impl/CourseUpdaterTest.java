@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.service.CourseService;
+import org.motechproject.whp.mtraining.dto.CourseDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.service.CourseService;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.service.CourseService;
-import org.motechproject.mtraining.service.QuizService;
+import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.whp.mtraining.service.CourseService;
+import org.motechproject.whp.mtraining.service.QuizService;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
@@ -34,7 +34,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.motechproject.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
+import static org.motechproject.whp.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QuizControllerTest {

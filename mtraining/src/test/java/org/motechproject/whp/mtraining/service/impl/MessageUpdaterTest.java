@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mtraining.dto.MessageDto;
-import org.motechproject.mtraining.service.MessageService;
+import org.motechproject.whp.mtraining.dto.MessageDto;
+import org.motechproject.whp.mtraining.service.MessageService;
 
 import java.util.ArrayList;
 import java.util.List;

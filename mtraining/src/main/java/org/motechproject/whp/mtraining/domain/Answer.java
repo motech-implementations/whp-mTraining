@@ -1,6 +1,6 @@
 package org.motechproject.whp.mtraining.domain;
 
-import org.motechproject.mtraining.dto.AnswerDto;
+import org.motechproject.whp.mtraining.dto.AnswerDto;
 
 import javax.jdo.annotations.EmbeddedOnly;
 import javax.jdo.annotations.PersistenceCapable;
@@ -30,6 +30,9 @@ public class Answer {
     }
 
     public String getExternalId() {
+        return externalId;
+    }
+    public String getExternalContentId() {
         return externalId;
     }
 }

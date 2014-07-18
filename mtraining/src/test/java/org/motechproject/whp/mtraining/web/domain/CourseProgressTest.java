@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.junit.Test;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.BookmarkBuilder;
 
 import static junit.framework.Assert.assertTrue;

@@ -3,8 +3,8 @@ package org.motechproject.whp.mtraining.csv.validator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
-import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.service.CourseService;
+import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.slf4j.Logger;
@@ -28,16 +28,16 @@ import static org.motechproject.whp.mtraining.csv.domain.CallLogRecordType.QUEST
 import static org.motechproject.whp.mtraining.csv.domain.CallLogRecordType.from;
 
 @Component
-public class CourseStructureValidator {
-    private Logger logger = LoggerFactory.getLogger(CourseStructureValidator.class);
+public class CourseCsvStructureValidator {
+    private Logger logger = LoggerFactory.getLogger(CourseCsvStructureValidator.class);
     private String ACTIVE_STATUS = "active";
     private String INACTIVE_STATUS = "inactive";
     private String BLANK_STATUS = "";
 
-    private CourseService courseService;
+    private MTrainingService courseService;
 
     @Autowired
-    public CourseStructureValidator(CourseService courseService) {
+    public CourseCsvStructureValidator(MTrainingService courseService) {
         this.courseService = courseService;
     }
 
@@ -231,7 +231,7 @@ public class CourseStructureValidator {
     }
 
     private boolean isInValidCourseName(String nodeName, List<CsvImportError> errors) {
-        List<CourseDto> existingCourses = courseService.getAllCourses();
+        List<Course> existingCourses = courseService.getCourseByName(nodeName);
         if (existingCourses.isEmpty() || equalsIgnoreCase(existingCourses.get(0).getName(), nodeName))
             return false;
         CsvImportError error = new CsvImportError(String.format("Course: %s already exists in database. You cannot import a new course.", existingCourses.get(0).getName()));

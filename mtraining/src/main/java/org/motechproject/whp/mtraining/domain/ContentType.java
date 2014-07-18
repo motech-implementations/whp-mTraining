@@ -1,13 +1,13 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.apache.commons.lang.StringUtils;
-import org.motechproject.mtraining.dto.AnswerDto;
-import org.motechproject.mtraining.dto.ChapterDto;
-import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.MessageDto;
-import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.dto.QuestionDto;
-import org.motechproject.mtraining.dto.QuizDto;
+import org.motechproject.whp.mtraining.dto.AnswerDto;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.CourseDto;
+import org.motechproject.whp.mtraining.dto.MessageDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.QuestionDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
 
 import java.util.ArrayList;
 import java.util.List;

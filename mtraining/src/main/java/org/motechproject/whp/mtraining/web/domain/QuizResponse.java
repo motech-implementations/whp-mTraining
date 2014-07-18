@@ -1,6 +1,6 @@
 package org.motechproject.whp.mtraining.web.domain;
 
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
 
 import java.util.List;
 

@@ -31,12 +31,12 @@ public class CourseAdmin {
         this.properties = settingsFacade.asProperties();
     }
 
-    public void notifyCoursePublished(String courseName, Integer version) {
-        emailService.send(new Mail(fromAddress(), toAddress(), format(SUCCESS_SUBJECT_FORMAT, courseName, version), format(SUCCESS_SUBJECT_FORMAT, courseName, version)));
+    public void notifyCoursePublished(String courseName) {
+        emailService.send(new Mail(fromAddress(), toAddress(), format(SUCCESS_SUBJECT_FORMAT, courseName), format(SUCCESS_SUBJECT_FORMAT, courseName)));
     }
 
-    public void notifyCoursePublishFailure(String courseName, Integer version, IVRResponse ivrResponse) {
-        emailService.send(new Mail(fromAddress(), toAddress(), format(FAILURE_SUBJECT_FORMAT, courseName, version), format(FAILURE_MESSAGE_FORMAT, courseName, version, ivrResponse.getResponseCode(), ivrResponse.getResponseMessage())));
+    public void notifyCoursePublishFailure(String courseName, IVRResponse ivrResponse) {
+        emailService.send(new Mail(fromAddress(), toAddress(), format(FAILURE_SUBJECT_FORMAT, courseName), format(FAILURE_MESSAGE_FORMAT, courseName, ivrResponse.getResponseCode(), ivrResponse.getResponseMessage())));
     }
 
     private String toAddress() {

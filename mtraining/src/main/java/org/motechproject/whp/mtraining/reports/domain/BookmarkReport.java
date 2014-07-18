@@ -1,9 +1,9 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.dto.BookmarkDto;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.dto.BookmarkDto;
+import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import javax.jdo.annotations.EmbeddedOnly;
 import javax.jdo.annotations.PersistenceCapable;

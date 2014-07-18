@@ -1,9 +1,9 @@
 package org.motechproject.whp.mtraining;
 
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.dto.BookmarkDto;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.dto.BookmarkDto;
+import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
 
 import java.util.UUID;

@@ -14,7 +14,7 @@
         ">
 
     <context:annotation-config/>
-    <context:component-scan base-package="org.motechproject.whp.mtraining"/>
+    <context:component-scan base-package="org.motechproject.whp.mtraining, org.motechproject.mtraining"/>
     <mvc:annotation-driven/>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -28,11 +28,9 @@
                 <value>classpath:mtraining.properties</value>
             </list>
         </property>
-        <property name="configurationService" ref="configurationService"/>
     </bean>
 
 
-    <bean id="header" class="org.motechproject.osgi.web.Header"/>
 
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
         <constructor-arg name="url" value="../mtraining/index.html"/>
@@ -47,7 +45,6 @@
                 <entry key="messages" value="../admin/messages/"/>
             </map>
         </constructor-arg>
-        <constructor-arg name="header" ref="header"/>
     </bean>
 
     <bean id="persistenceManagerFactoryBean" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean">

@@ -1,8 +1,8 @@
 package org.motechproject.whp.mtraining.service.impl;
 
 import org.junit.Test;
-import org.motechproject.mtraining.dto.ChapterDto;
-import org.motechproject.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
 
 import java.util.Collections;
 import java.util.List;

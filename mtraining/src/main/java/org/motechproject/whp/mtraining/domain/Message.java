@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.dto.MessageDto;
+import org.motechproject.whp.mtraining.dto.MessageDto;
 
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;

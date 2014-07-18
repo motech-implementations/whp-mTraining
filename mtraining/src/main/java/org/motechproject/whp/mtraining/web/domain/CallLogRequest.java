@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
 import java.util.UUID;

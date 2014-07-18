@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining;
 
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.domain.Answer;
 import org.motechproject.whp.mtraining.domain.Chapter;
 import org.motechproject.whp.mtraining.domain.Course;
