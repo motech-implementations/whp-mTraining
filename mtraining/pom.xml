@@ -9,7 +9,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <motech.version>0.22</motech.version>
+        <motech.version>0.24-SNAPSHOT</motech.version>
         <yui.compress.dir>${project.build.directory}/yui-compress/</yui.compress.dir>
         <postgres.host>localhost</postgres.host>
         <postgres.port>5432</postgres.port>
@@ -48,8 +48,8 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
-            <artifactId>platform-mtraining</artifactId>
-            <version>0.22.1-SNAPSHOT</version>
+            <artifactId>mtraining</artifactId>
+            <version>0.24-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -156,11 +156,11 @@
         </dependency>
 
 
-        <!--<dependency>-->
-        <!--<groupId>javax.time</groupId>-->
-        <!--<artifactId>org.motechproject.javax.time</artifactId>-->
-        <!--<version>0.6.3-${external.dependency.release.tag}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>javax.time</groupId>
+            <artifactId>org.motechproject.javax.time</artifactId>
+            <version>0.6.3-${external.dependency.release.tag}</version>
+        </dependency>
 
 
         <!-- ORM dependencies end -->
@@ -172,7 +172,7 @@
         <dependency>
             <groupId>org.datanucleus</groupId>
             <artifactId>datanucleus-rdbms</artifactId>
-            <version>3.2.6</version>
+            <version>3.2.12</version>
         </dependency>
 
 
@@ -344,6 +344,7 @@
                         </goals>
                         <configuration>
                             <includeScope>runtime</includeScope>
+                            <excludeArtifactIds>org.apache.felix.framework</excludeArtifactIds>
                             <overWriteIfNewer>true</overWriteIfNewer>
                             <outputDirectory>
                                 ${user.home}/.motech/bundles
