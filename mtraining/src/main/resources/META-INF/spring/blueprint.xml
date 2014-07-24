@@ -26,8 +26,14 @@
     <osgi:service id="providerServiceOsgi" ref="providerService"
                   interface="org.motechproject.whp.mtraining.service.ProviderService" />
 
+    <osgi:service id="courseConfigurationServiceOsgi" ref="courseConfigurationService"
+                  interface="org.motechproject.whp.mtraining.service.CourseConfigurationService" />
+
     <osgi:reference id="providerDataService"
                     interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
+
+    <osgi:reference id="courseConfigurationDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CourseConfigurationDataService" />
 
 
     <!--Mail Configuration-->

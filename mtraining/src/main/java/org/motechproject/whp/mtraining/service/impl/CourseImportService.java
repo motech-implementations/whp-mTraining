@@ -1,15 +1,15 @@
 package org.motechproject.whp.mtraining.service.impl;
 
-import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.whp.mtraining.dto.CourseConfigurationDto;
+import org.motechproject.whp.mtraining.domain.CourseConfiguration;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.mtraining.domain.Course;
-import org.motechproject.whp.mtraining.dto.LocationDto;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.security.model.UserDto;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.domain.Content;
 import org.motechproject.whp.mtraining.csv.request.CourseConfigurationRequest;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
+import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.Integer.valueOf;
-import static java.util.Arrays.asList;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Service
@@ -28,15 +27,14 @@ public class CourseImportService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CourseImportService.class);
 
-    private MTrainingService courseService;
-    private MotechUserService motechUserService;
+    @Autowired
+    private MTrainingService mTrainingService;
 
     @Autowired
-    public CourseImportService(MTrainingService courseService, MotechUserService motechUserService) {
-        this.courseService = courseService;
-        this.motechUserService = motechUserService;
-    }
+    private CourseConfigurationService courseConfigurationService;
 
+    @Autowired
+    private MotechUserService motechUserService;
 
     public Course importCourse(List<CourseCsvRequest> requests) {
         Map<String, Content> contentMap = formContents(requests, contentAuthor());
@@ -44,13 +42,18 @@ public class CourseImportService {
         Content courseContent = contentMap.get(requests.get(0).getNodeName());
         Course course = (Course) courseContent.toDto();
 
-        return courseService.updateCourse(course);
+        return mTrainingService.updateCourse(course);
     }
 
     public void importCourseConfig(List<CourseConfigurationRequest> requests) {
         for (CourseConfigurationRequest request : requests) {
-            //courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(request.getCourseName(),
-            //        valueOf(request.getCourseDurationInDays()), new LocationDto(request.getBlock(), request.getDistrict(), request.getState())));
+            CourseConfiguration courseConfiguration = new CourseConfiguration(request.getCourseName(),
+                   valueOf(request.getCourseDurationInDays()), new Location(request.getBlock(), request.getDistrict(), request.getState()));
+            if (courseConfigurationService.getCourseConfigurationById(courseConfiguration.getId()) == null) {
+                courseConfigurationService.createCourseConfiguration(courseConfiguration);
+            } else {
+                courseConfigurationService.updateCourseConfiguration(courseConfiguration);
+            }
         }
     }
 

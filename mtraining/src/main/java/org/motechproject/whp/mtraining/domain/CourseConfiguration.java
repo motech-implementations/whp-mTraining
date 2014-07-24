@@ -1,4 +1,7 @@
-package org.motechproject.whp.mtraining.dto;
+package org.motechproject.whp.mtraining.domain;
+
+import org.motechproject.mds.annotations.Entity;
+import org.motechproject.mtraining.domain.MdsEntity;
 
 /**
  * Contract object representing a CourseConfiguration.
@@ -7,15 +10,19 @@ package org.motechproject.whp.mtraining.dto;
  * + location : the region for which the course is configured
  */
 
-public class CourseConfigurationDto {
-    private String courseName;
-    private Integer courseDuration;
-    private LocationDto location;
+@Entity
+public class CourseConfiguration extends MdsEntity {
 
-    public CourseConfigurationDto() {
+    private String courseName;
+
+    private Integer courseDuration;
+
+    private Location location;
+
+    public CourseConfiguration() {
     }
 
-    public CourseConfigurationDto(String courseName, Integer courseDuration, LocationDto location) {
+    public CourseConfiguration(String courseName, Integer courseDuration, Location location) {
         this.courseName = courseName;
         this.courseDuration = courseDuration;
         this.location = location;
@@ -29,7 +36,7 @@ public class CourseConfigurationDto {
         return courseDuration;
     }
 
-    public LocationDto getLocation() {
+    public Location getLocation() {
         return location;
     }
 }
