@@ -1,8 +1,7 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
 import org.joda.time.DateTime;
-import org.motechproject.whp.mtraining.dto.BookmarkDto;
-import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.domain.Bookmark;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import javax.jdo.annotations.EmbeddedOnly;
@@ -41,13 +40,13 @@ public class BookmarkReport {
     @Temporal(TemporalType.TIMESTAMP)
     private DateTime dateModified;
 
-    public BookmarkReport(BookmarkDto bookmark) {
-        setCourse(bookmark.getCourse());
-        setModule(bookmark.getModule());
-        setChapter(bookmark.getChapter());
-        setMessage(bookmark.getMessage());
-        setQuiz(bookmark.getQuiz());
-        dateModified = ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified());
+    public BookmarkReport(Bookmark bookmark) {
+//        setCourse(bookmark.getCourse());
+//        setModule(bookmark.getModule());
+//        setChapter(bookmark.getChapter());
+//        setMessage(bookmark.getMessage());
+//        setQuiz(bookmark.getQuiz());
+//        dateModified = ISODateTimeUtil.parseWithTimeZoneUTC(bookmark.getDateModified());
     }
 
     public UUID getCourseId() {
@@ -74,43 +73,43 @@ public class BookmarkReport {
         return quizVersion;
     }
 
-    private void setMessage(ContentIdentifierDto message) {
-        if (message == null) {
-            this.messageId = null;
-            this.messageVersion = null;
-        } else {
-            this.messageId = message.getContentId();
-            this.messageVersion = message.getVersion();
-        }
-    }
-
-    private void setChapter(ContentIdentifierDto chapter) {
-        this.chapterId = chapter.getContentId();
-        this.chapterVersion = chapter.getVersion();
-    }
-
-    private void setModule(ContentIdentifierDto module) {
-        this.moduleId = module.getContentId();
-        this.moduleVersion = module.getVersion();
-    }
-
-    private void setCourse(ContentIdentifierDto course) {
-        this.courseId = course.getContentId();
-        this.courseVersion = course.getVersion();
-    }
-
-    public boolean hasCourse(ContentIdentifierDto course) {
-        return this.courseId.equals(course.getContentId()) && this.courseVersion.equals(course.getVersion());
-    }
-
-    private void setQuiz(ContentIdentifierDto quiz) {
-        if (quiz == null) {
-            this.quizId = null;
-            this.quizVersion = null;
-        } else {
-            this.quizId = quiz.getContentId();
-            this.quizVersion = quiz.getVersion();
-        }
-    }
+//    private void setMessage(ContentIdentifierDto message) {
+//        if (message == null) {
+//            this.messageId = null;
+//            this.messageVersion = null;
+//        } else {
+//            this.messageId = message.getContentId();
+//            this.messageVersion = message.getVersion();
+//        }
+//    }
+//
+//    private void setChapter(ContentIdentifierDto chapter) {
+//        this.chapterId = chapter.getContentId();
+//        this.chapterVersion = chapter.getVersion();
+//    }
+//
+//    private void setModule(ContentIdentifierDto module) {
+//        this.moduleId = module.getContentId();
+//        this.moduleVersion = module.getVersion();
+//    }
+//
+//    private void setCourse(ContentIdentifierDto course) {
+//        this.courseId = course.getContentId();
+//        this.courseVersion = course.getVersion();
+//    }
+//
+//    public boolean hasCourse(ContentIdentifierDto course) {
+//        return this.courseId.equals(course.getContentId()) && this.courseVersion.equals(course.getVersion());
+//    }
+//
+//    private void setQuiz(ContentIdentifierDto quiz) {
+//        if (quiz == null) {
+//            this.quizId = null;
+//            this.quizVersion = null;
+//        } else {
+//            this.quizId = quiz.getContentId();
+//            this.quizVersion = quiz.getVersion();
+//        }
+//    }
 
 }

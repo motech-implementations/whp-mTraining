@@ -1,7 +1,5 @@
  package org.motechproject.whp.mtraining.csv.domain;
 
-import org.motechproject.whp.mtraining.domain.ContentType;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +8,6 @@ public class Content {
 
     private String name;
     private String contentAuthor;
-    private ContentType contentType;
     private boolean isActive;
     private String description;
     private String fileName;
@@ -27,7 +24,6 @@ public class Content {
                    String correctAnswerFileName, Double passPercentage, String contentAuthor) {
         this.name = name;
         this.passPercentage = passPercentage;
-        this.contentType = ContentType.from(contentType);
         this.isActive = !INACTIVE_STATUS.equalsIgnoreCase(status);
         this.description = description;
         this.fileName = fileName;
@@ -49,7 +45,8 @@ public class Content {
             Object childDto = childContent.toDto();
             childDtos.add(childDto);
         }
-        return contentType.toDto(name, description, fileName, isActive, numberOfQuizQuestions, options, correctAnswer, correctAnswerFileName, passPercentage, childDtos, contentAuthor);
+        //return contentType.toDto(name, description, fileName, isActive, numberOfQuizQuestions, options, correctAnswer, correctAnswerFileName, passPercentage, childDtos, contentAuthor);
+        return null;
     }
 
     public String getName() {

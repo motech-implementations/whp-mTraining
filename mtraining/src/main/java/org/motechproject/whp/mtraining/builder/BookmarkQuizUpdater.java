@@ -1,7 +1,6 @@
 package org.motechproject.whp.mtraining.builder;
 
-import org.motechproject.whp.mtraining.domain.Bookmark;
-import org.motechproject.whp.mtraining.dto.*;
+import org.motechproject.mtraining.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,34 +27,34 @@ public class BookmarkQuizUpdater {
      * 5) If no next active chapter is left in the module then build bookmark from next active module
      * 5) If no next active module is left in the course then build course completion bookmark
      * @param bookmark
-     * @param courseDto
-     * @param moduleDto
-     * @param chapterDto
+     * @param course
+     * @param chapter
      * @return
      */
-    public BookmarkDto update(Bookmark bookmark, CourseDto courseDto, ModuleDto moduleDto, ChapterDto chapterDto) {
-        QuizDto quiz = chapterDto.getQuiz();
-        String externalId = bookmark.getExternalId();
-
-        if (quiz == null) {
-            return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, chapterDto);
-        }
-
-        if (!quiz.isActive()) {
-            ChapterDto nextActiveChapterDto = moduleDto.getNextActiveChapterAfter(chapterDto.getContentId());
-            if (nextActiveChapterDto != null) {
-                return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, nextActiveChapterDto);
-            }
-
-            ModuleDto nextActiveModuleDto = courseDto.getNextActiveModuleAfter(moduleDto.getContentId());
-            if (nextActiveModuleDto != null) {
-                return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, nextActiveModuleDto);
-            }
-
-            return courseBookmarkBuilder.buildCourseCompletionBookmark(externalId, courseDto);
-        }
-
-        return courseBookmarkBuilder.buildBookmarkFrom(externalId, courseDto, moduleDto, chapterDto, quiz, bookmark.getDateModified());
+    public Bookmark update(Bookmark bookmark, Course course, Chapter chapter) {
+//        QuizDto quiz = chapterDto.getQuiz();
+//        String externalId = bookmark.getExternalId();
+//
+//        if (quiz == null) {
+//            return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, chapterDto);
+//        }
+//
+//        if (!quiz.isActive()) {
+//            ChapterDto nextActiveChapterDto = moduleDto.getNextActiveChapterAfter(chapterDto.getContentId());
+//            if (nextActiveChapterDto != null) {
+//                return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, nextActiveChapterDto);
+//            }
+//
+//            ModuleDto nextActiveModuleDto = courseDto.getNextActiveModuleAfter(moduleDto.getContentId());
+//            if (nextActiveModuleDto != null) {
+//                return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, nextActiveModuleDto);
+//            }
+//
+//            return courseBookmarkBuilder.buildCourseCompletionBookmark(externalId, courseDto);
+//        }
+//
+//        return courseBookmarkBuilder.buildBookmarkFrom(externalId, courseDto, moduleDto, chapterDto, quiz, bookmark.getDateModified());
+        return null;
     }
 
 }

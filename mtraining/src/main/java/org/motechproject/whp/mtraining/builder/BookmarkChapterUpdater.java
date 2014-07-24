@@ -1,10 +1,9 @@
 package org.motechproject.whp.mtraining.builder;
 
-import org.motechproject.whp.mtraining.domain.Bookmark;
-import org.motechproject.whp.mtraining.dto.BookmarkDto;
-import org.motechproject.whp.mtraining.dto.ChapterDto;
-import org.motechproject.whp.mtraining.dto.CourseDto;
-import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.mtraining.domain.Bookmark;
+import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.Chapter;
+import org.motechproject.mtraining.domain.CourseUnitState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,14 +17,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookmarkChapterUpdater {
     private BookmarkBuilder bookmarkBuilder;
-    private BookmarkMessageUpdater bookmarkMessageUpdater;
+    private BookmarkLessonUpdater bookmarkLessonUpdater;
     private BookmarkQuizUpdater bookmarkQuizUpdater;
 
     @Autowired
-    public BookmarkChapterUpdater(BookmarkBuilder bookmarkBuilder, BookmarkMessageUpdater bookmarkMessageUpdater,
+    public BookmarkChapterUpdater(BookmarkBuilder bookmarkBuilder, BookmarkLessonUpdater bookmarkLessonUpdater,
                                   BookmarkQuizUpdater bookmarkQuizUpdater) {
         this.bookmarkBuilder = bookmarkBuilder;
-        this.bookmarkMessageUpdater = bookmarkMessageUpdater;
+        this.bookmarkLessonUpdater = bookmarkLessonUpdater;
         this.bookmarkQuizUpdater = bookmarkQuizUpdater;
     }
 
@@ -39,38 +38,30 @@ public class BookmarkChapterUpdater {
      * 6) If bookmark is for quiz then update bookmark quiz
      * 7) If bookmark does not have either quiz or message then build bookmark from first active message/quiz of chapter
      * @param bookmark
-     * @param courseDto
-     * @param moduleDto
+     * @param course
      * @return
      */
-    public BookmarkDto update(Bookmark bookmark, CourseDto courseDto, ModuleDto moduleDto) {
-        ChapterDto chapterDto = moduleDto.getChapter(bookmark.getChapter().getContentId());
+    public Bookmark update(Bookmark bookmark, Course course) {
+        //Chapter chapter = course.getChapters(Integer.parseInt(bookmark.getChapterIdentifier());
+        Chapter chapter = course.getChapters().get(Integer.parseInt(bookmark.getChapterIdentifier()));
         String externalId = bookmark.getExternalId();
-        if (chapterDto == null) {
-            return bookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto);
+        if (chapter == null) {
+            return bookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, course);
         }
-        if (!chapterDto.isActive()) {
-            ChapterDto nextActiveChapterDto = moduleDto.getNextActiveChapterAfter(chapterDto.getContentId());
-            if (nextActiveChapterDto != null) {
-                return bookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, nextActiveChapterDto);
+        if (chapter.getState() == CourseUnitState.Active) {
+            Chapter nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
+            if (nextActiveChapter != null) {
+                return bookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, course, nextActiveChapter);
             }
-
-            ModuleDto nextActiveModuleDto = courseDto.getNextActiveModuleAfter(moduleDto.getContentId());
-            if (nextActiveModuleDto != null) {
-                return bookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, nextActiveModuleDto);
-            }
-
-            return bookmarkBuilder.buildCourseCompletionBookmark(externalId, courseDto);
-
+            return bookmarkBuilder.buildCourseCompletionBookmark(externalId, course);
         }
-        if (bookmark.isForMessage()) {
-            return bookmarkMessageUpdater.update(bookmark, courseDto, moduleDto, chapterDto);
-        }
-        if (bookmark.isForQuiz()) {
-            return bookmarkQuizUpdater.update(bookmark, courseDto, moduleDto, chapterDto);
-        }
-
-        return bookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, chapterDto);
-
+        //TODO Uncomment or remove
+        //if (bookmark.isForMessage()) {
+        //    return bookmarkLessonUpdater.update(bookmark, course, chapter);
+        //}
+        //if (bookmark.isForQuiz()) {
+        //    return bookmarkQuizUpdater.update(bookmark, course, chapter);
+        //}
+        return bookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, course, chapter);
     }
 }

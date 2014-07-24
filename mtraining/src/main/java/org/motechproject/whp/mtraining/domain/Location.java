@@ -7,16 +7,14 @@ import org.motechproject.mtraining.domain.MdsEntity;
 @Entity
 public class Location extends MdsEntity {
 
+    @Field
     private String block;
 
+    @Field
     private String district;
 
+    @Field
     private String state;
-
-
-    //For tests
-    public Location() {
-    }
 
     public Location(String block, String district, String state) {
         this.block = block;
@@ -27,7 +25,6 @@ public class Location extends MdsEntity {
     public Location(String state) {
         this.state = state;
     }
-
 
     public String getBlock() {
         return block;

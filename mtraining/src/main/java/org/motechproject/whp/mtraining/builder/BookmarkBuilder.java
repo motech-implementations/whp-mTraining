@@ -1,9 +1,11 @@
 package org.motechproject.whp.mtraining.builder;
 
 import org.joda.time.DateTime;
-import org.motechproject.whp.mtraining.dto.*;
+import org.motechproject.mtraining.domain.*;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * Factory class to create/modify a {@link org.motechproject.mtraining.dto.BookmarkDto} for an enrollee from a {@link org.motechproject.mtraining.dto.CourseDto}.
@@ -18,90 +20,64 @@ public class BookmarkBuilder {
 
 
     /**
-     * Build bookmark from the first active content of a course for the given parameter
+     * Build bookmark from the first active chapter of a course for the given parameter
      * @param externalId
-     * @param courseDto
+     * @param course
      * @return
      */
-    public BookmarkDto buildBookmarkFromFirstActiveContent(String externalId, CourseDto courseDto) {
-        ModuleDto moduleDto = courseDto.firstActiveModule();
-        return buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto);
+    public Bookmark buildBookmarkFromFirstActiveContent(String externalId, Course course) {
+        Chapter chapter = BuilderHelper.findFirstActive(course.getChapters());
+        return buildBookmarkFromFirstActiveContent(externalId, course, chapter);
     }
 
     /**
-     * Build bookmark for a given enrollee from the first active content of a module in a given course
+     * Build bookmark from the first active Lesson of a chapter in a given course
+     * If chapter does not have active lesson then try building  from  the chapter quiz
      * @param externalId
-     * @param courseDto
-     * @param moduleDto
+     * @param course
+     * @param chapter
      * @return
      */
-    public BookmarkDto buildBookmarkFromFirstActiveContent(String externalId, CourseDto courseDto, ModuleDto moduleDto) {
-        if (moduleDto == null) {
+    public Bookmark buildBookmarkFromFirstActiveContent(String externalId, Course course, Chapter chapter) {
+        if (chapter == null) {
             return null;
         }
-        return buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, moduleDto.findFirstActiveChapter());
-    }
-
-
-    /**
-     * Build bookmark from the first active message of a chapter in a given module,course
-     * If chapter does not have active message then try building  from  the chapter quiz
-     * @param externalId
-     * @param courseDto
-     * @param moduleDto
-     * @param chapterDto
-     * @return
-     */
-    public BookmarkDto buildBookmarkFromFirstActiveContent(String externalId, CourseDto courseDto, ModuleDto moduleDto, ChapterDto chapterDto) {
-        if (chapterDto == null) {
-            return null;
+        Lesson firstActiveLesson = BuilderHelper.findFirstActive(chapter.getLessons());
+        if (firstActiveLesson != null) {
+            return buildBookmarkFrom(externalId, course, chapter, firstActiveLesson);
         }
-        MessageDto firstActiveMessage = chapterDto.findFirstActiveMessage();
-        if (firstActiveMessage != null) {
-            return buildBookmarkFrom(externalId, courseDto, moduleDto, chapterDto, firstActiveMessage);
-        }
-        return buildBookmarkFrom(externalId, courseDto, moduleDto, chapterDto, chapterDto.getQuiz());
+        return buildBookmarkFrom(externalId, course, chapter, chapter.getQuiz());
     }
 
 
     /**
-     * Build bookmark from the provided message in a given chapter,module,course
+     * Build bookmark from the provided message in a given chapter,course
      * @param externalId
-     * @param courseDto
-     * @param moduleDto
-     * @param chapterDto
-     * @param messageDto
+     * @param course
+     * @param chapter
+     * @param lesson
      * @return
      */
-    public BookmarkDto buildBookmarkFrom(String externalId, CourseDto courseDto, ModuleDto moduleDto, ChapterDto chapterDto, MessageDto messageDto) {
-        if (messageDto == null) {
+    public Bookmark buildBookmarkFrom(String externalId, Course course, Chapter chapter, Lesson lesson) {
+        if (lesson == null) {
             return null;
         }
-        ContentIdentifierDto course = new ContentIdentifierDto(courseDto.getContentId(), courseDto.getVersion());
-        ContentIdentifierDto module = new ContentIdentifierDto(moduleDto.getContentId(), moduleDto.getVersion());
-        ContentIdentifierDto chapter = new ContentIdentifierDto(chapterDto.getContentId(), chapterDto.getVersion());
-        ContentIdentifierDto message = new ContentIdentifierDto(messageDto.getContentId(), messageDto.getVersion());
-        return new BookmarkDto(externalId, course, module, chapter, message, null, now());
+        return new Bookmark(externalId, Objects.toString(course.getId()), Objects.toString(chapter.getId()), Objects.toString(lesson.getId()), null);
     }
 
     /**
-     * Build bookmark from the provided quiz in a given chapter,module,course
+     * Build bookmark from the provided quiz in a given chapter,course
      * @param externalId
-     * @param courseDto
-     * @param moduleDto
-     * @param chapterDto
-     * @param quizDto
+     * @param course
+     * @param chapter
+     * @param quiz
      * @return
      */
-    public BookmarkDto buildBookmarkFrom(String externalId, CourseDto courseDto, ModuleDto moduleDto, ChapterDto chapterDto, QuizDto quizDto) {
-        if (quizDto == null) {
+    public Bookmark buildBookmarkFrom(String externalId, Course course, Chapter chapter, Quiz quiz) {
+        if (quiz == null) {
             return null;
         }
-        ContentIdentifierDto course = new ContentIdentifierDto(courseDto.getContentId(), courseDto.getVersion());
-        ContentIdentifierDto module = new ContentIdentifierDto(moduleDto.getContentId(), moduleDto.getVersion());
-        ContentIdentifierDto chapter = new ContentIdentifierDto(chapterDto.getContentId(), chapterDto.getVersion());
-        ContentIdentifierDto quiz = new ContentIdentifierDto(quizDto.getContentId(), quizDto.getVersion());
-        return new BookmarkDto(externalId, course, module, chapter, null, quiz, now());
+        return new Bookmark(externalId, Objects.toString(course.getId()), Objects.toString(chapter.getId()), quiz.getName(), null);
     }
 
 
@@ -109,11 +85,12 @@ public class BookmarkBuilder {
      * Build a bookmark that implies course completion
      * A course completed bookmark points only to the course with other values as null
      * @param externalId
-     * @param courseDto
+     * @param course
      * @return
      */
-    public BookmarkDto buildCourseCompletionBookmark(String externalId, CourseDto courseDto) {
-        return new BookmarkDto(externalId, courseDto.toContentIdentifierDto());
+    public Bookmark buildCourseCompletionBookmark(String externalId, Course course) {
+        return new Bookmark();
+        //return new Bookmark(externalId, course.toContentIdentifierDto());
     }
 
 
@@ -122,60 +99,46 @@ public class BookmarkBuilder {
      * if a course has both active message and quiz , then build bookmark from the quiz
      * otherwise build bookmark from the last active message
      * @param externalId
-     * @param courseDto
+     * @param course
      * @return
      */
-    public BookmarkDto buildBookmarkFromLastActiveContent(String externalId, CourseDto courseDto) {
-        ModuleDto lastActiveModule = courseDto.lastActiveModule();
-        ChapterDto lastActiveChapter = lastActiveModule.lastActiveChapter();
-        MessageDto lastActiveMessage = lastActiveChapter.lastActiveMessage();
-        if (lastActiveMessage != null) {
-            if (lastActiveChapter.hasActiveQuiz()) {
-                return buildBookmarkFrom(externalId, courseDto, lastActiveModule, lastActiveChapter, lastActiveChapter.getQuiz(), ISODateTimeUtil.nowInTimeZoneUTC());
-            }
-            return buildBookmarkFrom(externalId, courseDto, lastActiveModule, lastActiveChapter, lastActiveMessage, ISODateTimeUtil.nowInTimeZoneUTC());
+    public Bookmark buildBookmarkFromLastActiveContent(String externalId, Course course) {
+        Chapter lastActiveChapter = BuilderHelper.findLastActive(course.getChapters());
+        Lesson lastActiveLesson = BuilderHelper.findLastActive(lastActiveChapter.getLessons());
+        if (lastActiveLesson != null) {
+//            if (lastActiveChapter.hasActiveQuiz()) {
+                return buildBookmarkFrom(externalId, course, lastActiveChapter, lastActiveChapter.getQuiz(), ISODateTimeUtil.nowInTimeZoneUTC());
+//            }
+//            return buildBookmarkFrom(externalId, course, lastActiveChapter, lastActiveMessage, ISODateTimeUtil.nowInTimeZoneUTC());
         }
-        return buildBookmarkFrom(externalId, courseDto, lastActiveModule, lastActiveChapter, lastActiveChapter.getQuiz(), ISODateTimeUtil.nowInTimeZoneUTC());
+        return buildBookmarkFrom(externalId, course, lastActiveChapter, lastActiveChapter.getQuiz(), ISODateTimeUtil.nowInTimeZoneUTC());
     }
 
     /**
      * Builds a bookmark from the given params with quiz as null
      * @param externalId
-     * @param courseDto
-     * @param moduleDto
-     * @param chapterDto
-     * @param messageDto
+     * @param course
+     * @param chapter
+     * @param lesson
      * @param dateModified
      * @return
      */
-    public BookmarkDto buildBookmarkFrom(String externalId, CourseDto courseDto, ModuleDto moduleDto, ChapterDto chapterDto,
-                                         MessageDto messageDto, DateTime dateModified) {
-        return new BookmarkDto(externalId, courseDto.toContentIdentifierDto(),
-                moduleDto.toContentIdentifierDto(),
-                chapterDto.toContentIdentifierDto(),
-                messageDto.toContentIdentifierDto(), null, dateModified);
+    public Bookmark buildBookmarkFrom(String externalId, Course course, Chapter chapter, Lesson lesson, DateTime dateModified) {
+        //return new Bookmark(externalId, Objects.toString(course.getId()),Objects.toString(chapter.getId()),Objects.toString(lesson.getId()), dateModified);
+        return new Bookmark(externalId, Objects.toString(course.getId()), Objects.toString(chapter.getId()), Objects.toString(lesson.getId()), null);
     }
 
     /**
      * Builds a bookmark from the given params with message as null
      * @param externalId
-     * @param courseDto
-     * @param moduleDto
-     * @param chapterDto
-     * @param quizDto
+     * @param course
+     * @param chapter
+     * @param quiz
      * @param dateModified
      * @return
      */
-    public BookmarkDto buildBookmarkFrom(String externalId, CourseDto courseDto, ModuleDto moduleDto, ChapterDto chapterDto,
-                                         QuizDto quizDto, DateTime dateModified) {
-        return new BookmarkDto(externalId, courseDto.toContentIdentifierDto(),
-                moduleDto.toContentIdentifierDto(),
-                chapterDto.toContentIdentifierDto(),
-                null, quizDto.toContentIdentifierDto(), dateModified);
-    }
-
-
-    private DateTime now() {
-        return ISODateTimeUtil.nowInTimeZoneUTC();
+    public Bookmark buildBookmarkFrom(String externalId, Course course, Chapter chapter, Quiz quiz, DateTime dateModified) {
+        //return new Bookmark(externalId, Objects.toString(course.getId()),Objects.toString(chapter.getId()), quiz.getName(), dateModified);
+        return new Bookmark(externalId, Objects.toString(course.getId()), Objects.toString(chapter.getId()), quiz.getName(), null);
     }
 }

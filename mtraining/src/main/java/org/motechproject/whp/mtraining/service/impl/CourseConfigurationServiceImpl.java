@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.service.impl;
 
-import org.motechproject.whp.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.CourseConfiguration;
 import org.motechproject.whp.mtraining.repository.CourseConfigurationDataService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;

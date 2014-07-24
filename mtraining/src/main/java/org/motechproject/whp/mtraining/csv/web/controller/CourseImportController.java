@@ -1,7 +1,5 @@
 package org.motechproject.whp.mtraining.csv.web.controller;
 
-
-import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
 import org.motechproject.whp.mtraining.exception.CourseNotFoundException;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
