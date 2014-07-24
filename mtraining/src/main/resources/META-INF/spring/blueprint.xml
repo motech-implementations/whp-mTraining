@@ -19,6 +19,17 @@
 
     <osgi:reference id="mTrainingService" interface="org.motechproject.mtraining.service.MTrainingService" />
 
+    <osgi:reference id="bookmarkService" interface="org.motechproject.mtraining.service.BookmarkService" />
+
+    <osgi:reference id="activityService" interface="org.motechproject.mtraining.service.ActivityService" />
+
+    <osgi:service id="providerServiceOsgi" ref="providerService"
+                  interface="org.motechproject.whp.mtraining.service.ProviderService" />
+
+    <osgi:reference id="providerDataService"
+                    interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
+
+
     <!--Mail Configuration-->
 
     <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"

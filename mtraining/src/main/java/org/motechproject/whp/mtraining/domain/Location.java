@@ -1,20 +1,16 @@
 package org.motechproject.whp.mtraining.domain;
 
-import javax.jdo.annotations.EmbeddedOnly;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
+import org.motechproject.mds.annotations.Entity;
+import org.motechproject.mds.annotations.Field;
+import org.motechproject.mtraining.domain.MdsEntity;
 
-@PersistenceCapable
-@EmbeddedOnly
-public class Location {
+@Entity
+public class Location extends MdsEntity {
 
-    @Persistent
     private String block;
 
-    @Persistent
     private String district;
 
-    @Persistent
     private String state;
 
 

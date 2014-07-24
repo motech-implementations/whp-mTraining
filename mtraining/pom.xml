@@ -61,6 +61,12 @@
             <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
             <version>1.7_3</version>
         </dependency>
+        <!-- Repository -->
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-dataservices</artifactId>
+            <version>${motech.version}</version>
+        </dependency>
 
         <!--AspectJ AOP dependencies -->
 
@@ -307,6 +313,13 @@
                         <Context-Path>mtraining/web-api</Context-Path>
                         <Resource-Path>mtraining</Resource-Path>
                         <Blueprint-Enabled>true</Blueprint-Enabled>
+                        <Export-Package>
+                            org.motechproject.whp.mtraining.repository;version=${project.version},
+                            org.motechproject.whp.mtraining.domain;version=${project.version},
+                            org.motechproject.whp.mtraining.service;version=${project.version},
+                            org.motechproject.whp.mtraining.service.impl;version=${project.version},
+                            org.motechproject.whp.mtraining.web.domain;version=${project.version}
+                        </Export-Package>
                         <Import-Package>
                             org.motechproject.server.config;version=${motech.version},
                             org.motechproject.server.config.service;version=${motech.version},
@@ -457,30 +470,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.datanucleus</groupId>
-                <artifactId>datanucleus-maven-plugin</artifactId>
-                <version>3.3.0-release</version>
-                <configuration>
-                    <api>JDO</api>
-                    <verbose>true</verbose>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>enhance</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.datanucleus</groupId>
-                        <artifactId>datanucleus-core</artifactId>
-                        <version>3.2.12</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

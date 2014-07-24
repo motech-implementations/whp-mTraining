@@ -1,11 +1,13 @@
 package org.motechproject.whp.mtraining.service.impl;
 
 import org.motechproject.whp.mtraining.domain.Provider;
-import org.motechproject.whp.mtraining.repository.Providers;
+import org.motechproject.whp.mtraining.repository.ProviderDataService;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.isInvalid;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.NOT_WORKING_PROVIDER;
@@ -15,33 +17,51 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_
 @Service("providerService")
 public class ProviderServiceImpl implements ProviderService {
 
-    private Providers providers;
-
     @Autowired
-    public ProviderServiceImpl(Providers providers) {
-        this.providers = providers;
+    private ProviderDataService providerDataService;
+
+    @Override
+    public Provider createProvider(Provider provider) {
+        return providerDataService.create(provider);
     }
 
     @Override
-    public Long add(Provider provider) {
-        Provider savedProvider = providers.add(provider);
-        return savedProvider.getId();
+    public Provider updateProvider(Provider provider) {
+        return providerDataService.update(provider);
     }
 
     @Override
-    public boolean delete(Long providerId) {
-        return providers.delete(providerId);
+    public void deleteProvider(Provider provider) {
+        providerDataService.delete(provider);
     }
 
-    public Provider byCallerId(Long callerId) {
-        return providers.getByCallerId(callerId);
+    @Override
+    public Provider getProviderById(long id) {
+        return providerDataService.findProviderById(id);
+    }
+
+    @Override
+    public Provider getProviderByCallerId(Long callerId) {
+        List<Provider> providers = providerDataService.findProviderByCallerId(callerId);
+        return (providers.size() > 0) ? providers.get(0) : null;
+    }
+
+    @Override
+    public Provider getProviderByRemediId(String remediId) {
+        List<Provider> providers = providerDataService.findProviderByRemediId(remediId);
+        return (providers.size() > 0) ? providers.get(0) : null;
+    }
+
+    @Override
+    public List<Provider> getAllProviders() {
+        return providerDataService.retrieveAll();
     }
 
     public ResponseStatus validateProvider(Long callerId) {
-        Provider provider = byCallerId(callerId);
+        Provider provider = getProviderByCallerId(callerId);
         if (provider == null)
             return UNKNOWN_PROVIDER;
-        if (isInvalid(provider.getProviderStatus()))
+        if (isInvalid(provider.getProviderStatus().toString()))
             return NOT_WORKING_PROVIDER;
         return OK;
     }

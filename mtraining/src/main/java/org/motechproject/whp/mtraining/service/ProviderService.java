@@ -2,11 +2,21 @@ package org.motechproject.whp.mtraining.service;
 
 import org.motechproject.whp.mtraining.domain.Provider;
 
+import java.util.List;
+
 public interface ProviderService {
 
-    Long add(Provider provider);
+    Provider createProvider(Provider provider);
 
-    boolean delete(Long providerId);
+    Provider updateProvider(Provider provider);
 
-    Provider byCallerId(Long callerId);
+    void deleteProvider(Provider provider);
+
+    List<Provider> getAllProviders();
+
+    Provider getProviderById(long id);
+
+    Provider getProviderByCallerId(Long callerId);
+
+    Provider getProviderByRemediId(String remediId);
 }
