@@ -1,19 +1,18 @@
 package org.motechproject.whp.mtraining.ivr;
 
 import org.joda.time.DateTime;
+import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.CourseAdmin;
 import org.motechproject.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
-import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 public class CoursePublisher {
@@ -24,12 +23,12 @@ public class CoursePublisher {
     private MTrainingService courseService;
     private IVRGateway ivrGateway;
     private CourseAdmin courseAdmin;
-    private AllCoursePublicationAttempts allCoursePublicationStatus;
+    private CoursePublicationAttemptDataService allCoursePublicationStatus;
 
     private Integer numberOfAttempts = 1;
 
     @Autowired
-    public CoursePublisher(MTrainingService courseService, IVRGateway ivrGateway, CourseAdmin courseAdmin, AllCoursePublicationAttempts allCoursePublicationStatus) {
+    public CoursePublisher(MTrainingService courseService, IVRGateway ivrGateway, CourseAdmin courseAdmin, CoursePublicationAttemptDataService allCoursePublicationStatus) {
         this.courseService = courseService;
         this.ivrGateway = ivrGateway;
         this.courseAdmin = courseAdmin;
@@ -43,17 +42,17 @@ public class CoursePublisher {
         }
 
         Course course = courseService.getCourseById(courseId);
-//        if (!course.isActive()) {
-//            LOGGER.warn(String.format("[%s] Course with contentId %s and version %s inactive and hence not being published to IVR ", currentDateTime(), courseId));
-//            return;
-//        }
+        if (course.getState() != CourseUnitState.Active) {
+            LOGGER.warn(String.format("[%s] Course with contentId %s and version %s inactive and hence not being published to IVR ", currentDateTime(), courseId));
+            return;
+        }
 
         LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s , version %s ", numberOfAttempts, currentDateTime(), courseId));
 
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, currentDateTime(), course.getName(), courseId));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
-        allCoursePublicationStatus.add(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess()));
+        allCoursePublicationStatus.create(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess()));
 
 //        if (ivrResponse.isSuccess()) {
 //            courseService.publish(new ContentIdentifierDto());

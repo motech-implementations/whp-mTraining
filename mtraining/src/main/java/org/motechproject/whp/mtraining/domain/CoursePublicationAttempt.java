@@ -1,32 +1,23 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.joda.time.DateTime;
+import org.motechproject.mds.annotations.Entity;
+import org.motechproject.mds.annotations.Field;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.util.UUID;
-
-@PersistenceCapable(table = "course_publication_attempt", identityType = IdentityType.APPLICATION)
+@Entity
 public class CoursePublicationAttempt {
 
-    @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
-    @PrimaryKey
+    @Field
     private Long id;
 
-    @Persistent(column = "course_id")
+    @Field
     private Long courseId;
 
-    @Persistent(column = "published_to_ivr")
+    @Field
     private boolean publishedToIvr;
 
-    @Persistent(column = "publish_attempted_on")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Field
     private DateTime publishAttemptedOn;
 
 

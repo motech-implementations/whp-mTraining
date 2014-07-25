@@ -315,6 +315,8 @@
                         <Blueprint-Enabled>true</Blueprint-Enabled>
                         <Export-Package>
                             org.motechproject.whp.mtraining.repository;version=${project.version},
+			    org.motechproject.whp.mtraining.reports.domain;version=${project.version},
+			    org.motechproject.whp.mtraining.csv.domain;version=${project.version},
                             org.motechproject.whp.mtraining.domain;version=${project.version},
                             org.motechproject.whp.mtraining.service;version=${project.version},
                             org.motechproject.whp.mtraining.service.impl;version=${project.version},

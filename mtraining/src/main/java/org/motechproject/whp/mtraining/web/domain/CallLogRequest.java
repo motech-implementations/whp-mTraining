@@ -13,7 +13,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class CallLogRequest extends IVRRequest {
 
     @JsonProperty
-    private UUID courseId;
+    private Long courseId;
     @JsonProperty
     private String callStartTime;
     @JsonProperty
@@ -25,7 +25,7 @@ public class CallLogRequest extends IVRRequest {
     public CallLogRequest() {
     }
 
-    public CallLogRequest(Long callerId, String uniqueId, String sessionId, UUID courseId, List<CallLogRecord> callLogRecords, String callStartTime, String callEndTime) {
+    public CallLogRequest(Long callerId, String uniqueId, String sessionId, Long courseId, List<CallLogRecord> callLogRecords, String callStartTime, String callEndTime) {
         super(callerId, uniqueId, sessionId);
         this.courseId = courseId;
         this.callLogRecords = callLogRecords;
@@ -70,7 +70,7 @@ public class CallLogRequest extends IVRRequest {
         return callLogRecords;
     }
 
-    public UUID getCourseId() {
+    public Long getCourseId() {
         return courseId;
     }
 

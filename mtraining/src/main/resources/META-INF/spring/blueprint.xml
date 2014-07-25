@@ -29,12 +29,29 @@
     <osgi:service id="courseConfigurationServiceOsgi" ref="courseConfigurationService"
                   interface="org.motechproject.whp.mtraining.service.CourseConfigurationService" />
 
+    <osgi:service id="callDurationServiceOsgi" ref="callDurationService"
+                  interface="org.motechproject.whp.mtraining.service.CallDurationService" />
+
+    <osgi:service id="callLogServiceOsgi" ref="callLogService"
+                  interface="org.motechproject.whp.mtraining.service.CallLogService" />
+
+    <osgi:service id="coursePublicationAttemptServiceOsgi" ref="coursePublicationAttemptService"
+                  interface="org.motechproject.whp.mtraining.service.CoursePublicationAttemptService" />
+    
     <osgi:reference id="providerDataService"
                     interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
 
     <osgi:reference id="courseConfigurationDataService"
                     interface="org.motechproject.whp.mtraining.repository.CourseConfigurationDataService" />
 
+    <osgi:reference id="callDurationDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CallDurationDataService" />
+
+    <osgi:reference id="callLogDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CallLogDataService" />
+
+    <osgi:reference id="coursePublicationAttemptDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService" />
 
     <!--Mail Configuration-->
 
