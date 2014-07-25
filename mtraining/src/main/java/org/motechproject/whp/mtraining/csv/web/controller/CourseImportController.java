@@ -51,7 +51,7 @@ public class CourseImportController {
                 return failure(errors);
             }
             Course importedCourseIdentifier = courseImportService.importCourse(courseCsvRequests);
-            return CsvImportResponse.success(format("Course: %s with version %s has been imported successfully",
+            return CsvImportResponse.success(format("Course: %s has been imported successfully",
                     importedCourseIdentifier.getId()));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
