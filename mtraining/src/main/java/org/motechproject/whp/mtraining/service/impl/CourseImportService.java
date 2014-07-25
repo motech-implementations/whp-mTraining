@@ -2,12 +2,13 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.motechproject.mtraining.domain.*;
 import org.motechproject.whp.mtraining.domain.CourseConfiguration;
+import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.domain.Location;
-import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.request.CourseConfigurationRequest;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
+import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class CourseImportService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CourseImportService.class);
 
     @Autowired
-    private MTrainingService mTrainingService;
+    private CoursePlanService coursePlanService;
 
     @Autowired
     private CourseConfigurationService courseConfigurationService;
@@ -35,14 +36,10 @@ public class CourseImportService {
     @Autowired
     private MotechUserService motechUserService;
 
-    public Course importCourse(List<CourseCsvRequest> requests) {
-        Course course = formCourse(requests);
+    public CoursePlan importCoursePlan(List<CourseCsvRequest> requests) {
+        CoursePlan coursePlan = formCoursePlan(requests);
 
-        if (mTrainingService.getCourseById(course.getId()) == null) {
-            return mTrainingService.createCourse(course);
-        } else {
-            return mTrainingService.updateCourse(course);
-        }
+        return coursePlanService.updateCoursePlan(coursePlan);
     }
 
     public void importCourseConfig(List<CourseConfigurationRequest> requests) {
@@ -57,10 +54,11 @@ public class CourseImportService {
         }
     }
 
-    private Course formCourse(List<CourseCsvRequest> requests) {
+    private CoursePlan formCoursePlan(List<CourseCsvRequest> requests) {
         CourseCsvRequest courseRequest = requests.get(0);
-        Course course = new Course(courseRequest.getNodeName(), courseRequest.getStatus(), courseRequest.getFileName());
+        CoursePlan coursePlan = new CoursePlan(courseRequest.getNodeName(), courseRequest.getStatus(), courseRequest.getFileName());
 
+        Map<Course, CourseCsvRequest> courses = new HashMap<>();
         Map<Chapter, CourseCsvRequest> chapters = new HashMap<>();
         Map<Lesson, CourseCsvRequest> lessons = new HashMap<>();
         Map<Question, CourseCsvRequest> questions = new HashMap<>();
@@ -75,33 +73,44 @@ public class CourseImportService {
             } else if (type.contentEquals("Question")) {
                 Question question = new Question(request.getFileName(), request.getCorrectAnswerFileName());
                 questions.put(question, request);
+            } else if (type.contentEquals("Module")) {
+                Course course = new Course(request.getNodeName(), request.getStatus(), request.getFileName(), new ArrayList<Chapter>());
+                courses.put(course, request);
             }
         }
 
-        for(Map.Entry<Chapter, CourseCsvRequest> chapter : chapters.entrySet()) {
+        for(Map.Entry<Chapter, CourseCsvRequest> chapterMap : chapters.entrySet()) {
+            Chapter chapter = chapterMap.getKey();
+            CourseCsvRequest chapterRow = chapterMap.getValue();
             for(Map.Entry<Lesson, CourseCsvRequest> lesson : lessons.entrySet()) {
-                if (lesson.getValue().getParentNode().contentEquals(chapter.getKey().getName())) {
-                   chapter.getKey().getLessons().add(lesson.getKey());
+                if (lesson.getValue().getParentNode().contentEquals(chapter.getName())) {
+                    chapter.getLessons().add(lesson.getKey());
                 }
             }
-            String noOfQuizQuestions = chapter.getValue().getNoOfQuizQuestions();
+            String noOfQuizQuestions = chapterRow.getNoOfQuizQuestions();
             Integer numberOfQuizQuestions = isBlank(noOfQuizQuestions) ? 0 : Integer.parseInt(noOfQuizQuestions);
             if(numberOfQuizQuestions > 0) {
                 Quiz quiz = new Quiz();
-                quiz.setPassPercentage(Double.valueOf(chapter.getValue().getPassPercentage()));
+                quiz.setPassPercentage(Double.valueOf(chapterRow.getPassPercentage()));
                 quiz.setQuestions(new ArrayList<Question>());
                 for(Map.Entry<Question, CourseCsvRequest> question : questions.entrySet()) {
-                    if (question.getValue().getParentNode().contentEquals(chapter.getKey().getName())) {
+                    if (question.getValue().getParentNode().contentEquals(chapter.getName())) {
                         quiz.getQuestions().add(question.getKey());
                         quiz.setName(question.getValue().getNodeName());
                     }
                 }
-            chapter.getKey().setQuiz(quiz);
+                chapter.setQuiz(quiz);
+            }
+
+            for(Map.Entry<Course, CourseCsvRequest> course : courses.entrySet()) {
+                if (course.getValue().getNodeName().contentEquals(chapterRow.getParentNode())) {
+                    course.getKey().getChapters().add(chapter);
+                }
             }
         }
-        course.setChapters(new ArrayList<Chapter>(chapters.keySet()));
+        coursePlan.setCourses(new ArrayList<Course>(courses.keySet()));
 
-        return course;
+        return coursePlan;
     }
 
 }

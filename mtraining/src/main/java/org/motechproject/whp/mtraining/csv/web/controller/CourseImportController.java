@@ -1,5 +1,7 @@
 package org.motechproject.whp.mtraining.csv.web.controller;
 
+
+import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.exception.CourseNotFoundException;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
@@ -50,9 +52,9 @@ public class CourseImportController {
             if (!errors.isEmpty()) {
                 return failure(errors);
             }
-            Course importedCourseIdentifier = courseImportService.importCourse(courseCsvRequests);
+            CoursePlan importedCoursePlanIdentifier = courseImportService.importCoursePlan(courseCsvRequests);
             return CsvImportResponse.success(format("Course: %s has been imported successfully",
-                    importedCourseIdentifier.getId()));
+                    importedCoursePlanIdentifier.getId()));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             return failure(asList(new CsvImportError(ex.getMessage())));

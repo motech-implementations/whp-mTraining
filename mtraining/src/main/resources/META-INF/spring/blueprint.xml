@@ -29,6 +29,9 @@
     <osgi:service id="courseConfigurationServiceOsgi" ref="courseConfigurationService"
                   interface="org.motechproject.whp.mtraining.service.CourseConfigurationService" />
 
+    <osgi:service id="coursePlanServiceOsgi" ref="coursePlanService"
+                  interface="org.motechproject.whp.mtraining.service.CoursePlanService" />
+
     <osgi:service id="callDurationServiceOsgi" ref="callDurationService"
                   interface="org.motechproject.whp.mtraining.service.CallDurationService" />
 
@@ -37,12 +40,15 @@
 
     <osgi:service id="coursePublicationAttemptServiceOsgi" ref="coursePublicationAttemptService"
                   interface="org.motechproject.whp.mtraining.service.CoursePublicationAttemptService" />
-    
+
     <osgi:reference id="providerDataService"
                     interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
 
     <osgi:reference id="courseConfigurationDataService"
                     interface="org.motechproject.whp.mtraining.repository.CourseConfigurationDataService" />
+
+    <osgi:reference id="coursePlanDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CoursePlanDataService" />
 
     <osgi:reference id="callDurationDataService"
                     interface="org.motechproject.whp.mtraining.repository.CallDurationDataService" />
