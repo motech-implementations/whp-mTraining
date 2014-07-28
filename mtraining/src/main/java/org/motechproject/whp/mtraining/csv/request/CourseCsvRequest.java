@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.csv.request;
 
+import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import static org.apache.commons.lang.StringUtils.split;
 public class CourseCsvRequest {
     private String nodeName;
     private String nodeType;
-    private String status;
+    private CourseUnitState status;
     private String parentNode;
     private String description;
     private String fileName;
@@ -25,7 +26,7 @@ public class CourseCsvRequest {
     public CourseCsvRequest() {
     }
 
-    public CourseCsvRequest(String nodeName, String nodeType, String status, String parentNode, String description, String fileName) {
+    public CourseCsvRequest(String nodeName, String nodeType, CourseUnitState status, String parentNode, String description, String fileName) {
         this.nodeName = nodeName;
         this.nodeType = nodeType;
         this.status = status;
@@ -34,7 +35,7 @@ public class CourseCsvRequest {
         this.fileName = fileName;
     }
 
-    public CourseCsvRequest(String nodeName, String nodeType, String status, String parentNode, String description,
+    public CourseCsvRequest(String nodeName, String nodeType, CourseUnitState status, String parentNode, String description,
                             String fileName, String options, String correctAnswer, String correctAnswerFileName, String noOfQuizQuestions, String passPercentage) {
         this.nodeName = nodeName;
         this.nodeType = nodeType;
@@ -57,7 +58,7 @@ public class CourseCsvRequest {
         return nodeType;
     }
 
-    public String getStatus() {
+    public CourseUnitState getStatus() {
         return status;
     }
 
@@ -112,7 +113,7 @@ public class CourseCsvRequest {
     }
 
     public boolean isValidStatus() {
-        return isBlank(status) || "ACTIVE".equalsIgnoreCase(status) || "INACTIVE".equalsIgnoreCase(status);
+        return status == CourseUnitState.Pending || status == CourseUnitState.Active || status == CourseUnitState.Inactive;
     }
 
     public String getCorrectAnswer() {
@@ -128,7 +129,7 @@ public class CourseCsvRequest {
     }
 
     public boolean isInActive() {
-        return "INACTIVE".equalsIgnoreCase(status);
+        return status == CourseUnitState.Inactive;
     }
 
     public void setNodeName(String nodeName) {
@@ -139,7 +140,7 @@ public class CourseCsvRequest {
         this.nodeType = nodeType;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CourseUnitState status) {
         this.status = status;
     }
 

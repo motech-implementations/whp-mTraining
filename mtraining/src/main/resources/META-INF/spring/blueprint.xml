@@ -15,8 +15,6 @@
                   interface="org.motechproject.whp.mtraining.service.EmailService"
                   auto-export="interfaces"/>
 
-    <osgi:reference interface="org.motechproject.security.service.MotechUserService" id="motechUserService"/>
-
     <osgi:reference id="mTrainingService" interface="org.motechproject.mtraining.service.MTrainingService" />
 
     <osgi:reference id="bookmarkService" interface="org.motechproject.mtraining.service.BookmarkService" />

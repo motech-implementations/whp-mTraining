@@ -130,7 +130,7 @@ public class CourseCsvStructureValidator {
     private void addErrorIfNoOfQuestionsIsNotSufficient(Integer quizQuestions, List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest, List<CsvImportError> errors, List<String> status, String errorMessage) {
         int noOfQuestions = 0;
         for (CourseCsvRequest request : requests) {
-            if (QUESTION.equals(from(request.getNodeType())) && chapterRequest.getNodeName().equalsIgnoreCase(request.getParentNode()) && status.contains(request.getStatus().toLowerCase()))
+            if (QUESTION.equals(from(request.getNodeType())) && chapterRequest.getNodeName().equalsIgnoreCase(request.getParentNode()) && status.contains(request.getStatus()))
                 noOfQuestions++;
         }
         if (noOfQuestions < quizQuestions) {
