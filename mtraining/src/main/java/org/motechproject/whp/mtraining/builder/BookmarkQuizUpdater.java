@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 /**
  * Updater to re-validate and set the quiz in a Bookmark against the provided Course Structure for a given enrollee.
  * Switches Bookmark to next chapter if unable to set a quiz in the Bookmark for the given chapter.
- * @see org.motechproject.mtraining.builder.BookmarkBuilder
+ * @see org.motechproject.whp.mtraining.builder.BookmarkBuilder
  */
 
 @Component
@@ -32,29 +32,23 @@ public class BookmarkQuizUpdater {
      * @return
      */
     public Bookmark update(Bookmark bookmark, Course course, Chapter chapter) {
-//        QuizDto quiz = chapterDto.getQuiz();
-//        String externalId = bookmark.getExternalId();
-//
-//        if (quiz == null) {
-//            return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, chapterDto);
-//        }
-//
-//        if (!quiz.isActive()) {
-//            ChapterDto nextActiveChapterDto = moduleDto.getNextActiveChapterAfter(chapterDto.getContentId());
-//            if (nextActiveChapterDto != null) {
-//                return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, moduleDto, nextActiveChapterDto);
-//            }
-//
-//            ModuleDto nextActiveModuleDto = courseDto.getNextActiveModuleAfter(moduleDto.getContentId());
-//            if (nextActiveModuleDto != null) {
-//                return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, courseDto, nextActiveModuleDto);
-//            }
-//
-//            return courseBookmarkBuilder.buildCourseCompletionBookmark(externalId, courseDto);
-//        }
-//
-//        return courseBookmarkBuilder.buildBookmarkFrom(externalId, courseDto, moduleDto, chapterDto, quiz, bookmark.getDateModified());
-        return null;
+        Quiz quiz = chapter.getQuiz();
+        String externalId = bookmark.getExternalId();
+        
+        if (quiz == null) {
+            return courseBookmarkBuilder.buildBookmarkFromFirstActiveMetadata(externalId, course, chapter);
+        }
+        
+        if (quiz.getState() != CourseUnitState.Active) {
+            Chapter nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
+            if (nextActiveChapter != null) {
+                return courseBookmarkBuilder.buildBookmarkFromFirstActiveMetadata(externalId, course, nextActiveChapter);
+            }
+            
+            return courseBookmarkBuilder.buildCourseCompletionBookmark(externalId, course);
+        }
+
+        return courseBookmarkBuilder.buildBookmarkFromFirstActiveMetadata(externalId, course, chapter);
     }
 
 }

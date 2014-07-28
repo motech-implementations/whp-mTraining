@@ -2,6 +2,8 @@ package org.motechproject.whp.mtraining.builder;
 
 import org.motechproject.mtraining.domain.*;
 
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.mtraining.service.impl.MTrainingServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,31 +38,25 @@ public class BookmarkLessonUpdater {
      * @return
      */
     public Bookmark update(Bookmark bookmark, Course course, Chapter chapter) {
-        //Lesson lesson = chapter.getLesson(bookmark.getLessonIdentifier());
-        Lesson lesson = chapter.getLessons().get(Integer.parseInt(bookmark.getLessonIdentifier()));
+        MTrainingService mTrainingService = new MTrainingServiceImpl();
+        Lesson lesson = mTrainingService.getLessonById(Integer.parseInt(bookmark.getLessonIdentifier()));
         String externalId = bookmark.getExternalId();
         if (lesson == null) {
-            return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, course, chapter);
+            return courseBookmarkBuilder.buildBookmarkFromFirstActiveMetadata(externalId, course, chapter);
         }
         if (lesson.getState() != CourseUnitState.Active) {
             Lesson nextActiveLesson = BuilderHelper.getNextActive(lesson, chapter.getLessons());
             if (nextActiveLesson != null) {
                 return courseBookmarkBuilder.buildBookmarkFrom(externalId, course, chapter, nextActiveLesson);
             }
-
-//            if (chapterDto.hasActiveQuiz()) {
-//                return courseBookmarkBuilder.buildBookmarkFrom(externalId, course, chapter, chapter.getQuiz());
-//            }
-
             Chapter nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
             if (nextActiveChapter != null) {
-                return courseBookmarkBuilder.buildBookmarkFromFirstActiveContent(externalId, course, nextActiveChapter);
+                return courseBookmarkBuilder.buildBookmarkFromFirstActiveMetadata(externalId, course, nextActiveChapter);
             }
             
             return courseBookmarkBuilder.buildCourseCompletionBookmark(externalId, course);
         }
-        return null;
-        //return courseBookmarkBuilder.buildBookmarkFrom(externalId, course, chapter, lesson, bookmark.getDateModified());
+        return courseBookmarkBuilder.buildBookmarkFrom(externalId, course, chapter, lesson);
     }
 
 }
