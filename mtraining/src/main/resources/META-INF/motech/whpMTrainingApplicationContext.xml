@@ -47,20 +47,6 @@
         </constructor-arg>
     </bean>
 
-    <bean id="persistenceManagerFactoryBean" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean">
-        <property name="configLocation" value="classpath:datanucleus.properties"/>
-    </bean>
-
-    <bean id="persistenceManagerFactory"
-          class="org.springframework.orm.jdo.TransactionAwarePersistenceManagerFactoryProxy">
-        <property name="targetPersistenceManagerFactory" ref="persistenceManagerFactoryBean"/>
-        <property name="allowCreate" value="false"/>
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.jdo.JdoTransactionManager">
-        <property name="persistenceManagerFactory" ref="persistenceManagerFactoryBean"/>
-    </bean>
-
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="15000000"/>
     </bean>

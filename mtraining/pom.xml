@@ -90,13 +90,6 @@
         <!--AspectJ AOP dependencies ends -->
 
         <!-- ORM dependencies start -->
-
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>2.1.0</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>org.datanucleus</groupId>
             <artifactId>datanucleus-core</artifactId>

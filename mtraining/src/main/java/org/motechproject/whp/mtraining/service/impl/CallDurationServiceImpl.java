@@ -7,7 +7,6 @@ import org.motechproject.whp.mtraining.service.CallDurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.jdo.PersistenceManagerFactory;
 import java.util.List;
 
 @Service("callDurationService")
