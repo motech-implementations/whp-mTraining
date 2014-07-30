@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
-import org.motechproject.whp.mtraining.repository.Providers;
-import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
@@ -24,47 +22,42 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_
 @RunWith(MockitoJUnitRunner.class)
 public class ProviderServiceImplTest {
 
-    @Mock
-    private Providers providers;
 
     private ProviderServiceImpl providerService;
 
     @Before
     public void setUp() {
-        providerService = new ProviderServiceImpl(providers);
+        providerService = new ProviderServiceImpl();
     }
 
     @Test
     public void shouldAddProvider() {
         Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
         Provider persistedProvider = mock(Provider.class);
-        when(providers.add(provider)).thenReturn(persistedProvider);
+        when(providerService.createProvider(provider)).thenReturn(persistedProvider);
         when(persistedProvider.getId()).thenReturn(100l);
 
-        Long id = providerService.add(provider);
+        Long id = providerService.createProvider(provider).getId();
 
         assertThat(id, Is.is(100l));
-        verify(providers).add(provider);
+        verify(providerService).createProvider(provider);
     }
 
     @Test
     public void shouldDeleteProvider() {
-        Providers providers = mock(Providers.class);
-        ProviderService providerService = new ProviderServiceImpl(providers);
-
-        providerService.delete(100l);
-
-        verify(providers).delete(100l);
+        Provider provider = providerService.getProviderById(100L);
+        providerService.deleteProvider(provider);
+        verify(providerService).deleteProvider(provider);
     }
 
     @Test
     public void shouldMarkCallerAsUnidentifiedIfCallerIdNotRegistered() {
         long callerId = 76465464L;
-        when(providers.getByCallerId(callerId)).thenReturn(null);
+        when(providerService.getProviderByCallerId(callerId)).thenReturn(null);
 
         ResponseStatus responseStatus = providerService.validateProvider(callerId);
 
-        verify(providers).getByCallerId(callerId);
+        verify(providerService).getProviderByCallerId(callerId);
         assertEquals(responseStatus.getCode(), UNKNOWN_PROVIDER.getCode());
     }
 
@@ -72,11 +65,11 @@ public class ProviderServiceImplTest {
     public void shouldMarkErrorIfProviderIsNotValid() {
         long callerId = 76465464L;
         Provider provider = new Provider("remediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, new Location("block", "district", "state"));
-        when(providers.getByCallerId(callerId)).thenReturn(provider);
+        when(providerService.getProviderByCallerId(callerId)).thenReturn(provider);
 
         ResponseStatus response = providerService.validateProvider(callerId);
 
-        verify(providers).getByCallerId(callerId);
+        verify(providerService).getProviderByCallerId(callerId);
         assertEquals(response, NOT_WORKING_PROVIDER);
     }
 }

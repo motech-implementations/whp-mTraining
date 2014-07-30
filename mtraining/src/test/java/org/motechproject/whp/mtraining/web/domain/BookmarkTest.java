@@ -16,17 +16,15 @@ public class BookmarkTest {
         Bookmark bookmarkWithInvalidDateModified = new BookmarkBuilder().withDateModified("2011-32-33").build();
         Bookmark bookmarkWithEmptyDateModified = new BookmarkBuilder().withDateModified("").build();
         Bookmark bookmarkWithNullDateModified = new BookmarkBuilder().withDateModified(null).build();
-        Bookmark bookmarkWithNoCourse = new BookmarkBuilder().withCourse(null).build();
-        Bookmark bookmarkWithNoModule = new BookmarkBuilder().withModule(null).build();
-        Bookmark bookmarkWithNoChapter= new BookmarkBuilder().withChapter(null).build();
-        Bookmark bookmarkWithNoMessageOrQuiz = new BookmarkBuilder().withMessage(null).withQuiz(null).build();
+        Bookmark bookmarkWithNoCourse = new BookmarkBuilder().withCourse(0).build();
+        Bookmark bookmarkWithNoChapter= new BookmarkBuilder().withChapter(0).build();
+        Bookmark bookmarkWithNoMessageOrQuiz = new BookmarkBuilder().withMessage(0).withQuiz(0).build();
 
         assertFalse(bookmarkWithValidDateModified.validate().contains(new ValidationError(INVALID_DATE_TIME)));
         assertTrue(bookmarkWithInvalidDateModified.validate().contains(new ValidationError(INVALID_DATE_TIME)));
         assertTrue(bookmarkWithEmptyDateModified.validate().contains(new ValidationError(INVALID_DATE_TIME)));
         assertTrue(bookmarkWithNullDateModified.validate().contains(new ValidationError(INVALID_DATE_TIME)));
         assertTrue(bookmarkWithNoCourse.validate().contains(new ValidationError(910,"Missing Content Id or Version for: Course")));
-        assertTrue(bookmarkWithNoModule.validate().contains(new ValidationError(910,"Missing Content Id or Version for: Module")));
         assertTrue(bookmarkWithNoChapter.validate().contains(new ValidationError(910,"Missing Content Id or Version for: Chapter")));
         assertTrue(bookmarkWithNoMessageOrQuiz.validate().contains(new ValidationError(910,"Quiz or Message should be present")));
     }

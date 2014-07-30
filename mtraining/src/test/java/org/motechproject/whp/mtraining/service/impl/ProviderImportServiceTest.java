@@ -10,7 +10,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.whp.mtraining.csv.request.ProviderCsvRequest;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
-import org.motechproject.whp.mtraining.repository.Providers;
 
 import java.util.Arrays;
 
@@ -24,14 +23,14 @@ import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_
 public class ProviderImportServiceTest {
 
     @Mock
-    private Providers providers;
+    private ProviderServiceImpl providerService;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void shouldAddOrUpdateToProvidersWhenImporting() {
-        ProviderImportService providerImportService = new ProviderImportService(providers);
+        ProviderImportService providerImportService = new ProviderImportService();
         String remediId = "RemediX";
         String primaryContactNumber = "9898989898";
         String providerStatus = WORKING_PROVIDER.getStatus();
@@ -42,7 +41,7 @@ public class ProviderImportServiceTest {
         providerImportService.importProviders(Arrays.asList(new ProviderCsvRequest(remediId, primaryContactNumber, providerStatus, state, block, district)));
 
         ArgumentCaptor<Provider> providerArgumentCaptor = ArgumentCaptor.forClass(Provider.class);
-        verify(providers).addOrUpdate(providerArgumentCaptor.capture());
+        verify(providerService).createProvider(providerArgumentCaptor.capture());
         Provider provider = providerArgumentCaptor.getValue();
         assertEquals(provider.getRemediId(), remediId);
         assertEquals(provider.getCallerId(), Long.valueOf(primaryContactNumber));

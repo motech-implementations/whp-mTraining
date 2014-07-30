@@ -1,13 +1,7 @@
 package org.motechproject.whp.mtraining.osgi;
 
-import org.motechproject.whp.mtraining.dto.AnswerDto;
-import org.motechproject.whp.mtraining.dto.ChapterDto;
-import org.motechproject.whp.mtraining.dto.CourseDto;
-import org.motechproject.whp.mtraining.dto.MessageDto;
-import org.motechproject.whp.mtraining.dto.ModuleDto;
-import org.motechproject.whp.mtraining.dto.QuestionDto;
-import org.motechproject.whp.mtraining.dto.QuizDto;
-import org.motechproject.whp.mtraining.service.CourseService;
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.mtraining.domain.*;
 import org.motechproject.testing.utils.Wait;
 import org.motechproject.testing.utils.WaitCondition;
 import org.motechproject.whp.mtraining.IVRServer;
@@ -32,10 +26,10 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
     }
 
     public void testThatCourseIsPublishedToIVR() throws IOException, InterruptedException {
-        CourseService courseService = (CourseService) getApplicationContext().getBean("courseService");
-        assertNotNull(courseService);
-        CourseDto cs001 = buildCourse();
-        courseService.addOrUpdateCourse(cs001);
+        MTrainingService mTrainingService = (MTrainingService) getApplicationContext().getBean("mTrainingService");
+        assertNotNull(mTrainingService);
+        Course cs001 = buildCourse();
+        mTrainingService.createCourse(cs001);
         new Wait(new WaitCondition() {
             @Override
             public boolean needsToWait() {
@@ -88,15 +82,12 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
         }
     }
 
-    private CourseDto buildCourse() {
-        String createdBy = "author";
-        MessageDto activeMessage = new MessageDto(true, "msg001", "aud01", "message desc", createdBy);
-        MessageDto inactiveMessage = new MessageDto(false, "msg002", "aud01.wav", "message desc", createdBy);
-        QuestionDto questionDto = new QuestionDto(true, "Q001", "ques desc", "ques-aud.wav", new AnswerDto("C", "correct-answer.wav"),
-                Arrays.asList("A", "B", "C"), createdBy);
-        QuizDto quiz001 = new QuizDto(true, "Quiz001", null, Arrays.asList(questionDto), 1, 85.0, createdBy);
-        ChapterDto ch001 = new ChapterDto(true, "ch001", "chapter description", "chap-aud.wav", createdBy, Arrays.asList(activeMessage, inactiveMessage), quiz001);
-        ModuleDto mod001 = new ModuleDto(true, "MOD001", "module desc", "module-aud.wav", createdBy, Arrays.asList(ch001));
-        return new CourseDto(true, "CS001", "Course Desc", "course-aud.wav", createdBy, Arrays.asList(mod001));
+    private Course buildCourse() {
+        Lesson activeMessage = new Lesson("msg001", CourseUnitState.Active, "message desc");
+        Lesson inactiveMessage = new Lesson("msg002", CourseUnitState.Inactive, "message desc");
+        Question question = new Question("Q001", "correct-answer.wav");
+        Quiz quiz001 = new Quiz("Quiz001",  CourseUnitState.Active, null, Arrays.asList(question), 85.0);
+        Chapter ch001 = new Chapter("ch001", CourseUnitState.Active, "chap-aud.wav", Arrays.asList(activeMessage, inactiveMessage), quiz001);
+        return new Course("CS001", CourseUnitState.Active, "course-aud.wav", Arrays.asList(ch001));
     }
 }

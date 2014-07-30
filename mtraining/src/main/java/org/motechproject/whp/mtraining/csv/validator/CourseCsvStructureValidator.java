@@ -98,7 +98,7 @@ public class CourseCsvStructureValidator {
                 createErrorResponse(request, errors, "A Chapter should have valid no of questions and pass percentage between 0 and 100. Please try importing it again.");
             }
         }
-        if (!(request.isMessage() || request.isQuestion()) && (hasNoChild(request, parentNamesMap, errors) || hasNoActiveChild(request, requests, errors)))
+        if (!(request.isLesson() || request.isQuestion()) && (hasNoChild(request, parentNamesMap, errors) || hasNoActiveChild(request, requests, errors)))
             return;
 
         if (request.isQuestion())

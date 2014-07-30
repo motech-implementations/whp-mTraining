@@ -29,7 +29,7 @@ public class CourseEventListener {
         Map<String, Object> eventData = event.getParameters();
         Long courseId = (Long) eventData.get(MTrainingEventConstants.CONTENT_ID);
         Integer version = (Integer) eventData.get(MTrainingEventConstants.VERSION);
-        courseReporter.reportCourseAdded(courseId, version);
+        courseReporter.reportCourseAdded(courseId);
         coursePublisher.publish(courseId);
     }
 

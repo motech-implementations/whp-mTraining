@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
+import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,22 +21,22 @@ import static org.junit.Assert.assertThat;
 public class ProvidersIT {
 
     @Autowired
-    Providers providers;
+    ProviderService providerService;
 
     @Before
     public void before() {
-        providers.deleteAll();
+        providerService.getAllProviders().clear();
     }
 
     @Test
     public void shouldAddAndRetrieveAProvider() {
         String remediId = "remedix";
-        assertThat(providers.getByRemediId(remediId), IsNull.nullValue());
+        assertThat(providerService.getProviderByRemediId(remediId), IsNull.nullValue());
         Provider provider = new Provider(remediId, 717777L, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
 
-        providers.addOrUpdate(provider);
+        providerService.createProvider(provider);
 
-        Provider savedProvider = providers.getByRemediId(remediId);
+        Provider savedProvider = providerService.getProviderByRemediId(remediId);
         assertThat(savedProvider, IsNull.notNullValue());
         assertThat(savedProvider.getCallerId(), Is.is(717777L));
     }
@@ -47,12 +48,12 @@ public class ProvidersIT {
         String remediId = "remediId";
 
         Provider oldProvider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
-        providers.add(oldProvider);
+        providerService.createProvider(oldProvider);
 
         Provider newProvider = new Provider(remediId, callerIdNew, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
-        providers.addOrUpdate(newProvider);
+        providerService.createProvider(newProvider);
 
-        Provider savedProvider = providers.getByRemediId(remediId);
+        Provider savedProvider = providerService.getProviderByRemediId(remediId);
         assertThat(savedProvider, IsNull.notNullValue());
         assertThat(savedProvider.getRemediId(), Is.is(remediId));
         assertThat(savedProvider.getCallerId(), Is.is(callerIdNew));
@@ -61,6 +62,6 @@ public class ProvidersIT {
 
     @After
     public void after() {
-        providers.deleteAll();
+        providerService.getAllProviders().clear();
     }
 }

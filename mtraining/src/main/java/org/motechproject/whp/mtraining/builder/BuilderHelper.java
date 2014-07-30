@@ -12,7 +12,7 @@ import java.util.List;
 
 public abstract class BuilderHelper {
 
-    protected static <T extends CourseUnitMetadata> T findFirstActive(List<T> collection) {
+    public static <T extends CourseUnitMetadata> T findFirstActive(List<T> collection) {
         Object match = CollectionUtils.find(collection, new Predicate() {
             @Override
             public boolean evaluate(Object object) {

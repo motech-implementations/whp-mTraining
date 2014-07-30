@@ -10,21 +10,13 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
-import org.motechproject.whp.mtraining.constants.CourseStatus;
-import org.motechproject.whp.mtraining.dto.BookmarkDto;
-import org.motechproject.whp.mtraining.dto.ChapterDto;
-import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.whp.mtraining.dto.CourseConfigurationDto;
-import org.motechproject.whp.mtraining.dto.CourseDto;
-import org.motechproject.whp.mtraining.dto.EnrolleeCourseProgressDto;
-import org.motechproject.whp.mtraining.dto.LocationDto;
-import org.motechproject.whp.mtraining.dto.MessageDto;
-import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.CourseBuilder;
+import org.motechproject.mtraining.domain.*;
+import org.motechproject.whp.mtraining.domain.CourseConfiguration;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
-import org.motechproject.whp.mtraining.service.CourseService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
-import org.motechproject.whp.mtraining.CourseDTOBuilder;
 import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
@@ -59,23 +51,22 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private List<Long> providersAdded = new ArrayList<>();
 
-    private CourseService courseService;
+    private MTrainingService mTrainingService;
 
     private ProviderService providerService;
     private CourseConfigurationService courseConfigService;
-    private CourseProgressService courseProgressService;
 
     private Provider activeProvider;
     protected IVRServer ivrServer;
-    private CourseDto course002;
+    private Course course002;
 
 
     @Override
     public void onSetUp() throws InterruptedException, IOException {
         super.onSetUp();
         ivrServer = new IVRServer(8888, "/ivr-wgn").start();
-        courseService = (CourseService) getService("courseService");
-        assertNotNull(courseService);
+        mTrainingService = (MTrainingService) getService("mTrainingService");
+        assertNotNull(mTrainingService);
 
         providerService = (ProviderService) getApplicationContext().getBean("providerService");
         assertNotNull(providerService);
@@ -83,26 +74,17 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         courseConfigService = (CourseConfigurationService) getApplicationContext().getBean("courseConfigService");
         assertNotNull(courseConfigService);
 
-        courseProgressService = (CourseProgressService) getApplicationContext().getBean("courseProgressService");
-        assertNotNull(courseProgressService);
-
-
         String courseName = String.format("CS002-%s", UUID.randomUUID());
-        course002 = courseService.getCourse(createCourse(courseName));
-        courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(course002.getName(), 60, new LocationDto("block", "district", "state")));
+        course002 = mTrainingService.getCourseById(createCourse(courseName).getId());
+        courseConfigService.createCourseConfiguration(new CourseConfiguration(course002.getName(), 60, new Location("block", "district", "state")));
 
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);
-
-        ModuleDto moduleDto = course002.firstActiveModule();
-        BookmarkDto bookmarkDto = new BookmarkDto("remediId1", course002.toContentIdentifierDto(), moduleDto.toContentIdentifierDto(), moduleDto.findFirstActiveChapter().toContentIdentifierDto(), moduleDto.findFirstActiveChapter().findFirstActiveMessage().toContentIdentifierDto(), null, DateTime.now());
-        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("remediId1", DateTime.now(), bookmarkDto, CourseStatus.ONGOING);
-        courseProgressService.addOrUpdateCourseProgress(courseProgressDto);
     }
 
 
-    private ContentIdentifierDto createCourse(final String courseName) {
-        return courseService.addOrUpdateCourse(new CourseDTOBuilder().withName(courseName).build());
+    private Course createCourse(final String courseName) {
+        return mTrainingService.createCourse(new CourseBuilder().withName(courseName).build());
     }
 
     public void testThatStatusURLDoesIsAvailableWithoutAuthentication() throws IOException, InterruptedException {
@@ -171,15 +153,10 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private String getBookmarkAsJSON() throws IOException {
 
-        ModuleDto moduleDto = course002.getModules().get(0);
-        ChapterDto chapterDto = moduleDto.getChapters().get(0);
-        MessageDto messageDto = chapterDto.getMessages().get(0);
+        Chapter chapter = course002.getChapters().get(0);
+        Lesson lesson = chapter.getLessons().get(0);
 
-        ContentIdentifierDto module = moduleDto.toContentIdentifierDto();
-        ContentIdentifierDto chapter = chapterDto.toContentIdentifierDto();
-        ContentIdentifierDto message = messageDto.toContentIdentifierDto();
-
-        Bookmark bookmark = new Bookmark(new ContentIdentifierDto(course002.getContentId(), course002.getVersion()), module, chapter, message, null, DateTime.now().toString());
+        Bookmark bookmark = new Bookmark(course002.getId(), chapter.getId(), lesson.getId(), null, DateTime.now().toString());
         CourseProgress courseProgress = new CourseProgress(DateTime.now().toString(), bookmark, 2, "ONGOING");
         CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", courseProgress);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -188,8 +165,8 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {
         Provider provider = new Provider(remediId, callerId, providerStatus, new Location("block", "district", "state"));
-        providersAdded.add(providerService.add(provider));
-        return providerService.byCallerId(callerId);
+        providersAdded.add(providerService.createProvider(provider).getId());
+        return providerService.getProviderByCallerId(callerId);
     }
 
     private String getBookmarkRequestUrlWith(long callerId, String uniqueId, String sessionId) {
@@ -237,8 +214,10 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
     }
 
     private void removeAllProviders() {
+        Provider provider;
         for (Long providerId : providersAdded) {
-            providerService.delete(providerId);
+            provider = providerService.getProviderById(providerId);
+            providerService.deleteProvider(provider);
         }
     }
 

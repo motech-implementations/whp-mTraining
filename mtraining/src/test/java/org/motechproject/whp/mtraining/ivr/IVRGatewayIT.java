@@ -14,7 +14,7 @@ import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.RequestInfo;
 import org.motechproject.whp.mtraining.WebClient;
-import org.motechproject.whp.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.Course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

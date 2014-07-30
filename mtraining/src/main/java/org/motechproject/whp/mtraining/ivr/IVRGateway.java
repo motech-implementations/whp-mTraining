@@ -38,7 +38,7 @@ public class IVRGateway {
 
     public IVRResponse postCourse(Course course) {
         try {
-            LOGGER.info(String.format("Publishing Course to IVR Course name %s and version %s", course.getName()));
+            LOGGER.info(String.format("Publishing Course to IVR Course name %s", course.getName()));
             String courseToPublish = toJson(course);
             LOGGER.info("Publishing course ...");
             LOGGER.info(courseToPublish);

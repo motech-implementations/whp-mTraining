@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.whp.mtraining.WebClient;
-import org.motechproject.whp.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.Course;
 
 import java.io.IOException;
 import java.util.Properties;

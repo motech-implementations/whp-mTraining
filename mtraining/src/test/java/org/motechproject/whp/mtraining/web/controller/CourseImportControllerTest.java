@@ -5,7 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
@@ -50,7 +51,7 @@ public class CourseImportControllerTest {
     @Test
     public void shouldReturnErrorWhenCourseStructureIsInvalid() throws Exception {
         CommonsMultipartFile csvFile = mock(CommonsMultipartFile.class);
-        CourseCsvRequest courseRequestWithoutParentName = new CourseCsvRequest("nodeName", "nodeType", "status", null, "description", "fileName");
+        CourseCsvRequest courseRequestWithoutParentName = new CourseCsvRequest("nodeName", "nodeType", CourseUnitState.valueOf("status"), null, "description", "fileName");
         List<CourseCsvRequest> courseList = asList(courseRequestWithoutParentName);
         List<CsvImportError> errors = asList(new CsvImportError("nodeName", "nodeType", "some message"));
         when(csvParser.parse(csvFile, CourseCsvRequest.class)).thenReturn(courseList);
@@ -81,11 +82,11 @@ public class CourseImportControllerTest {
         List<CourseCsvRequest> courseCsvRequests = asList(new CourseCsvRequest());
         when(csvParser.parse(csvFile, CourseCsvRequest.class)).thenReturn(courseCsvRequests);
         when(courseStructureValidator.validate(courseCsvRequests)).thenReturn(Collections.EMPTY_LIST);
-        when(courseImportService.importCourse(courseCsvRequests)).thenReturn(new ContentIdentifierDto(UUID.randomUUID(), 1));
+        when(courseImportService.importCoursePlan(courseCsvRequests)).thenReturn(new CoursePlan("New Plan", CourseUnitState.Active, "Content"));
 
         CsvImportResponse csvImportResponse = courseImportController.importCourseStructure(csvFile);
 
-        verify(courseImportService).importCourse(courseCsvRequests);
+        verify(courseImportService).importCoursePlan(courseCsvRequests);
         assertTrue(csvImportResponse.isSuccess());
         assertTrue(csvImportResponse.getErrors().isEmpty());
     }

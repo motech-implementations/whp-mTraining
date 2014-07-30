@@ -82,8 +82,8 @@ public class CourseCsvRequest {
         return isNotBlank(parentNode);
     }
 
-    public boolean isMessage() {
-        return CallLogRecordType.isMessage(nodeType);
+    public boolean isLesson() {
+        return CallLogRecordType.isLesson(nodeType);
     }
 
     public boolean isQuestion() {

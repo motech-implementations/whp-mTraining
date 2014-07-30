@@ -1,20 +1,15 @@
 package org.motechproject.whp.mtraining;
 
-import org.joda.time.DateTime;
-import org.motechproject.whp.mtraining.dto.BookmarkDto;
-import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.domain.*;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
 
-import java.util.UUID;
-
 public class BookmarkBuilder {
 
-    private ContentIdentifierDto course = new ContentIdentifierDto(UUID.randomUUID(), 1);
-    private ContentIdentifierDto module = new ContentIdentifierDto(UUID.randomUUID(), 1);
-    private ContentIdentifierDto chapter = new ContentIdentifierDto(UUID.randomUUID(), 1);
-    private ContentIdentifierDto message = new ContentIdentifierDto(UUID.randomUUID(), 1);
-    private ContentIdentifierDto quiz = new ContentIdentifierDto(UUID.randomUUID(), 1);
+    private long course = new Course("New course", CourseUnitState.Active, "Content").getId();
+    private long chapter = new Chapter().getId();
+    private long lesson = new Lesson("New lesson", CourseUnitState.Active, "Content").getId();
+    private long quiz = new Quiz().getId();
     private String dateModified = ISODateTimeUtil.nowInTimeZoneUTC().toString();
     private String externalId = "RMD001";
 
@@ -31,34 +26,25 @@ public class BookmarkBuilder {
 
 
     public Bookmark build() {
-        return new Bookmark(course, module, chapter, message, quiz, dateModified);
+        return new Bookmark(course, chapter, lesson, quiz, dateModified);
     }
 
-    public BookmarkDto buildDTO() {
-        return new BookmarkDto(externalId, course, module, chapter, message, quiz, DateTime.now());
-    }
-
-    public BookmarkBuilder withCourse(ContentIdentifierDto course) {
+    public BookmarkBuilder withCourse(long course) {
         this.course = course;
         return this;
     }
 
-    public BookmarkBuilder withModule(ContentIdentifierDto module) {
-        this.module = module;
-        return this;
-    }
-
-    public BookmarkBuilder withChapter(ContentIdentifierDto chapter) {
+    public BookmarkBuilder withChapter(long chapter) {
         this.chapter = chapter;
         return this;
     }
 
-    public BookmarkBuilder withMessage(ContentIdentifierDto message) {
-        this.message = message;
+    public BookmarkBuilder withMessage(long lesson) {
+        this.lesson = lesson;
         return this;
     }
 
-    public BookmarkBuilder withQuiz(ContentIdentifierDto quiz) {
+    public BookmarkBuilder withQuiz(long quiz) {
         this.quiz = quiz;
         return this;
     }

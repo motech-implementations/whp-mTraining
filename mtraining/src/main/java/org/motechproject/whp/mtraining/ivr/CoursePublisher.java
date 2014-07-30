@@ -37,19 +37,19 @@ public class CoursePublisher {
 
     public void publish(long courseId) {
         if (numberOfAttempts > MAX_ATTEMPTS) {
-            LOGGER.info(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s , version %s.", numberOfAttempts, currentDateTime(), courseId));
+            LOGGER.info(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s", numberOfAttempts, currentDateTime(), courseId));
             return;
         }
 
         Course course = courseService.getCourseById(courseId);
         if (course.getState() != CourseUnitState.Active) {
-            LOGGER.warn(String.format("[%s] Course with contentId %s and version %s inactive and hence not being published to IVR ", currentDateTime(), courseId));
+            LOGGER.warn(String.format("[%s] Course with contentId %s inactive and hence not being published to IVR ", currentDateTime(), courseId));
             return;
         }
 
-        LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s , version %s ", numberOfAttempts, currentDateTime(), courseId));
+        LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s", numberOfAttempts, currentDateTime(), courseId));
 
-        LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s , version %s ", numberOfAttempts, currentDateTime(), course.getName(), courseId));
+        LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s", numberOfAttempts, currentDateTime(), course.getName(), courseId));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
         allCoursePublicationStatus.create(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess()));
@@ -71,7 +71,7 @@ public class CoursePublisher {
 
     private void notifyCourseAdmin(String courseName, IVRResponse ivrResponse) {
         if (ivrResponse.isSuccess()) {
-            LOGGER.info(String.format("Attempt %d [%s] - Course published to IVR for course %s , version %s ", numberOfAttempts, currentDateTime(), courseName));
+            LOGGER.info(String.format("Attempt %d [%s] - Course published to IVR for course %s", numberOfAttempts, currentDateTime(), courseName));
             courseAdmin.notifyCoursePublished(courseName);
             return;
         }

@@ -17,7 +17,7 @@ public class CourseReporter {
         this.courseService = courseService;
     }
 
-    public void reportCourseAdded(long courseId, Integer version) {
+    public void reportCourseAdded(long courseId) {
         Course course = courseService.getCourseById(courseId);
         courseService.createCourse(course);
     }

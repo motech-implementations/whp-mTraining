@@ -14,7 +14,7 @@ public class CourseProgressTest {
         CourseProgress courseProgressWithMissingStartTime = new CourseProgress(null, bookmark, 1000, "STARTED");
         CourseProgress courseProgressWithInvalidStartTime = new CourseProgress("fbdjsbfjdsbjkfdhjks", bookmark, 1000, "STARTED");
         CourseProgress courseProgressWithInvalidBookmark = new CourseProgress(ISODateTimeUtil.nowAsStringInTimeZoneUTC(), null, 1000, "STARTED");
-        CourseProgress courseProgressWithBookmarkWithNullCourse = new CourseProgress(ISODateTimeUtil.nowAsStringInTimeZoneUTC(), new BookmarkBuilder().withCourse(null).build(), 1000, "STARTED");
+        CourseProgress courseProgressWithBookmarkWithNullCourse = new CourseProgress(ISODateTimeUtil.nowAsStringInTimeZoneUTC(), new BookmarkBuilder().withCourse(0).build(), 1000, "STARTED");
         CourseProgress courseProgressWithInvalidStatus = new CourseProgress(null, bookmark, 1000, null);
 
         assertTrue(courseProgressWithMissingStartTime.validate().contains(new ValidationError(ResponseStatus.MISSING_COURSE_START_TIME)));

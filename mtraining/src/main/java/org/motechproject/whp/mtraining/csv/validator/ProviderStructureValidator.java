@@ -24,6 +24,10 @@ public class ProviderStructureValidator {
 
     @Autowired
     private ProviderService providerService;
+    
+    public ProviderStructureValidator(ProviderService providerService){
+        this.providerService = providerService;
+    }
 
     public List<CsvImportError> validate(List<ProviderCsvRequest> providerCsvRequests) {
         ArrayList<CsvImportError> errors = new ArrayList<>();

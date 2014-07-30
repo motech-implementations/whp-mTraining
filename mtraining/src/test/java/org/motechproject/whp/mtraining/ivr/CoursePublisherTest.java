@@ -5,18 +5,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
-import org.motechproject.whp.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.whp.mtraining.dto.CourseDto;
-import org.motechproject.whp.mtraining.dto.ModuleDto;
-import org.motechproject.whp.mtraining.service.CourseService;
+import org.motechproject.mtraining.domain.Chapter;
+import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.CourseAdmin;
-import org.motechproject.whp.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
-import org.motechproject.whp.mtraining.repository.AllCoursePublicationAttempts;
+import org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -26,52 +24,49 @@ import static org.mockito.Mockito.*;
 public class CoursePublisherTest {
 
 
-    static UUID cs001 = UUID.randomUUID();
+    static long cs001 = 123L;
 
-    private CourseService courseService;
+    private MTrainingService mTrainingService;
     private IVRGateway ivrGateway;
-    private AllCoursePublicationAttempts allCoursePublicationAttempts;
+    private CoursePublicationAttemptDataService coursePublicationAttemptDataService;
     private CourseAdmin courseAdmin;
     private CoursePublisher coursePublisher;
 
     @Before
     public void before() {
-        courseService = mock(CourseService.class);
+        mTrainingService = mock(MTrainingService.class);
         ivrGateway = mock(IVRGateway.class);
-        allCoursePublicationAttempts = mock(AllCoursePublicationAttempts.class);
+        coursePublicationAttemptDataService = mock(CoursePublicationAttemptDataService.class);
         courseAdmin = mock(CourseAdmin.class);
-        coursePublisher = new CoursePublisher(courseService, ivrGateway, courseAdmin, allCoursePublicationAttempts);
+        coursePublisher = new CoursePublisher(mTrainingService, ivrGateway, courseAdmin, coursePublicationAttemptDataService);
     }
-
 
     @Test
     public void shouldPostTheCorrectCourse() {
-        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 3);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "NA001", "This is a test course", "Course file name", "Test Author", null);
-        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
+        Course course = new Course("NA001", CourseUnitState.Active, "This is a test course");
+        when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
 
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.OK);
         when(ivrGateway.postCourse(any(Course.class))).thenReturn(ivrResponse);
 
-        coursePublisher.publish(cs001, 3);
+        coursePublisher.publish(cs001);
 
         ArgumentCaptor<Course> courseArgumentCaptor = ArgumentCaptor.forClass(Course.class);
         verify(ivrGateway).postCourse(courseArgumentCaptor.capture());
 
         ArgumentCaptor<CoursePublicationAttempt> coursePublicationAttemptArgumentCaptor = ArgumentCaptor.forClass(CoursePublicationAttempt.class);
 
-        InOrder inOrder = inOrder(courseService, allCoursePublicationAttempts);
+        InOrder inOrder = inOrder(mTrainingService, coursePublicationAttemptDataService);
 
-        inOrder.verify(allCoursePublicationAttempts).add(coursePublicationAttemptArgumentCaptor.capture());
-        inOrder.verify(courseService).publish(contentIdentifierDto);
+        inOrder.verify(coursePublicationAttemptDataService).create(coursePublicationAttemptArgumentCaptor.capture());
+        //TODO inOrder.verify(mTrainingService).publish(contentIdentifierDto);
 
         Course publishedCourse = courseArgumentCaptor.getValue();
 
         assertThat(publishedCourse.getName(), Is.is("NA001"));
-        assertThat(publishedCourse.getVersion(), Is.is(3));
-        assertThat(publishedCourse.getDescription(), Is.is("This is a test course"));
-        assertThat(publishedCourse.getModules().isEmpty(), Is.is(true));
+        assertThat(publishedCourse.getContent(), Is.is("This is a test course"));
+        assertThat(publishedCourse.getChapters().isEmpty(), Is.is(true));
 
         CoursePublicationAttempt coursePublicationAttempt = coursePublicationAttemptArgumentCaptor.getValue();
         assertThat(coursePublicationAttempt.getCourseId(), Is.is(cs001));
@@ -81,51 +76,48 @@ public class CoursePublisherTest {
 
     @Test
     public void shouldPublishCourseToIVRUrl() {
-        UUID courseId = UUID.randomUUID();
+        long courseId = 123L;
 
-        List<ModuleDto> modules = Collections.emptyList();
+        List<Chapter> chapters = Collections.emptyList();
         int courseVersion = 2;
-        CourseDto courseDto = new CourseDto(true, "CS001", "CS Course", "Course file name", "Created By", modules);
+        Course course = new Course("CS001", CourseUnitState.Active, "Course file name", chapters);
 
-        when(courseService.getCourse(new ContentIdentifierDto(courseId, courseVersion))).thenReturn(courseDto);
+        when(mTrainingService.getCourseById(courseId)).thenReturn(course);
 
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.OK);
         when(ivrGateway.postCourse(any(Course.class))).thenReturn(ivrResponse);
 
-        coursePublisher.publish(courseId, 2);
+        coursePublisher.publish(courseId);
 
         verify(ivrGateway).postCourse(any(Course.class));
-        verify(courseService).getCourse(new ContentIdentifierDto(courseId, courseVersion));
-        verify(allCoursePublicationAttempts).add(new CoursePublicationAttempt(courseId, courseVersion, true));
+        verify(mTrainingService).getCourseById(courseId);
+        verify(coursePublicationAttemptDataService).create(new CoursePublicationAttempt(courseId, true));
     }
 
     @Test
     public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() {
-
-        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Course file name", "Created By", null);
-        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
+        Course course = new Course("CS001", CourseUnitState.Inactive, "Course file name");
+        when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
         when(ivrGateway.postCourse(any(Course.class))).thenReturn(new IVRResponse(800, "OK"));
 
-        coursePublisher.publish(cs001, 2);
+        coursePublisher.publish(cs001);
 
-        verify(courseAdmin).notifyCoursePublished("CS001", 2);
+        verify(courseAdmin).notifyCoursePublished("CS001");
     }
 
     @Test
     public void shouldNotifyCourseAdminOfFailureIfThereAreValidationErrorsInResponse() {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.MISSING_FILES, "file1,file2");
 
-        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Course file name", "Created By", null);
-        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
+        Course course = new Course("CS001", CourseUnitState.Inactive, "Course file name", null);
+        when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
         given(ivrGateway.postCourse(any(Course.class))).willReturn(ivrResponse);
 
-        coursePublisher.publish(cs001, 2);
+        coursePublisher.publish(cs001);
 
-        verify(courseAdmin).notifyCoursePublishFailure("CS001", 2, ivrResponse);
+        verify(courseAdmin).notifyCoursePublishFailure("CS001", ivrResponse);
 
     }
 
@@ -133,25 +125,23 @@ public class CoursePublisherTest {
     public void shouldRetryPublishingInCaseOfNetworkFailure() {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
 
-        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Course file name", "Created By", null);
-        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
+        Course course = new Course("CS001", CourseUnitState.valueOf(""), "Course file name", null);
+        when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
         given(ivrGateway.postCourse(any(Course.class))).willReturn(ivrResponse);
 
-        coursePublisher.publish(cs001, 2);
+        coursePublisher.publish(cs001);
 
         verify(ivrGateway, times(CoursePublisher.MAX_ATTEMPTS)).postCourse(any(Course.class));
-        verify(courseAdmin, times(CoursePublisher.MAX_ATTEMPTS)).notifyCoursePublishFailure("CS001", 2, ivrResponse);
+        verify(courseAdmin, times(CoursePublisher.MAX_ATTEMPTS)).notifyCoursePublishFailure("CS001", ivrResponse);
     }
 
     @Test
     public void shouldNotPublishInactiveCourse() {
-        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), false, "CS001", "", "Course file name", "Created By", null);
-        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
+        Course course = new Course("CS001", CourseUnitState.valueOf(""), "Course file name", null);
+        when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
-        coursePublisher.publish(cs001, 2);
+        coursePublisher.publish(cs001);
 
         verify(ivrGateway, never()).postCourse(any(Course.class));
     }
@@ -159,15 +149,14 @@ public class CoursePublisherTest {
 
     @Test
     public void shouldNotPublishToMTrainingIfCourseIsNotPublishedToIVR() throws Exception {
-        ContentIdentifierDto contentIdentifierDto = new ContentIdentifierDto(cs001, 2);
-        CourseDto courseDTO = new CourseDto(contentIdentifierDto.getContentId(), contentIdentifierDto.getVersion(), true, "CS001", "", "Course file name", "Created By", null);
-        when(courseService.getCourse(contentIdentifierDto)).thenReturn(courseDTO);
+        Course course = new Course("CS001", CourseUnitState.valueOf(""), "Course file name", null);
+        when(mTrainingService.getCourseById(cs001)).thenReturn(course);
         when(ivrGateway.postCourse(any(Course.class))).thenReturn(new IVRResponse(1001, "Missing Files"));
 
-        coursePublisher.publish(cs001, 2);
+        coursePublisher.publish(cs001);
 
-        verify(allCoursePublicationAttempts).add(new CoursePublicationAttempt(cs001, 2, false));
-        verify(courseService).getCourse(contentIdentifierDto);
-        verifyNoMoreInteractions(courseService);
+        verify(coursePublicationAttemptDataService).create(new CoursePublicationAttempt(cs001, false));
+        verify(mTrainingService).getCourseById(cs001);
+        verifyNoMoreInteractions(mTrainingService);
     }
 }

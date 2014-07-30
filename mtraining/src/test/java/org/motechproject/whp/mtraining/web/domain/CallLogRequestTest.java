@@ -22,7 +22,7 @@ public class CallLogRequestTest {
     public void shouldValidateCallLog() {
         DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
         DateTime tenMinutesAfterNow = now.plusMinutes(10);
-        CallLogRequest validCallLogRequest = new CallLogRequest(746l, "unk001", "ssn001", UUID.randomUUID(), newArrayList(new CallLogRecord(UUID.randomUUID(), 1, "COURSE", now.toString(), now.toString())),
+        CallLogRequest validCallLogRequest = new CallLogRequest(746l, "unk001", "ssn001", 123L, newArrayList(new CallLogRecord(123L, 1, "COURSE", now.toString(), now.toString())),
                 now.toString(), tenMinutesAfterNow.toString());
         List<ValidationError> expectedEmptyErrors = validCallLogRequest.validate();
         assertThat(expectedEmptyErrors.size(), Is.is(0));
@@ -37,7 +37,7 @@ public class CallLogRequestTest {
         String nullCallCompletionDate = null;
 
         CallLogRequest callLogRequest = new CallLogRequest(nullCallerId, blankUniqueId, blankSessionId,
-                UUID.randomUUID(), Collections.<CallLogRecord>emptyList(), now.toString(), nullCallCompletionDate);
+                123L, Collections.<CallLogRecord>emptyList(), now.toString(), nullCallCompletionDate);
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(3));
         assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.MISSING_CALLER_ID)));
@@ -50,7 +50,7 @@ public class CallLogRequestTest {
         DateTime now = ISODateTimeUtil.nowInTimeZoneUTC();
 
         CallLogRequest callLogRequest = new CallLogRequest(12234l, "UniqueId", "sessionId",
-                UUID.randomUUID(), Collections.<CallLogRecord>emptyList(), "2001-32-12T00:00:00.000Z", now.toString());
+                123L, Collections.<CallLogRecord>emptyList(), "2001-32-12T00:00:00.000Z", now.toString());
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(1));
         assertTrue(validationErrors.contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME)));
@@ -59,7 +59,7 @@ public class CallLogRequestTest {
     @Test
     public void shouldReturnErrorsIfBothCallStartTimeAndCallEndTimeIsNull() {
         CallLogRequest callLogRequest = new CallLogRequest(12234l, "UniqueId", "sessionId",
-                UUID.randomUUID(), Collections.<CallLogRecord>emptyList(), null, null);
+                123L, Collections.<CallLogRecord>emptyList(), null, null);
 
         List<ValidationError> validationErrors = callLogRequest.validate();
 
@@ -74,7 +74,7 @@ public class CallLogRequestTest {
         DateTime tenMinutesAfterNow = now.plusMinutes(10);
         CallLogRecord invalidCallLogRecord = new CallLogRecord();
         List<CallLogRecord> callLogRecords = Arrays.asList(invalidCallLogRecord);
-        CallLogRequest invalidCallLogRequestWithCallRecords = new CallLogRequest(null, null, "", UUID.randomUUID(), callLogRecords, now.toString(), tenMinutesAfterNow.toString());
+        CallLogRequest invalidCallLogRequestWithCallRecords = new CallLogRequest(null, null, "", 123L, callLogRecords, now.toString(), tenMinutesAfterNow.toString());
         List<ValidationError> validationErrors = invalidCallLogRequestWithCallRecords.validate();
         assertThat(validationErrors.size(), Is.is(3));
     }
@@ -86,7 +86,7 @@ public class CallLogRequestTest {
         DateTime tenMinutesAddedToNow = now.plusMinutes(10);
         callLogRecords.add(new CallLogRecord(null, 1, "FOO", now.toString(), tenMinutesAddedToNow.toString()));
 
-        CallLogRequest callLogRequest = new CallLogRequest(777897l, "unk001", "ssn001", UUID.randomUUID(), callLogRecords, now.toString(), tenMinutesAddedToNow.toString());
+        CallLogRequest callLogRequest = new CallLogRequest(777897l, "unk001", "ssn001", 123L, callLogRecords, now.toString(), tenMinutesAddedToNow.toString());
 
         List<ValidationError> validationErrors = callLogRequest.validate();
         assertThat(validationErrors.size(), Is.is(2));

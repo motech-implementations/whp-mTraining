@@ -14,9 +14,9 @@ import static java.lang.String.format;
 @Component
 public class CourseAdmin {
 
-    public static final String SUCCESS_SUBJECT_FORMAT = "Course %s (version %s) Published";
-    public static final String FAILURE_SUBJECT_FORMAT = "Course %s (version %s) could not be published";
-    public static final String FAILURE_MESSAGE_FORMAT = "Course %s (version %s) could not be published because: %d - %s";
+    public static final String SUCCESS_SUBJECT_FORMAT = "Course %s Published";
+    public static final String FAILURE_SUBJECT_FORMAT = "Course %s could not be published";
+    public static final String FAILURE_MESSAGE_FORMAT = "Course %s could not be published because: %d - %s";
 
 
     private final Properties properties;
