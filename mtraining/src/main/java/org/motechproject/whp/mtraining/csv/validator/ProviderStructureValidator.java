@@ -24,7 +24,10 @@ public class ProviderStructureValidator {
 
     @Autowired
     private ProviderService providerService;
-    
+
+    public ProviderStructureValidator() {
+    }
+
     public ProviderStructureValidator(ProviderService providerService){
         this.providerService = providerService;
     }

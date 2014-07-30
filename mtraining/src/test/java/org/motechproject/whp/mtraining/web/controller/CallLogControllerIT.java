@@ -21,6 +21,7 @@ import org.springframework.test.web.server.request.MockMvcRequestBuilders;
 import org.springframework.test.web.server.setup.MockMvcBuilders;
 
 import java.io.InputStream;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -50,7 +51,8 @@ public class CallLogControllerIT {
     @Before
     public void before() {
         clear();
-        providerId = providerService.createProvider(new Provider("r002", 9934793809l, ProviderStatus.WORKING_PROVIDER, new Location("Bihar"))).getId();
+        Provider provider = providerService.createProvider(new Provider("r002", 9934793809l, ProviderStatus.WORKING_PROVIDER, new Location("Bihar")));
+        providerId = provider.getId();
         mockMvc = MockMvcBuilders.standaloneSetup(callLogController).build();
     }
 
@@ -75,7 +77,6 @@ public class CallLogControllerIT {
     }
 
     private void clear() {
-        //TODO
         callLogService.getAllCallLog().clear();
         callDurationService.getAllCallDurations().clear();
     }

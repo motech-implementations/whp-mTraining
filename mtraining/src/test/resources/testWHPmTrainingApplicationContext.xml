@@ -10,24 +10,11 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="org.motechproject.whp.mtraining.repository"/>
+    <context:component-scan base-package="org.motechproject.whp.mtraining, org.motechproject.mtraining"/>
     <mvc:annotation-driven/>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <bean id="persistenceManagerFactoryBean" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean">
-        <property name="configLocation" value="classpath:test-datanucleus.properties"/>
-    </bean>
-
-    <bean id="persistenceManagerFactory"
-          class="org.springframework.orm.jdo.TransactionAwarePersistenceManagerFactoryProxy">
-        <property name="targetPersistenceManagerFactory" ref="persistenceManagerFactoryBean"/>
-        <property name="allowCreate" value="false"/>
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.jdo.JdoTransactionManager">
-        <property name="persistenceManagerFactory" ref="persistenceManagerFactoryBean"/>
-    </bean>
 
     <bean id="testSettingsFacacde" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
         <property name="moduleName" value="whp-mtraining"/>

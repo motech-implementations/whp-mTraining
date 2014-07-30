@@ -11,7 +11,7 @@ import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.CourseAdmin;
 import org.motechproject.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
-import org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService;
+import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +28,7 @@ public class CoursePublisherTest {
 
     private MTrainingService mTrainingService;
     private IVRGateway ivrGateway;
-    private CoursePublicationAttemptDataService coursePublicationAttemptDataService;
+    private CoursePublicationAttemptService coursePublicationAttemptService;
     private CourseAdmin courseAdmin;
     private CoursePublisher coursePublisher;
 
@@ -36,9 +36,9 @@ public class CoursePublisherTest {
     public void before() {
         mTrainingService = mock(MTrainingService.class);
         ivrGateway = mock(IVRGateway.class);
-        coursePublicationAttemptDataService = mock(CoursePublicationAttemptDataService.class);
+        coursePublicationAttemptService = mock(CoursePublicationAttemptService.class);
         courseAdmin = mock(CourseAdmin.class);
-        coursePublisher = new CoursePublisher(mTrainingService, ivrGateway, courseAdmin, coursePublicationAttemptDataService);
+        coursePublisher = new CoursePublisher(mTrainingService, ivrGateway, courseAdmin, coursePublicationAttemptService);
     }
 
     @Test
@@ -57,9 +57,9 @@ public class CoursePublisherTest {
 
         ArgumentCaptor<CoursePublicationAttempt> coursePublicationAttemptArgumentCaptor = ArgumentCaptor.forClass(CoursePublicationAttempt.class);
 
-        InOrder inOrder = inOrder(mTrainingService, coursePublicationAttemptDataService);
+        InOrder inOrder = inOrder(mTrainingService, coursePublicationAttemptService);
 
-        inOrder.verify(coursePublicationAttemptDataService).create(coursePublicationAttemptArgumentCaptor.capture());
+        inOrder.verify(coursePublicationAttemptService).createCoursePublicationAttempt(coursePublicationAttemptArgumentCaptor.capture());
         //TODO inOrder.verify(mTrainingService).publish(contentIdentifierDto);
 
         Course publishedCourse = courseArgumentCaptor.getValue();
@@ -91,7 +91,7 @@ public class CoursePublisherTest {
 
         verify(ivrGateway).postCourse(any(Course.class));
         verify(mTrainingService).getCourseById(courseId);
-        verify(coursePublicationAttemptDataService).create(new CoursePublicationAttempt(courseId, true));
+        verify(coursePublicationAttemptService).createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, true));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class CoursePublisherTest {
 
         coursePublisher.publish(cs001);
 
-        verify(coursePublicationAttemptDataService).create(new CoursePublicationAttempt(cs001, false));
+        verify(coursePublicationAttemptService).createCoursePublicationAttempt(new CoursePublicationAttempt(cs001, false));
         verify(mTrainingService).getCourseById(cs001);
         verifyNoMoreInteractions(mTrainingService);
     }

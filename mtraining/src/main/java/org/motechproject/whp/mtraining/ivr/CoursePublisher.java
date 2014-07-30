@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.ivr;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.mtraining.service.MTrainingService;
-import org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService;
+import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.CourseAdmin;
 import org.motechproject.mtraining.domain.Course;
@@ -23,16 +23,16 @@ public class CoursePublisher {
     private MTrainingService courseService;
     private IVRGateway ivrGateway;
     private CourseAdmin courseAdmin;
-    private CoursePublicationAttemptDataService allCoursePublicationStatus;
+    private CoursePublicationAttemptService coursePublicationAttemptService;
 
     private Integer numberOfAttempts = 1;
 
     @Autowired
-    public CoursePublisher(MTrainingService courseService, IVRGateway ivrGateway, CourseAdmin courseAdmin, CoursePublicationAttemptDataService allCoursePublicationStatus) {
+    public CoursePublisher(MTrainingService courseService, IVRGateway ivrGateway, CourseAdmin courseAdmin, CoursePublicationAttemptService coursePublicationAttemptService) {
         this.courseService = courseService;
         this.ivrGateway = ivrGateway;
         this.courseAdmin = courseAdmin;
-        this.allCoursePublicationStatus = allCoursePublicationStatus;
+        this.coursePublicationAttemptService = coursePublicationAttemptService;
     }
 
     public void publish(long courseId) {
@@ -52,7 +52,7 @@ public class CoursePublisher {
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s", numberOfAttempts, currentDateTime(), course.getName(), courseId));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
-        allCoursePublicationStatus.create(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess()));
+        coursePublicationAttemptService.createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess()));
 
 //        if (ivrResponse.isSuccess()) {
 //            courseService.publish(new ContentIdentifierDto());
