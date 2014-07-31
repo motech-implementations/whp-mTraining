@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="org.motechproject.whp.mtraining, org.motechproject.mtraining"/>
+    <mvc:annotation-driven/>
+
+    <import resource="testWHPmTrainingApplicationContext.xml"/>
+
+
+    <bean id="bookmarkService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.mtraining.service.BookmarkService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.mtraining.service.BookmarkService</value>
+        </property>
+    </bean>
+
+    <bean id="mTrainingService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.mtraining.service.MTrainingService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.mtraining.service.MTrainingService</value>
+        </property>
+    </bean>
+
+    <bean id="activityService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.mtraining.service.ActivityService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.mtraining.service.ActivityService</value>
+        </property>
+    </bean>
+
+    <bean id="callLogService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.CallLogService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.CallLogService</value>
+        </property>
+    </bean>
+
+    <bean id="callDurationService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.CallDurationService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.CallDurationService</value>
+        </property>
+    </bean>
+
+    <bean id="providerService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.ProviderService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.ProviderService</value>
+        </property>
+    </bean>
+
+    <bean id="coursePublicationAttemptService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.CoursePublicationAttemptService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.CoursePublicationAttemptService</value>
+        </property>
+    </bean>
+
+    <bean id="courseConfigurationService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.CourseConfigurationService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.CourseConfigurationService</value>
+        </property>
+    </bean>
+
+    <bean id="coursePlanService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.CoursePlanService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.CoursePlanService</value>
+        </property>
+    </bean>
+
+    <bean id="emailService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.EmailService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.EmailService</value>
+        </property>
+    </bean>
+
+    <bean id="courseConfigService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.CourseConfigurationService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.CourseConfigurationService</value>
+        </property>
+    </bean>
+
+    <bean id="motechUserService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.security.service.MotechUserService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.security.service.MotechUserService</value>
+        </property>
+    </bean>
+
+</beans>

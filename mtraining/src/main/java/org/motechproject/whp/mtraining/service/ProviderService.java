@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.service;
 
 import org.motechproject.whp.mtraining.domain.Provider;
+import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface ProviderService {
     Provider getProviderByCallerId(Long callerId);
 
     Provider getProviderByRemediId(String remediId);
+
+    ResponseStatus validateProvider(Long callerId);
 }

@@ -14,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.Integer.valueOf;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -35,6 +32,15 @@ public class CourseImportService {
 
     @Autowired
     private MotechUserService motechUserService;
+
+    public CourseImportService() { }
+
+    public CourseImportService(CoursePlanService coursePlanService, CourseConfigurationService courseConfigurationService,
+                               MotechUserService motechUserService) {
+        this.coursePlanService = coursePlanService;
+        this.courseConfigurationService = courseConfigurationService;
+        this.motechUserService = motechUserService;
+    }
 
     public CoursePlan importCoursePlan(List<CourseCsvRequest> requests) {
         CoursePlan coursePlan = formCoursePlan(requests);
@@ -58,22 +64,22 @@ public class CourseImportService {
         CourseCsvRequest courseRequest = requests.get(0);
         CoursePlan coursePlan = new CoursePlan(courseRequest.getNodeName(), courseRequest.getStatus(), courseRequest.getFileName());
 
-        Map<Course, CourseCsvRequest> courses = new HashMap<>();
-        Map<Chapter, CourseCsvRequest> chapters = new HashMap<>();
-        Map<Lesson, CourseCsvRequest> lessons = new HashMap<>();
-        Map<Question, CourseCsvRequest> questions = new HashMap<>();
+        Map<Course, CourseCsvRequest> courses = new LinkedHashMap<>();
+        Map<Chapter, CourseCsvRequest> chapters = new LinkedHashMap<>();
+        Map<Lesson, CourseCsvRequest> lessons = new LinkedHashMap<>();
+        Map<Question, CourseCsvRequest> questions = new LinkedHashMap<>();
         for (CourseCsvRequest request : requests) {
             String type = request.getNodeType();
-            if (type.contentEquals("Chapter")) {
+            if (type.equalsIgnoreCase("Chapter")) {
                 Chapter chapter = new Chapter(request.getNodeName(), request.getStatus(), request.getFileName(), new ArrayList<Lesson>());
                 chapters.put(chapter, request);
-            } else if (type.contentEquals("Message") || type.contentEquals("Lesson")) {
+            } else if (type.equalsIgnoreCase("Message") || type.equalsIgnoreCase("Lesson")) {
                 Lesson lesson = new Lesson(request.getNodeName(), request.getStatus(), request.getFileName());
                 lessons.put(lesson, request);
-            } else if (type.contentEquals("Question")) {
+            } else if (type.equalsIgnoreCase("Question")) {
                 Question question = new Question(request.getFileName(), request.getCorrectAnswerFileName());
                 questions.put(question, request);
-            } else if (type.contentEquals("Module")) {
+            } else if (type.equalsIgnoreCase("Module")) {
                 Course course = new Course(request.getNodeName(), request.getStatus(), request.getFileName(), new ArrayList<Chapter>());
                 courses.put(course, request);
             }

@@ -17,6 +17,7 @@ import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertFalse;
@@ -37,12 +38,12 @@ public class CallLogControllerTest {
     private ProviderService providerService;
 
     private CallLogController callLogController;
-    private long courseId;
+    private UUID courseId;
 
     @Before
     public void setUp() {
         callLogController = new CallLogController(callLogReporter, providerService);
-        courseId = 321L;
+        courseId = UUID.randomUUID();
     }
 
     @Test
@@ -51,7 +52,7 @@ public class CallLogControllerTest {
         String uniqueId = "uniqueId";
         String nullSessionId = null;
 
-        CallLogRecord course = new CallLogRecord(123L, 1, CallLogRecordType.COURSE.name(), "2014-03-30T17:42:25.976Z", "2014-03-30T17:52:25.976Z");
+        CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.COURSE.name(), "2014-03-30T17:42:25.976Z", "2014-03-30T17:52:25.976Z");
 
         CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, nullSessionId, courseId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
 
@@ -67,8 +68,8 @@ public class CallLogControllerTest {
         String uniqueId = "uniqueId";
         String sessionId = "ssn001";
         String invalidStartTime = "2014-33-30T17:52:25.976Z";
-        long contentId = 456L;
-        CallLogRecord course = new CallLogRecord(contentId, 1, CallLogRecordType.LESSON.name(), invalidStartTime, "2014-03-30T17:52:25.976Z");
+        UUID uuid = UUID.randomUUID();
+        CallLogRecord course = new CallLogRecord(uuid, 1, CallLogRecordType.LESSON.name(), invalidStartTime, "2014-03-30T17:52:25.976Z");
         CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, courseId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
         when(providerService.getProviderByCallerId(callerId)).thenReturn(new Provider());
 
@@ -76,7 +77,7 @@ public class CallLogControllerTest {
 
         MotechResponse motechResponse = response.getBody();
         assertThat(motechResponse.getResponseCode(), Is.is(ResponseStatus.INVALID_DATE_TIME.getCode()));
-        assertThat(motechResponse.getResponseMessage(), Is.is("Invalid Date specified for " + contentId));
+        assertThat(motechResponse.getResponseMessage(), Is.is("Invalid Date specified for " + uuid));
         verify(callLogReporter, never()).report(any(CallLogRequest.class), any(Provider.class));
     }
 
@@ -85,7 +86,7 @@ public class CallLogControllerTest {
         long callerId = 1234567890L;
         String uniqueId = "uniqueId";
         String sessionId = "sessionId";
-        CallLogRecord course = new CallLogRecord(123L, 1, CallLogRecordType.COURSE.name(), null, "2014-03-30T17:52:25.976Z");
+        CallLogRecord course = new CallLogRecord(UUID.randomUUID(), 1, CallLogRecordType.COURSE.name(), null, "2014-03-30T17:52:25.976Z");
         CallLogRequest callLogRequest = new CallLogRequest(callerId, uniqueId, sessionId, courseId, newArrayList(course), "2014-03-30T17:52:25.976Z", "2014-03-30T17:55:25.976Z");
 
         when(providerService.getProviderByCallerId(callerId)).thenReturn(new Provider());

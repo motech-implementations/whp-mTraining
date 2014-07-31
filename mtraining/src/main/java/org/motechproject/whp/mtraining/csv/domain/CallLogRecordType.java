@@ -4,8 +4,10 @@ import org.apache.commons.lang.StringUtils;
 
 public enum CallLogRecordType {
     COURSE(null),
-    CHAPTER(COURSE),
+    MODULE(COURSE),
+    CHAPTER(MODULE),
     LESSON(CHAPTER),
+    MESSAGE(CHAPTER),
     QUESTION(CHAPTER),
     QUIZ(CHAPTER);
 
@@ -45,7 +47,8 @@ public enum CallLogRecordType {
     }
 
     public static boolean isLesson(String nodeType) {
-        return CallLogRecordType.LESSON.equals(from(nodeType));
+        return CallLogRecordType.LESSON.equals(from(nodeType)) ||
+                CallLogRecordType.MESSAGE.equals(from(nodeType));
     }
 
     public static boolean isQuestion(String nodeType) {

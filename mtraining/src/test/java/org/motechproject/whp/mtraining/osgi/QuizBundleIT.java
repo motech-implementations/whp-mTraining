@@ -1,12 +1,17 @@
 package org.motechproject.whp.mtraining.osgi;
 
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
 import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.whp.mtraining.builder.BuilderHelper;
 import org.motechproject.mtraining.domain.Bookmark;
@@ -28,27 +33,40 @@ import org.motechproject.whp.mtraining.web.domain.QuestionRequest;
 import org.motechproject.whp.mtraining.web.domain.QuizReportRequest;
 import org.motechproject.whp.mtraining.web.domain.QuizReportResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.ops4j.pax.exam.ExamFactory;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.springframework.http.HttpStatus;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.motechproject.whp.mtraining.util.ISODateTimeUtil.nowAsStringInTimeZoneUTC;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
 
-
-public class QuizBundleIT extends AuthenticationAwareIT {
+@Ignore
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerSuite.class)
+@ExamFactory(MotechNativeTestContainerFactory.class)
+public class QuizBundleIT {
     PollingHttpClient httpClient = new PollingHttpClient(new DefaultHttpClient(), 10);
 
     private List<Long> providersAdded = new ArrayList<>();
 
+    @Inject
     private MTrainingService mTrainingService;
 
+    @Inject
     private ProviderService providerService;
 
+    @Inject
     private BookmarkService bookmarkService;
 
 
@@ -60,26 +78,15 @@ public class QuizBundleIT extends AuthenticationAwareIT {
     Chapter chapter;
     Quiz quiz;
 
-    @Override
-    public void onSetUp() throws IOException, InterruptedException {
-        super.onSetUp();
+    @Before
+    public void setUp() throws IOException, InterruptedException {
         ivrServer = new IVRServer(8888, "/ivr-wgn").start();
 
-        providerService = (ProviderService) getApplicationContext().getBean("providerService");
-        assertNotNull(providerService);
-
-        mTrainingService = (MTrainingService) getService("mTrainingService");
-        assertNotNull(mTrainingService);
-
-        bookmarkService = (BookmarkService) getService("bookmarkService");
-        assertNotNull(bookmarkService);
-
-        removeAllProviders();
         provider = addProvider("remediId23", 222292L, WORKING_PROVIDER);
         course = mTrainingService.createCourse(new CourseBuilder().build());
         chapter = BuilderHelper.findFirstActive(course.getChapters());
 
-        Bookmark bookmark = new Bookmark("remediId23", Objects.toString(course.getId()), Objects.toString(chapter.getId()), 
+        Bookmark bookmark = new Bookmark("remediId23", Objects.toString(course.getId()), Objects.toString(chapter.getId()),
                 Objects.toString(BuilderHelper.findFirstActive(chapter.getLessons()).getId()), null);
         bookmarkService.createBookmark(bookmark);
         startTime = nowAsStringInTimeZoneUTC();
@@ -87,6 +94,8 @@ public class QuizBundleIT extends AuthenticationAwareIT {
         chapter = course.getChapters().get(0);
         quiz = chapter.getQuiz();
     }
+
+    public HttpUriRequest httpRequestWithAuthHeaders(String url, String method) { return null; }
 
     public void testShouldReturnQuizResultResponseForQuizRequest() throws IOException, InterruptedException {
         HttpPost httpPost = (HttpPost) httpRequestWithAuthHeaders(String.format("http://localhost:%s/mtraining/web-api/quiz", TestContext.getJettyPort()), "POST");
@@ -144,53 +153,6 @@ public class QuizBundleIT extends AuthenticationAwareIT {
         Provider provider = new Provider(remediId, callerId, providerStatus, new Location("block", "district", "state"));
         providersAdded.add(providerService.createProvider(provider).getId());
         return providerService.getProviderByCallerId(callerId);
-    }
-
-
-    @Override
-    protected List<String> getImports() {
-        List<String> imports = new ArrayList<>();
-        imports.add("org.motechproject.commons.api");
-        imports.add("org.apache.http.util");
-        imports.add("org.mortbay.jetty");
-        imports.add("org.mortbay.jetty.servlet");
-        imports.add("javax.servlet");
-        imports.add("javax.servlet.http");
-        imports.add("org.apache.commons.io");
-        imports.add("org.jasypt.encryption.pbe.config");
-        imports.add("org.jasypt.encryption.pbe");
-        imports.add("org.jasypt.spring.properties");
-        imports.add("org.motechproject.whp.mtraining.mail");
-        imports.add("org.motechproject.whp.mtraining.web.domain");
-        imports.add("org.motechproject.whp.mtraining.domain");
-//        imports.add("com.google.common.collect");
-        return imports;
-
-    }
-
-    @Override
-    protected String[] getConfigLocations() {
-        return new String[]{"test-blueprint.xml"};
-    }
-
-    private Object getService(String serviceBeanName) {
-        return getApplicationContext().getBean(serviceBeanName);
-    }
-
-    @Override
-    protected void onTearDown() throws Exception {
-        removeAllProviders();
-        if (ivrServer != null) {
-            ivrServer.stop();
-        }
-    }
-
-    private void removeAllProviders() {
-        Provider provider;
-        for (Long providerId : providersAdded) {
-            provider = providerService.getProviderById(providerId);
-            providerService.deleteProvider(provider);
-        }
     }
 
     private MotechResponse responseToJson(String response, Class<? extends MotechResponse> responseType) throws IOException {

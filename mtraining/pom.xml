@@ -311,10 +311,14 @@
                             org.motechproject.whp.mtraining.repository;version=${project.version},
                             org.motechproject.whp.mtraining.reports.domain;version=${project.version},
                             org.motechproject.whp.mtraining.csv.domain;version=${project.version},
+                            org.motechproject.whp.mtraining.csv.request;version=${project.version},
                             org.motechproject.whp.mtraining.domain;version=${project.version},
                             org.motechproject.whp.mtraining.service;version=${project.version},
                             org.motechproject.whp.mtraining.service.impl;version=${project.version},
-                            org.motechproject.whp.mtraining.web.domain;version=${project.version}
+                            org.motechproject.whp.mtraining.web.domain;version=${project.version},
+                            org.motechproject.whp.mtraining.reports;version=${project.version},
+                            org.motechproject.whp.mtraining.ivr;version=${project.version},
+                            org.motechproject.whp.mtraining;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.motechproject.server.config;version=${motech.version},
@@ -473,6 +477,13 @@
     <profiles>
         <profile>
             <id>IT</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>motech-osgi-integration-tests</artifactId>
+                    <version>${motech.version}</version>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -538,25 +549,12 @@
                                 </goals>
                                 <configuration>
                                     <encoding>UTF-8</encoding>
-                                    <excludes>
-                                        <exclude>**/**/*BundleIT.java</exclude>
-                                    </excludes>
-                                    <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
-                                    <systemPropertiesFile>${basedir}/maven.properties</systemPropertiesFile>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>integration-test-osgi</id>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                </goals>
-                                <configuration>
-                                    <encoding>UTF-8</encoding>
                                     <includes>
-                                        <include>**/**/*BundleIT.java</include>
+                                        <include>**/**/*IT.java</include>
                                     </includes>
-                                    <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
-                                    <forkMode>always</forkMode>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>false</reuseForks>
+                                    <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
                                     <systemPropertiesFile>${basedir}/maven.properties</systemPropertiesFile>
                                 </configuration>
                             </execution>
@@ -568,7 +566,6 @@
                                 <configuration>
                                     <summaryFiles>
                                         <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
-                                        <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
                                     </summaryFiles>
                                 </configuration>
                             </execution>

@@ -1,27 +1,39 @@
-package org.motechproject.whp.mtraining.repository;
+package org.motechproject.whp.mtraining.service.impl;
 
 import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.testing.osgi.BasePaxIT;
+import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
 import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.ops4j.pax.exam.ExamFactory;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
+import org.junit.rules.TestName;
+import org.osgi.framework.BundleContext;
 
-import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import javax.inject.Inject;
+
+import java.util.List;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:testWHPmTrainingApplicationContext.xml")
-public class AllCoursePublicationAttemptsIT {
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerSuite.class)
+@ExamFactory(MotechNativeTestContainerFactory.class)
+public class CoursePublicationAttemptServiceIT extends BasePaxIT {
 
-    @Autowired
+    @Rule
+    public TestName testName = new TestName();
+
+    @Inject
     CoursePublicationAttemptService coursePublicationAttemptService;
 
     @Test
@@ -40,7 +52,10 @@ public class AllCoursePublicationAttemptsIT {
     @Before
     @After
     public void clearAllCoursePublicationStatus() {
-        coursePublicationAttemptService.getAllCoursePublicationAttempt().clear();
+        List<CoursePublicationAttempt> attempts = coursePublicationAttemptService.getAllCoursePublicationAttempt();
+        for(CoursePublicationAttempt attempt : attempts) {
+            coursePublicationAttemptService.deleteCoursePublicationAttempt(attempt);
+        }
     }
 
     @Test

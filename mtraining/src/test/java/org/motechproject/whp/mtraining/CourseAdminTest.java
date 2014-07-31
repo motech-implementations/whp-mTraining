@@ -51,7 +51,7 @@ public class CourseAdminTest {
         CourseAdmin courseAdmin = new CourseAdmin(emailService, settingsFacade);
         courseAdmin.notifyCoursePublishFailure("CS001", response);
 
-        Mail mail = new Mail("motech@email.com", "admin@email.com", format(CourseAdmin.FAILURE_SUBJECT_FORMAT, "CS001", 1), format(CourseAdmin.FAILURE_MESSAGE_FORMAT, "CS001", 1, response.getResponseCode(), response.getResponseMessage()));
+        Mail mail = new Mail("motech@email.com", "admin@email.com", format(CourseAdmin.FAILURE_SUBJECT_FORMAT, "CS001", 1), format(CourseAdmin.FAILURE_MESSAGE_FORMAT, "CS001", 1001, "hello.wav", response.getResponseMessage()));
         verify(emailService).send(mail);
     }
 

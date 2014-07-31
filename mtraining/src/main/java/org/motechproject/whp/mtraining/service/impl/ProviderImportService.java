@@ -18,6 +18,12 @@ public class ProviderImportService {
     @Autowired
     private ProviderService providerService;
 
+    public ProviderImportService() {}
+
+    public ProviderImportService(ProviderService providerService) {
+        this.providerService = providerService;
+    }
+
     public void importProviders(List<ProviderCsvRequest> providerCsvRequests) {
         for (ProviderCsvRequest providerCsvRequest : providerCsvRequests) {
             Provider provider = createProvider(providerCsvRequest);

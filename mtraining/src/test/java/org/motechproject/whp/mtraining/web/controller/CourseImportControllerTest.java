@@ -51,7 +51,7 @@ public class CourseImportControllerTest {
     @Test
     public void shouldReturnErrorWhenCourseStructureIsInvalid() throws Exception {
         CommonsMultipartFile csvFile = mock(CommonsMultipartFile.class);
-        CourseCsvRequest courseRequestWithoutParentName = new CourseCsvRequest("nodeName", "nodeType", CourseUnitState.valueOf("status"), null, "description", "fileName");
+        CourseCsvRequest courseRequestWithoutParentName = new CourseCsvRequest("nodeName", "nodeType", CourseUnitState.Active, null, "description", "fileName");
         List<CourseCsvRequest> courseList = asList(courseRequestWithoutParentName);
         List<CsvImportError> errors = asList(new CsvImportError("nodeName", "nodeType", "some message"));
         when(csvParser.parse(csvFile, CourseCsvRequest.class)).thenReturn(courseList);

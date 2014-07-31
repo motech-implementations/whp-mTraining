@@ -19,7 +19,7 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
 public class CallLogRecord {
 
     @JsonProperty()
-    private Long contentId;
+    private UUID contentId;
     @JsonProperty
     private Integer version;
     @JsonProperty
@@ -34,7 +34,7 @@ public class CallLogRecord {
     public CallLogRecord() {
     }
 
-    public CallLogRecord(Long contentId, Integer version, String recordType, String startTime, String endTime) {
+    public CallLogRecord(UUID contentId, Integer version, String recordType, String startTime, String endTime) {
         this.contentId = contentId;
         this.version = version;
         this.type = recordType;
@@ -42,7 +42,7 @@ public class CallLogRecord {
         this.endTime = endTime;
     }
 
-    public Long getContentId() {
+    public UUID getContentId() {
         return contentId;
     }
 

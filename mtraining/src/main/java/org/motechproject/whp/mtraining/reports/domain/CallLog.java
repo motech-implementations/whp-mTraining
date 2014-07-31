@@ -5,6 +5,8 @@ import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
 
+import java.util.UUID;
+
 @Entity
 public class CallLog {
 
@@ -24,7 +26,7 @@ public class CallLog {
     private String sessionId;
 
     @Field
-    private Long courseId;
+    private String courseId;
 
     @Field
     private CallLogRecordType callLogRecordType;
@@ -42,12 +44,12 @@ public class CallLog {
     private Boolean restarted;
 
     public CallLog(String remedyId, Long callerId, String uniqueId, String sessionId,
-                   Long courseId, CallLogRecordType callLogRecordType, DateTime startTime, DateTime endTime, String status, boolean restarted) {
+                   UUID courseId, CallLogRecordType callLogRecordType, DateTime startTime, DateTime endTime, String status, boolean restarted) {
         this.remedyId = remedyId;
         this.callerId = callerId;
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
-        this.courseId = courseId;
+        this.courseId = courseId.toString();
         this.callLogRecordType = callLogRecordType;
         this.startTime = startTime;
         this.endTime = endTime;
