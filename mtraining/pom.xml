@@ -169,18 +169,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.motechproject</groupId>
-            <artifactId>org.motechproject.osgi.it</artifactId>
-            <version>1.0.2.RELEASE-r014</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.osgi</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.6.0.v20100517</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>com.springsource.org.mortbay.jetty.server</artifactId>
             <version>6.1.9</version>
@@ -247,7 +235,6 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>1.2.1</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -265,6 +252,11 @@
             <groupId>org.ektorp</groupId>
             <artifactId>org.motechproject.org.ektorp</artifactId>
             <version>1.3.0-r027</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
@@ -547,10 +539,10 @@
                                 <configuration>
                                     <encoding>UTF-8</encoding>
                                     <excludes>
-                                        <exclude>**/**/*IT.java</exclude>
+                                        <exclude>**/**/*BundleIT.java</exclude>
                                     </excludes>
                                     <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
-                                    <systemPropertiesFile>${modules.root.dir}/maven.properties</systemPropertiesFile>
+                                    <systemPropertiesFile>${basedir}/maven.properties</systemPropertiesFile>
                                 </configuration>
                             </execution>
                             <execution>
@@ -561,11 +553,11 @@
                                 <configuration>
                                     <encoding>UTF-8</encoding>
                                     <includes>
-                                        <include>**/**/*IT.java</include>
+                                        <include>**/**/*BundleIT.java</include>
                                     </includes>
                                     <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
                                     <forkMode>always</forkMode>
-                                    <systemPropertiesFile>${modules.root.dir}/maven.properties</systemPropertiesFile>
+                                    <systemPropertiesFile>${basedir}/maven.properties</systemPropertiesFile>
                                 </configuration>
                             </execution>
                             <execution>

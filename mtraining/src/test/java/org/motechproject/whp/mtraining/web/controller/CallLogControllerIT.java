@@ -48,9 +48,10 @@ public class CallLogControllerIT extends BasePaxIT {
 
     private Long providerId;
 
-    private static final String USER_NAME = "test-username";
-    private static final String USER_PASSWORD = "test-password";
+    private static final String USER_NAME = "motech";
+    private static final String USER_PASSWORD = "motech";
     private static final String CALLLOG_URL = "http://localhost:%d/motech-platform-server/module/mtraining/web-api/callLog";
+
     @Test
     public void shouldCreateProvider() throws Exception {
         Provider provider = providerService.createProvider(new Provider("r003", 9934793802l, ProviderStatus.WORKING_PROVIDER, new Location("Bihar")));
