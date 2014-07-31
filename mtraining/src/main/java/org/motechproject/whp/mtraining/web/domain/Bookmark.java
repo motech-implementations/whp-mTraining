@@ -60,12 +60,12 @@ public class Bookmark {
 
     public List<ValidationError> validate() {
         List<ValidationError> validationErrors = newArrayList();
-        if (courseIdentifier == null)// || courseIdentifier.getContentId() == null || courseIdentifier.getVersion() == null)
+        if (courseIdentifier == null || courseIdentifier == 0)// || courseIdentifier.getContentId() == null || courseIdentifier.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Course"));
-        if (chapterIdentifier == null)// || chapterIdentifier.getContentId() == null || chapterIdentifier.getVersion() == null)
+        if (chapterIdentifier == null || courseIdentifier == 0)// || chapterIdentifier.getContentId() == null || chapterIdentifier.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Chapter"));
-        if ((lessonIdentifier == null && // || lessonIdentifier.getContentId() == null || lessonIdentifier.getVersion() == null) &&
-                quizIdentifier == null))// || quizIdentifierDto.getContentId() == null || quizIdentifierDto.getVersion() == null))
+        if (((lessonIdentifier == null || courseIdentifier == 0) && // || lessonIdentifier.getContentId() == null || lessonIdentifier.getVersion() == null) &&
+                (quizIdentifier == null || courseIdentifier == 0)))// || quizIdentifierDto.getContentId() == null || quizIdentifierDto.getVersion() == null))
             validationErrors.add(new ValidationError(MISSING_NODE.getCode(), "Quiz or Message should be present"));
         if (isBlank(dateModified) || !ISODateTimeUtil.validate(dateModified))
             validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME));

@@ -115,12 +115,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>org.motechproject.org.postgresql</artifactId>
-            <version>9.1-901.jdbc4-r024</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.javassist</groupId>
             <artifactId>com.springsource.javassist</artifactId>
             <version>3.15.0.GA</version>
@@ -174,7 +168,6 @@
             <version>3.2.12</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>org.motechproject.osgi.it</artifactId>
@@ -216,7 +209,6 @@
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-osgi-extender-fragment</artifactId>
             <version>${motech.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -276,8 +268,25 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
-            <artifactId>motech-platform-commons-couchdb</artifactId>
-            <version>0.24-SNAPSHOT</version>
+            <artifactId>motech-pax-it</artifactId>
+            <version>${motech.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-native</artifactId>
+            <version>3.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -308,8 +317,8 @@
                         <Blueprint-Enabled>true</Blueprint-Enabled>
                         <Export-Package>
                             org.motechproject.whp.mtraining.repository;version=${project.version},
-			    org.motechproject.whp.mtraining.reports.domain;version=${project.version},
-			    org.motechproject.whp.mtraining.csv.domain;version=${project.version},
+                            org.motechproject.whp.mtraining.reports.domain;version=${project.version},
+                            org.motechproject.whp.mtraining.csv.domain;version=${project.version},
                             org.motechproject.whp.mtraining.domain;version=${project.version},
                             org.motechproject.whp.mtraining.service;version=${project.version},
                             org.motechproject.whp.mtraining.service.impl;version=${project.version},
@@ -468,48 +477,67 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>IT</id>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.googlecode.flyway</groupId>
-                        <artifactId>flyway-maven-plugin</artifactId>
-                        <version>2.3</version>
-                        <configuration>
-                            <url>jdbc:postgresql://${postgres.host}:${postgres.port}/whp</url>
-                            <user>${postgres.user}</user>
-                            <password>${postgres.password}</password>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>postgresql</groupId>
-                                <artifactId>postgresql</artifactId>
-                                <version>9.1-901.jdbc4</version>
-                            </dependency>
-                        </dependencies>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.6</version>
                         <executions>
                             <execution>
-                                <id>db-migrate</id>
+                                <id>copy-test-config-files</id>
                                 <phase>pre-integration-test</phase>
                                 <goals>
-                                    <goal>migrate</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
+                                <configuration>
+                                    <outputDirectory>${user.home}/.motech/config</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/src/test/resources/</directory>
+                                            <include>bootstrap.properties</include>
+                                            <include>motech-settings.properties</include>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>2.5</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>clean-test-config-files</id>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <followSymlinks>false</followSymlinks>
+                                            <directory>${user.home}/.motech/config</directory>
+                                            <includes>
+                                                <include>bootstrap.properties</include>
+                                                <include>motech-settings.properties</include>
+                                            </includes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.9</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.maven.surefire</groupId>
-                                <artifactId>surefire-junit47</artifactId>
-                                <version>2.12.4</version>
-                            </dependency>
-                        </dependencies>
+                        <version>2.17</version>
                         <executions>
                             <execution>
                                 <id>integration-test</id>
@@ -519,7 +547,7 @@
                                 <configuration>
                                     <encoding>UTF-8</encoding>
                                     <excludes>
-                                        <exclude>**/**/*BundleIT.java</exclude>
+                                        <exclude>**/**/*IT.java</exclude>
                                     </excludes>
                                     <summaryFile>target/failsafe-reports/failsafe-summary-it.xml</summaryFile>
                                     <systemPropertiesFile>${modules.root.dir}/maven.properties</systemPropertiesFile>
@@ -533,7 +561,7 @@
                                 <configuration>
                                     <encoding>UTF-8</encoding>
                                     <includes>
-                                        <include>**/**/*BundleIT.java</include>
+                                        <include>**/**/*IT.java</include>
                                     </includes>
                                     <summaryFile>target/failsafe-reports/failsafe-summary-it-osgi.xml</summaryFile>
                                     <forkMode>always</forkMode>
@@ -553,6 +581,24 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>sql-maven-plugin</artifactId>
+                        <version>1.5</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>mysql</groupId>
+                                <artifactId>mysql-connector-java</artifactId>
+                                <version>5.1.9</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <driver>com.mysql.jdbc.Driver</driver>
+                            <username>root</username>
+                            <password>password</password>
+                            <url>jdbc:mysql://localhost:3306</url>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
