@@ -37,6 +37,7 @@ public class CourseProgressUpdater {
      * @param enrolleeCourseProgressDto
      * @return
      */
+    //TODO Uncomment and fix test from old platform-mtraining
 //    public EnrolleeCourseProgressDto update(EnrolleeCourseProgressDto enrolleeCourseProgressDto) {
 //        BookmarkDto bookmarkDto = enrolleeCourseProgressDto.getBookmarkDto();
 //        Bookmark bookmark = toBookmark(bookmarkDto);
