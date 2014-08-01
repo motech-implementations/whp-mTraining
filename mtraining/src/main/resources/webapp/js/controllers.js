@@ -5,6 +5,30 @@
 
     var controllers = angular.module("mtraining.controllers", []);
 
+    controllers.controller('treeViewController', function ($scope) {
+
+    });
+
+    controllers.controller('schedulesController', function ($scope) {
+
+    });
+
+    controllers.controller('coursesController', function ($scope) {
+
+    });
+
+    controllers.controller('modulesController', function ($scope) {
+
+    });
+
+    controllers.controller('chaptersController', function ($scope) {
+
+    });
+
+    controllers.controller('messagesController', function ($scope) {
+
+    });
+
     controllers.controller('fileUploadController', function ($scope, fileUpload) {
         $scope.uploadedCourse = false;
         $scope.uploadedProvider = false;
