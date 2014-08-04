@@ -15,13 +15,26 @@
                   interface="org.motechproject.whp.mtraining.service.EmailService"
                   auto-export="interfaces"/>
 
-    <osgi:reference interface="org.motechproject.security.service.MotechUserService" id="motechUserService"/>
+    <osgi:reference id="motechUserService"
+                    interface="org.motechproject.security.service.MotechUserService" />
 
-    <osgi:reference id="mTrainingService" interface="org.motechproject.mtraining.service.MTrainingService" />
+    <osgi:reference id="mTrainingService"
+                    interface="org.motechproject.mtraining.service.MTrainingService" />
 
-    <osgi:reference id="bookmarkService" interface="org.motechproject.mtraining.service.BookmarkService" />
+    <osgi:reference id="bookmarkService"
+                    interface="org.motechproject.mtraining.service.BookmarkService" />
 
-    <osgi:reference id="activityService" interface="org.motechproject.mtraining.service.ActivityService" />
+    <osgi:reference id="activityService"
+                    interface="org.motechproject.mtraining.service.ActivityService" />
+
+    <osgi:reference id="courseDataService"
+                    interface="org.motechproject.mtraining.repository.CourseDataService" />
+
+    <osgi:reference id="chapterDataService"
+                    interface="org.motechproject.mtraining.repository.ChapterDataService" />
+
+    <osgi:reference id="lessonDataService"
+                    interface="org.motechproject.mtraining.repository.LessonDataService" />
 
     <osgi:service id="providerServiceOsgi" ref="providerService"
                   interface="org.motechproject.whp.mtraining.service.ProviderService" />
