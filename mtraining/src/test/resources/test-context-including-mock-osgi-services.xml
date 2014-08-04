@@ -47,6 +47,17 @@
         </property>
     </bean>
 
+    <bean id="flagService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.FlagService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.FlagService</value>
+        </property>
+    </bean>
+
     <bean id="callLogService" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">
             <bean class="org.mockito.Mockito" factory-method="mock">

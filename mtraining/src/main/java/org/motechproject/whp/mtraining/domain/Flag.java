@@ -75,7 +75,7 @@ public class Flag extends Bookmark {
             validationErrors.add(errorMessage(MISSING_NODE, "Chapter"));
         if ((getLessonIdentifier() == null && quizIdentifier == null))
             validationErrors.add(new ValidationError(MISSING_NODE.getCode(), "Quiz or Lesson should be present"));
-        if (isBlank(getModificationDate().toString()) || !ISODateTimeUtil.validate(getModificationDate().toString()))
+        if (getModificationDate() == null || isBlank(getModificationDate().toString()) || !ISODateTimeUtil.validate(getModificationDate().toString()))
             validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME));
         return validationErrors;
     }

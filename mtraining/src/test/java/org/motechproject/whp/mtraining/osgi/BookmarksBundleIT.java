@@ -18,6 +18,7 @@ import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory
 import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.mtraining.domain.*;
 import org.motechproject.whp.mtraining.domain.CourseConfiguration;
+import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
@@ -167,7 +168,7 @@ public class BookmarksBundleIT {
         Chapter chapter = course002.getChapters().get(0);
         Lesson lesson = chapter.getLessons().get(0);
 
-        Bookmark bookmark = new Bookmark(course002.getId(), chapter.getId(), lesson.getId(), null, DateTime.now().toString());
+        Flag bookmark = new Flag(String.valueOf(course002.getId()), String.valueOf(chapter.getId()), String.valueOf(lesson.getId()), null, null, null ,null);
         CourseProgress courseProgress = new CourseProgress(DateTime.now().toString(), bookmark, 2, "ONGOING");
         CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", courseProgress);
         ObjectMapper objectMapper = new ObjectMapper();

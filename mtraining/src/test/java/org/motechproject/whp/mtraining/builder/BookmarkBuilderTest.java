@@ -23,7 +23,7 @@ public class BookmarkBuilderTest {
                 .withChapters(asList(chapter01))
                 .buildCourse();
 
-        Bookmark bookmark = new BookmarkBuilder().buildBookmarkFromFirstActiveMetadata("roll001", course01, chapter01);
+        Bookmark bookmark = new FlagBuilder().buildFlagFromFirstActiveMetadata("roll001", course01, chapter01);
 
         assertThat(bookmark.getExternalId(), Is.is("roll001"));
         assertThat(bookmark.getLessonIdentifier(), Is.is(Objects.toString(activeLesson.getId())));
