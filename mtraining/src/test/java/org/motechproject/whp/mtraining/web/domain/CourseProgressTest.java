@@ -19,7 +19,7 @@ public class CourseProgressTest {
 
         assertTrue(courseProgressWithMissingStartTime.validate().contains(new ValidationError(ResponseStatus.MISSING_COURSE_START_TIME)));
         assertTrue(courseProgressWithInvalidStartTime.validate().contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME)));
-        assertTrue(courseProgressWithInvalidBookmark.validate().contains(new ValidationError(ResponseStatus.INVALID_BOOKMARK)));
+        assertTrue(courseProgressWithInvalidBookmark.validate().contains(new ValidationError(ResponseStatus.INVALID_FLAG)));
         assertTrue(courseProgressWithBookmarkWithNullCourse.validate().contains(new ValidationError(910, "Missing Content Id or Version for: Course")));
         assertTrue(courseProgressWithInvalidStatus.validate().contains(new ValidationError(ResponseStatus.INVALID_COURSE_STATUS)));
     }

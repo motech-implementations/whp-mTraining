@@ -52,7 +52,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_BOOKMARK;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_FLAG;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_CALLER_ID;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_SESSION_ID;
@@ -193,7 +193,7 @@ public class BookmarkControllerTest {
         assertThat(courseProgressResponse.getCallerId(), Is.is(callerId));
         assertThat(courseProgressResponse.getUniqueId(), Is.is(uniqueId));
         assertThat(courseProgressResponse.getSessionId(), Is.is(sessionId));
-        Bookmark bookmark = courseProgressResponse.getCourseProgress().getBookmark();
+        Bookmark bookmark = courseProgressResponse.getCourseProgress().getFlag();
 
 
         assertThat(courseProgressResponse.getCourseProgress().getCourseStatus(), Is.is(CourseStatus.STARTED.value()));
@@ -300,7 +300,7 @@ public class BookmarkControllerTest {
         doThrow(new InvalidBookmarkException("")).when(courseProgressService).addOrUpdateCourseProgress(courseProgressDtoArgumentCaptor.capture());
         ResponseEntity<MotechResponse> response = bookmarkController.postBookmark(courseProgressPostRequest);
 
-        assertEquals(INVALID_BOOKMARK.getCode(), response.getBody().getResponseCode());
+        assertEquals(INVALID_FLAG.getCode(), response.getBody().getResponseCode());
     }
 
     @Test
