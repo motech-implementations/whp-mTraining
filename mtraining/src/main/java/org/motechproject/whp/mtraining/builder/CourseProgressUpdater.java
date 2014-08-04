@@ -1,30 +1,27 @@
 package org.motechproject.whp.mtraining.builder;
 
-import org.joda.time.DateTime;
 import org.motechproject.mtraining.service.MTrainingService;
-import org.motechproject.mtraining.domain.Bookmark;
-import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
-* Updater to re-validate and set the course in a Bookmark against the provided Course Structure for a given enrollee.
-* In cases where the {@link org.motechproject.mtraining.domain.Bookmark} already refers to a valid course, then jump to {@link org.motechproject.whp.mtraining.builder.BookmarkChapterUpdater}
-* @see org.motechproject.whp.mtraining.builder.BookmarkBuilder
+* Updater to re-validate and set the course in a Flag against the provided Course Structure for a given enrollee.
+* In cases where the {@link org.motechproject.whp.mtraining.domain.Flag} already refers to a valid course, then jump to {@link FlagChapterUpdater}
+* @see FlagBuilder
 */
 //TODO 
 @Component
 public class CourseProgressUpdater {
 
     private MTrainingService courseService;
-    private BookmarkChapterUpdater bookmarkChapterUpdater;
-    private BookmarkBuilder bookmarkBuilder;
+    private FlagChapterUpdater flagChapterUpdater;
+    private FlagBuilder flagBuilder;
 
     @Autowired
-    public CourseProgressUpdater(MTrainingService courseService, BookmarkChapterUpdater bookmarkChapterUpdater, BookmarkBuilder bookmarkBuilder) {
+    public CourseProgressUpdater(MTrainingService courseService, FlagChapterUpdater flagChapterUpdater, FlagBuilder flagBuilder) {
         this.courseService = courseService;
-        this.bookmarkChapterUpdater = bookmarkChapterUpdater;
-        this.bookmarkBuilder = bookmarkBuilder;
+        this.flagChapterUpdater = flagChapterUpdater;
+        this.flagBuilder = flagBuilder;
     }
 
     /**
@@ -46,7 +43,7 @@ public class CourseProgressUpdater {
 //            return null;
 //        }
 //        if (!bookmark.hasModule()) {
-//            BookmarkDto firstActiveBookmark = bookmarkBuilder.buildBookmarkFromFirstActiveMetadata(bookmark.getExternalId(), courseDto);
+//            BookmarkDto firstActiveBookmark = bookmarkBuilder.buildFlagFromFirstActiveMetadata(bookmark.getExternalId(), courseDto);
 //            if (firstActiveBookmark == null) {
 //                return null;
 //            }
@@ -59,7 +56,7 @@ public class CourseProgressUpdater {
 //        }
 //
 //        if (isCourseCompleted(updatedBookmark)) {
-//            BookmarkDto lastBookmarkOfCourse = bookmarkBuilder.buildBookmarkFromLastActiveMetadata(enrolleeCourseProgressDto.getExternalId(), courseDto);
+//            BookmarkDto lastBookmarkOfCourse = bookmarkBuilder.buildFlagFromLastActiveMetadata(enrolleeCourseProgressDto.getExternalId(), courseDto);
 //            enrolleeCourseProgressDto.setBookmarkDto(lastBookmarkOfCourse);
 //            enrolleeCourseProgressDto.markComplete();
 //            return enrolleeCourseProgressDto;

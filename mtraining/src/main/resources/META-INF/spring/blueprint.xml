@@ -41,6 +41,9 @@
     <osgi:service id="coursePublicationAttemptServiceOsgi" ref="coursePublicationAttemptService"
                   interface="org.motechproject.whp.mtraining.service.CoursePublicationAttemptService" />
 
+    <osgi:service id="flagServiceOsgi" ref="flagService"
+                  interface="org.motechproject.whp.mtraining.service.FlagService" />
+
     <osgi:reference id="providerDataService"
                     interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
 
@@ -58,6 +61,9 @@
 
     <osgi:reference id="coursePublicationAttemptDataService"
                     interface="org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService" />
+
+    <osgi:reference id="flagDataService"
+                    interface="org.motechproject.whp.mtraining.repository.FlagDataService" />
 
     <!--Mail Configuration-->
 

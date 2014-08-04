@@ -14,6 +14,9 @@ public class CoursePlan extends CourseUnitMetadata {
     @Field
     private List<Course> courses;
 
+    @Field
+    private Location location;
+
     public CoursePlan(String name, CourseUnitState state, String content) {
         this(name, state, content, null);
     }
@@ -31,4 +34,11 @@ public class CoursePlan extends CourseUnitMetadata {
         this.courses = courses;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 }
