@@ -1,9 +1,8 @@
 (function () {
     'use strict';
 
-    /* App Module */
     var mtraining = angular.module('mtraining', ['motech-dashboard', 'mtraining.controllers', 'mtraining.directives',
-        'ngRoute', 'mtraining.services']);
+        'ngRoute', 'ngResource', 'mtraining.services']);
 
     mtraining.config(function ($routeProvider) {
             $routeProvider.when('/mtraining/treeView', {

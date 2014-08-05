@@ -21,4 +21,12 @@
         }
     });
 
+    services.factory('Course', function($resource) {
+         return $resource('/motech-platform-server/module/mtraining/web-api/course/:id', { id: '@_id' }, {
+          update: {
+            method: 'PUT'
+          }
+        });
+     });
+
 }());

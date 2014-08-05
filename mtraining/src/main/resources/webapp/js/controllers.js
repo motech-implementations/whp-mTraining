@@ -11,11 +11,30 @@
 
     controllers.controller('schedulesController', function ($scope) {
 
-    });
+     });
 
-    controllers.controller('coursesController', function ($scope) {
+    controllers.controller('coursesController', ['$scope', 'Course', function ($scope, Course) {
+        $scope.creatingCourse = false;
+        $scope.updatingCourse = false;
+        $scope.course = undefined;
+        // var course = Course.get({ id: $scope.id });
 
-    });
+        $scope.createCourse = function() {
+            $scope.creatingCourse = true;
+        }
+
+        $scope.saveCourse = function() {
+            var course = new Course();
+            course.name = 'test';
+            course.state = 'Active';
+            course.content = 'desc/filename';
+            course.$save(function() {
+                // saved
+                $scope.creatingCourse = false;
+            });
+        }
+
+    }]);
 
     controllers.controller('modulesController', function ($scope) {
 
