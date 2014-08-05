@@ -23,6 +23,9 @@ public class FlagLessonUpdater {
     private FlagBuilder courseFlagBuilder;
 
     @Autowired
+    private MTrainingService mTrainingService;
+
+    @Autowired
     public FlagLessonUpdater(FlagBuilder flagBuilder) {
         this.courseFlagBuilder = flagBuilder;
     }
@@ -42,7 +45,6 @@ public class FlagLessonUpdater {
      * @return
      */
     public Flag update(Flag flag, Course course, Chapter chapter) {
-        MTrainingService mTrainingService = new MTrainingServiceImpl();
         Lesson lesson = mTrainingService.getLessonById(Integer.parseInt(flag.getLessonIdentifier()));
         String externalId = flag.getExternalId();
         if (lesson == null) {
