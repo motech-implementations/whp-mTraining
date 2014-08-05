@@ -20,17 +20,19 @@
         // var course = Course.get({ id: $scope.id });
 
         $scope.createCourse = function() {
+            $scope.alertMessage = undefined;
             $scope.creatingCourse = true;
+            $scope.course = new Course();
         }
 
         $scope.saveCourse = function() {
-            var course = new Course();
-            course.name = 'test';
-            course.state = 'Active';
-            course.content = 'desc/filename';
-            course.$save(function() {
+            $scope.savingCourse = true;
+            $scope.course.state = 'Inactive';
+            $scope.course.$save(function() {
                 // saved
+                $scope.savingCourse = false;
                 $scope.creatingCourse = false;
+                $scope.alertMessage = 'Course created successfully!';
             });
         }
 
