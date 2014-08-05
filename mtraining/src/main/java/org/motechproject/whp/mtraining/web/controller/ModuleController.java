@@ -4,10 +4,7 @@ import org.motechproject.mtraining.domain.Course;
 import org.motechproject.mtraining.repository.CourseDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,13 +23,28 @@ public class ModuleController {
         return courseDataService.retrieveAll();
     }
 
-    @RequestMapping(value = "/module/remove", params = "id", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String removeModule(@RequestParam("id") long id){
-        Course course = courseDataService.findCourseById(id);
-        if (course == null)
-            return "Module with id="+id+" doesn't exist!";
-        courseDataService.delete(course);
-        return "Removed module with id="+id+" successfully!";
+    public Course getModule(@PathVariable long moduleId) {
+        return courseDataService.findCourseById(moduleId);
     }
+
+    @RequestMapping(value = "/module", method = RequestMethod.POST, consumes = "application/json")
+    @ResponseBody
+    public Course createModule(@RequestBody Course course) {
+        return courseDataService.create(course);
+    }
+
+    @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.PUT, consumes = "application/json")
+    @ResponseBody
+    public Course updateModule(@RequestBody Course course) {
+        return courseDataService.update(course);
+    }
+
+    @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.DELETE, consumes = "application/json")
+    @ResponseBody
+    public void removeModule(@RequestBody Course course) {
+        courseDataService.delete(course);
+    }
+
 }

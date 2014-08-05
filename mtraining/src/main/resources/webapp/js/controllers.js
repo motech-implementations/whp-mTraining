@@ -38,17 +38,17 @@
 
     }]);
 
-    controllers.controller('modulesController', function ($scope) {
+    controllers.controller('modulesController', ['$scope', 'Module', function ($scope, Module) {
 
-    });
+    }]);
 
-    controllers.controller('chaptersController', function ($scope) {
+    controllers.controller('chaptersController', ['$scope', 'Chapter', function ($scope, Chapter) {
 
-    });
+    }]);
 
-    controllers.controller('messagesController', function ($scope) {
+    controllers.controller('messagesController', ['$scope', 'Lesson', function ($scope, Lesson) {
 
-    });
+    }]);
 
     controllers.controller('fileUploadController', function ($scope, fileUpload) {
         $scope.uploadedCourse = false;

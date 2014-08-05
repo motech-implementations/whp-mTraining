@@ -4,10 +4,7 @@ import org.motechproject.mtraining.domain.Chapter;
 import org.motechproject.mtraining.repository.ChapterDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,17 +19,32 @@ public class ChapterController {
 
     @RequestMapping("/chapters")
     @ResponseBody
-    public List<Chapter> getAllChapters(){
+    public List<Chapter> getAllChapters() {
         return chapterDataService.retrieveAll();
     }
 
-    @RequestMapping(value = "/chapter/remove", params = "id", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String removeChapter(@RequestParam("id") long id){
-        Chapter chapter = chapterDataService.findChapterById(id);
-        if (chapter == null)
-            return "Chapter with id="+id+" doesn't exist!";
-        chapterDataService.delete(chapter);
-        return "Removed chapter with id="+id+" successfully!";
+    public Chapter getChapter(@PathVariable long chapterId) {
+        return chapterDataService.findChapterById(chapterId);
     }
+
+    @RequestMapping(value = "/chapter", method = RequestMethod.POST, consumes = "application/json")
+    @ResponseBody
+    public Chapter createChapter(@RequestBody Chapter chapter) {
+        return chapterDataService.create(chapter);
+    }
+
+    @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.PUT, consumes = "application/json")
+    @ResponseBody
+    public Chapter updateChapter(@RequestBody Chapter chapter) {
+        return chapterDataService.update(chapter);
+    }
+
+    @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.DELETE, consumes = "application/json")
+    @ResponseBody
+    public void removeChapter(@RequestBody Chapter chapter) {
+        chapterDataService.delete(chapter);
+    }
+
 }

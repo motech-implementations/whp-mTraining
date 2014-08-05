@@ -4,10 +4,7 @@ import org.motechproject.mtraining.domain.Lesson;
 import org.motechproject.mtraining.repository.LessonDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,17 +19,32 @@ public class LessonController {
 
     @RequestMapping("/lessons")
     @ResponseBody
-    public List<Lesson> getAllLessons(){
+    public List<Lesson> getAllLessons() {
         return lessonDataService.retrieveAll();
     }
 
-    @RequestMapping(value = "/lesson/remove", params = "id", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String removeLesson(@RequestParam("id") long id){
-        Lesson lesson = lessonDataService.findLessonById(id);
-        if (lesson == null)
-            return "Lesson with id="+id+" doesn't exist!";
-        lessonDataService.delete(lesson);
-        return "Removed lesson with id="+id+" successfully!";
+    public Lesson getLesson(@PathVariable long lessonId) {
+        return lessonDataService.findLessonById(lessonId);
     }
+
+    @RequestMapping(value = "/lesson", method = RequestMethod.POST, consumes = "application/json")
+    @ResponseBody
+    public Lesson createLesson(@RequestBody Lesson lesson) {
+        return lessonDataService.create(lesson);
+    }
+
+    @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.PUT, consumes = "application/json")
+    @ResponseBody
+    public Lesson updateLesson(@RequestBody Lesson lesson) {
+        return lessonDataService.update(lesson);
+    }
+
+    @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.DELETE, consumes = "application/json")
+    @ResponseBody
+    public void removeLesson(@RequestBody Lesson lesson) {
+        lessonDataService.delete(lesson);
+    }
+
 }

@@ -29,4 +29,28 @@
         });
      });
 
+     services.factory('Chapter', function($resource) {
+          return $resource('/motech-platform-server/module/mtraining/web-api/chapter/:id', { id: '@_id' }, {
+           update: {
+             method: 'PUT'
+           }
+         });
+      });
+
+     services.factory('Lesson', function($resource) {
+          return $resource('/motech-platform-server/module/mtraining/web-api/lesson/:id', { id: '@_id' }, {
+           update: {
+             method: 'PUT'
+           }
+         });
+      });
+
+     services.factory('Module', function($resource) {
+          return $resource('/motech-platform-server/module/mtraining/web-api/module/:id', { id: '@_id' }, {
+           update: {
+             method: 'PUT'
+           }
+         });
+      });
+
 }());
