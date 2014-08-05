@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-    <button id="createCourse" ng-show="!creatingCourse" ng-click="createCourse()">Create new course</button>
+<div class="row">
+
+	<button id="createCourse" ng-show="!creatingCourse" ng-click="createCourse()">Create new course</button>
     <button id="saveCourse" ng-show="creatingCourse" ng-click="saveCourse()">Save</button>
-</body>
-</html>
+
+    <div id="outsideEmailLoggingTable" class="overrideJqgridTable">
+        <table id="emailLoggingTable" courses-grid="test"></table>
+    </div>
+
+</div>
