@@ -37,7 +37,7 @@
                 $scope.savingCourse = false;
                 $scope.creatingCourse = false;
                 $scope.alertMessage = $scope.msg('mtraining.createdCourse');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#coursesListTable").trigger("reloadGrid");
             });
         }
 
@@ -48,7 +48,7 @@
                 $scope.savingCourse = false;
                 $scope.updatingCourse = false;
                 $scope.alertMessage = $scope.msg('mtraining.updatedCourse');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#coursesListTable").trigger("reloadGrid");
             });
         }
 
@@ -58,7 +58,7 @@
                 $scope.savingCourse = false;
                 $scope.updatingCourse = false;
                 $scope.alertMessage = $scope.msg('mtraining.deletedCourse');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#coursesListTable").trigger("reloadGrid");
             });
         }
 

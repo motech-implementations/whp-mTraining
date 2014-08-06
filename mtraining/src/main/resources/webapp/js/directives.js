@@ -99,7 +99,7 @@
                       elem.jqGrid('setGridWidth', '100%');
                     },
                     onCellSelect: function (rowId, iRow, iCol, e) {
-                        var rowData = $('#emailLoggingTable').jqGrid('getRowData', rowId);
+                        var rowData = $('#coursesListTable').jqGrid('getRowData', rowId);
                         scope.$emit('courseClick', rowData.id);
                     }
                 });
