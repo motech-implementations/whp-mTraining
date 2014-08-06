@@ -41,9 +41,10 @@ public class ChapterController {
         return chapterDataService.update(chapter);
     }
 
-    @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.DELETE, consumes = "application/json")
+    @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeChapter(@RequestBody Chapter chapter) {
+    public void removeChapter(@PathVariable long chapterId) {
+        Chapter chapter = chapterDataService.findChapterById(chapterId);
         chapterDataService.delete(chapter);
     }
 

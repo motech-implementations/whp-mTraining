@@ -41,9 +41,10 @@ public class LessonController {
         return lessonDataService.update(lesson);
     }
 
-    @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.DELETE, consumes = "application/json")
+    @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeLesson(@RequestBody Lesson lesson) {
+    public void removeLesson(@PathVariable long lessonId) {
+        Lesson lesson = lessonDataService.findLessonById(lessonId);
         lessonDataService.delete(lesson);
     }
 

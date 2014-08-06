@@ -21,36 +21,32 @@
         }
     });
 
-    services.factory('Course', function($resource) {
-         return $resource('/motech-platform-server/module/mtraining/web-api/course/:id', { id: '@_id' }, {
-          update: {
-            method: 'PUT'
-          }
+    services.factory('Course', ['$resource', function($resource) {
+        return $resource('/motech-platform-server/module/mtraining/web-api/course/:id', null,
+        {
+           'update': { method:'PUT' }
         });
-     });
+    }]);
 
-     services.factory('Chapter', function($resource) {
-          return $resource('/motech-platform-server/module/mtraining/web-api/chapter/:id', { id: '@_id' }, {
-           update: {
-             method: 'PUT'
-           }
-         });
-      });
+    services.factory('Chapter', ['$resource', function($resource) {
+        return $resource('/motech-platform-server/module/mtraining/web-api/chapter/:id', null,
+        {
+           'update': { method:'PUT' }
+        });
+     }]);
 
-     services.factory('Lesson', function($resource) {
-          return $resource('/motech-platform-server/module/mtraining/web-api/lesson/:id', { id: '@_id' }, {
-           update: {
-             method: 'PUT'
-           }
-         });
-      });
+    services.factory('Lesson', ['$resource', function($resource) {
+        return $resource('/motech-platform-server/module/mtraining/web-api/lesson/:id', null,
+        {
+           'update': { method:'PUT' }
+        });
+    }]);
 
-     services.factory('Module', function($resource) {
-          return $resource('/motech-platform-server/module/mtraining/web-api/module/:id', { id: '@_id' }, {
-           update: {
-             method: 'PUT'
-           }
-         });
-      });
+    services.factory('Module', ['$resource', function($resource) {
+        return $resource('/motech-platform-server/module/mtraining/web-api/module/:id', null,
+        {
+           'update': { method:'PUT' }
+        });
+    }]);
 
 }());

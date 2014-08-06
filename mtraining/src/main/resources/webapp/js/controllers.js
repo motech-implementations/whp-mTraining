@@ -16,8 +16,12 @@
     controllers.controller('coursesController', ['$scope', 'Course', function ($scope, Course) {
         $scope.creatingCourse = false;
         $scope.updatingCourse = false;
-        $scope.course = undefined;
-        // var course = Course.get({ id: $scope.id });
+
+        $scope.$on('courseClick', function(event, courseId) {
+            $scope.alertMessage = undefined;
+            $scope.course = Course.get({ id: courseId });
+            $scope.updatingCourse = true;
+        });
 
         $scope.createCourse = function() {
             $scope.alertMessage = undefined;
@@ -28,11 +32,33 @@
         $scope.saveCourse = function() {
             $scope.savingCourse = true;
             $scope.course.state = 'Inactive';
-            $scope.course.$save(function() {
-                // saved
+            $scope.course.$save(function(c) {
+                // c => saved course object
                 $scope.savingCourse = false;
                 $scope.creatingCourse = false;
-                $scope.alertMessage = 'Course created successfully!';
+                $scope.alertMessage = $scope.msg('mtraining.createdCourse');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.updateCourse = function() {
+            $scope.savingCourse = true;
+            $scope.course.$update({ id:$scope.course.id }, function (c) {
+                // c => updated course object
+                $scope.savingCourse = false;
+                $scope.updatingCourse = false;
+                $scope.alertMessage = $scope.msg('mtraining.updatedCourse');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.deleteCourse = function() {
+            $scope.savingCourse = true;
+            $scope.course.$delete({ id:$scope.course.id }, function () {
+                $scope.savingCourse = false;
+                $scope.updatingCourse = false;
+                $scope.alertMessage = $scope.msg('mtraining.deletedCourse');
+                $("#emailLoggingTable").trigger("reloadGrid");
             });
         }
 

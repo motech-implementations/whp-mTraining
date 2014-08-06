@@ -41,9 +41,10 @@ public class CourseController {
         return coursePlanService.updateCoursePlan(coursePlan);
     }
 
-    @RequestMapping(value = "/course/{courseId}", method = RequestMethod.DELETE, consumes = "application/json")
+    @RequestMapping(value = "/course/{courseId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeCourse(@RequestBody CoursePlan coursePlan) {
+    public void removeCourse(@PathVariable long courseId) {
+        CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseId);
         coursePlanService.deleteCoursePlan(coursePlan);
     }
 

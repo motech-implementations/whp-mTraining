@@ -2,12 +2,13 @@
 
     <div>
         <ul ng-show="alertMessage" class="alert alert-success">{{alertMessage}}</ul>
-        <button id="createCourse" class="btn btn-success" ng-hide="creatingCourse" ng-click="createCourse()">{{msg('mtraining.createCourse')}}</button>
+        <button id="createCourse" class="btn btn-success" ng-hide="creatingCourse || updatingCourse" ng-click="createCourse()">{{msg('mtraining.createCourse')}}</button>
     </div>
 
-    <form class="form-horizontal" ng-show="creatingCourse">
+    <form class="form-horizontal" ng-show="creatingCourse || updatingCourse">
         <fieldset>
-            <legend>{{msg('mtraining.createCourse')}}</legend>
+            <legend ng-show="creatingCourse">{{msg('mtraining.createCourse')}}</legend>
+            <legend ng-show="updatingCourse">{{msg('mtraining.updateCourse')}}</legend>
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="courseName">{{msg('mtraining.courseName')}}</label>
@@ -32,8 +33,10 @@
 
             <div class="form-group">
                 <div class="col-md-8 pull-right">
-                    <button id="saveButton" name="saveButton" class="btn btn-primary" ng-click="saveCourse()">{{msg('mtraining.save')}}</button>
-                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="creatingCourse = false">{{msg('mtraining.cancel')}}</button>
+                    <button id="saveButton" ng-show="creatingCourse" name="saveButton" class="btn btn-primary" ng-click="saveCourse()">{{msg('mtraining.save')}}</button>
+                    <button id="updateButton" ng-show="updatingCourse" name="updateButton" class="btn btn-warning" ng-click="updateCourse()">{{msg('mtraining.update')}}</button>
+                    <button id="deleteButton" ng-show="updatingCourse"name="deleteButton" class="btn btn-danger" ng-click="deleteCourse()">{{msg('mtraining.delete')}}</button>
+                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="creatingCourse = false; updatingCourse = false;">{{msg('mtraining.cancel')}}</button>
                 </div>
                 <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingCourse"/>
             </div>

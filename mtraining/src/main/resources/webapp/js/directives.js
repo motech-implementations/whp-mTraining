@@ -44,13 +44,18 @@
                     forceFit: true,
                     autowidth: true,
                     rownumbers: true,
-                    colNames: ['ID', scope.msg('mtraining.courseName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
+                    colNames: ['ID', scope.msg('mtraining.courseId'), scope.msg('mtraining.courseName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
                         scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                     colModel: [{
-                       name: 'id',
-                       index: 'id',
+                       name: 'rowId',
+                       index: 'rowId',
                        hidden: true,
                        key: true
+                    }, {
+                       name: 'id',
+                       index: 'id',
+                       align: 'center',
+                       hidden: true,
                     }, {
                         name: 'name',
                         index: 'name',
@@ -92,6 +97,10 @@
                     },
                     gridComplete: function () {
                       elem.jqGrid('setGridWidth', '100%');
+                    },
+                    onCellSelect: function (rowId, iRow, iCol, e) {
+                        var rowData = $('#emailLoggingTable').jqGrid('getRowData', rowId);
+                        scope.$emit('courseClick', rowData.id);
                     }
                 });
             }

@@ -41,9 +41,10 @@ public class ModuleController {
         return courseDataService.update(course);
     }
 
-    @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.DELETE, consumes = "application/json")
+    @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeModule(@RequestBody Course course) {
+    public void removeModule(@PathVariable long courseId) {
+        Course course = courseDataService.findCourseById(courseId);
         courseDataService.delete(course);
     }
 
