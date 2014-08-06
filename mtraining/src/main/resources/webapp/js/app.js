@@ -23,6 +23,9 @@
                   }).when('/mtraining/messages', {
                     templateUrl: '../mtraining/partials/messages.html',
                     controller: 'messagesController'
+                  }).when('/mtraining/quizzes', {
+                    templateUrl: '../mtraining/partials/quizzes.html',
+                    controller: 'quizzesController'
                   }).when('/mtraining/upload', {
                     templateUrl: '../mtraining/partials/upload.html',
                     controller: 'fileUploadController'

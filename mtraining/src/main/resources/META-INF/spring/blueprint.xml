@@ -36,6 +36,9 @@
     <osgi:reference id="lessonDataService"
                     interface="org.motechproject.mtraining.repository.LessonDataService" />
 
+    <osgi:reference id="quizDataService"
+                    interface="org.motechproject.mtraining.repository.QuizDataService" />
+
     <osgi:service id="providerServiceOsgi" ref="providerService"
                   interface="org.motechproject.whp.mtraining.service.ProviderService" />
 

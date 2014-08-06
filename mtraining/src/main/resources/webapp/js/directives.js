@@ -44,7 +44,7 @@
                     forceFit: true,
                     autowidth: true,
                     rownumbers: true,
-                    colNames: ['ID', scope.msg('mtraining.courseId'), scope.msg('mtraining.courseName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
+                    colNames: ['rowId', 'id', scope.msg('mtraining.courseName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
                         scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                     colModel: [{
                        name: 'rowId',

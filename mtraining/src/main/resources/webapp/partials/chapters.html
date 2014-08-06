@@ -1,10 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+<div class="row">
 
-</body>
-</html>
+    <div>
+        <ul ng-show="alertMessage" class="alert alert-success">{{alertMessage}}</ul>
+        <button id="createChapter" class="btn btn-success" ng-hide="creatingChapter || updatingChapter" ng-click="createChapter()">{{msg('mtraining.createChapter')}}</button>
+    </div>
+
+    <form class="form-horizontal" ng-show="creatingChapter || updatingChapter">
+        <fieldset>
+            <legend ng-show="creatingChapter">{{msg('mtraining.createChapter')}}</legend>
+            <legend ng-show="updatingChapter">{{msg('mtraining.updateChapter')}}</legend>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="chapterName">{{msg('mtraining.chapterName')}}</label>
+                <div class="col-md-4">
+                    <input id="chapterName" name="chapterName" class="form-control input-md" type="text" ng-model="chapter.name" >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="chapterDescription">{{msg('mtraining.description')}}</label>
+                <div class="col-md-4">
+                    <textarea class="form-control" id="chapterDescription" name="chapterDescription" ng-model="chapter.content" ></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="audioFilename">{{msg('mtraining.filename')}}</label>
+                <div class="col-md-4">
+                    <input id="audioFileName" name="audioFileName" class="form-control input-md" type="text" ng-model="chapter.content" >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-8 pull-right">
+                    <button id="saveButton" ng-show="creatingChapter" name="saveButton" class="btn btn-primary" ng-click="saveChapter()">{{msg('mtraining.save')}}</button>
+                    <button id="updateButton" ng-show="updatingChapter" name="updateButton" class="btn btn-warning" ng-click="updateChapter()">{{msg('mtraining.update')}}</button>
+                    <button id="deleteButton" ng-show="updatingChapter"name="deleteButton" class="btn btn-danger" ng-click="deleteChapter()">{{msg('mtraining.delete')}}</button>
+                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="creatingChapter = false; updatingChapter = false;">{{msg('mtraining.cancel')}}</button>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingChapter"/>
+            </div>
+
+        </fieldset>
+    </form>
+
+</div>

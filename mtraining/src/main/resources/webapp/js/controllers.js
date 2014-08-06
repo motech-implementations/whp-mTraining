@@ -65,15 +65,203 @@
     }]);
 
     controllers.controller('modulesController', ['$scope', 'Module', function ($scope, Module) {
+        $scope.creatingModule = false;
+        $scope.updatingModule = false;
 
+        $scope.$on('moduleClick', function(event, moduleId) {
+            $scope.alertMessage = undefined;
+            $scope.module = Module.get({ id: moduleId });
+            $scope.updatingModule = true;
+        });
+
+        $scope.createModule = function() {
+            $scope.alertMessage = undefined;
+            $scope.creatingModule = true;
+            $scope.module = new Module();
+        }
+
+        $scope.saveModule = function() {
+            $scope.savingModule = true;
+            $scope.module.state = 'Inactive';
+            $scope.module.$save(function(m) {
+                // m => saved module object
+                $scope.savingModule = false;
+                $scope.creatingModule = false;
+                $scope.alertMessage = $scope.msg('mtraining.createdModule');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.updateModule = function() {
+            $scope.savingModule = true;
+            $scope.module.$update({ id:$scope.module.id }, function (m) {
+                // m => updated module object
+                $scope.savingModule = false;
+                $scope.updatingModule = false;
+                $scope.alertMessage = $scope.msg('mtraining.updatedModule');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.deleteModule = function() {
+            $scope.savingModule = true;
+            $scope.module.$delete({ id:$scope.module.id }, function () {
+                $scope.savingModule = false;
+                $scope.updatingModule = false;
+                $scope.alertMessage = $scope.msg('mtraining.deletedModule');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
     }]);
 
     controllers.controller('chaptersController', ['$scope', 'Chapter', function ($scope, Chapter) {
+        $scope.creatingChapter = false;
+        $scope.updatingChapter = false;
 
+        $scope.$on('chapterClick', function(event, chapterId) {
+            $scope.alertMessage = undefined;
+            $scope.chapter = Chapter.get({ id: chapterId });
+            $scope.updatingChapter = true;
+        });
+
+        $scope.createChapter = function() {
+            $scope.alertMessage = undefined;
+            $scope.creatingChapter = true;
+            $scope.chapter = new Chapter();
+        }
+
+        $scope.saveChapter = function() {
+            $scope.savingChapter = true;
+            $scope.chapter.state = 'Inactive';
+            $scope.chapter.$save(function(c) {
+                // c => saved chapter object
+                $scope.savingChapter = false;
+                $scope.creatingChapter = false;
+                $scope.alertMessage = $scope.msg('mtraining.createdChapter');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.updateChapter = function() {
+            $scope.savingChapter = true;
+            $scope.chapter.$update({ id:$scope.chapter.id }, function (c) {
+                // c => updated chapter object
+                $scope.savingChapter = false;
+                $scope.updatingChapter = false;
+                $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.deleteChapter = function() {
+            $scope.savingChapter = true;
+            $scope.chapter.$delete({ id:$scope.chapter.id }, function () {
+                $scope.savingChapter = false;
+                $scope.updatingChapter = false;
+                $scope.alertMessage = $scope.msg('mtraining.deletedChapter');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
     }]);
 
     controllers.controller('messagesController', ['$scope', 'Lesson', function ($scope, Lesson) {
+        $scope.creatingMessage = false;
+        $scope.updatingMessage = false;
 
+        $scope.$on('messageClick', function(event, messageId) {
+            $scope.alertMessage = undefined;
+            $scope.message = Lesson.get({ id: messageId });
+            $scope.updatingMessage = true;
+        });
+
+        $scope.createMessage = function() {
+            $scope.alertMessage = undefined;
+            $scope.creatingMessage = true;
+            $scope.message = new Lesson();
+        }
+
+        $scope.saveMessage = function() {
+            $scope.savingMessage = true;
+            $scope.message.state = 'Inactive';
+            $scope.message.$save(function(m) {
+                // m => saved message object
+                $scope.savingMessage = false;
+                $scope.creatingMessage = false;
+                $scope.alertMessage = $scope.msg('mtraining.createdMessage');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.updateMessage = function() {
+            $scope.savingMessage = true;
+            $scope.message.$update({ id:$scope.message.id }, function (m) {
+                // cm => updated message object
+                $scope.savingMessage = false;
+                $scope.updatingMessage = false;
+                $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.deleteMessage = function() {
+            $scope.savingMessage = true;
+            $scope.message.$delete({ id:$scope.message.id }, function () {
+                $scope.savingMessage = false;
+                $scope.updatingMessage = false;
+                $scope.alertMessage = $scope.msg('mtraining.deletedMessage');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+    }]);
+
+    controllers.controller('quizzesController', ['$scope', 'Quiz', function ($scope, Quiz) {
+        $scope.creatingQuiz = false;
+        $scope.updatingQuiz = false;
+
+        $scope.$on('quizClick', function(event, quizId) {
+            $scope.alertMessage = undefined;
+            $scope.quiz = Quiz.get({ id: quizId });
+            $scope.updatingQuiz = true;
+        });
+
+        $scope.createQuiz = function() {
+            $scope.alertQuiz = undefined;
+            $scope.creatingQuiz = true;
+            $scope.quiz = new Quiz();
+        }
+
+        $scope.saveQuiz = function() {
+            $scope.savingQuiz = true;
+            $scope.quiz.state = 'Inactive';
+            $scope.quiz.$save(function(q) {
+                // q => saved quiz object
+                $scope.savingQuiz = false;
+                $scope.creatingQuiz = false;
+                $scope.alertMessage = $scope.msg('mtraining.createdQuiz');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.updateQuiz = function() {
+            $scope.savingQuiz = true;
+            $scope.quiz.$update({ id:$scope.quiz.id }, function (q) {
+                // q => updated quiz object
+                $scope.savingQuiz = false;
+                $scope.updatingQuiz = false;
+                $scope.alertQuiz = $scope.msg('mtraining.updatedQuiz');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
+
+        $scope.deleteQuiz = function() {
+            $scope.savingQuiz = true;
+            $scope.quiz.$delete({ id:$scope.quiz.id }, function () {
+                $scope.savingQuiz = false;
+                $scope.updatingQuiz = false;
+                $scope.alertQuiz = $scope.msg('mtraining.deletedQuiz');
+                $("#emailLoggingTable").trigger("reloadGrid");
+            });
+        }
     }]);
 
     controllers.controller('fileUploadController', function ($scope, fileUpload) {
