@@ -2,6 +2,9 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.domain.Course;
 import org.motechproject.mtraining.repository.CourseDataService;
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,37 +18,39 @@ import java.util.List;
 public class ModuleController {
 
     @Autowired
-    CourseDataService courseDataService;
+    MTrainingService mTrainingService;
+
+    @Autowired
+    DtoFactoryService dtoFactoryService;
 
     @RequestMapping("/modules")
     @ResponseBody
-    public List<Course> getAllModules() {
-        return courseDataService.retrieveAll();
+    public List<ModuleDto> getAllModules() {
+        return dtoFactoryService.getAllModuleDtos();
     }
 
     @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Course getModule(@PathVariable long moduleId) {
-        return courseDataService.findCourseById(moduleId);
+    public ModuleDto getModule(@PathVariable long moduleId) {
+        return dtoFactoryService.getModuleDtoById(moduleId);
     }
 
     @RequestMapping(value = "/module", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Course createModule(@RequestBody Course course) {
-        return courseDataService.create(course);
+    public void createModule(@RequestBody ModuleDto module) {
+        dtoFactoryService.createOrUpdateModuleFromDto(module);
     }
 
     @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public Course updateModule(@RequestBody Course course) {
-        return courseDataService.update(course);
+    public void updateModule(@RequestBody ModuleDto module) {
+        dtoFactoryService.createOrUpdateModuleFromDto(module);
     }
 
     @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeModule(@PathVariable long courseId) {
-        Course course = courseDataService.findCourseById(courseId);
-        courseDataService.delete(course);
+    public void removeModule(@PathVariable long moduleId) {
+        mTrainingService.deleteCourse(moduleId);
     }
 
 }

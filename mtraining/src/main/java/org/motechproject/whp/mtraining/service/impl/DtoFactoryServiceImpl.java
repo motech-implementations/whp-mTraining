@@ -1,7 +1,10 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.dto.CoursePlanDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
@@ -16,6 +19,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Autowired
     CoursePlanService coursePlanService;
+
+    @Autowired
+    MTrainingService mTrainingService;
 
     @Autowired
     ContentOperationService contentOperationService;
@@ -72,5 +78,56 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             coursePlanDtos.add(convertCoursePlanToDto(coursePlan));
         }
         return coursePlanDtos;
+    }
+
+    @Override
+    public List<ModuleDto> getAllModuleDtos() {
+        List<Course> allCourses = mTrainingService.getAllCourses();
+        return convertModuleListToDtos(allCourses);
+    }
+
+    @Override
+    public ModuleDto getModuleDtoById(long moduleId) {
+        return convertModuleToDto(mTrainingService.getCourseById(moduleId));
+    }
+
+    @Override
+    public void createOrUpdateModuleFromDto(ModuleDto moduleDto) {
+        Course module;
+        if (moduleDto.getId() == 0) {
+            mTrainingService.createCourse(generateModuleFromDto(moduleDto));
+        } else {
+            module = mTrainingService.getCourseById(moduleDto.getId());
+            module.setName(moduleDto.getName());
+            module.setState(moduleDto.getState());
+            module.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
+                    (moduleDto.getFilename(), moduleDto.getDescription()));
+            mTrainingService.updateCourse(module);
+        }
+    }
+
+    @Override
+    public Course generateModuleFromDto(ModuleDto moduleDto) {
+        return new Course(moduleDto.getName(), moduleDto.getState(),
+                contentOperationService.codeFileNameAndDescriptionIntoContent(moduleDto.getFilename(), moduleDto.getDescription()));
+    }
+    @Override
+    public ModuleDto convertModuleToDto(Course module) {
+        ModuleDto moduleDto = new ModuleDto(module.getId(),module.getName(),module.getState(),
+                module.getCreationDate(), module.getModificationDate());
+
+        contentOperationService.getFileNameAndDescriptionFromContent(moduleDto, module.getContent());
+
+        return moduleDto;
+    }
+
+    @Override
+    public List<ModuleDto> convertModuleListToDtos (List<Course> modules) {
+        List<ModuleDto> moduleDtos = new ArrayList<>();
+
+        for (Course module : modules) {
+            moduleDtos.add(convertModuleToDto(module));
+        }
+        return moduleDtos;
     }
 }

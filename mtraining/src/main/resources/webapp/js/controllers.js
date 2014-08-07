@@ -21,6 +21,7 @@
             $scope.alertMessage = undefined;
             $scope.course = Course.get({ id: courseId });
             $scope.updatingCourse = true;
+            $scope.creatingCourse = false;
         });
 
         $scope.createCourse = function() {
@@ -72,6 +73,7 @@
             $scope.alertMessage = undefined;
             $scope.module = Module.get({ id: moduleId });
             $scope.updatingModule = true;
+            $scope.creatingModule = false;
         });
 
         $scope.createModule = function() {
@@ -122,6 +124,7 @@
             $scope.alertMessage = undefined;
             $scope.chapter = Chapter.get({ id: chapterId });
             $scope.updatingChapter = true;
+            $scope.creatingChapter = false;
         });
 
         $scope.createChapter = function() {
@@ -172,6 +175,7 @@
             $scope.alertMessage = undefined;
             $scope.message = Lesson.get({ id: messageId });
             $scope.updatingMessage = true;
+            $scope.creatingMessage = false;
         });
 
         $scope.createMessage = function() {
@@ -224,6 +228,7 @@
             $scope.alertMessage = undefined;
             $scope.quiz = Quiz.get({ id: quizId });
             $scope.updatingQuiz = true;
+            $scope.creatingQuiz = false;
         });
 
         $scope.clearQuestion = function() {

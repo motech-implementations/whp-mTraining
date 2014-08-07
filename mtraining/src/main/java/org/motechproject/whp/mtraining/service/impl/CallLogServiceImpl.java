@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("callLogService")
-public class CallLogServiceImpl implements CallLogService{
+public class CallLogServiceImpl implements CallLogService {
 
     @Autowired
     private CallLogDataService callLogDataService;

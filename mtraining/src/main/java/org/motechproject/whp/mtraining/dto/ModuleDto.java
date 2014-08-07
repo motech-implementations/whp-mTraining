@@ -21,6 +21,10 @@ public class ModuleDto extends CourseUnitMetadataDto {
         this.chapters = chapters;
     }
 
+    public ModuleDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate) {
+        super(id, name, state, creationDate, modificationDate);
+    }
+
     public List<ChapterDto> getChapters() {
         return chapters;
     }
