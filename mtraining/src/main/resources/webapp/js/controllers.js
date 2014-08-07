@@ -197,7 +197,7 @@
                 $scope.savingMessage = false;
                 $scope.creatingMessage = false;
                 $scope.alertMessage = $scope.msg('mtraining.createdMessage');
-                $("#messageListTable").trigger("reloadGrid");
+                $("#messagesListTable").trigger("reloadGrid");
             });
         }
 
@@ -208,7 +208,7 @@
                 $scope.savingMessage = false;
                 $scope.updatingMessage = false;
                 $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
-                $("#messageListTable").trigger("reloadGrid");
+                $("#messagesListTable").trigger("reloadGrid");
             });
         }
 
@@ -218,7 +218,7 @@
                 $scope.savingMessage = false;
                 $scope.updatingMessage = false;
                 $scope.alertMessage = $scope.msg('mtraining.deletedMessage');
-                $("#messageListTable").trigger("reloadGrid");
+                $("#messagesListTable").trigger("reloadGrid");
             });
         }
 
@@ -283,12 +283,13 @@
         $scope.saveQuiz = function() {
             $scope.savingQuiz = true;
             $scope.quiz.state = 'Inactive';
+            console.log($scope.quiz);
             $scope.quiz.$save(function(q) {
                 // q => saved quiz object
                 $scope.savingQuiz = false;
                 $scope.creatingQuiz = false;
                 $scope.alertMessage = $scope.msg('mtraining.createdQuiz');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#quizzesListTable").trigger("reloadGrid");
             });
             $scope.clearQuestion();
         }
@@ -300,7 +301,7 @@
                 $scope.savingQuiz = false;
                 $scope.updatingQuiz = false;
                 $scope.alertQuiz = $scope.msg('mtraining.updatedQuiz');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#quizzesListTable").trigger("reloadGrid");
             });
             $scope.clearQuestion();
         }
@@ -311,7 +312,7 @@
                 $scope.savingQuiz = false;
                 $scope.updatingQuiz = false;
                 $scope.alertQuiz = $scope.msg('mtraining.deletedQuiz');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#quizzesListTable").trigger("reloadGrid");
             });
             $scope.clearQuestion();
         }

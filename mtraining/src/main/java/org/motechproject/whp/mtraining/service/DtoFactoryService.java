@@ -79,4 +79,8 @@ public interface DtoFactoryService {
 
     List<QuestionDto> convertQuestionListToDtos (List<Question> questions);
 
+    Question convertDtoToQuestion(QuestionDto questionDto);
+
+    List<Question> convertDtosToQuestionList (List<QuestionDto> questionDtos);
+
 }

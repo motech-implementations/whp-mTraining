@@ -35,7 +35,7 @@
             <div class="form-group">
                 <label class="col-md-4 control-label" for="passPercentage">{{msg('mtraining.passPercentage')}}</label>
                 <div class="col-md-4">
-                    <input id="passPercentage" name="passPercentage" class="form-control input-md" type="text" ng-model="quiz.passPercentage" >
+                    <input id="passPercentage" name="passPercentage" class="form-control input-md" type="number" ng-model="quiz.passPercentage" >
                 </div>
             </div>
 
@@ -74,5 +74,10 @@
         </fieldset>
 
     </form>
+
+    <div id="outsideQuizzesListTable" class="overrideJqgridTable">
+        <table id="quizzesListTable" quizzes-grid="quizzesResourceTable"></table>
+    </div>
+
 
 </div>

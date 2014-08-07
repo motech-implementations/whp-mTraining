@@ -256,6 +256,8 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             quiz = mTrainingService.getQuizById(quizDto.getId());
             quiz.setName(quizDto.getName());
             quiz.setState(quizDto.getState());
+            quiz.setPassPercentage(quizDto.getPassPercentage());
+            quiz.setQuestions(convertDtosToQuestionList(quizDto.getQuestions()));
             quiz.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
                     (quizDto.getFilename(), quizDto.getDescription()));
             mTrainingService.updateQuiz(quiz);
@@ -264,8 +266,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Override
     public Quiz generateQuizFromDto(QuizDto quizDto) {
-        return new Quiz(quizDto.getName(), quizDto.getState(),
+        Quiz quiz = new Quiz(quizDto.getName(), quizDto.getState(),
                 contentOperationService.codeFileNameAndDescriptionIntoContent(quizDto.getFilename(), quizDto.getDescription()));
+        quiz.setPassPercentage(quizDto.getPassPercentage());
+        quiz.setQuestions(convertDtosToQuestionList(quizDto.getQuestions()));
+        return quiz;
     }
     @Override
     public QuizDto convertQuizToDto(Quiz quiz) {
@@ -301,5 +306,21 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             questionDtos.add(convertQuestionToDto(question));
         }
         return questionDtos;
+    }
+
+    @Override
+    public Question convertDtoToQuestion(QuestionDto questionDto) {
+        Question question = new Question(questionDto.getQuestion(), questionDto.getAnswer());
+        return question;
+    }
+
+    @Override
+    public List<Question> convertDtosToQuestionList (List<QuestionDto> questionDtos) {
+        List<Question> questions = new ArrayList<>();
+
+        for (QuestionDto questionDto : questionDtos) {
+            questions.add(convertDtoToQuestion(questionDto));
+        }
+        return questions;
     }
 }
