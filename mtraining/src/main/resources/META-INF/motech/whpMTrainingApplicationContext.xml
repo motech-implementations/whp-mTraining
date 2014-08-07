@@ -30,8 +30,6 @@
         </property>
     </bean>
 
-
-
     <bean id="moduleRegistrationData" class="org.motechproject.osgi.web.ModuleRegistrationData">
         <constructor-arg name="url" value="../mtraining/index.html"/>
         <constructor-arg name="moduleName" value="mtraining.module"/>
@@ -45,6 +43,7 @@
                 <entry key="messages" value="../admin/messages/"/>
             </map>
         </constructor-arg>
+        <property name="defaultURL" value="/mtraining/treeView"/>
     </bean>
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

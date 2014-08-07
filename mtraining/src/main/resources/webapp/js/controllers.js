@@ -63,6 +63,7 @@
             });
         }
 
+        $scope.createCourse();
     }]);
 
     controllers.controller('modulesController', ['$scope', 'Module', function ($scope, Module) {
@@ -114,6 +115,8 @@
                 $("#modulesListTable").trigger("reloadGrid");
             });
         }
+
+        $scope.createModule();
     }]);
 
     controllers.controller('chaptersController', ['$scope', 'Chapter', function ($scope, Chapter) {
@@ -165,6 +168,8 @@
                 $("#chaptersListTable").trigger("reloadGrid");
             });
         }
+
+        $scope.createChapter();
     }]);
 
     controllers.controller('messagesController', ['$scope', 'Lesson', function ($scope, Lesson) {
@@ -216,6 +221,8 @@
                 $("#messageListTable").trigger("reloadGrid");
             });
         }
+
+        $scope.createMessage();
     }]);
 
     controllers.controller('quizzesController', ['$scope', 'Quiz', function ($scope, Quiz) {
@@ -308,6 +315,8 @@
             });
             $scope.clearQuestion();
         }
+
+        $scope.createQuiz();
     }]);
 
     controllers.controller('fileUploadController', function ($scope, fileUpload) {
