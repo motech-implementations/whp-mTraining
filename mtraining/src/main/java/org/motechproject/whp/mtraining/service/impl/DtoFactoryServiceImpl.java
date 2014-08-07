@@ -24,13 +24,38 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     public static final String FILENAME_MAPPING_NAME = "filename";
 
     @Override
-    public List<CoursePlanDto> getAllCoursePlanDtos(){
+    public List<CoursePlanDto> getAllCoursePlanDtos() {
         List<CoursePlan> allCourses = coursePlanService.getAllCoursePlans();
         return convertCoursePlanListToDtos(allCourses);
     }
 
     @Override
-    public CoursePlanDto convertCoursePlanToDto(CoursePlan coursePlan){
+    public CoursePlanDto getCoursePlanDtoById(long courseId) {
+        return convertCoursePlanToDto(coursePlanService.getCoursePlanById(courseId));
+    }
+
+    @Override
+    public void createOrUpdateCoursePlanFromDto(CoursePlanDto coursePlanDto) {
+        CoursePlan coursePlan;
+        if (coursePlanDto.getId() == 0) {
+            coursePlanService.createCoursePlan(generateCoursePlanFromDto(coursePlanDto));
+        } else {
+            coursePlan = coursePlanService.getCoursePlanById(coursePlanDto.getId());
+            coursePlan.setName(coursePlanDto.getName());
+            coursePlan.setState(coursePlanDto.getState());
+            coursePlan.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
+                    (coursePlanDto.getFilename(), coursePlanDto.getDescription()));
+            coursePlanService.updateCoursePlan(coursePlan);
+        }
+    }
+
+    @Override
+    public CoursePlan generateCoursePlanFromDto(CoursePlanDto coursePlanDto) {
+        return new CoursePlan(coursePlanDto.getName(), coursePlanDto.getState(),
+                contentOperationService.codeFileNameAndDescriptionIntoContent(coursePlanDto.getFilename(), coursePlanDto.getDescription()));
+    }
+    @Override
+    public CoursePlanDto convertCoursePlanToDto(CoursePlan coursePlan) {
         CoursePlanDto coursePlanDto = new CoursePlanDto(coursePlan.getId(),coursePlan.getName(),coursePlan.getState(),
                 coursePlan.getCreationDate(), coursePlan.getModificationDate());
 

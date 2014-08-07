@@ -15,4 +15,10 @@ public interface DtoFactoryService {
     CoursePlanDto convertCoursePlanToDto(CoursePlan coursePlan);
 
     List<CoursePlanDto> convertCoursePlanListToDtos (List<CoursePlan> coursePlans);
+
+    CoursePlanDto getCoursePlanDtoById(long courseId);
+
+    void createOrUpdateCoursePlanFromDto(CoursePlanDto coursePlanDto);
+
+    CoursePlan generateCoursePlanFromDto(CoursePlanDto coursePlanDto);
 }

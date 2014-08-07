@@ -62,8 +62,8 @@
                         align: 'center',
                         width: 155
                     }, {
-                        name: 'content',
-                        index: 'content',
+                        name: 'description',
+                        index: 'description',
                         align: 'center',
                         width: 200
                     }, {
@@ -72,8 +72,8 @@
                         align: 'center',
                         width: 60
                     },{
-                        name: 'content',
-                        index: 'content',
+                        name: 'filename',
+                        index: 'filename',
                         align: 'center',
                         width: 100
                     }, {
