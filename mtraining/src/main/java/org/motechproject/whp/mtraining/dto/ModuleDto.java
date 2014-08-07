@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.dto;
 
 import org.joda.time.DateTime;
+import org.motechproject.mtraining.domain.CourseUnitState;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class ModuleDto extends CourseUnitMetadataDto {
     public ModuleDto() {
     }
 
-    public ModuleDto(Integer id, String name, String description, String state, String filename,
+    public ModuleDto(Integer id, String name, String description, CourseUnitState state, String filename,
                      DateTime creationDate, DateTime modificationDate, List<ChapterDto> chapters) {
         super(id, name, description, state, filename, creationDate, modificationDate);
         this.chapters = chapters;

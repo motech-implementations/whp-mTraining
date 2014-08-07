@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.dto;
 
 import org.joda.time.DateTime;
+import org.motechproject.mtraining.domain.CourseUnitState;
 
 /**
  * Generic DTO for mTraining units
@@ -10,7 +11,7 @@ public class CourseUnitMetadataDto {
     private long id;
     private String name;
     private String description;
-    private String state;
+    private CourseUnitState state;
     private String filename;
     private DateTime creationDate;
     private DateTime modificationDate;
@@ -18,13 +19,17 @@ public class CourseUnitMetadataDto {
     public CourseUnitMetadataDto() {
     }
 
-    public CourseUnitMetadataDto(long id, String name, String description, String state, String filename,
+    public CourseUnitMetadataDto(long id, String name, String description, CourseUnitState state, String filename,
                                  DateTime creationDate, DateTime modificationDate) {
+        this(id, name, state, creationDate, modificationDate);
+        this.description = description;
+        this.filename = filename;
+    }
+
+    public CourseUnitMetadataDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate) {
         this.id = id;
         this.name = name;
-        this.description = description;
         this.state = state;
-        this.filename = filename;
         this.creationDate = creationDate;
         this.modificationDate = modificationDate;
     }
@@ -53,11 +58,11 @@ public class CourseUnitMetadataDto {
         this.description = description;
     }
 
-    public String getState() {
+    public CourseUnitState getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(CourseUnitState state) {
         this.state = state;
     }
 

@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.dto;
 
 import org.joda.time.DateTime;
+import org.motechproject.mtraining.domain.CourseUnitState;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class QuizDto extends CourseUnitMetadataDto {
     public QuizDto() {
     }
 
-    public QuizDto(Integer id, String name, String description, String state, String filename,
+    public QuizDto(Integer id, String name, String description, CourseUnitState state, String filename,
                    DateTime creationDate, DateTime modificationDate, List<QuestionDto> questions) {
         super(id, name, description, state, filename, creationDate, modificationDate);
         this.questions = questions;
