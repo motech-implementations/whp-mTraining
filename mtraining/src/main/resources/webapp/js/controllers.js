@@ -141,7 +141,7 @@
                 $scope.savingChapter = false;
                 $scope.creatingChapter = false;
                 $scope.alertMessage = $scope.msg('mtraining.createdChapter');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#chaptersListTable").trigger("reloadGrid");
             });
         }
 
@@ -152,7 +152,7 @@
                 $scope.savingChapter = false;
                 $scope.updatingChapter = false;
                 $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#chaptersListTable").trigger("reloadGrid");
             });
         }
 
@@ -162,7 +162,7 @@
                 $scope.savingChapter = false;
                 $scope.updatingChapter = false;
                 $scope.alertMessage = $scope.msg('mtraining.deletedChapter');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#chaptersListTable").trigger("reloadGrid");
             });
         }
     }]);
