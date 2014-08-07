@@ -1,12 +1,17 @@
 package org.motechproject.whp.mtraining.service.impl;
 
-import org.motechproject.mtraining.domain.*;
-import org.motechproject.whp.mtraining.domain.CourseConfiguration;
-import org.motechproject.whp.mtraining.domain.CoursePlan;
-import org.motechproject.whp.mtraining.domain.Location;
+import org.motechproject.mtraining.domain.Chapter;
+import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.Lesson;
+import org.motechproject.mtraining.domain.Question;
+import org.motechproject.mtraining.domain.Quiz;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.request.CourseConfigurationRequest;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
+import org.motechproject.whp.mtraining.domain.CourseConfiguration;
+import org.motechproject.whp.mtraining.domain.CoursePlan;
+import org.motechproject.whp.mtraining.domain.Location;
+import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.slf4j.Logger;
@@ -14,7 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.Integer.valueOf;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -32,6 +40,9 @@ public class CourseImportService {
 
     @Autowired
     private MotechUserService motechUserService;
+
+    @Autowired
+    private ContentOperationService contentOperationService;
 
     public CourseImportService() { }
 
@@ -62,7 +73,8 @@ public class CourseImportService {
 
     private CoursePlan formCoursePlan(List<CourseCsvRequest> requests) {
         CourseCsvRequest courseRequest = requests.get(0);
-        CoursePlan coursePlan = new CoursePlan(courseRequest.getNodeName(), courseRequest.getStatus(), courseRequest.getFileName());
+        CoursePlan coursePlan = new CoursePlan(courseRequest.getNodeName(), courseRequest.getStatus(),
+                contentOperationService.codeFileNameAndDescriptionIntoContent(courseRequest.getFileName(), courseRequest.getDescription()));
 
         Map<Course, CourseCsvRequest> courses = new LinkedHashMap<>();
         Map<Chapter, CourseCsvRequest> chapters = new LinkedHashMap<>();
@@ -71,16 +83,21 @@ public class CourseImportService {
         for (CourseCsvRequest request : requests) {
             String type = request.getNodeType();
             if (type.equalsIgnoreCase("Chapter")) {
-                Chapter chapter = new Chapter(request.getNodeName(), request.getStatus(), request.getFileName(), new ArrayList<Lesson>());
+                Chapter chapter = new Chapter(request.getNodeName(), request.getStatus(),
+                        contentOperationService.codeFileNameAndDescriptionIntoContent(request.getFileName(), request.getDescription()),
+                        new ArrayList<Lesson>());
                 chapters.put(chapter, request);
             } else if (type.equalsIgnoreCase("Message") || type.equalsIgnoreCase("Lesson")) {
-                Lesson lesson = new Lesson(request.getNodeName(), request.getStatus(), request.getFileName());
+                Lesson lesson = new Lesson(request.getNodeName(), request.getStatus(),
+                        contentOperationService.codeFileNameAndDescriptionIntoContent(request.getFileName(), request.getDescription()));
                 lessons.put(lesson, request);
             } else if (type.equalsIgnoreCase("Question")) {
                 Question question = new Question(request.getFileName(), request.getCorrectAnswerFileName());
                 questions.put(question, request);
             } else if (type.equalsIgnoreCase("Module")) {
-                Course course = new Course(request.getNodeName(), request.getStatus(), request.getFileName(), new ArrayList<Chapter>());
+                Course course = new Course(request.getNodeName(), request.getStatus(),
+                        contentOperationService.codeFileNameAndDescriptionIntoContent(request.getFileName(), request.getDescription()),
+                        new ArrayList<Chapter>());
                 courses.put(course, request);
             }
         }
