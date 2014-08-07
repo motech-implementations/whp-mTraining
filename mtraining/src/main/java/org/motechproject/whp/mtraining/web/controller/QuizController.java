@@ -1,7 +1,8 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.motechproject.mtraining.domain.Quiz;
-import org.motechproject.mtraining.repository.QuizDataService;
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.dto.QuizDto;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,37 +16,39 @@ import java.util.List;
 public class QuizController {
 
     @Autowired
-    QuizDataService quizDataService;
+    MTrainingService mTrainingService;
+
+    @Autowired
+    DtoFactoryService dtoFactoryService;
 
     @RequestMapping("/quizzes")
     @ResponseBody
-    public List<Quiz> getAllQuizzes() {
-        return quizDataService.retrieveAll();
+    public List<QuizDto> getAllQuizzes() {
+        return dtoFactoryService.getAllQuizDtos();
     }
 
     @RequestMapping(value = "/quiz/{quizId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Quiz getQuiz(@PathVariable long quizId) {
-        return quizDataService.findQuizById(quizId);
+    public QuizDto getQuiz(@PathVariable long quizId) {
+        return dtoFactoryService.getQuizDtoById(quizId);
     }
 
     @RequestMapping(value = "/quiz", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Quiz createQuiz(@RequestBody Quiz quiz) {
-        return quizDataService.create(quiz);
+    public void createQuiz(@RequestBody QuizDto quiz) {
+        dtoFactoryService.createOrUpdateQuizFromDto(quiz);
     }
 
     @RequestMapping(value = "/quiz/{quizId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public Quiz updateQuiz(@RequestBody Quiz quiz) {
-        return quizDataService.update(quiz);
+    public void updateQuiz(@RequestBody QuizDto quiz) {
+        dtoFactoryService.createOrUpdateQuizFromDto(quiz);
     }
 
     @RequestMapping(value = "/quiz/{quizId}", method = RequestMethod.DELETE)
     @ResponseBody
     public void removeQuiz(@PathVariable long quizId) {
-        Quiz quiz = quizDataService.findQuizById(quizId);
-        quizDataService.delete(quiz);
+        mTrainingService.deleteQuiz(quizId);
     }
 
 }

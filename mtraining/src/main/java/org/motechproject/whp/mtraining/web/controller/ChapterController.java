@@ -1,7 +1,8 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.motechproject.mtraining.domain.Chapter;
-import org.motechproject.mtraining.repository.ChapterDataService;
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -9,43 +10,45 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Web API for Chapter
+ * Web API for ChapterDto
  */
 @Controller
 public class ChapterController {
 
     @Autowired
-    ChapterDataService chapterDataService;
+    MTrainingService mTrainingService;
+
+    @Autowired
+    DtoFactoryService dtoFactoryService;
 
     @RequestMapping("/chapters")
     @ResponseBody
-    public List<Chapter> getAllChapters() {
-        return chapterDataService.retrieveAll();
+    public List<ChapterDto> getAllChapterDtos() {
+        return dtoFactoryService.getAllChapterDtos();
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Chapter getChapter(@PathVariable long chapterId) {
-        return chapterDataService.findChapterById(chapterId);
+    public ChapterDto getChapterDto(@PathVariable long chapterId) {
+        return dtoFactoryService.getChapterDtoById(chapterId);
     }
 
     @RequestMapping(value = "/chapter", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Chapter createChapter(@RequestBody Chapter chapter) {
-        return chapterDataService.create(chapter);
+    public void createChapterDto(@RequestBody ChapterDto chapter) {
+        dtoFactoryService.createOrUpdateChapterFromDto(chapter);
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public Chapter updateChapter(@RequestBody Chapter chapter) {
-        return chapterDataService.update(chapter);
+    public  void updateChapterDto(@RequestBody ChapterDto chapter) {
+        dtoFactoryService.createOrUpdateChapterFromDto(chapter);
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeChapter(@PathVariable long chapterId) {
-        Chapter chapter = chapterDataService.findChapterById(chapterId);
-        chapterDataService.delete(chapter);
+    public void removeChapterDto(@PathVariable long chapterId) {
+        mTrainingService.deleteChapter(chapterId);
     }
 
 }

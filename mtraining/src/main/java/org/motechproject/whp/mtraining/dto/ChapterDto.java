@@ -24,6 +24,10 @@ public class ChapterDto extends CourseUnitMetadataDto {
         this.quiz = quiz;
     }
 
+    public ChapterDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate) {
+        super(id, name, state, creationDate, modificationDate);
+    }
+
     public List<LessonDto> getLessons() {
         return lessons;
     }

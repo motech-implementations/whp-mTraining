@@ -1,10 +1,9 @@
 package org.motechproject.whp.mtraining.service.impl;
 
-import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.*;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
-import org.motechproject.whp.mtraining.dto.CoursePlanDto;
-import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.*;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
@@ -80,6 +79,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return coursePlanDtos;
     }
 
+
     @Override
     public List<ModuleDto> getAllModuleDtos() {
         List<Course> allCourses = mTrainingService.getAllCourses();
@@ -129,5 +129,177 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             moduleDtos.add(convertModuleToDto(module));
         }
         return moduleDtos;
+    }
+
+
+    @Override
+    public List<ChapterDto> getAllChapterDtos() {
+        List<Chapter> allCourses = mTrainingService.getAllChapters();
+        return convertChapterListToDtos(allCourses);
+    }
+
+    @Override
+    public ChapterDto getChapterDtoById(long chapterId) {
+        return convertChapterToDto(mTrainingService.getChapterById(chapterId));
+    }
+
+    @Override
+    public void createOrUpdateChapterFromDto(ChapterDto chapterDto) {
+        Chapter chapter;
+        if (chapterDto.getId() == 0) {
+            mTrainingService.createChapter(generateChapterFromDto(chapterDto));
+        } else {
+            chapter = mTrainingService.getChapterById(chapterDto.getId());
+            chapter.setName(chapterDto.getName());
+            chapter.setState(chapterDto.getState());
+            chapter.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
+                    (chapterDto.getFilename(), chapterDto.getDescription()));
+            mTrainingService.updateChapter(chapter);
+        }
+    }
+
+    @Override
+    public Chapter generateChapterFromDto(ChapterDto chapterDto) {
+        return new Chapter(chapterDto.getName(), chapterDto.getState(),
+                contentOperationService.codeFileNameAndDescriptionIntoContent(chapterDto.getFilename(), chapterDto.getDescription()));
+    }
+    @Override
+    public ChapterDto convertChapterToDto(Chapter chapter) {
+        ChapterDto chapterDto = new ChapterDto(chapter.getId(),chapter.getName(),chapter.getState(),
+                chapter.getCreationDate(), chapter.getModificationDate());
+
+        contentOperationService.getFileNameAndDescriptionFromContent(chapterDto, chapter.getContent());
+
+        return chapterDto;
+    }
+
+    @Override
+    public List<ChapterDto> convertChapterListToDtos (List<Chapter> chapters) {
+        List<ChapterDto> chapterDtos = new ArrayList<>();
+
+        for (Chapter chapter : chapters) {
+            chapterDtos.add(convertChapterToDto(chapter));
+        }
+        return chapterDtos;
+    }
+
+
+    @Override
+    public List<LessonDto> getAllLessonDtos() {
+        List<Lesson> allCourses = mTrainingService.getAllLessons();
+        return convertLessonListToDtos(allCourses);
+    }
+
+    @Override
+    public LessonDto getLessonDtoById(long lessonId) {
+        return convertLessonToDto(mTrainingService.getLessonById(lessonId));
+    }
+
+    @Override
+    public void createOrUpdateLessonFromDto(LessonDto lessonDto) {
+        Lesson lesson;
+        if (lessonDto.getId() == 0) {
+            mTrainingService.createLesson(generateLessonFromDto(lessonDto));
+        } else {
+            lesson = mTrainingService.getLessonById(lessonDto.getId());
+            lesson.setName(lessonDto.getName());
+            lesson.setState(lessonDto.getState());
+            lesson.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
+                    (lessonDto.getFilename(), lessonDto.getDescription()));
+            mTrainingService.updateLesson(lesson);
+        }
+    }
+
+    @Override
+    public Lesson generateLessonFromDto(LessonDto lessonDto) {
+        return new Lesson(lessonDto.getName(), lessonDto.getState(),
+                contentOperationService.codeFileNameAndDescriptionIntoContent(lessonDto.getFilename(), lessonDto.getDescription()));
+    }
+    @Override
+    public LessonDto convertLessonToDto(Lesson lesson) {
+        LessonDto lessonDto = new LessonDto(lesson.getId(),lesson.getName(),lesson.getState(),
+                lesson.getCreationDate(), lesson.getModificationDate());
+
+        contentOperationService.getFileNameAndDescriptionFromContent(lessonDto, lesson.getContent());
+
+        return lessonDto;
+    }
+
+    @Override
+    public List<LessonDto> convertLessonListToDtos (List<Lesson> lessons) {
+        List<LessonDto> lessonDtos = new ArrayList<>();
+
+        for (Lesson lesson : lessons) {
+            lessonDtos.add(convertLessonToDto(lesson));
+        }
+        return lessonDtos;
+    }
+
+
+    @Override
+    public List<QuizDto> getAllQuizDtos() {
+        List<Quiz> allCourses = mTrainingService.getAllQuizzes();
+        return convertQuizListToDtos(allCourses);
+    }
+
+    @Override
+    public QuizDto getQuizDtoById(long quizId) {
+        return convertQuizToDto(mTrainingService.getQuizById(quizId));
+    }
+
+    @Override
+    public void createOrUpdateQuizFromDto(QuizDto quizDto) {
+        Quiz quiz;
+        if (quizDto.getId() == 0) {
+            mTrainingService.createQuiz(generateQuizFromDto(quizDto));
+        } else {
+            quiz = mTrainingService.getQuizById(quizDto.getId());
+            quiz.setName(quizDto.getName());
+            quiz.setState(quizDto.getState());
+            quiz.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
+                    (quizDto.getFilename(), quizDto.getDescription()));
+            mTrainingService.updateQuiz(quiz);
+        }
+    }
+
+    @Override
+    public Quiz generateQuizFromDto(QuizDto quizDto) {
+        return new Quiz(quizDto.getName(), quizDto.getState(),
+                contentOperationService.codeFileNameAndDescriptionIntoContent(quizDto.getFilename(), quizDto.getDescription()));
+    }
+    @Override
+    public QuizDto convertQuizToDto(Quiz quiz) {
+        QuizDto quizDto = new QuizDto(quiz.getId(),quiz.getName(),quiz.getState(),
+                quiz.getCreationDate(), quiz.getModificationDate(), quiz.getPassPercentage(), convertQuestionListToDtos(quiz.getQuestions()));
+
+        contentOperationService.getFileNameAndDescriptionFromContent(quizDto, quiz.getContent());
+
+        return quizDto;
+    }
+
+    @Override
+    public List<QuizDto> convertQuizListToDtos (List<Quiz> quizzes) {
+        List<QuizDto> quizDtos = new ArrayList<>();
+
+        for (Quiz quiz : quizzes) {
+            quizDtos.add(convertQuizToDto(quiz));
+        }
+        return quizDtos;
+    }
+
+    @Override
+    public QuestionDto convertQuestionToDto(Question question) {
+        QuestionDto questionDto = new QuestionDto(question.getQuestion(), question.getAnswer());
+        return questionDto;
+    }
+
+    @Override
+    public List<QuestionDto> convertQuestionListToDtos (List<Question> questions) {
+        List<QuestionDto> questionDtos = new ArrayList<>();
+
+        for (Question question : questions) {
+            questionDtos.add(convertQuestionToDto(question));
+        }
+        return questionDtos;
     }
 }

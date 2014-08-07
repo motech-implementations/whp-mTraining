@@ -15,4 +15,8 @@ public class LessonDto extends CourseUnitMetadataDto {
                      String filename, DateTime creationDate, DateTime modificationDate) {
         super(id, name, description, state, filename, creationDate, modificationDate);
     }
+
+    public LessonDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate) {
+        super(id, name, state, creationDate, modificationDate);
+    }
 }

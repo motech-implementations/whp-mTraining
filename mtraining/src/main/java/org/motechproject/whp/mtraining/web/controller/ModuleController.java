@@ -1,7 +1,5 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.motechproject.mtraining.domain.Course;
-import org.motechproject.mtraining.repository.CourseDataService;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.dto.ModuleDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;

@@ -1,7 +1,8 @@
 package org.motechproject.whp.mtraining.web.controller;
 
-import org.motechproject.mtraining.domain.Lesson;
-import org.motechproject.mtraining.repository.LessonDataService;
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,37 +16,37 @@ import java.util.List;
 public class LessonController {
 
     @Autowired
-    LessonDataService lessonDataService;
+    MTrainingService mTrainingService;
+
+    @Autowired
+    DtoFactoryService dtoFactoryService;
 
     @RequestMapping("/lessons")
     @ResponseBody
-    public List<Lesson> getAllLessons() {
-        return lessonDataService.retrieveAll();
+    public List<LessonDto> getAllLessons() {
+        return dtoFactoryService.getAllLessonDtos();
     }
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Lesson getLesson(@PathVariable long lessonId) {
-        return lessonDataService.findLessonById(lessonId);
+    public LessonDto getLesson(@PathVariable long lessonId) {
+        return dtoFactoryService.getLessonDtoById(lessonId);
     }
 
     @RequestMapping(value = "/lesson", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Lesson createLesson(@RequestBody Lesson lesson) {
-        return lessonDataService.create(lesson);
-    }
+    public void createLesson(@RequestBody LessonDto lesson) { dtoFactoryService.createOrUpdateLessonFromDto(lesson); }
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public Lesson updateLesson(@RequestBody Lesson lesson) {
-        return lessonDataService.update(lesson);
+    public void updateLesson(@RequestBody LessonDto lesson) {
+        dtoFactoryService.createOrUpdateLessonFromDto(lesson);
     }
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.DELETE)
     @ResponseBody
     public void removeLesson(@PathVariable long lessonId) {
-        Lesson lesson = lessonDataService.findLessonById(lessonId);
-        lessonDataService.delete(lesson);
+        mTrainingService.deleteLesson(lessonId);
     }
 
 }

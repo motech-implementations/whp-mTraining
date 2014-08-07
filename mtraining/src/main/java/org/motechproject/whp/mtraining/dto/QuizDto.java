@@ -38,4 +38,11 @@ public class QuizDto extends CourseUnitMetadataDto {
     public void setPassPercentage(double passPercentage) {
         this.passPercentage = passPercentage;
     }
+
+    public QuizDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate,
+                   double passPercentage, List<QuestionDto> questions) {
+        super(id, name, state, creationDate, modificationDate);
+        setPassPercentage(passPercentage);
+        setQuestions(questions);
+    }
 }

@@ -27,18 +27,6 @@
     <osgi:reference id="activityService"
                     interface="org.motechproject.mtraining.service.ActivityService" />
 
-    <osgi:reference id="courseDataService"
-                    interface="org.motechproject.mtraining.repository.CourseDataService" />
-
-    <osgi:reference id="chapterDataService"
-                    interface="org.motechproject.mtraining.repository.ChapterDataService" />
-
-    <osgi:reference id="lessonDataService"
-                    interface="org.motechproject.mtraining.repository.LessonDataService" />
-
-    <osgi:reference id="quizDataService"
-                    interface="org.motechproject.mtraining.repository.QuizDataService" />
-
     <osgi:service id="providerServiceOsgi" ref="providerService"
                   interface="org.motechproject.whp.mtraining.service.ProviderService" />
 
