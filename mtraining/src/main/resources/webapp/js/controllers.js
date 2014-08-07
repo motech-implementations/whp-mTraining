@@ -192,7 +192,7 @@
                 $scope.savingMessage = false;
                 $scope.creatingMessage = false;
                 $scope.alertMessage = $scope.msg('mtraining.createdMessage');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#messageListTable").trigger("reloadGrid");
             });
         }
 
@@ -203,7 +203,7 @@
                 $scope.savingMessage = false;
                 $scope.updatingMessage = false;
                 $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#messageListTable").trigger("reloadGrid");
             });
         }
 
@@ -213,7 +213,7 @@
                 $scope.savingMessage = false;
                 $scope.updatingMessage = false;
                 $scope.alertMessage = $scope.msg('mtraining.deletedMessage');
-                $("#emailLoggingTable").trigger("reloadGrid");
+                $("#messageListTable").trigger("reloadGrid");
             });
         }
     }]);
