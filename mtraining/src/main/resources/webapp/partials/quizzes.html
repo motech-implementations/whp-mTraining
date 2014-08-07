@@ -6,9 +6,10 @@
     </div>
 
     <form class="form-horizontal" ng-show="creatingQuiz || updatingQuiz">
+        <legend ng-show="creatingQuiz">{{msg('mtraining.createQuiz')}}</legend>
+        <legend ng-show="updatingQuiz">{{msg('mtraining.updateQuiz')}}</legend>
+
         <fieldset>
-            <legend ng-show="creatingQuiz">{{msg('mtraining.createQuiz')}}</legend>
-            <legend ng-show="updatingQuiz">{{msg('mtraining.updateQuiz')}}</legend>
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="quizName">{{msg('mtraining.quizName')}}</label>
@@ -38,17 +39,40 @@
                 </div>
             </div>
 
+
             <div class="form-group">
-                <div class="col-md-8 pull-right">
-                    <button id="saveButton" ng-show="creatingQuiz" name="saveButton" class="btn btn-primary" ng-click="saveQuiz()">{{msg('mtraining.save')}}</button>
-                    <button id="updateButton" ng-show="updatingQuiz" name="updateButton" class="btn btn-warning" ng-click="updateQuiz()">{{msg('mtraining.update')}}</button>
-                    <button id="deleteButton" ng-show="updatingQuiz"name="deleteButton" class="btn btn-danger" ng-click="deleteQuiz()">{{msg('mtraining.delete')}}</button>
-                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="creatingQuiz = false; updatingQuiz = false;">{{msg('mtraining.cancel')}}</button>
+                <label class="col-md-4 control-label" for="question">{{msg('mtraining.questions')}}</label>
+                <div id="question" class="col-md-4 col-centered">
+                    <input type="text" class="form-control" placeholder="{{msg('mtraining.question')}}" ng-model="question.question">
+                    <input type="text" class="form-control" placeholder="{{msg('mtraining.answer')}}" ng-model="question.answer">
+                    <button ng-click="addQuestion()" class="btn btn-primary">{{msg('mtraining.add')}}</button>
+                    <button ng-click="updateQuestion()" ng-show="questionIndex != -1" class="btn btn-warning">{{msg('mtraining.update')}}</button>
+                    <button ng-click="deleteQuestion()" ng-show="questionIndex != -1" class="btn btn-danger">{{msg('mtraining.delete')}}</button>
                 </div>
-                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingQuiz"/>
             </div>
 
+            <div class="list-group">
+                <div class="col-md-4 col-centered">
+                    <a ng-repeat="question in quiz.questions" class="list-group-item" ng-click="questionClick($index)" ng-class="{active: $index==questionIndex}">
+                        <h4 class="list-group-item-heading">{{question.question}}</h4>
+                        <p class="list-group-item-text">{{question.answer}}</p>
+                    </a>
+                </div>
+            </div>
+
+
+        <div class="form-group">
+            <div class="col-md-8 pull-right">
+                <button id="saveButton" ng-show="creatingQuiz" name="saveButton" class="btn btn-primary" ng-click="saveQuiz()">{{msg('mtraining.save')}}</button>
+                <button id="updateButton" ng-show="updatingQuiz" name="updateButton" class="btn btn-warning" ng-click="updateQuiz()">{{msg('mtraining.update')}}</button>
+                <button id="deleteButton" ng-show="updatingQuiz"name="deleteButton" class="btn btn-danger" ng-click="deleteQuiz()">{{msg('mtraining.delete')}}</button>
+                <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="creatingQuiz = false; updatingQuiz = false;">{{msg('mtraining.cancel')}}</button>
+            </div>
+            <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingQuiz"/>
+        </div>
+
         </fieldset>
+
     </form>
 
 </div>

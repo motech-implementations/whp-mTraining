@@ -195,7 +195,7 @@
         $scope.updateMessage = function() {
             $scope.savingMessage = true;
             $scope.message.$update({ id:$scope.message.id }, function (m) {
-                // cm => updated message object
+                // m => updated message object
                 $scope.savingMessage = false;
                 $scope.updatingMessage = false;
                 $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
@@ -217,12 +217,50 @@
     controllers.controller('quizzesController', ['$scope', 'Quiz', function ($scope, Quiz) {
         $scope.creatingQuiz = false;
         $scope.updatingQuiz = false;
+        $scope.question = {};
+        $scope.questionIndex = -1;
 
         $scope.$on('quizClick', function(event, quizId) {
             $scope.alertMessage = undefined;
             $scope.quiz = Quiz.get({ id: quizId });
             $scope.updatingQuiz = true;
         });
+
+        $scope.clearQuestion = function() {
+            $scope.questionIndex = -1;
+            $scope.question = {};
+        }
+
+        $scope.questionClick = function(index) {
+            $scope.questionIndex = index;
+            $scope.question = {};
+            $scope.question.question = $scope.quiz.questions[index].question;
+            $scope.question.answer = $scope.quiz.questions[index].answer;
+        }
+
+        $scope.addQuestion = function() {
+            if ($scope.quiz.questions == undefined) {
+                $scope.quiz.questions = [];
+            }
+            var question = {};
+            question.question = $scope.question.question;
+            question.answer = $scope.question.answer;
+            $scope.quiz.questions.push(question)
+            $scope.clearQuestion();
+        }
+
+        $scope.updateQuestion = function() {
+            var question = {};
+            question.question = $scope.question.question;
+            question.answer = $scope.question.answer;
+            $scope.quiz.questions[$scope.questionIndex] = question;
+        }
+
+        $scope.deleteQuestion = function() {
+            var index = $scope.quiz.questions.indexOf($scope.questionIndex);
+            $scope.quiz.questions.splice(index, 1);
+            $scope.clearQuestion();
+        }
 
         $scope.createQuiz = function() {
             $scope.alertQuiz = undefined;
@@ -240,6 +278,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.createdQuiz');
                 $("#emailLoggingTable").trigger("reloadGrid");
             });
+            $scope.clearQuestion();
         }
 
         $scope.updateQuiz = function() {
@@ -251,6 +290,7 @@
                 $scope.alertQuiz = $scope.msg('mtraining.updatedQuiz');
                 $("#emailLoggingTable").trigger("reloadGrid");
             });
+            $scope.clearQuestion();
         }
 
         $scope.deleteQuiz = function() {
@@ -261,6 +301,7 @@
                 $scope.alertQuiz = $scope.msg('mtraining.deletedQuiz');
                 $("#emailLoggingTable").trigger("reloadGrid");
             });
+            $scope.clearQuestion();
         }
     }]);
 
