@@ -32,6 +32,18 @@
             </div>
 
             <div class="form-group">
+                <label class="col-md-4 control-label" for="course">{{msg('mtraining.course')}}</label>
+                <div class="col-md-4 btn-group" id="course">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span data-bind="label" class="dropdown-label">{{selectedCourse.name}}</span> <span class="caret"></span>
+                    </button>
+                    <ul id="courses" class="dropdown-menu" role="menu">
+                        <li ng-repeat="course in courses"><a idx="{{$index}}">{{course.name}}</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <div class="col-md-8 pull-right">
                     <button id="saveButton" ng-show="creatingModule" name="saveButton" class="btn btn-primary" ng-click="saveModule()">{{msg('mtraining.save')}}</button>
                     <button id="updateButton" ng-show="updatingModule" name="updateButton" class="btn btn-warning" ng-click="updateModule()">{{msg('mtraining.update')}}</button>

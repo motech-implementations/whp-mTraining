@@ -39,20 +39,22 @@
             $scope.course.state = 'Inactive';
             $scope.course.$save(function(c) {
                 // c => saved course object
-                $scope.clearCourse();
                 $scope.alertMessage = $scope.msg('mtraining.createdCourse');
                 $("#coursesListTable").trigger("reloadGrid");
             });
+            $scope.clearCourse();
+            $scope.createCourse();
         }
 
         $scope.updateCourse = function() {
             $scope.savingCourse = true;
             $scope.course.$update({ id:$scope.course.id }, function (c) {
                 // c => updated course object
-                $scope.clearCourse();
                 $scope.alertMessage = $scope.msg('mtraining.updatedCourse');
                 $("#coursesListTable").trigger("reloadGrid");
             });
+            $scope.clearCourse();
+            $scope.createCourse();
         }
 
         $scope.deleteCourse = function() {
@@ -62,19 +64,35 @@
                 $scope.alertMessage = $scope.msg('mtraining.deletedCourse');
                 $("#coursesListTable").trigger("reloadGrid");
             });
+            $scope.clearCourse();
+            $scope.createCourse();
         }
 
         $scope.clearCourse();
         $scope.createCourse();
     }]);
 
-    controllers.controller('modulesController', ['$scope', 'Module', function ($scope, Module) {
+    controllers.controller('modulesController', ['$scope', 'Module', 'Course', function ($scope, Module, Course) {
+
+        $.getJSON('../mtraining/web-api/courses', function(data) {
+            $scope.courses = data;
+            $scope.$apply();
+        });
 
         $scope.clearModule = function() {
             $scope.creatingModule = false;
             $scope.updatingModule = false;
             $scope.savingModule = false;
+            $scope.selectedCourse = undefined;
+            $scope.$apply();
         }
+
+        $(document).on('click', '#courses li a', function () {
+            var idx = $(this).attr("idx");
+            $scope.selectedCourse = $scope.courses[idx];
+            $scope.$apply();
+        });
+
 
         $scope.$on('moduleClick', function(event, moduleId) {
             $scope.alertMessage = undefined;
@@ -92,31 +110,56 @@
         $scope.saveModule = function() {
             $scope.savingModule = true;
             $scope.module.state = 'Inactive';
-            $scope.module.$save(function(m) {
+                 $scope.module.$save(function(m) {
                 // m => saved module object
-                $scope.clearModule();
+                if ($scope.selectedCourse != undefined) {
+                    Course.get({ id: $scope.selectedCourse.id }, function (course) {
+                        if (course.courses == undefined) {
+                            course.courses = [];
+                        }
+                        course.courses.push(m);
+                        course.$update({ id: course.id }, function (c) {
+                            // c => updated course object
+                        });
+                    });
+                }
                 $scope.alertMessage = $scope.msg('mtraining.createdModule');
                 $("#modulesListTable").trigger("reloadGrid");
             });
+            $scope.clearModule();
+            $scope.createModule();
         }
 
         $scope.updateModule = function() {
             $scope.savingModule = true;
             $scope.module.$update({ id:$scope.module.id }, function (m) {
                 // m => updated module object
-                $scope.clearModule();
+                if ($scope.selectedCourse != undefined) {
+                    Course.get({ id: $scope.selectedCourse.id }, function (course) {
+                        if (course.courses == undefined) {
+                            course.courses = [];
+                        }
+                        course.courses.push(m);
+                        course.$update({ id: course.id }, function (c) {
+                            // c => updated course object
+                        });
+                    });
+                }
                 $scope.alertMessage = $scope.msg('mtraining.updatedModule');
                 $("#modulesListTable").trigger("reloadGrid");
             });
+            $scope.clearModule();
+            $scope.createModule();
         }
 
         $scope.deleteModule = function() {
             $scope.savingModule = true;
             $scope.module.$delete({ id:$scope.module.id }, function () {
-                $scope.clearModule();
                 $scope.alertMessage = $scope.msg('mtraining.deletedModule');
                 $("#modulesListTable").trigger("reloadGrid");
             });
+            $scope.clearModule();
+            $scope.createModule();
         }
 
         $scope.clearModule();
@@ -149,29 +192,32 @@
             $scope.chapter.state = 'Inactive';
             $scope.chapter.$save(function(c) {
                 // c => saved chapter object
-                $scope.clearChapter();
                 $scope.alertMessage = $scope.msg('mtraining.createdChapter');
                 $("#chaptersListTable").trigger("reloadGrid");
             });
+            $scope.clearChapter();
+            $scope.createChapter();
         }
 
         $scope.updateChapter = function() {
             $scope.savingChapter = true;
             $scope.chapter.$update({ id:$scope.chapter.id }, function (c) {
                 // c => updated chapter object
-                $scope.clearChapter();
                 $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
                 $("#chaptersListTable").trigger("reloadGrid");
             });
+            $scope.clearChapter();
+            $scope.createChapter();
         }
 
         $scope.deleteChapter = function() {
             $scope.savingChapter = true;
             $scope.chapter.$delete({ id:$scope.chapter.id }, function () {
-                $scope.clearChapter();
                 $scope.alertMessage = $scope.msg('mtraining.deletedChapter');
                 $("#chaptersListTable").trigger("reloadGrid");
             });
+            $scope.clearChapter();
+            $scope.createChapter();
         }
 
         $scope.clearChapter();
@@ -204,29 +250,32 @@
             $scope.message.state = 'Inactive';
             $scope.message.$save(function(m) {
                 // m => saved message object
-                $scope.clearMessage();
                 $scope.alertMessage = $scope.msg('mtraining.createdMessage');
                 $("#messagesListTable").trigger("reloadGrid");
             });
+            $scope.clearMessage();
+            $scope.createMessage();
         }
 
         $scope.updateMessage = function() {
             $scope.savingMessage = true;
             $scope.message.$update({ id:$scope.message.id }, function (m) {
                 // m => updated message object
-                $scope.clearMessage();
                 $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
                 $("#messagesListTable").trigger("reloadGrid");
             });
+            $scope.clearMessage();
+            $scope.createMessage();
         }
 
         $scope.deleteMessage = function() {
             $scope.savingMessage = true;
             $scope.message.$delete({ id:$scope.message.id }, function () {
-                $scope.clearMessage();
                 $scope.alertMessage = $scope.msg('mtraining.deletedMessage');
                 $("#messagesListTable").trigger("reloadGrid");
             });
+            $scope.clearMessage();
+            $scope.createMessage();
         }
 
         $scope.clearMessage();
@@ -258,14 +307,10 @@
         }
 
         $scope.addQuestion = function() {
-            if ($scope.quiz.questions == undefined) {
-                $scope.quiz.questions = [];
-            }
             var question = {};
             question.question = $scope.question.question;
             question.answer = $scope.question.answer;
             $scope.quiz.questions.push(question)
-            $scope.clearQuiz();
         }
 
         $scope.updateQuestion = function() {
@@ -278,25 +323,27 @@
         $scope.deleteQuestion = function() {
             var index = $scope.quiz.questions.indexOf($scope.questionIndex);
             $scope.quiz.questions.splice(index, 1);
-            $scope.clearQuiz();
         }
 
         $scope.createQuiz = function() {
-            $scope.alertQuiz = undefined;
+            $scope.alertMessage = undefined;
             $scope.creatingQuiz = true;
             $scope.quiz = new Quiz();
+            if ($scope.quiz.questions == undefined) {
+                $scope.quiz.questions = [];
+            }
         }
 
         $scope.saveQuiz = function() {
             $scope.savingQuiz = true;
             $scope.quiz.state = 'Inactive';
-            console.log($scope.quiz);
             $scope.quiz.$save(function(q) {
                 // q => saved quiz object
                 $scope.alertMessage = $scope.msg('mtraining.createdQuiz');
                 $("#quizzesListTable").trigger("reloadGrid");
             });
             $scope.clearQuiz();
+            $scope.createQuiz();
         }
 
         $scope.updateQuiz = function() {
@@ -307,6 +354,7 @@
                 $("#quizzesListTable").trigger("reloadGrid");
             });
             $scope.clearQuiz();
+            $scope.createQuiz();
         }
 
         $scope.deleteQuiz = function() {
@@ -316,6 +364,7 @@
                 $("#quizzesListTable").trigger("reloadGrid");
             });
             $scope.clearQuiz();
+            $scope.createQuiz();
         }
 
         $scope.clearQuiz();
