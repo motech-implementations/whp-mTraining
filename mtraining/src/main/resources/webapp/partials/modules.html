@@ -36,7 +36,7 @@
                     <button id="saveButton" ng-show="creatingModule" name="saveButton" class="btn btn-primary" ng-click="saveModule()">{{msg('mtraining.save')}}</button>
                     <button id="updateButton" ng-show="updatingModule" name="updateButton" class="btn btn-warning" ng-click="updateModule()">{{msg('mtraining.update')}}</button>
                     <button id="deleteButton" ng-show="updatingModule"name="deleteButton" class="btn btn-danger" ng-click="deleteModule()">{{msg('mtraining.delete')}}</button>
-                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="creatingModule = false; updatingModule = false;">{{msg('mtraining.cancel')}}</button>
+                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="clearModule()">{{msg('mtraining.cancel')}}</button>
                 </div>
                 <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingModule"/>
             </div>
