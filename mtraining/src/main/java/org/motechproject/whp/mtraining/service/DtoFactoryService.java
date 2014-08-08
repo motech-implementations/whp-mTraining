@@ -23,6 +23,10 @@ public interface DtoFactoryService {
 
     CoursePlan generateCoursePlanFromDto(CoursePlanDto coursePlanDto);
 
+    Course convertDtoToCourse(ModuleDto dto) ;
+
+    List<Course> convertDtosToCourses (List<ModuleDto> courseDtos);
+
 
     List<ModuleDto> getAllModuleDtos();
 
@@ -32,7 +36,7 @@ public interface DtoFactoryService {
 
     ModuleDto getModuleDtoById(long moduleId);
 
-    void createOrUpdateModuleFromDto(ModuleDto moduleDto);
+    Course createOrUpdateModuleFromDto(ModuleDto moduleDto);
 
     Course generateModuleFromDto(ModuleDto moduleDto);
 

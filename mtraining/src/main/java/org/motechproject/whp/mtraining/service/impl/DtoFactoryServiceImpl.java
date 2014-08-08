@@ -50,19 +50,23 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             coursePlan.setState(coursePlanDto.getState());
             coursePlan.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
                     (coursePlanDto.getFilename(), coursePlanDto.getDescription()));
+            coursePlan.setCourses(convertDtosToCourses(coursePlanDto.getCourses()));
             coursePlanService.updateCoursePlan(coursePlan);
         }
     }
 
     @Override
     public CoursePlan generateCoursePlanFromDto(CoursePlanDto coursePlanDto) {
-        return new CoursePlan(coursePlanDto.getName(), coursePlanDto.getState(),
+        CoursePlan coursePlan = new CoursePlan(coursePlanDto.getName(), coursePlanDto.getState(),
                 contentOperationService.codeFileNameAndDescriptionIntoContent(coursePlanDto.getFilename(), coursePlanDto.getDescription()));
+        coursePlan.setCourses(convertDtosToCourses(coursePlanDto.getCourses()));
+        return coursePlan;
     }
     @Override
     public CoursePlanDto convertCoursePlanToDto(CoursePlan coursePlan) {
         CoursePlanDto coursePlanDto = new CoursePlanDto(coursePlan.getId(),coursePlan.getName(),coursePlan.getState(),
                 coursePlan.getCreationDate(), coursePlan.getModificationDate());
+        coursePlanDto.setCourses(convertModuleListToDtos(coursePlan.getCourses()));
 
         contentOperationService.getFileNameAndDescriptionFromContent(coursePlanDto, coursePlan.getContent());
 
@@ -79,6 +83,31 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return coursePlanDtos;
     }
 
+    @Override
+    public Course convertDtoToCourse(ModuleDto dto) {
+        String content = contentOperationService.codeFileNameAndDescriptionIntoContent(dto.getFilename(), dto.getDescription());
+        return new Course(dto.getName(), dto.getState(), content);
+    }
+
+    @Override
+    public List<Course> convertDtosToCourses (List<ModuleDto> courseDtos) {
+        List<Course> courses = new ArrayList<>();
+
+        for (ModuleDto dto : courseDtos) {
+            if (dto.getId() == 0) {
+                courses.add(convertDtoToCourse(dto));
+            } else {
+                Course course = mTrainingService.getCourseById(dto.getId());
+                course.setName(dto.getName());
+                course.setState(dto.getState());
+                course.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent(dto.getFilename(), dto.getDescription()));
+                courses.add(course);
+            }
+        }
+
+        return courses;
+    }
+
 
     @Override
     public List<ModuleDto> getAllModuleDtos() {
@@ -92,17 +121,17 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
-    public void createOrUpdateModuleFromDto(ModuleDto moduleDto) {
+    public Course createOrUpdateModuleFromDto(ModuleDto moduleDto) {
         Course module;
         if (moduleDto.getId() == 0) {
-            mTrainingService.createCourse(generateModuleFromDto(moduleDto));
+            return mTrainingService.createCourse(generateModuleFromDto(moduleDto));
         } else {
             module = mTrainingService.getCourseById(moduleDto.getId());
             module.setName(moduleDto.getName());
             module.setState(moduleDto.getState());
             module.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
                     (moduleDto.getFilename(), moduleDto.getDescription()));
-            mTrainingService.updateCourse(module);
+           return mTrainingService.updateCourse(module);
         }
     }
 
