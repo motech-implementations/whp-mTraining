@@ -74,7 +74,6 @@
 
         $.getJSON('../mtraining/web-api/courses', function(data) {
             $scope.courses = data;
-            $scope.$apply();
         });
 
         $scope.clearModule = function() {
@@ -83,7 +82,6 @@
             $scope.savingModule = false;
             $scope.selectedCourse = undefined;
             $scope.createModule();
-            $scope.$apply();
         }
 
         $(document).on('click', '#courses li a', function () {
@@ -102,7 +100,6 @@
                     $.each(course.courses, function(j, module) {
                         if(module.id == $scope.module.id) {
                             $scope.selectedCourse = course;
-                            $scope.$apply();
                             return false;
                         }
                     });
