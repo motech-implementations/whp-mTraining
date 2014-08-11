@@ -44,6 +44,8 @@
                     forceFit: true,
                     autowidth: true,
                     rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
                     colNames: ['rowId', 'id', scope.msg('mtraining.courseName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
                         scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                     colModel: [{
@@ -65,6 +67,7 @@
                         name: 'description',
                         index: 'description',
                         align: 'center',
+                        sortable: false,
                         width: 200
                     }, {
                         name: 'state',
@@ -75,6 +78,7 @@
                         name: 'filename',
                         index: 'filename',
                         align: 'center',
+                        sortable: false,
                         width: 100
                     }, {
                         name: 'creationDate',
@@ -87,10 +91,13 @@
                         align: 'center',
                         width: 70
                     }],
+                    pager: '#' + attrs.coursesGrid,
                     width: '100%',
                     height: 'auto',
                     sortname: 'modificationDate',
                     sortorder: 'desc',
+                    viewrecords: true,
+                    loadonce: true,
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
@@ -130,6 +137,8 @@
                     forceFit: true,
                     autowidth: true,
                     rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
                     colNames: ['rowId', 'id', scope.msg('mtraining.moduleName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
                         scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                     colModel: [{
@@ -151,6 +160,7 @@
                         name: 'description',
                         index: 'description',
                         align: 'center',
+                        sortable: false,
                         width: 200
                     }, {
                         name: 'state',
@@ -161,6 +171,7 @@
                         name: 'filename',
                         index: 'filename',
                         align: 'center',
+                        sortable: false,
                         width: 100
                     }, {
                         name: 'creationDate',
@@ -173,10 +184,13 @@
                         align: 'center',
                         width: 70
                     }],
+                    pager: '#' + attrs.modulesGrid,
                     width: '100%',
                     height: 'auto',
                     sortname: 'modificationDate',
                     sortorder: 'desc',
+                    viewrecords: true,
+                    loadonce: true,
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
@@ -216,6 +230,8 @@
                     forceFit: true,
                     autowidth: true,
                     rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
                     colNames: ['rowId', 'id', scope.msg('mtraining.chapterName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
                         scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                     colModel: [{
@@ -237,6 +253,7 @@
                         name: 'description',
                         index: 'description',
                         align: 'center',
+                        sortable: false,
                         width: 200
                     }, {
                         name: 'state',
@@ -247,6 +264,7 @@
                         name: 'filename',
                         index: 'filename',
                         align: 'center',
+                        sortable: false,
                         width: 100
                     }, {
                         name: 'creationDate',
@@ -259,10 +277,13 @@
                         align: 'center',
                         width: 70
                     }],
+                    pager: '#' + attrs.chaptersGrid,
                     width: '100%',
                     height: 'auto',
                     sortname: 'modificationDate',
                     sortorder: 'desc',
+                    viewrecords: true,
+                    loadonce: true,
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
@@ -302,6 +323,8 @@
                         forceFit: true,
                         autowidth: true,
                         rownumbers: true,
+                        rowNum: 10,
+                        rowList: [10, 20, 50],
                         colNames: ['rowId', 'id', scope.msg('mtraining.messageName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
                             scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                         colModel: [{
@@ -323,6 +346,7 @@
                             name: 'description',
                             index: 'description',
                             align: 'center',
+                            sortable: false,
                             width: 200
                         }, {
                             name: 'state',
@@ -333,6 +357,7 @@
                             name: 'filename',
                             index: 'filename',
                             align: 'center',
+                            sortable: false,
                             width: 100
                         }, {
                             name: 'creationDate',
@@ -345,10 +370,13 @@
                             align: 'center',
                             width: 70
                         }],
+                        pager: '#' + attrs.messagesGrid,
                         width: '100%',
                         height: 'auto',
                         sortname: 'modificationDate',
                         sortorder: 'desc',
+                        viewrecords: true,
+                        loadonce: true,
                         loadComplete : function(array) {
                             $('.ui-jqgrid-htable').addClass('table-lightblue');
                             $('.ui-jqgrid-btable').addClass("table-lightblue");
@@ -388,6 +416,8 @@
                                 forceFit: true,
                                 autowidth: true,
                                 rownumbers: true,
+                                rowNum: 10,
+                                rowList: [10, 20, 50],
                                 colNames: ['rowId', 'id', scope.msg('mtraining.quizName'), scope.msg('mtraining.passPercentage'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
                                     scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                                 colModel: [{
@@ -414,6 +444,7 @@
                                     name: 'description',
                                     index: 'description',
                                     align: 'center',
+                                    sortable: false,
                                     width: 200
                                 }, {
                                     name: 'state',
@@ -424,6 +455,7 @@
                                     name: 'filename',
                                     index: 'filename',
                                     align: 'center',
+                                    sortable: false,
                                     width: 100
                                 }, {
                                     name: 'creationDate',
@@ -436,10 +468,13 @@
                                     align: 'center',
                                     width: 70
                                 }],
+                                pager: '#' + attrs.quizzesGrid,
                                 width: '100%',
                                 height: 'auto',
                                 sortname: 'modificationDate',
                                 sortorder: 'desc',
+                                viewrecords: true,
+                                loadonce: true,
                                 loadComplete : function(array) {
                                     $('.ui-jqgrid-htable').addClass('table-lightblue');
                                     $('.ui-jqgrid-btable').addClass("table-lightblue");
