@@ -24,6 +24,7 @@
 
         $scope.$on('courseClick', function(event, courseId) {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.course = Course.get({ id: courseId });
             $scope.updatingCourse = true;
             $scope.creatingCourse = false;
@@ -31,12 +32,16 @@
 
         $scope.createCourse = function() {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.creatingCourse = true;
             $scope.course = new Course();
             $scope.course.courses = [];
         }
 
         $scope.saveCourse = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingCourse = true;
             $scope.course.state = 'Inactive';
             $scope.course.$save(function(c) {
@@ -48,6 +53,9 @@
         }
 
         $scope.updateCourse = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingCourse = true;
             $scope.course.$update({ id:$scope.course.id }, function (c) {
                 // c => updated course object
@@ -65,6 +73,15 @@
                 $("#coursesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
             });
             $scope.clearCourse();
+        }
+
+        $scope.validate = function() {
+            if (!$scope.course.name){
+                $scope.alertMessage = undefined;
+                $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.courseName'));
+                return false;
+            }
+            return true;
         }
 
         $scope.clearCourse();
@@ -94,6 +111,7 @@
 
         $scope.$on('moduleClick', function(event, moduleId) {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.updatingModule = true;
             $scope.creatingModule = false;
             $scope.module = Module.get({ id: moduleId }, function () {
@@ -110,11 +128,15 @@
 
         $scope.createModule = function() {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.creatingModule = true;
             $scope.module = new Module();
         }
 
         $scope.saveModule = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingModule = true;
             $scope.module.state = 'Inactive';
              if ($scope.selectedCourse != undefined) {
@@ -141,6 +163,9 @@
         }
 
         $scope.updateModule = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingModule = true;
             if ($scope.selectedCourse != undefined) {
                 Course.get({ id: $scope.selectedCourse.id }, function (course) {
@@ -176,6 +201,15 @@
             $scope.clearModule();
         }
 
+        $scope.validate = function() {
+            if (!$scope.module.name){
+                $scope.alertMessage = undefined;
+                $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.moduleName'));
+                return false;
+            }
+            return true;
+        }
+
         $scope.clearModule();
     }]);
 
@@ -190,6 +224,7 @@
 
         $scope.$on('chapterClick', function(event, chapterId) {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.chapter = Chapter.get({ id: chapterId });
             $scope.updatingChapter = true;
             $scope.creatingChapter = false;
@@ -197,11 +232,15 @@
 
         $scope.createChapter = function() {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.creatingChapter = true;
             $scope.chapter = new Chapter();
         }
 
         $scope.saveChapter = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingChapter = true;
             $scope.chapter.state = 'Inactive';
             $scope.chapter.$save(function(c) {
@@ -213,6 +252,9 @@
         }
 
         $scope.updateChapter = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingChapter = true;
             $scope.chapter.$update({ id:$scope.chapter.id }, function (c) {
                 // c => updated chapter object
@@ -231,6 +273,15 @@
             $scope.clearChapter();
         }
 
+        $scope.validate = function() {
+            if (!$scope.chapter.name){
+                $scope.alertMessage = undefined;
+                $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.chapterName'));
+                return false;
+            }
+            return true;
+        }
+
         $scope.clearChapter();
     }]);
 
@@ -244,6 +295,7 @@
 
         $scope.$on('messageClick', function(event, messageId) {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.message = Lesson.get({ id: messageId });
             $scope.updatingMessage = true;
             $scope.creatingMessage = false;
@@ -251,11 +303,15 @@
 
         $scope.createMessage = function() {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.creatingMessage = true;
             $scope.message = new Lesson();
         }
 
         $scope.saveMessage = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingMessage = true;
             $scope.message.state = 'Inactive';
             $scope.message.$save(function(m) {
@@ -267,6 +323,9 @@
         }
 
         $scope.updateMessage = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingMessage = true;
             $scope.message.$update({ id:$scope.message.id }, function (m) {
                 // m => updated message object
@@ -285,6 +344,15 @@
             $scope.clearMessage();
         }
 
+        $scope.validate = function() {
+            if (!$scope.message.name){
+                $scope.alertMessage = undefined;
+                $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.messageName'));
+                return false;
+            }
+            return true;
+        }
+
         $scope.clearMessage();
     }]);
 
@@ -292,6 +360,7 @@
 
         $scope.$on('quizClick', function(event, quizId) {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.quiz = Quiz.get({ id: quizId });
             $scope.updatingQuiz = true;
             $scope.creatingQuiz = false;
@@ -306,6 +375,11 @@
             $scope.createQuiz();
         }
 
+        $scope.clearQuestion = function() {
+            $scope.question = {};
+            $scope.questionIndex = -1;
+        }
+
         $scope.questionClick = function(index) {
             $scope.questionIndex = index;
             $scope.question = {};
@@ -314,26 +388,35 @@
         }
 
         $scope.addQuestion = function() {
+            if (!$scope.validateQuestion()) {
+                return;
+            }
             var question = {};
             question.question = $scope.question.question;
             question.answer = $scope.question.answer;
-            $scope.quiz.questions.push(question)
+            $scope.quiz.questions.push(question);
+            $scope.clearQuestion();
         }
 
         $scope.updateQuestion = function() {
+            if (!$scope.validateQuestion()) {
+                return;
+            }
             var question = {};
             question.question = $scope.question.question;
             question.answer = $scope.question.answer;
             $scope.quiz.questions[$scope.questionIndex] = question;
+            $scope.clearQuestion();
         }
 
         $scope.deleteQuestion = function() {
-            var index = $scope.quiz.questions.indexOf($scope.questionIndex);
-            $scope.quiz.questions.splice(index, 1);
+            $scope.quiz.questions.splice($scope.questionIndex, 1);
+            $scope.clearQuestion();
         }
 
         $scope.createQuiz = function() {
             $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
             $scope.creatingQuiz = true;
             $scope.quiz = new Quiz();
             if ($scope.quiz.questions == undefined) {
@@ -342,6 +425,9 @@
         }
 
         $scope.saveQuiz = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingQuiz = true;
             $scope.quiz.state = 'Inactive';
             $scope.quiz.$save(function(q) {
@@ -353,6 +439,9 @@
         }
 
         $scope.updateQuiz = function() {
+            if (!$scope.validate()){
+                return;
+            }
             $scope.savingQuiz = true;
             $scope.quiz.$update({ id:$scope.quiz.id }, function (q) {
                 // q => updated quiz object
@@ -369,6 +458,36 @@
                 $("#quizzesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
             });
             $scope.clearQuiz();
+        }
+
+        $scope.validate = function() {
+            $scope.errorQuestion = undefined;
+            $scope.errorAnswer = undefined;
+            if (!$scope.quiz.name) {
+                $scope.alertMessage = undefined;
+                $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.quizName'));
+                return false;
+            }
+            return true;
+        }
+
+        $scope.validateQuestion = function() {
+            var toReturn = true;
+            if (!$scope.question.question) {
+                $scope.errorQuestion = $scope.msg('mtraining.field.required', $scope.msg('mtraining.question'));
+                toReturn = false;
+            }
+            else {
+                $scope.errorQuestion = undefined;
+            }
+            if (!$scope.question.answer) {
+                $scope.errorAnswer = $scope.msg('mtraining.field.required', $scope.msg('mtraining.answer'));
+                toReturn = false;
+            }
+            else {
+                $scope.errorAnswer = undefined;
+            }
+            return toReturn;
         }
 
         $scope.clearQuiz();

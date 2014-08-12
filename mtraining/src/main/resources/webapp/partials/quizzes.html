@@ -13,41 +13,50 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="quizName">{{msg('mtraining.quizName')}}</label>
-                <div class="col-md-4">
-                    <input id="quizName" name="quizName" class="form-control input-md" type="text" ng-model="quiz.name" >
+                <div class="form-inline col-md-8">
+                    <input id="quizName" name="quizName" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="quiz.name" >
+                    <span ng-show="errorName" class="form-hint">{{errorName}}</span>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="quizDescription">{{msg('mtraining.description')}}</label>
                 <div class="col-md-4">
-                    <textarea class="form-control" id="quizDescription" name="quizDescription" ng-model="quiz.description" ></textarea>
+                    <textarea class="form-control input-xlarge-fluid" id="quizDescription" name="quizDescription" ng-model="quiz.description" maxlength="180"></textarea>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="audioFilename">{{msg('mtraining.filename')}}</label>
                 <div class="col-md-4">
-                    <input id="audioFileName" name="audioFileName" class="form-control input-md" type="text" ng-model="quiz.filename" >
+                    <input id="audioFileName" name="audioFileName" class="form-control input-xlarge-fluid" type="text" ng-model="quiz.filename" maxlength="43">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="passPercentage">{{msg('mtraining.passPercentage')}}</label>
                 <div class="col-md-4">
-                    <input id="passPercentage" name="passPercentage" class="form-control input-md" type="number" ng-model="quiz.passPercentage" min="0" max="100">
+                    <input id="passPercentage" name="passPercentage" class="form-control input-xlarge-fluid" type="number" ng-model="quiz.passPercentage" min="0" max="100">
                 </div>
             </div>
 
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="question">{{msg('mtraining.questions')}}</label>
-                <div id="question" class="col-md-4 col-centered">
-                    <input type="text" class="form-control" placeholder="{{msg('mtraining.question')}}" ng-model="question.question">
-                    <input type="text" class="form-control" placeholder="{{msg('mtraining.answer')}}" ng-model="question.answer">
-                    <button ng-click="addQuestion()" class="btn btn-primary">{{msg('mtraining.add')}}</button>
-                    <button ng-click="updateQuestion()" ng-show="questionIndex != -1" class="btn btn-warning">{{msg('mtraining.update')}}</button>
-                    <button ng-click="deleteQuestion()" ng-show="questionIndex != -1" class="btn btn-danger">{{msg('mtraining.delete')}}</button>
+                <div id="question">
+                    <div class="form-inline col-md-8">
+                        <input type="text" class="form-control input-xlarge-fluid input-auto" placeholder="{{msg('mtraining.question')}}" ng-model="question.question">
+                        <span ng-show="errorQuestion" class="form-hint">{{errorQuestion}}</span>
+                    </div>
+                    <div class="form-inline col-md-8 col-md-offset-4">
+                        <input type="text" class="form-control input-xlarge-fluid input-auto" placeholder="{{msg('mtraining.answer')}}" ng-model="question.answer">
+                        <span ng-show="errorAnswer" class="form-hint">{{errorAnswer}}</span>
+                    </div>
+                    <div class="form-inline col-md-8 col-md-offset-4">
+                        <button ng-click="addQuestion()" class="btn btn-primary">{{msg('mtraining.add')}}</button>
+                        <button ng-click="updateQuestion()" ng-show="questionIndex != -1" class="btn btn-warning">{{msg('mtraining.update')}}</button>
+                        <button ng-click="deleteQuestion()" ng-show="questionIndex != -1" class="btn btn-danger">{{msg('mtraining.delete')}}</button>
+                    </div>
                 </div>
             </div>
 

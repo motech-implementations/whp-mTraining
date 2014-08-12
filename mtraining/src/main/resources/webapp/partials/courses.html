@@ -12,22 +12,23 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="courseName">{{msg('mtraining.courseName')}}</label>
-                <div class="col-md-4">
-                    <input id="courseName" name="courseName" class="form-control input-md" type="text" ng-model="course.name" >
+                <div class="form-inline col-md-8">
+                    <input id="courseName" name="courseName" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="course.name" >
+                    <span ng-show="errorName" class="form-hint">{{errorName}}</span>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="courseDescription">{{msg('mtraining.description')}}</label>
                 <div class="col-md-4">
-                    <textarea class="form-control" id="courseDescription" name="courseDescription" ng-model="course.description" ></textarea>
+                    <textarea class="form-control input-xlarge-fluid" id="courseDescription" name="courseDescription" ng-model="course.description" maxlength="180"></textarea>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="audioFilename">{{msg('mtraining.filename')}}</label>
                 <div class="col-md-4">
-                    <input id="audioFileName" name="audioFileName" class="form-control input-md" type="text" ng-model="course.filename" >
+                    <input id="audioFileName" name="audioFileName" class="form-control input-xlarge-fluid" type="text" ng-model="course.filename" maxlength="43">
                 </div>
             </div>
 
