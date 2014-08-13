@@ -323,7 +323,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Override
     public QuestionDto convertQuestionToDto(Question question) {
-        QuestionDto questionDto = new QuestionDto(question.getQuestion(), question.getAnswer());
+        QuestionDto questionDto = new QuestionDto();
+        contentOperationService.getQuestionNameAndDescriptionFromQuestion(questionDto, question.getQuestion());
+        contentOperationService.getAnswersAndFilesNamesFromAnswer(questionDto, question.getAnswer());
         return questionDto;
     }
 
@@ -339,8 +341,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Override
     public Question convertDtoToQuestion(QuestionDto questionDto) {
-        Question question = new Question(questionDto.getQuestion(), questionDto.getAnswer());
-        return question;
+        String question = contentOperationService.codeQuestionNameAndDescriptionIntoQuestion(questionDto.getName(), questionDto.getDescription());
+        String answer = contentOperationService.codeAnswersAndFilesNamesIntoAnswer(questionDto.getCorrectAnswer(), questionDto.getOptions(), 
+                questionDto.getFilename(), questionDto.getExplainingAnswerFilename());
+        Question questionObject = new Question(question, answer);
+        return questionObject;
     }
 
     @Override

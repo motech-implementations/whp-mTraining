@@ -45,11 +45,11 @@
                 <label class="col-md-4 control-label" for="question">{{msg('mtraining.questions')}}</label>
                 <div id="question">
                     <div class="form-inline col-md-8">
-                        <input type="text" class="form-control input-xlarge-fluid input-auto" placeholder="{{msg('mtraining.question')}}" ng-model="question.question">
+                        <input type="text" class="form-control input-xlarge-fluid input-auto" placeholder="{{msg('mtraining.question')}}" ng-model="question.name">
                         <span ng-show="errorQuestion" class="form-hint">{{errorQuestion}}</span>
                     </div>
                     <div class="form-inline col-md-8 col-md-offset-4">
-                        <input type="text" class="form-control input-xlarge-fluid input-auto" placeholder="{{msg('mtraining.answer')}}" ng-model="question.answer">
+                        <input type="text" class="form-control input-xlarge-fluid input-auto" placeholder="{{msg('mtraining.answer')}}" ng-model="question.correctAnswer">
                         <span ng-show="errorAnswer" class="form-hint">{{errorAnswer}}</span>
                     </div>
                     <div class="form-inline col-md-8 col-md-offset-4">
@@ -63,8 +63,8 @@
             <div class="list-group">
                 <div class="col-md-4 col-centered">
                     <a ng-repeat="question in quiz.questions" class="list-group-item" ng-click="questionClick($index)" ng-class="{active: $index==questionIndex}">
-                        <h4 class="list-group-item-heading">{{question.question}}</h4>
-                        <p class="list-group-item-text">{{question.answer}}</p>
+                        <h4 class="list-group-item-heading">{{question.name}}</h4>
+                        <p class="list-group-item-text">{{question.correctAnswer}}</p>
                     </a>
                 </div>
             </div>

@@ -398,8 +398,8 @@
         $scope.questionClick = function(index) {
             $scope.questionIndex = index;
             $scope.question = {};
-            $scope.question.question = $scope.quiz.questions[index].question;
-            $scope.question.answer = $scope.quiz.questions[index].answer;
+            $scope.question.name = $scope.quiz.questions[index].name;
+            $scope.question.correctAnswer = $scope.quiz.questions[index].correctAnswer;
         }
 
         $scope.addQuestion = function() {
@@ -407,8 +407,8 @@
                 return;
             }
             var question = {};
-            question.question = $scope.question.question;
-            question.answer = $scope.question.answer;
+            question.name = $scope.question.name;
+            question.correctAnswer = $scope.question.correctAnswer;
             $scope.quiz.questions.push(question);
             $scope.clearQuestion();
         }
@@ -418,8 +418,8 @@
                 return;
             }
             var question = {};
-            question.question = $scope.question.question;
-            question.answer = $scope.question.answer;
+            question.name = $scope.question.name;
+            question.correctAnswer = $scope.question.correctAnswer;
             $scope.quiz.questions[$scope.questionIndex] = question;
             $scope.clearQuestion();
         }
@@ -492,14 +492,14 @@
 
         $scope.validateQuestion = function() {
             var toReturn = true;
-            if (!$scope.question.question) {
+            if (!$scope.question.name) {
                 $scope.errorQuestion = $scope.msg('mtraining.field.required', $scope.msg('mtraining.question'));
                 toReturn = false;
             }
             else {
                 $scope.errorQuestion = undefined;
             }
-            if (!$scope.question.answer) {
+            if (!$scope.question.correctAnswer) {
                 $scope.errorAnswer = $scope.msg('mtraining.field.required', $scope.msg('mtraining.answer'));
                 toReturn = false;
             }
