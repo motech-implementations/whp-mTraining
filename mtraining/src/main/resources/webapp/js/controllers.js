@@ -92,10 +92,12 @@
 
     controllers.controller('modulesController', ['$scope', 'Module', 'Course', function ($scope, Module, Course) {
 
-        $.getJSON('../mtraining/web-api/courses', function(data) {
-            $scope.courses = data;
-            $scope.$apply();
-        });
+        $scope.getCourses = function() {
+            $.getJSON('../mtraining/web-api/courses', function(data) {
+                $scope.courses = data;
+                $scope.$apply();
+            });
+        }
 
         $scope.clearModule = function() {
             $scope.creatingModule = false;
@@ -103,12 +105,12 @@
             $scope.savingModule = false;
             $scope.selectedCourse = undefined;
             $scope.createModule();
+            $scope.getCourses();
         }
 
         $(document).on('click', '#courses li a', function () {
             var idx = $(this).attr("idx");
             $scope.selectedCourse = $scope.courses[idx];
-            $scope.selectedIdx = idx;
             $scope.$apply();
         });
 
@@ -150,7 +152,6 @@
                      course.courses.push($scope.module);
                      course.$update({ id: course.id }, function (c) {
                          // c => updated course object
-                         $scope.courses[$scope.selectedIdx] = c;
                          $scope.clearModule();
                          $scope.alertMessage = $scope.msg('mtraining.createdModule');
                      });
@@ -172,15 +173,22 @@
             $scope.savingModule = true;
             if ($scope.selectedCourse != undefined) {
                 Course.get({ id: $scope.selectedCourse.id }, function (course) {
-                    console.log(course.courses);
                     if (course.courses == undefined) {
                         course.courses = [];
                     }
-                    course.courses.push($scope.module);
-                    console.log(course.courses);
+                    var hasParent = false;
+                    $.each(course.courses, function(j, module) {
+                        if (module.id == $scope.module.id) {
+                            hasParent = true;
+                            module = $scope.module;
+                            return false;
+                        }
+                    });
+                    if (!hasParent) {
+                        course.courses.push($scope.module);
+                    }
                     course.$update({ id: course.id }, function (c) {
                         // c => updated course object
-                        $scope.courses[$scope.selectedIdx] = c;
                         $scope.clearModule();
                         $scope.alertMessage = $scope.msg('mtraining.updatedModule');
                     });
