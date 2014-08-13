@@ -44,6 +44,7 @@
             </map>
         </constructor-arg>
         <property name="defaultURL" value="/mtraining/treeView"/>
+        <property name="roleForAccess" value="mdsDataAccess"/>
     </bean>
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
