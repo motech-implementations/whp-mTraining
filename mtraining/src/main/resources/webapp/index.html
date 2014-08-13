@@ -25,11 +25,31 @@
             <li ng-class="active('#/mtraining/upload')"><a  ng-href="#/mtraining/upload">{{msg('mtraining.upload')}}</a></li>
         </ul>
     </div>
+
     <div class="ui-layout-content">
+
         <div class="tab-content" id="tab-content">
             <div id="main-content" class="tab-pane active">
                 <div ng-view></div>
             </div>
         </div>
+
+        <div class="modal fade" id="errorDialog" tabindex="-1" role="dialog" aria-labelledby="errorLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="errorLabel">{{msg('mtraining.error')}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <span id="errorMessage">
+                        </span>
+                    </div>
+                    <div class="modal-footer centered">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{msg('mtraining.ok')}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>

@@ -204,16 +204,21 @@
         }
 
         $scope.deleteModule = function() {
-            jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.moduleWhp'), $scope.module.name), $scope.msg('mtraining.confirm.remove.header'), function (val) {
-                if (val) {
-                    $scope.savingModule = true;
-                    $scope.module.$delete({ id:$scope.module.id }, function () {
-                        $scope.alertMessage = $scope.msg('mtraining.deletedModule');
-                        $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
-                    });
-                    $scope.clearModule();
-                }
-            });
+            if ($scope.selectedCourse != undefined) {
+                $("#errorMessage").text($scope.msg('mtraining.cannotDeleteModule'));
+                $("#errorDialog").modal('show');
+            } else {
+                jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.moduleWhp'), $scope.module.name), $scope.msg('mtraining.confirm.remove.header'), function (val) {
+                    if (val) {
+                        $scope.savingModule = true;
+                        $scope.module.$delete({ id:$scope.module.id }, function () {
+                            $scope.alertMessage = $scope.msg('mtraining.deletedModule');
+                            $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                        });
+                        $scope.clearModule();
+                    }
+                });
+            }
         }
 
         $scope.validate = function() {
@@ -280,16 +285,21 @@
         }
 
         $scope.deleteChapter = function() {
-            jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.chapter'), $scope.chapter.name), $scope.msg('mtraining.confirm.remove.header'), function (val) {
-                if (val) {
-                    $scope.savingChapter = true;
-                    $scope.chapter.$delete({ id:$scope.chapter.id }, function () {
-                        $scope.alertMessage = $scope.msg('mtraining.deletedChapter');
-                        $("#chaptersListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
-                    });
-                    $scope.clearChapter();
-                }
-            });
+            if ($scope.selectedModule != undefined) {
+                $("#errorMessage").text($scope.msg('mtraining.cannotDeleteChapter'));
+                $("#errorDialog").modal('show');
+            } else {
+                jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.chapter'), $scope.chapter.name), $scope.msg('mtraining.confirm.remove.header'), function (val) {
+                    if (val) {
+                        $scope.savingChapter = true;
+                        $scope.chapter.$delete({ id:$scope.chapter.id }, function () {
+                            $scope.alertMessage = $scope.msg('mtraining.deletedChapter');
+                            $("#chaptersListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                        });
+                        $scope.clearChapter();
+                    }
+                });
+            }
         }
 
         $scope.validate = function() {
@@ -310,6 +320,7 @@
             $scope.creatingMessage = false;
             $scope.updatingMessage = false;
             $scope.savingMessage = false;
+            $scope.createMessage();
         }
 
         $scope.$on('messageClick', function(event, messageId) {
@@ -355,16 +366,21 @@
         }
 
         $scope.deleteMessage = function() {
-            jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.message'), $scope.message.name), $scope.msg('mtraining.confirm.remove.header'), function (val) {
-                if (val) {
-                    $scope.savingMessage = true;
-                    $scope.message.$delete({ id:$scope.message.id }, function () {
-                        $scope.alertMessage = $scope.msg('mtraining.deletedMessage');
-                        $("#messagesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
-                    });
-                    $scope.clearMessage();
-                }
-            });
+            if ($scope.selectedChapter != undefined) {
+                $("#errorMessage").text($scope.msg('mtraining.cannotDeleteMessage'));
+                $("#errorDialog").modal('show');
+            } else {
+                jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.message'), $scope.message.name), $scope.msg('mtraining.confirm.remove.header'), function (val) {
+                    if (val) {
+                        $scope.savingMessage = true;
+                        $scope.message.$delete({ id:$scope.message.id }, function () {
+                            $scope.alertMessage = $scope.msg('mtraining.deletedMessage');
+                            $("#messagesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                        });
+                        $scope.clearMessage();
+                    }
+                });
+            }
         }
 
         $scope.validate = function() {
@@ -475,16 +491,21 @@
         }
 
         $scope.deleteQuiz = function() {
-            jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.quiz'), $scope.quiz.name), $scope.msg('mtraining.confirm.remove.header'), function (val) {
-                if (val) {
-                    $scope.savingQuiz = true;
-                    $scope.quiz.$delete({ id:$scope.quiz.id }, function () {
-                        $scope.alertMessage = $scope.msg('mtraining.deletedQuiz');
-                        $("#quizzesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
-                    });
-                    $scope.clearQuiz();
-                }
-            });
+            if ($scope.selectedChapter != undefined) {
+                $("#errorMessage").text($scope.msg('mtraining.cannotDeleteQuiz'));
+                $("#errorDialog").modal('show');
+            } else {
+                jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.quiz'), $scope.quiz.name), $scope.msg('mtraining.confirm.remove.header'), function (val) {
+                    if (val) {
+                        $scope.savingQuiz = true;
+                        $scope.quiz.$delete({ id:$scope.quiz.id }, function () {
+                            $scope.alertMessage = $scope.msg('mtraining.deletedQuiz');
+                            $("#quizzesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                        });
+                        $scope.clearQuiz();
+                    }
+                });
+            }
         }
 
         $scope.validate = function() {
