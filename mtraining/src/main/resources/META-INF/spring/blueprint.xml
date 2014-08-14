@@ -48,6 +48,9 @@
     <osgi:service id="flagServiceOsgi" ref="flagService"
                   interface="org.motechproject.whp.mtraining.service.FlagService" />
 
+    <osgi:service id="manyToManyRelationServiceOsgi" ref="manyToManyRelationService"
+                  interface="org.motechproject.whp.mtraining.service.ManyToManyRelationService" />
+
     <osgi:reference id="providerDataService"
                     interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
 
@@ -68,6 +71,9 @@
 
     <osgi:reference id="flagDataService"
                     interface="org.motechproject.whp.mtraining.repository.FlagDataService" />
+
+    <osgi:reference id="manyToManyRelationDataService"
+                    interface="org.motechproject.whp.mtraining.repository.ManyToManyRelationDataService" />
 
     <!--Mail Configuration-->
 
