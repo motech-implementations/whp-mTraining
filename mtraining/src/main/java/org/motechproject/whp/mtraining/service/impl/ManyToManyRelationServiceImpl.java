@@ -13,6 +13,7 @@ import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RelationType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
     }
 
     @Override
-    public void deleteManyToManyRelation(ManyToManyRelation relation) {
+    public void deleteRelation(ManyToManyRelation relation) {
         relationDataService.delete(relation);
     }
 
@@ -79,6 +80,15 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
             coursePlans.add(coursePlanService.getCoursePlanById(relation.getParentId()));
         }
         return coursePlans;
+    }
+
+
+    @Override
+    public void deleteRelationsByChildId(ParentType parentType, Long childId) {
+        List<ManyToManyRelation> relations = relationDataService.findRelations(parentType, null, childId);
+        for(ManyToManyRelation relation : relations) {
+            deleteRelation(relation);
+        }
     }
 
     // Course - Chapter

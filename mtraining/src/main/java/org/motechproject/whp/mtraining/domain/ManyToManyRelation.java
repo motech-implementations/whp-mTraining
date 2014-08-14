@@ -15,6 +15,12 @@ public class ManyToManyRelation {
     @Field
     private ParentType parentType;
 
+    public ManyToManyRelation(long parentId, long childId, ParentType parentType) {
+        this.parentId = parentId;
+        this.childId = childId;
+        this.parentType = parentType;
+    }
+
     public long getParentId() {
         return parentId;
     }

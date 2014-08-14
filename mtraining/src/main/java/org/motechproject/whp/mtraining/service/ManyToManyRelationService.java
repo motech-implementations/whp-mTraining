@@ -15,13 +15,15 @@ public interface ManyToManyRelationService {
 
     ManyToManyRelation updateRelation(ManyToManyRelation relation);
 
-    void deleteManyToManyRelation(ManyToManyRelation relation);
+    void deleteRelation(ManyToManyRelation relation);
 
     List<ManyToManyRelation> getAllRelations();
 
     ManyToManyRelation getRelationById(long id);
 
     List<ManyToManyRelation> getRelationsByParentType(ParentType parentType);
+
+    void deleteRelationsByChildId(ParentType parentType, Long childId);
 
     // CoursePlan - Course
     List<Course> getCoursesByParentId(long parentId);
