@@ -27,7 +27,13 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label" for="options">{{msg('mtraining.options')}}</label>
                         <div class="form-inline col-md-8">
-                            <input id="options" name="options" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="question.options" ng-keypress="addOption($event)">
+                            <div id="options" name="options" class="form-control input-xlarge-fluid input-auto options" onclick="$('#optionsInput').focus();">
+                                <ul class="option-list" id="optionList">
+                                    <li class="options-input">
+                                        <input id="optionsInput" type="text" ng-keypress="addOption($event)" onfocus="$('#options').addClass('options-active');" onfocusout="$('#options').removeClass('options-active');">
+                                    </li>
+                                </ul>
+                            </div>
                             <span ng-show="errorOptions" class="form-hint">{{errorOptions}}</span>
                         </div>
                     </div>

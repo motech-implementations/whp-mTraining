@@ -410,6 +410,7 @@
             $scope.quiz = Quiz.get({ id: quizId });
             $scope.updatingQuiz = true;
             $scope.creatingQuiz = false;
+            $scope.clearQuestion();
         });
 
         $scope.clearQuiz = function() {
@@ -424,6 +425,7 @@
         $scope.clearQuestion = function() {
             $scope.question = {};
             $scope.questionIndex = -1;
+            $(".valid-option").remove();
         }
 
         $scope.clearErrorSpans = function() {
@@ -464,7 +466,7 @@
             question.name = $scope.question.name;
             question.description = $scope.question.description;
             question.correctAnswer = $scope.question.correctAnswer;
-            question.options = $scope.question.options;
+            question.options = $scope.question.options.toString();
             question.filename = $scope.question.filename;
             question.explainingAnswerFilename = $scope.question.explainingAnswerFilename;
         }
@@ -549,23 +551,22 @@
                 $scope.errorQuestion = undefined;
             }
 
-            if (!$scope.question.options) {
+            if ($scope.question.options.length == 0) {
                 $scope.errorOptions = $scope.msg('mtraining.field.required', $scope.msg('mtraining.options'));
             }
             else {
                 $scope.errorOptions = undefined;
-                var options = $scope.question.options.replace(/[^0-9,]/g,'').split(",");
             }
 
-            if (!$scope.question.correctAnswer) {
+            if (!$scope.question.correctAnswer && $scope.question.correctAnswer !== 0) {
                 $scope.errorAnswer = $scope.msg('mtraining.field.required', $scope.msg('mtraining.correctAnswer'));
             }
             else {
                 $scope.errorAnswer = $scope.msg('mtraining.invalid.answer');
-                if (options) {
+                if ($scope.question.options.length > 0) {
                     var correctAnswer = $scope.question.correctAnswer.toString();
-                    for (var i=0; i<options.length; i++) {
-                        if (options[i] == correctAnswer){
+                    for (var i=0; i < $scope.question.options.length; i++) {
+                        if ($scope.question.options[i] == correctAnswer){
                             $scope.errorAnswer = undefined;
                             break;
                         }
@@ -594,27 +595,50 @@
         }
 
         $scope.addOption = function (e) {
-            if ($.inArray(e.keyCode, [44, 8, 9, 27, 13]) !== -1 || (e.keyCode == 65 && e.ctrlKey === true) || (e.keyCode >= 35 && e.keyCode <= 39)) {
+            if ($.inArray(e.keyCode, [9, 27, 13]) !== -1) {
                  return;
             }
-            if (e.keyCode < 48 || e.keyCode > 57) {
+            if (e.keyCode < 48 || e.keyCode > 57 || $.inArray(String.fromCharCode(e.keyCode), $scope.question.options) !== -1) {
                 e.preventDefault();
             }
+            else {
+                var option = String.fromCharCode(e.keyCode);
+                $scope.question.options.push(option);
+                $scope.createOption(option);
+                e.preventDefault();
+            }
+        }
+
+        $scope.createOption = function (option) {
+            $(".options-input").before('<li class="valid-option" value="' + option + '"><div>' + option +
+                '</div><a onclick="angular.element(\'#optionList\').scope().removeOption($(this));" class="select2-search-choice-close"></a></li>');
+        }
+
+        $scope.removeOption = function (t) {
+            var pos = $.inArray(t.parent().val().toString(), $scope.question.options);
+            $scope.question.options.splice(pos, 1 );
+            $(t).parent().remove();
         }
 
         $scope.addQuestionModal = function () {
             $scope.clearQuestion();
             $scope.clearErrorSpans();
+            $scope.question.options = [];
             $('#questionModal').modal('show');
         }
 
         $scope.updateQuestionModal = function () {
             var index = $scope.questionIndex;
             $scope.question = {};
+            $(".valid-option").remove();
             $scope.question.name = $scope.quiz.questions[index].name;
             $scope.question.description = $scope.quiz.questions[index].description;
             $scope.question.correctAnswer = parseInt($scope.quiz.questions[index].correctAnswer);
-            $scope.question.options = $scope.quiz.questions[index].options;
+            $scope.question.options = $scope.quiz.questions[index].options.split(",");
+            for (var i=0; i < $scope.question.options.length; i++) {
+                $scope.createOption($scope.question.options[i]);
+            }
+
             $scope.question.filename = $scope.quiz.questions[index].filename;
             $scope.question.explainingAnswerFilename = $scope.quiz.questions[index].explainingAnswerFilename;
             $scope.errorQuestion = undefined;
