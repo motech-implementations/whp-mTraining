@@ -96,6 +96,7 @@
             $.getJSON('../mtraining/web-api/courses', function(data) {
                 $scope.courses = data;
                 $scope.$apply();
+                $("#courses").select2();
             });
         }
 
@@ -103,28 +104,24 @@
             $scope.creatingModule = false;
             $scope.updatingModule = false;
             $scope.savingModule = false;
-            $scope.selectedCourse = undefined;
+            $scope.selectedCourses = [];
             $scope.createModule();
             $scope.getCourses();
         }
 
-        $(document).on('click', '#courses li a', function () {
-            var idx = $(this).attr("idx");
-            $scope.selectedCourse = $scope.courses[idx];
-            $scope.$apply();
-        });
-
         $scope.$on('moduleClick', function(event, moduleId) {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
+            $scope.selectedCourses = [];
             $scope.updatingModule = true;
             $scope.creatingModule = false;
             $scope.module = Module.get({ id: moduleId }, function () {
                 $.each($scope.courses, function(i, course) {
                     if ($.inArray(course.id, $scope.module.parentIds) != -1) {
-                        $scope.selectedCourse = course;
+                        $scope.selectedCourses.push("" + course.id);
                     }
                 });
+                $("#courses").select2('val', $scope.selectedCourses);
             });
         });
 
@@ -144,16 +141,13 @@
             }
             $scope.savingModule = true;
             $scope.module.state = 'Inactive';
-            $scope.module.parentIds = [];
-            if ($scope.selectedCourse != undefined) {
-               $scope.module.parentIds.push($scope.selectedCourse.id);
-            }
+            $scope.module.parentIds = $scope.selectedCourses;
             $scope.module.$save(function(m) {
-                // m => updated module object
-                $scope.clearModule();
+                // m => saved module object
                 $scope.alertMessage = $scope.msg('mtraining.createdModule');
+                $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
             });
-            $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+            $scope.clearModule();
         }
 
         $scope.updateModule = function() {
@@ -161,20 +155,17 @@
                 return;
             }
             $scope.savingModule = true;
-            $scope.module.parentIds = [];
-            if ($scope.selectedCourse != undefined) {
-               $scope.module.parentIds.push($scope.selectedCourse.id);
-            }
+            $scope.module.parentIds = $scope.selectedCourses;
             $scope.module.$update({ id:$scope.module.id }, function (m) {
                 // m => updated module object
-                $scope.clearModule();
                 $scope.alertMessage = $scope.msg('mtraining.updatedModule');
+                $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
             });
-            $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+            $scope.clearModule();
         }
 
         $scope.deleteModule = function() {
-            if ($scope.selectedCourse != undefined) {
+            if ($scope.selectedCourses != undefined && $scope.selectedCourses.length != 0) {
                 $("#errorMessage").text($scope.msg('mtraining.cannotDeleteModule'));
                 $("#errorDialog").modal('show');
             } else {
@@ -203,19 +194,37 @@
         $scope.clearModule();
     }]);
 
-    controllers.controller('chaptersController', ['$scope', 'Chapter', function ($scope, Chapter) {
+    controllers.controller('chaptersController', ['$scope', 'Chapter', 'Module', function ($scope, Chapter, Module) {
+
+        $scope.getModules = function() {
+            $.getJSON('../mtraining/web-api/modules', function(data) {
+                $scope.modules = data;
+                $scope.$apply();
+                $("#modules").select2();
+            });
+        }
 
         $scope.clearChapter = function() {
             $scope.creatingChapter = false;
             $scope.updatingChapter = false;
             $scope.savingChapter = false;
+            $scope.selectedModules = [];
             $scope.createChapter();
+            $scope.getModules();
         }
 
         $scope.$on('chapterClick', function(event, chapterId) {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
-            $scope.chapter = Chapter.get({ id: chapterId });
+            $scope.selectedModules = [];
+            $scope.chapter = Chapter.get({ id: chapterId }, function () {
+                $.each($scope.modules, function(i, module) {
+                    if ($.inArray(module.id, $scope.chapter.parentIds) != -1) {
+                        $scope.selectedModules.push("" + module.id);
+                    }
+                })
+                $("#modules").select2('val', $scope.selectedModules);
+            });
             $scope.updatingChapter = true;
             $scope.creatingChapter = false;
         });
@@ -225,6 +234,9 @@
             $scope.errorName = undefined;
             $scope.creatingChapter = true;
             $scope.chapter = new Chapter();
+            if ($scope.chapter.parentIds == undefined) {
+                $scope.chapter.parentIds = [];
+            }
         }
 
         $scope.saveChapter = function() {
@@ -233,6 +245,7 @@
             }
             $scope.savingChapter = true;
             $scope.chapter.state = 'Inactive';
+            $scope.chapter.parentIds = $scope.selectedModules;
             $scope.chapter.$save(function(c) {
                 // c => saved chapter object
                 $scope.alertMessage = $scope.msg('mtraining.createdChapter');
@@ -246,6 +259,7 @@
                 return;
             }
             $scope.savingChapter = true;
+            $scope.chapter.parentIds = $scope.selectedModules;;
             $scope.chapter.$update({ id:$scope.chapter.id }, function (c) {
                 // c => updated chapter object
                 $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
@@ -255,7 +269,7 @@
         }
 
         $scope.deleteChapter = function() {
-            if ($scope.selectedModule != undefined) {
+            if ($scope.selectedModule != undefined && $scope.selectedModules.length != 0) {
                 $("#errorMessage").text($scope.msg('mtraining.cannotDeleteChapter'));
                 $("#errorDialog").modal('show');
             } else {
@@ -284,19 +298,37 @@
         $scope.clearChapter();
     }]);
 
-    controllers.controller('messagesController', ['$scope', 'Lesson', function ($scope, Lesson) {
+    controllers.controller('messagesController', ['$scope', 'Lesson', 'Chapter', function ($scope, Lesson, Chapter) {
+
+        $scope.getChapters = function() {
+            $.getJSON('../mtraining/web-api/chapters', function(data) {
+                $scope.chapters = data;
+                $scope.$apply();
+                $("#chapters").select2();
+            });
+        }
 
         $scope.clearMessage = function() {
             $scope.creatingMessage = false;
             $scope.updatingMessage = false;
             $scope.savingMessage = false;
+            $scope.selectedChapters = [];
             $scope.createMessage();
+            $scope.getChapters();
         }
 
         $scope.$on('messageClick', function(event, messageId) {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
-            $scope.message = Lesson.get({ id: messageId });
+            $scope.selectedChapters = [];
+            $scope.message = Lesson.get({ id: messageId }, function () {
+                $.each($scope.chapters, function(i, chapter) {
+                    if ($.inArray(chapter.id, $scope.message.parentIds) != -1) {
+                        $scope.selectedChapters.push("" + chapter.id);
+                    }
+                })
+                $("#chapters").select2('val', $scope.selectedChapters);
+            });
             $scope.updatingMessage = true;
             $scope.creatingMessage = false;
         });
@@ -306,6 +338,9 @@
             $scope.errorName = undefined;
             $scope.creatingMessage = true;
             $scope.message = new Lesson();
+            if ($scope.message.parentIds == undefined) {
+                $scope.message.parentIds = [];
+            }
         }
 
         $scope.saveMessage = function() {
@@ -314,6 +349,7 @@
             }
             $scope.savingMessage = true;
             $scope.message.state = 'Inactive';
+            $scope.message.parentIds = $scope.selectedChapters;
             $scope.message.$save(function(m) {
                 // m => saved message object
                 $scope.alertMessage = $scope.msg('mtraining.createdMessage');
@@ -327,6 +363,7 @@
                 return;
             }
             $scope.savingMessage = true;
+            $scope.message.parentIds = $scope.selectedChapters;
             $scope.message.$update({ id:$scope.message.id }, function (m) {
                 // m => updated message object
                 $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
@@ -336,7 +373,7 @@
         }
 
         $scope.deleteMessage = function() {
-            if ($scope.selectedChapter != undefined) {
+            if ($scope.selectedChapter != undefined && $scope.selectedChapters.length != 0) {
                 $("#errorMessage").text($scope.msg('mtraining.cannotDeleteMessage'));
                 $("#errorDialog").modal('show');
             } else {

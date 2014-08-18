@@ -33,6 +33,13 @@
             </div>
 
             <div class="form-group">
+                <label class="col-md-4 control-label" for="chapters">{{msg('mtraining.chapters')}}</label>
+                <select id="chapters" class="col-md-4" multiple ng-model="selectedChapters">
+                    <option ng-repeat="chapter in chapters" value="{{chapter.id}}">{{chapter.name}}</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
                 <div class="col-md-8 pull-right">
                     <button id="saveButton" ng-show="creatingMessage" name="saveButton" class="btn btn-primary" ng-click="saveMessage()">{{msg('mtraining.save')}}</button>
                     <button id="updateButton" ng-show="updatingMessage" name="updateButton" class="btn btn-warning" ng-click="updateMessage()">{{msg('mtraining.update')}}</button>
