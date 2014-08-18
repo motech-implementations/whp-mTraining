@@ -1,4 +1,4 @@
-package org.motechproject.whp.mtraining.serializer;
+package org.motechproject.whp.mtraining.util;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonSerializer;
@@ -15,7 +15,7 @@ import java.io.IOException;
 public class CustomDateSerializer extends JsonSerializer<DateTime> {
 
     private static DateTimeFormatter formatter =
-            DateTimeFormat.forPattern("yyyy-MM-dd");
+            DateTimeFormat.forPattern("yyyy-MM-dd hh:mm:ss");
 
     @Override
     public void serialize(DateTime value, JsonGenerator gen,

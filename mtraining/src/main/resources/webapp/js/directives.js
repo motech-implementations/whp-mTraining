@@ -84,12 +84,14 @@
                         name: 'creationDate',
                         index: 'creationDate',
                         align: 'center',
-                        width: 70
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     }, {
                         name: 'modificationDate',
                         index: 'modificationDate',
                         align: 'center',
-                        width: 70
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     }],
                     pager: '#' + attrs.coursesGrid,
                     width: '100%',
@@ -101,6 +103,9 @@
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        setTimeout(function () {
+                           elem.trigger("reloadGrid");
+                        }, 10);
                     },
                     gridComplete: function () {
                       elem.jqGrid('setGridWidth', '100%');
@@ -177,12 +182,14 @@
                         name: 'creationDate',
                         index: 'creationDate',
                         align: 'center',
-                        width: 70
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     }, {
                         name: 'modificationDate',
                         index: 'modificationDate',
                         align: 'center',
-                        width: 70
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     }],
                     pager: '#' + attrs.modulesGrid,
                     width: '100%',
@@ -194,6 +201,9 @@
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        setTimeout(function () {
+                           elem.trigger("reloadGrid");
+                        }, 10);
                     },
                     gridComplete: function () {
                       elem.jqGrid('setGridWidth', '100%');
@@ -270,12 +280,14 @@
                         name: 'creationDate',
                         index: 'creationDate',
                         align: 'center',
-                        width: 70
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     }, {
                         name: 'modificationDate',
                         index: 'modificationDate',
                         align: 'center',
-                        width: 70
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     }],
                     pager: '#' + attrs.chaptersGrid,
                     width: '100%',
@@ -287,6 +299,9 @@
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        setTimeout(function () {
+                           elem.trigger("reloadGrid");
+                        }, 10);
                     },
                     gridComplete: function () {
                       elem.jqGrid('setGridWidth', '100%');
@@ -363,12 +378,14 @@
                             name: 'creationDate',
                             index: 'creationDate',
                             align: 'center',
-                            width: 70
+                            width: 70,
+                            formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                         }, {
                             name: 'modificationDate',
                             index: 'modificationDate',
                             align: 'center',
-                            width: 70
+                            width: 70,
+                            formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                         }],
                         pager: '#' + attrs.messagesGrid,
                         width: '100%',
@@ -380,6 +397,9 @@
                         loadComplete : function(array) {
                             $('.ui-jqgrid-htable').addClass('table-lightblue');
                             $('.ui-jqgrid-btable').addClass("table-lightblue");
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
                         },
                         gridComplete: function () {
                           elem.jqGrid('setGridWidth', '100%');
@@ -461,12 +481,14 @@
                                     name: 'creationDate',
                                     index: 'creationDate',
                                     align: 'center',
-                                    width: 70
+                                    width: 70,
+                                    formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                                 }, {
                                     name: 'modificationDate',
                                     index: 'modificationDate',
                                     align: 'center',
-                                    width: 70
+                                    width: 70,
+                                    formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                                 }],
                                 pager: '#' + attrs.quizzesGrid,
                                 width: '100%',
@@ -478,6 +500,9 @@
                                 loadComplete : function(array) {
                                     $('.ui-jqgrid-htable').addClass('table-lightblue');
                                     $('.ui-jqgrid-btable').addClass("table-lightblue");
+                                    setTimeout(function () {
+                                       elem.trigger("reloadGrid");
+                                    }, 10);
                                 },
                                 gridComplete: function () {
                                   elem.jqGrid('setGridWidth', '100%');

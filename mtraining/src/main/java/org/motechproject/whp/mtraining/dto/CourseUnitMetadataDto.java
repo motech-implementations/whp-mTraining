@@ -1,9 +1,11 @@
 package org.motechproject.whp.mtraining.dto;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
-import org.motechproject.whp.mtraining.serializer.CustomDateSerializer;
+import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
+import org.motechproject.whp.mtraining.util.CustomDateSerializer;
 
 /**
  * Generic DTO for mTraining units
@@ -77,6 +79,7 @@ public class CourseUnitMetadataDto {
     }
 
     @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
     public DateTime getCreationDate() {
         return creationDate;
     }
@@ -86,6 +89,7 @@ public class CourseUnitMetadataDto {
     }
 
     @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
     public DateTime getModificationDate() {
         return modificationDate;
     }
