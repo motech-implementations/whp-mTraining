@@ -22,3 +22,6 @@ main, .providerUpload, .response {
     float: none;
     margin: 0 auto;
 }
+
+#questionModal .modal-dialog  {width:60%;
+}

@@ -1,0 +1,77 @@
+<div id="questionModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" clear-form="newResourceForm">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" ng-show="questionIndex == -1">{{msg('mtraining.addQuestion')}}</h4>
+                <h4 class="modal-title" ng-show="questionIndex != -1">{{msg('mtraining.updateQuestion')}}</h4>
+            </div>
+            <div class="modal-body">
+                <form id="questionForm" name="questionForm" class="form-horizontal">
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="question">{{msg('mtraining.questionName')}}</label>
+                        <div id="question" class="form-inline col-md-8">
+                            <input type="text" class="form-control input-xlarge-fluid input-auto" ng-model="question.name" maxlength="47">
+                            <span ng-show="errorQuestion" class="form-hint">{{errorQuestion}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="description">{{msg('mtraining.description')}}</label>
+                        <div class="col-md-8">
+                            <textarea id="description" type="text" class="form-control input-xlarge-fluid input-auto" ng-model="question.description" maxlength="180"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="options">{{msg('mtraining.options')}}</label>
+                        <div class="form-inline col-md-8">
+                            <input id="options" name="options" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="question.options" ng-keypress="addOption($event)">
+                            <span ng-show="errorOptions" class="form-hint">{{errorOptions}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="correctAnswer">{{msg('mtraining.correctAnswer')}}</label>
+                        <div class="form-inline col-md-8">
+                            <input id="correctAnswer" name="correctAnswer" class="form-control input-xlarge-fluid input-auto" type="number" ng-model="question.correctAnswer" min="0" max="9" maxlength="1">
+                            <span ng-show="errorAnswer" class="form-hint">{{errorAnswer}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="filename">{{msg('mtraining.question.filename')}}</label>
+                        <div class="form-inline col-md-8">
+                            <input id="filename" type="text" class="form-control input-xlarge-fluid input-auto" ng-model="question.filename" maxlength="50">
+                            <span ng-show="errorFilename" class="form-hint">{{errorFilename}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="explainingAnswerFilename">{{msg('mtraining.explainingAnswerFilename')}}</label>
+                        <div class="form-inline col-md-8">
+                            <input id="explainingAnswerFilename" type="text" class="form-control input-xlarge-fluid input-auto" ng-model="question.explainingAnswerFilename" maxlength="50">
+                            <span ng-show="errorExplainingAnswerFilename" class="form-hint">{{errorExplainingAnswerFilename}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-8 col-md-offset-4">
+                            <button ng-click="addQuestion()" ng-show="questionIndex == -1" class="btn btn-success">
+                                <i class="icon-plus icon-white"></i>&nbsp;{{msg('mtraining.add')}}
+                            </button>
+                            <button ng-click="updateQuestion()" ng-show="questionIndex != -1" class="btn btn-warning">
+                                <i class="icon-cogs icon-white"></i>&nbsp;{{msg('mtraining.update')}}
+                            </button>
+                            <button ng-click="cancelUpdate()" ng-show="questionIndex != -1" class="btn btn-inverse">
+                                <i class="icon-minus icon-white"></i>&nbsp;{{msg('mtraining.cancel')}}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

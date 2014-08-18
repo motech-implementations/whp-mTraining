@@ -426,11 +426,16 @@
             $scope.questionIndex = -1;
         }
 
+        $scope.clearErrorSpans = function() {
+            $scope.errorQuestion = undefined;
+            $scope.errorOptions = undefined;
+            $scope.errorAnswer = undefined;
+            $scope.errorFilename = undefined;
+            $scope.errorExplainingAnswerFilename = undefined;
+        }
+
         $scope.questionClick = function(index) {
             $scope.questionIndex = index;
-            $scope.question = {};
-            $scope.question.name = $scope.quiz.questions[index].name;
-            $scope.question.correctAnswer = $scope.quiz.questions[index].correctAnswer;
         }
 
         $scope.addQuestion = function() {
@@ -438,10 +443,10 @@
                 return;
             }
             var question = {};
-            question.name = $scope.question.name;
-            question.correctAnswer = $scope.question.correctAnswer;
+            $scope.rewriteQuestion(question);
             $scope.quiz.questions.push(question);
             $scope.clearQuestion();
+            $('#questionModal').modal('hide');
         }
 
         $scope.updateQuestion = function() {
@@ -449,15 +454,25 @@
                 return;
             }
             var question = {};
-            question.name = $scope.question.name;
-            question.correctAnswer = $scope.question.correctAnswer;
+            $scope.rewriteQuestion(question);
             $scope.quiz.questions[$scope.questionIndex] = question;
             $scope.clearQuestion();
+            $('#questionModal').modal('hide');
+        }
+
+        $scope.rewriteQuestion = function(question) {
+            question.name = $scope.question.name;
+            question.description = $scope.question.description;
+            question.correctAnswer = $scope.question.correctAnswer;
+            question.options = $scope.question.options;
+            question.filename = $scope.question.filename;
+            question.explainingAnswerFilename = $scope.question.explainingAnswerFilename;
         }
 
         $scope.deleteQuestion = function() {
             $scope.quiz.questions.splice($scope.questionIndex, 1);
             $scope.clearQuestion();
+            $('#questionModal').modal('hide');
         }
 
         $scope.createQuiz = function() {
@@ -527,22 +542,89 @@
         }
 
         $scope.validateQuestion = function() {
-            var toReturn = true;
             if (!$scope.question.name) {
                 $scope.errorQuestion = $scope.msg('mtraining.field.required', $scope.msg('mtraining.question'));
-                toReturn = false;
             }
             else {
                 $scope.errorQuestion = undefined;
             }
-            if (!$scope.question.correctAnswer) {
-                $scope.errorAnswer = $scope.msg('mtraining.field.required', $scope.msg('mtraining.answer'));
-                toReturn = false;
+
+            if (!$scope.question.options) {
+                $scope.errorOptions = $scope.msg('mtraining.field.required', $scope.msg('mtraining.options'));
             }
             else {
-                $scope.errorAnswer = undefined;
+                $scope.errorOptions = undefined;
+                var options = $scope.question.options.replace(/[^0-9,]/g,'').split(",");
             }
-            return toReturn;
+
+            if (!$scope.question.correctAnswer) {
+                $scope.errorAnswer = $scope.msg('mtraining.field.required', $scope.msg('mtraining.correctAnswer'));
+            }
+            else {
+                $scope.errorAnswer = $scope.msg('mtraining.invalid.answer');
+                if (options) {
+                    var correctAnswer = $scope.question.correctAnswer.toString();
+                    for (var i=0; i<options.length; i++) {
+                        if (options[i] == correctAnswer){
+                            $scope.errorAnswer = undefined;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!$scope.question.filename) {
+                $scope.errorFilename = $scope.msg('mtraining.field.required', $scope.msg('mtraining.question.filename'));
+            }
+            else {
+                $scope.errorFilename = undefined;
+            }
+
+            if (!$scope.question.explainingAnswerFilename) {
+                $scope.errorExplainingAnswerFilename = $scope.msg('mtraining.field.required', $scope.msg('mtraining.explainingAnswerFilename'));
+            }
+            else {
+                $scope.errorExplainingAnswerFilename = undefined;
+            }
+
+            if (!$scope.errorQuestion && !$scope.errorOptions && !$scope.errorAnswer && !$scope.errorFilename && !$scope.errorExplainingAnswerFilename) {
+                return true
+            }
+            return false;
+        }
+
+        $scope.addOption = function (e) {
+            if ($.inArray(e.keyCode, [44, 8, 9, 27, 13]) !== -1 || (e.keyCode == 65 && e.ctrlKey === true) || (e.keyCode >= 35 && e.keyCode <= 39)) {
+                 return;
+            }
+            if (e.keyCode < 48 || e.keyCode > 57) {
+                e.preventDefault();
+            }
+        }
+
+        $scope.addQuestionModal = function () {
+            $scope.clearQuestion();
+            $scope.clearErrorSpans();
+            $('#questionModal').modal('show');
+        }
+
+        $scope.updateQuestionModal = function () {
+            var index = $scope.questionIndex;
+            $scope.question = {};
+            $scope.question.name = $scope.quiz.questions[index].name;
+            $scope.question.description = $scope.quiz.questions[index].description;
+            $scope.question.correctAnswer = parseInt($scope.quiz.questions[index].correctAnswer);
+            $scope.question.options = $scope.quiz.questions[index].options;
+            $scope.question.filename = $scope.quiz.questions[index].filename;
+            $scope.question.explainingAnswerFilename = $scope.quiz.questions[index].explainingAnswerFilename;
+            $scope.errorQuestion = undefined;
+            $scope.clearErrorSpans();
+            $('#questionModal').modal('show');
+        }
+
+        $scope.cancelUpdate = function () {
+            $scope.clearErrorSpans();
+            $('#questionModal').modal('hide');
         }
 
         $scope.clearQuiz();
