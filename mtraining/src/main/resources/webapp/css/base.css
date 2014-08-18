@@ -1,3 +1,5 @@
+@import url("select2-bootstrap.css");
+
 main, .providerUpload, .response {
     margin-top: 20px;
 }

@@ -93,8 +93,10 @@
     controllers.controller('modulesController', ['$scope', 'Module', 'Course', function ($scope, Module, Course) {
 
         $scope.getCourses = function() {
+            $scope.fetchingCourses = true;
             $.getJSON('../mtraining/web-api/courses', function(data) {
                 $scope.courses = data;
+                $scope.fetchingCourses = false;
                 $scope.$apply();
                 $("#courses").select2();
             });
@@ -197,8 +199,10 @@
     controllers.controller('chaptersController', ['$scope', 'Chapter', 'Module', function ($scope, Chapter, Module) {
 
         $scope.getModules = function() {
+            $scope.fetchingModules = true;
             $.getJSON('../mtraining/web-api/modules', function(data) {
                 $scope.modules = data;
+                $scope.fetchingModules = false;
                 $scope.$apply();
                 $("#modules").select2();
             });
@@ -301,8 +305,10 @@
     controllers.controller('messagesController', ['$scope', 'Lesson', 'Chapter', function ($scope, Lesson, Chapter) {
 
         $scope.getChapters = function() {
+            $scope.fetchingChapters = true;
             $.getJSON('../mtraining/web-api/chapters', function(data) {
                 $scope.chapters = data;
+                $scope.fetchingChapters = false;
                 $scope.$apply();
                 $("#chapters").select2();
             });

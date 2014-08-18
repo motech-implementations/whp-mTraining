@@ -34,9 +34,12 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="courses">{{msg('mtraining.courses')}}</label>
-                <select id="courses" class="col-md-4" multiple ng-model="selectedCourses">
-                    <option ng-repeat="course in courses" value="{{course.id}}">{{course.name}}</option>
-                </select>
+                <div class="col-md-4">
+                    <select id="courses" class="input-xlarge-fluid" hidden multiple ng-model="selectedCourses">
+                        <option ng-repeat="course in courses" value="{{course.id}}">{{course.name}}</option>
+                    </select>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="fetchingCourses"/>
             </div>
 
             <div class="form-group">

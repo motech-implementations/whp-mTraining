@@ -34,9 +34,12 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="chapters">{{msg('mtraining.chapters')}}</label>
-                <select id="chapters" class="col-md-4" multiple ng-model="selectedChapters">
-                    <option ng-repeat="chapter in chapters" value="{{chapter.id}}">{{chapter.name}}</option>
-                </select>
+                <div class="col-md-4">
+                    <select id="chapters" class="input-xlarge-fluid" hidden multiple ng-model="selectedChapters">
+                        <option ng-repeat="chapter in chapters" value="{{chapter.id}}">{{chapter.name}}</option>
+                    </select>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="fetchingChapters"/>
             </div>
             
             <div class="form-group">
