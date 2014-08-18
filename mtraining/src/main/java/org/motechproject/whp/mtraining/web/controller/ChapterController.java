@@ -1,8 +1,10 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.domain.ParentType;
 import org.motechproject.whp.mtraining.dto.ChapterDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
+import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,9 @@ public class ChapterController {
 
     @Autowired
     DtoFactoryService dtoFactoryService;
+
+    @Autowired
+    ManyToManyRelationService manyToManyRelationService;
 
     @RequestMapping("/chapters")
     @ResponseBody
@@ -47,7 +52,8 @@ public class ChapterController {
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeChapterDto(@PathVariable long chapterId) {
+    public void removeChapterDto(@PathVariable Long chapterId) {
+        manyToManyRelationService.deleteRelationsById(chapterId);
         mTrainingService.deleteChapter(chapterId);
     }
 

@@ -91,6 +91,15 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
         }
     }
 
+    @Override
+    public void deleteRelationsById(Long id) {
+        List<ManyToManyRelation> relations = relationDataService.findRelations(null, null, id);
+        relations.addAll(relationDataService.findRelations(null, id, null));
+        for(ManyToManyRelation relation : relations) {
+            deleteRelation(relation);
+        }
+    }
+
     // Course - Chapter
     @Override
     public List<Chapter> getChaptersByParentId(long parentId) {

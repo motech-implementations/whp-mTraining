@@ -25,6 +25,8 @@ public interface ManyToManyRelationService {
 
     void deleteRelationsByChildId(ParentType parentType, Long childId);
 
+    void deleteRelationsById(Long id);
+
     // CoursePlan - Course
     List<Course> getCoursesByParentId(long parentId);
 

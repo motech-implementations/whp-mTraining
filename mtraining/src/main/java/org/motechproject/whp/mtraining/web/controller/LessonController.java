@@ -1,8 +1,10 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.domain.ParentType;
 import org.motechproject.whp.mtraining.dto.LessonDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
+import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,9 @@ public class LessonController {
 
     @Autowired
     DtoFactoryService dtoFactoryService;
+
+    @Autowired
+    ManyToManyRelationService manyToManyRelationService;
 
     @RequestMapping("/lessons")
     @ResponseBody
@@ -45,7 +50,8 @@ public class LessonController {
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeLesson(@PathVariable long lessonId) {
+    public void removeLesson(@PathVariable Long lessonId) {
+        manyToManyRelationService.deleteRelationsById(lessonId);
         mTrainingService.deleteLesson(lessonId);
     }
 
