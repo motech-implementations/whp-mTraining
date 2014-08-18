@@ -595,14 +595,14 @@
         }
 
         $scope.addOption = function (e) {
-            if ($.inArray(e.keyCode, [9, 27, 13]) !== -1) {
+            if ($.inArray(e.charCode, [9, 27, 13]) !== -1) {
                  return;
             }
-            if (e.keyCode < 48 || e.keyCode > 57 || $.inArray(String.fromCharCode(e.keyCode), $scope.question.options) !== -1) {
+            if (e.charCode < 48 || e.charCode > 57 || $.inArray(String.fromCharCode(e.charCode), $scope.question.options) !== -1) {
                 e.preventDefault();
             }
             else {
-                var option = String.fromCharCode(e.keyCode);
+                var option = String.fromCharCode(e.charCode);
                 $scope.question.options.push(option);
                 $scope.createOption(option);
                 e.preventDefault();
