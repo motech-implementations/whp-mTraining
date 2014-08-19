@@ -10,6 +10,7 @@ import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,30 +30,29 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Autowired
     ManyToManyRelationService manyToManyRelationService;
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
 
     @Override
     public void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
         if (courseUnitMetadataDto.getId() == 0) {
             createCourseUnitMetadataFromDto(courseUnitMetadataDto);
-        }
-        else {
+        } else {
             updateCourseUnitMetadataFromDto(courseUnitMetadataDto);
         }
     }
 
     @Override
     public List<CoursePlanDto> getAllCoursePlanDtos() {
-        List<CoursePlan> allCourses = coursePlanService.getAllCoursePlans();
-        return convertCoursePlanListToDtos(allCourses);
+        List<?> allCourses = coursePlanService.getAllCoursePlans();
+        return (List<CoursePlanDto>) getDtos(allCourses);
     }
 
     @Override
     public CoursePlanDto getCoursePlanDtoById(long courseId) {
-        return convertCoursePlanToDto(coursePlanService.getCoursePlanById(courseId));
+        return (CoursePlanDto) getDto(coursePlanService.getCoursePlanById(courseId));
     }
 
-    @Override
-    public CoursePlanDto convertCoursePlanToDto(CoursePlan coursePlan) {
+    private CoursePlanDto convertToCoursePlanDto(CoursePlan coursePlan) {
         CoursePlanDto coursePlanDto = new CoursePlanDto(coursePlan.getId(), coursePlan.getName(), coursePlan.getState(),
                 coursePlan.getCreationDate(), coursePlan.getModificationDate());
 
@@ -61,12 +61,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return coursePlanDto;
     }
 
-    @Override
-    public List<CoursePlanDto> convertCoursePlanListToDtos(List<CoursePlan> coursePlans) {
+    private List<CoursePlanDto> convertToCoursePlanDtos(List<CoursePlan> coursePlans) {
         List<CoursePlanDto> coursePlanDtos = new ArrayList<>();
 
         for (CoursePlan coursePlan : coursePlans) {
-            coursePlanDtos.add(convertCoursePlanToDto(coursePlan));
+            coursePlanDtos.add((CoursePlanDto) getDto(coursePlan));
         }
         return coursePlanDtos;
     }
@@ -75,16 +74,15 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public List<ModuleDto> getAllModuleDtos() {
         List<Course> allCourses = mTrainingService.getAllCourses();
-        return convertModuleListToDtos(allCourses);
+        return (List<ModuleDto>) getDtos(allCourses);
     }
 
     @Override
     public ModuleDto getModuleDtoById(long moduleId) {
-        return convertModuleToDto(mTrainingService.getCourseById(moduleId));
+        return (ModuleDto) getDtos((List<?>) mTrainingService.getCourseById(moduleId));
     }
 
-    @Override
-    public ModuleDto convertModuleToDto(Course module) {
+    private ModuleDto convertToModuleDto(Course module) {
         ModuleDto moduleDto = new ModuleDto(module.getId(), module.getName(), module.getState(),
                 module.getCreationDate(), module.getModificationDate());
 
@@ -95,12 +93,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return moduleDto;
     }
 
-    @Override
-    public List<ModuleDto> convertModuleListToDtos(List<Course> modules) {
+    private List<ModuleDto> convertToModuleDtos(List<Course> modules) {
         List<ModuleDto> moduleDtos = new ArrayList<>();
 
         for (Course module : modules) {
-            moduleDtos.add(convertModuleToDto(module));
+            moduleDtos.add(convertToModuleDto(module));
         }
         return moduleDtos;
     }
@@ -109,16 +106,15 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public List<ChapterDto> getAllChapterDtos() {
         List<Chapter> allCourses = mTrainingService.getAllChapters();
-        return convertChapterListToDtos(allCourses);
+        return (List<ChapterDto>) getDtos(allCourses);
     }
 
     @Override
     public ChapterDto getChapterDtoById(long chapterId) {
-        return convertChapterToDto(mTrainingService.getChapterById(chapterId));
+        return convertToChapterDto(mTrainingService.getChapterById(chapterId));
     }
 
-    @Override
-    public ChapterDto convertChapterToDto(Chapter chapter) {
+    private ChapterDto convertToChapterDto(Chapter chapter) {
         ChapterDto chapterDto = new ChapterDto(chapter.getId(), chapter.getName(), chapter.getState(),
                 chapter.getCreationDate(), chapter.getModificationDate());
 
@@ -129,12 +125,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return chapterDto;
     }
 
-    @Override
-    public List<ChapterDto> convertChapterListToDtos(List<Chapter> chapters) {
+    private List<ChapterDto> convertToChapterDtos(List<Chapter> chapters) {
         List<ChapterDto> chapterDtos = new ArrayList<>();
 
         for (Chapter chapter : chapters) {
-            chapterDtos.add(convertChapterToDto(chapter));
+            chapterDtos.add(convertToChapterDto(chapter));
         }
         return chapterDtos;
     }
@@ -143,16 +138,15 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public List<LessonDto> getAllLessonDtos() {
         List<Lesson> allCourses = mTrainingService.getAllLessons();
-        return convertLessonListToDtos(allCourses);
+        return convertToLessonDtos(allCourses);
     }
 
     @Override
     public LessonDto getLessonDtoById(long lessonId) {
-        return convertLessonToDto(mTrainingService.getLessonById(lessonId));
+        return convertToLessonDto(mTrainingService.getLessonById(lessonId));
     }
 
-    @Override
-    public LessonDto convertLessonToDto(Lesson lesson) {
+    private LessonDto convertToLessonDto(Lesson lesson) {
         LessonDto lessonDto = new LessonDto(lesson.getId(), lesson.getName(), lesson.getState(),
                 lesson.getCreationDate(), lesson.getModificationDate());
 
@@ -163,12 +157,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return lessonDto;
     }
 
-    @Override
-    public List<LessonDto> convertLessonListToDtos(List<Lesson> lessons) {
+    private List<LessonDto> convertToLessonDtos(List<Lesson> lessons) {
         List<LessonDto> lessonDtos = new ArrayList<>();
 
         for (Lesson lesson : lessons) {
-            lessonDtos.add(convertLessonToDto(lesson));
+            lessonDtos.add(convertToLessonDto(lesson));
         }
         return lessonDtos;
     }
@@ -177,54 +170,49 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public List<QuizDto> getAllQuizDtos() {
         List<Quiz> allCourses = mTrainingService.getAllQuizzes();
-        return convertQuizListToDtos(allCourses);
+        return convertToQuizDtos(allCourses);
     }
 
     @Override
     public QuizDto getQuizDtoById(long quizId) {
-        return convertQuizToDto(mTrainingService.getQuizById(quizId));
+        return convertToQuizDto(mTrainingService.getQuizById(quizId));
     }
 
-    @Override
-    public QuizDto convertQuizToDto(Quiz quiz) {
+    private QuizDto convertToQuizDto(Quiz quiz) {
         QuizDto quizDto = new QuizDto(quiz.getId(), quiz.getName(), quiz.getState(),
-                quiz.getCreationDate(), quiz.getModificationDate(), quiz.getPassPercentage(), convertQuestionListToDtos(quiz.getQuestions()));
+                quiz.getCreationDate(), quiz.getModificationDate(), quiz.getPassPercentage(), convertToQuestionDtos(quiz.getQuestions()));
 
         contentOperationService.getFileNameAndDescriptionFromContent(quizDto, quiz.getContent());
 
         return quizDto;
     }
 
-    @Override
-    public List<QuizDto> convertQuizListToDtos(List<Quiz> quizzes) {
+    private List<QuizDto> convertToQuizDtos(List<Quiz> quizzes) {
         List<QuizDto> quizDtos = new ArrayList<>();
 
         for (Quiz quiz : quizzes) {
-            quizDtos.add(convertQuizToDto(quiz));
+            quizDtos.add(convertToQuizDto(quiz));
         }
         return quizDtos;
     }
 
-    @Override
-    public QuestionDto convertQuestionToDto(Question question) {
+    private QuestionDto convertToQuestionDto(Question question) {
         QuestionDto questionDto = new QuestionDto();
         contentOperationService.getQuestionNameAndDescriptionFromQuestion(questionDto, question.getQuestion());
         contentOperationService.getAnswersAndFilesNamesFromAnswer(questionDto, question.getAnswer());
         return questionDto;
     }
 
-    @Override
-    public List<QuestionDto> convertQuestionListToDtos(List<Question> questions) {
+    private List<QuestionDto> convertToQuestionDtos(List<Question> questions) {
         List<QuestionDto> questionDtos = new ArrayList<>();
 
         for (Question question : questions) {
-            questionDtos.add(convertQuestionToDto(question));
+            questionDtos.add(convertToQuestionDto(question));
         }
         return questionDtos;
     }
 
-    @Override
-    public List<Question> convertDtosToQuestionList(List<QuestionDto> questionDtos) {
+    private List<Question> convertDtosToQuestionList(List<QuestionDto> questionDtos) {
         List<Question> questions = new ArrayList<>();
 
         for (QuestionDto questionDto : questionDtos) {
@@ -243,33 +231,25 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     private void createCourseUnitMetadataFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
-            CoursePlan coursePlan =  new CoursePlan(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
+            CoursePlan coursePlan = new CoursePlan(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
             coursePlanService.createCoursePlan(coursePlan);
-        }
-
-        else if (courseUnitMetadataDto instanceof ModuleDto) {
+        } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = new Course(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
             module = mTrainingService.createCourse(module);
             createRelation(module, courseUnitMetadataDto);
-        }
-
-        else if (courseUnitMetadataDto instanceof ChapterDto) {
+        } else if (courseUnitMetadataDto instanceof ChapterDto) {
             Chapter chapter = new Chapter(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
             chapter = mTrainingService.createChapter(chapter);
             createRelation(chapter, courseUnitMetadataDto);
-        }
-
-        else if (courseUnitMetadataDto instanceof LessonDto) {
+        } else if (courseUnitMetadataDto instanceof LessonDto) {
             Lesson lesson = new Lesson(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
             lesson = mTrainingService.createLesson(lesson);
             createRelation(lesson, courseUnitMetadataDto);
-        }
-
-        else {
+        } else {
             Quiz quiz = new Quiz(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()),
                     convertDtosToQuestionList(((QuizDto) courseUnitMetadataDto).getQuestions()), ((QuizDto) courseUnitMetadataDto).getPassPercentage());
@@ -277,38 +257,30 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         }
     }
 
-    private void updateCourseUnitMetadataFromDto (CourseUnitMetadataDto courseUnitMetadataDto) {
+    private void updateCourseUnitMetadataFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(coursePlan, courseUnitMetadataDto);
             coursePlanService.updateCoursePlan(coursePlan);
-        }
-
-        else if (courseUnitMetadataDto instanceof ModuleDto) {
+        } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = mTrainingService.getCourseById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(module, courseUnitMetadataDto);
             mTrainingService.updateCourse(module);
             manyToManyRelationService.deleteRelationsByChildId(ParentType.CoursePlan, module.getId());
             createRelation(module, courseUnitMetadataDto);
-        }
-
-        else if (courseUnitMetadataDto instanceof ChapterDto) {
+        } else if (courseUnitMetadataDto instanceof ChapterDto) {
             Chapter chapter = mTrainingService.getChapterById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(chapter, courseUnitMetadataDto);
             mTrainingService.updateChapter(chapter);
             manyToManyRelationService.deleteRelationsByChildId(ParentType.Course, chapter.getId());
             createRelation(chapter, courseUnitMetadataDto);
-        }
-
-        else if (courseUnitMetadataDto instanceof LessonDto) {
+        } else if (courseUnitMetadataDto instanceof LessonDto) {
             Lesson lesson = mTrainingService.getLessonById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(lesson, courseUnitMetadataDto);
             mTrainingService.updateLesson(lesson);
             manyToManyRelationService.deleteRelationsByChildId(ParentType.Chapter, lesson.getId());
             createRelation(lesson, courseUnitMetadataDto);
-        }
-
-        else {
+        } else {
             Quiz quiz = mTrainingService.getQuizById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(quiz, courseUnitMetadataDto);
             quiz.setPassPercentage(((QuizDto) courseUnitMetadataDto).getPassPercentage());
@@ -323,16 +295,12 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                 ManyToManyRelation relation = new ManyToManyRelation(id, courseUnitMetadata.getId(), ParentType.CoursePlan);
                 manyToManyRelationService.createRelation(relation);
             }
-        }
-
-        else if (courseUnitMetadataDto instanceof ChapterDto) {
+        } else if (courseUnitMetadataDto instanceof ChapterDto) {
             for (Long id : ((ChapterDto) courseUnitMetadataDto).getParentIds()) {
                 ManyToManyRelation relation = new ManyToManyRelation(id, courseUnitMetadata.getId(), ParentType.Course);
                 manyToManyRelationService.createRelation(relation);
             }
-        }
-
-        else if (courseUnitMetadataDto instanceof LessonDto) {
+        } else if (courseUnitMetadataDto instanceof LessonDto) {
             for (Long id : ((LessonDto) courseUnitMetadataDto).getParentIds()) {
                 ManyToManyRelation relation = new ManyToManyRelation(id, courseUnitMetadata.getId(), ParentType.Chapter);
                 manyToManyRelationService.createRelation(relation);
@@ -340,7 +308,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         }
     }
 
-    private void populateCourseUnitMetadataFields (CourseUnitMetadata courseUnitMetadata, CourseUnitMetadataDto courseUnitMetadataDto) {
+    private void populateCourseUnitMetadataFields(CourseUnitMetadata courseUnitMetadata, CourseUnitMetadataDto courseUnitMetadataDto) {
         courseUnitMetadata.setName(courseUnitMetadataDto.getName());
         courseUnitMetadata.setState(courseUnitMetadataDto.getState());
         courseUnitMetadata.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
@@ -349,9 +317,55 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     private Set<Long> convertToIdSet(List<?> courseUnitMetadata) {
         Set<Long> ids = new LinkedHashSet<Long>();
-        for(Object metadata : courseUnitMetadata) {
+        for (Object metadata : courseUnitMetadata) {
             ids.add(((CourseUnitMetadata) metadata).getId());
         }
         return ids;
+    }
+
+    @Override
+    public CourseUnitMetadataDto getDto(CourseUnitMetadata courseUnitMetadata) {
+        if (courseUnitMetadata instanceof CoursePlan)
+            return convertToCoursePlanDto((CoursePlan) courseUnitMetadata);
+        if (courseUnitMetadata instanceof Course)
+            return convertToModuleDto((Course) courseUnitMetadata);
+        if (courseUnitMetadata instanceof Lesson)
+            return convertToLessonDto((Lesson) courseUnitMetadata);
+        if (courseUnitMetadata instanceof Quiz)
+            return convertToQuizDto((Quiz) courseUnitMetadata);
+        if (courseUnitMetadata instanceof Chapter)
+            return convertToChapterDto((Chapter) courseUnitMetadata);
+        LOG.error("not supported CourseUnitMetadata children");
+        return null;
+    }
+
+    @Override
+    public QuestionDto getDto(Question question) {
+        return convertToQuestionDto(question);
+    }
+
+    @Override
+    public List<?> getDtos(List<?> list) {
+        if (list != null) {
+            Class genericType;
+            genericType = list.get(0).getClass();
+
+            if (genericType.equals(Course.class))
+                return convertToModuleDtos((List<Course>) (List) list);
+            if (genericType.equals(Lesson.class))
+                return convertToLessonDtos((List<Lesson>) (List) list);
+            if (genericType.equals(Quiz.class))
+                return convertToQuizDtos((List<Quiz>) (List) list);
+            if (genericType.equals(CoursePlan.class))
+                return convertToCoursePlanDtos((List<CoursePlan>) (List) list);
+            if (genericType.equals(Question.class))
+                return convertToQuestionDtos((List<Question>) (List) list);
+            if (genericType.equals(Chapter.class))
+                return convertToChapterDtos((List<Chapter>) (List) list);
+            LOG.error("not supported Collection type");
+            return null;
+        }
+        LOG.error("Empty collection");
+        return null;
     }
 }

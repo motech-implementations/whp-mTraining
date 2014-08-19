@@ -13,55 +13,29 @@ public interface DtoFactoryService {
 
     void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto);
 
+    public CourseUnitMetadataDto getDto(CourseUnitMetadata courseUnitMetadata);
+
+    public QuestionDto getDto(Question question);
+
+    public List<?> getDtos(List<?> list);
 
     List<CoursePlanDto> getAllCoursePlanDtos();
 
-    CoursePlanDto convertCoursePlanToDto(CoursePlan coursePlan);
-
-    List<CoursePlanDto> convertCoursePlanListToDtos (List<CoursePlan> coursePlans);
-
-    CoursePlanDto getCoursePlanDtoById(long courseId);
-
-
     List<ModuleDto> getAllModuleDtos();
-
-    ModuleDto convertModuleToDto(Course module);
-
-    List<ModuleDto> convertModuleListToDtos (List<Course> modules);
-
-    ModuleDto getModuleDtoById(long moduleId);
-
 
     List<ChapterDto> getAllChapterDtos();
 
-    ChapterDto convertChapterToDto(Chapter chapter);
-
-    List<ChapterDto> convertChapterListToDtos (List<Chapter> chapters);
-
-    ChapterDto getChapterDtoById(long chapterId);
-
-
     List<LessonDto> getAllLessonDtos();
-
-    LessonDto convertLessonToDto(Lesson lesson);
-
-    List<LessonDto> convertLessonListToDtos (List<Lesson> lessons);
-
-    LessonDto getLessonDtoById(long lessonId);
-
 
     List<QuizDto> getAllQuizDtos();
 
-    QuizDto convertQuizToDto(Quiz quiz);
+    CoursePlanDto getCoursePlanDtoById(long courseId);
 
-    List<QuizDto> convertQuizListToDtos (List<Quiz> quizzes);
+    ModuleDto getModuleDtoById(long moduleId);
+
+    ChapterDto getChapterDtoById(long chapterId);
+
+    LessonDto getLessonDtoById(long lessonId);
 
     QuizDto getQuizDtoById(long quizId);
-
-    QuestionDto convertQuestionToDto(Question question);
-
-    List<QuestionDto> convertQuestionListToDtos (List<Question> questions);
-
-    List<Question> convertDtosToQuestionList (List<QuestionDto> questionDtos);
-
 }
