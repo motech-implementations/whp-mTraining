@@ -2,8 +2,7 @@ package org.motechproject.whp.mtraining.web.domain;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
 
@@ -15,13 +14,11 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
 public class QuizReportRequest extends IVRRequest {
 
     @JsonProperty("course")
-    private ContentIdentifierDto courseDto;
-    @JsonProperty("module")
-    private ContentIdentifierDto moduleDto;
+    private Long course;
     @JsonProperty("chapter")
-    private ContentIdentifierDto chapterDto;
+    private Long chapter;
     @JsonProperty("quiz")
-    private ContentIdentifierDto quizDto;
+    private Long quiz;
     @JsonProperty("questions")
     private List<QuestionRequest> questionRequests;
     @JsonProperty
@@ -34,13 +31,12 @@ public class QuizReportRequest extends IVRRequest {
     public QuizReportRequest() {
     }
 
-    public QuizReportRequest(Long callerId, String uniqueId, String sessionId, ContentIdentifierDto courseDto, ContentIdentifierDto moduleDto, ContentIdentifierDto chapterDto, ContentIdentifierDto quizDto,
+    public QuizReportRequest(Long callerId, String uniqueId, String sessionId, Long course, Long chapter, Long quiz,
                              List<QuestionRequest> questionRequests, String startTime, String endTime, Boolean incompleteAttempt) {
         super(callerId, uniqueId, sessionId);
-        this.courseDto = courseDto;
-        this.moduleDto = moduleDto;
-        this.chapterDto = chapterDto;
-        this.quizDto = quizDto;
+        this.course = course;
+        this.chapter = chapter;
+        this.quiz = quiz;
         this.questionRequests = questionRequests;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -51,13 +47,11 @@ public class QuizReportRequest extends IVRRequest {
         List<ValidationError> validationErrors = super.validate();
         if (isNotEmpty(validationErrors))
             return validationErrors;
-        if (courseDto.getContentId() == null || courseDto.getVersion() == null)
+        if (course == null)// || courseDto.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Course"));
-        if (moduleDto.getContentId() == null || moduleDto.getVersion() == null)
-            validationErrors.add(errorMessage(MISSING_NODE, "Module"));
-        if (chapterDto.getContentId() == null || chapterDto.getVersion() == null)
+        if (chapter == null)// || chapterDto.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Chapter"));
-        if (quizDto.getContentId() == null || quizDto.getVersion() == null)
+        if (quiz == null)// || quizDto.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Quiz"));
         if (isBlank(startTime) || !ISODateTimeUtil.validate(startTime))
             validationErrors.add(errorMessage(INVALID_DATE_TIME, "Start Time"));
@@ -75,20 +69,16 @@ public class QuizReportRequest extends IVRRequest {
         return validationErrors;
     }
 
-    public ContentIdentifierDto getCourseDto() {
-        return courseDto;
+    public Long getCourse() {
+        return course;
     }
 
-    public ContentIdentifierDto getModuleDto() {
-        return moduleDto;
+    public Long getChapter() {
+        return chapter;
     }
 
-    public ContentIdentifierDto getChapterDto() {
-        return chapterDto;
-    }
-
-    public ContentIdentifierDto getQuizDto() {
-        return quizDto;
+    public Long getQuiz() {
+        return quiz;
     }
 
     public List<QuestionRequest> getQuestionRequests() {

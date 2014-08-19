@@ -1,34 +1,31 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
 import org.joda.time.DateTime;
+import org.motechproject.mds.annotations.Entity;
+import org.motechproject.mds.annotations.Field;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-@PersistenceCapable(table = "call_duration", identityType = IdentityType.APPLICATION)
+@Entity
 public class CallDuration {
 
-    @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
-    @PrimaryKey
+    @Field
     private Long id;
-    @Persistent(column = "provider_remedy_id")
+    
+    @Field
     private String remedyId;
-    @Persistent(column = "caller_id")
+    
+    @Field
     private Long callerId;
-    @Persistent(column = "unique_id")
+    
+    @Field
     private String uniqueId;
-    @Persistent(column = "session_id")
+    
+    @Field
     private String sessionId;
-    @Persistent(column = "call_start_time")
-    @Temporal(TemporalType.TIMESTAMP)
+
+    @Field
     private DateTime callStartTime;
-    @Persistent(column = "call_end_time")
-    @Temporal(TemporalType.TIMESTAMP)
+
+    @Field
     private DateTime callEndTime;
 
     public CallDuration(String remedyId, Long callerId, String uniqueId, String sessionId, DateTime callStartTime, DateTime callEndTime) {

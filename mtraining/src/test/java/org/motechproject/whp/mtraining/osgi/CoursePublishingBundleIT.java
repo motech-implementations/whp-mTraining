@@ -1,41 +1,79 @@
 package org.motechproject.whp.mtraining.osgi;
 
-import org.motechproject.mtraining.dto.AnswerDto;
-import org.motechproject.mtraining.dto.ChapterDto;
-import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.MessageDto;
-import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.dto.QuestionDto;
-import org.motechproject.mtraining.dto.QuizDto;
-import org.motechproject.mtraining.service.CourseService;
+import org.apache.commons.lang.ArrayUtils;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.mtraining.domain.*;
+import org.motechproject.server.config.SettingsFacade;
+import org.motechproject.testing.osgi.BasePaxIT;
+import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.testing.utils.Wait;
 import org.motechproject.testing.utils.WaitCondition;
 import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.RequestInfo;
+import org.motechproject.whp.mtraining.WebClient;
+import org.motechproject.whp.mtraining.ivr.IVRGateway;
+import org.motechproject.whp.mtraining.ivr.IVRResponseParser;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.ExamFactory;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class CoursePublishingBundleIT extends AuthenticationAwareIT {
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.vmOption;
+
+@Ignore
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerSuite.class)
+@ExamFactory(MotechNativeTestContainerFactory.class)
+public class CoursePublishingBundleIT extends BasePaxIT {
 
     protected IVRServer ivrServer;
     protected List<String> coursesPublished;
 
-    @Override
-    public void onSetUp() throws IOException, InterruptedException {
-        super.onSetUp();
+    @Inject
+    private MTrainingService mTrainingService;
+
+    @Inject
+    private SettingsFacade mTrainingSettings;
+
+    IVRResponseParser ivrResponseHandler = new IVRResponseParser();
+
+    @Before
+    public void setUp() throws IOException, InterruptedException {
         ivrServer = new IVRServer(8888, "/ivr-wgn").start();
         coursesPublished = new ArrayList<>();
     }
 
+    @Override
+    @Configuration
+    public Option[] config() throws IOException {
+        Option[] debug = options(
+                vmOption( "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005" ));
+        return (Option[]) ArrayUtils.addAll(super.config(), debug);
+    }
+
+    @Test
     public void testThatCourseIsPublishedToIVR() throws IOException, InterruptedException {
-        CourseService courseService = (CourseService) getApplicationContext().getBean("courseService");
-        assertNotNull(courseService);
-        CourseDto cs001 = buildCourse();
-        courseService.addOrUpdateCourse(cs001);
+        Course cs001 = buildCourse();
+        mTrainingService.createCourse(cs001);
+        new IVRGateway(mTrainingSettings, new WebClient(), ivrResponseHandler).postCourse(cs001);
+
         new Wait(new WaitCondition() {
             @Override
             public boolean needsToWait() {
@@ -50,6 +88,7 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
             }
         }, 30000).start();
 
+
         assertFalse(coursesPublished.isEmpty());
         System.out.println(coursesPublished.get(0));
         assertTrue(coursesPublished.get(0).contains("CS001"));
@@ -57,46 +96,12 @@ public class CoursePublishingBundleIT extends AuthenticationAwareIT {
         assertFalse(coursesPublished.get(0).contains("msg002"));
     }
 
-    @Override
-    protected String[] getConfigLocations() {
-        return new String[]{"test-blueprint.xml"};
-    }
-
-    @Override
-    protected List<String> getImports() {
-        List<String> imports = new ArrayList<>();
-        imports.add("org.motechproject.commons.api");
-        imports.add("org.apache.http.util");
-        imports.add("org.mortbay.jetty");
-        imports.add("org.mortbay.jetty.servlet");
-        imports.add("javax.servlet");
-        imports.add("javax.servlet.http");
-        imports.add("org.apache.commons.io");
-        imports.add("org.motechproject.whp.mtraining.service");
-        imports.add("org.jasypt.encryption.pbe.config");
-        imports.add("org.jasypt.encryption.pbe");
-        imports.add("org.jasypt.spring.properties");
-        imports.add("org.motechproject.whp.mtraining.mail");
-        return imports;
-
-    }
-
-    @Override
-    protected void onTearDown() throws Exception {
-        if (ivrServer != null) {
-            ivrServer.stop();
-        }
-    }
-
-    private CourseDto buildCourse() {
-        String createdBy = "author";
-        MessageDto activeMessage = new MessageDto(true, "msg001", "aud01", "message desc", createdBy);
-        MessageDto inactiveMessage = new MessageDto(false, "msg002", "aud01.wav", "message desc", createdBy);
-        QuestionDto questionDto = new QuestionDto(true, "Q001", "ques desc", "ques-aud.wav", new AnswerDto("C", "correct-answer.wav"),
-                Arrays.asList("A", "B", "C"), createdBy);
-        QuizDto quiz001 = new QuizDto(true, "Quiz001", null, Arrays.asList(questionDto), 1, 85.0, createdBy);
-        ChapterDto ch001 = new ChapterDto(true, "ch001", "chapter description", "chap-aud.wav", createdBy, Arrays.asList(activeMessage, inactiveMessage), quiz001);
-        ModuleDto mod001 = new ModuleDto(true, "MOD001", "module desc", "module-aud.wav", createdBy, Arrays.asList(ch001));
-        return new CourseDto(true, "CS001", "Course Desc", "course-aud.wav", createdBy, Arrays.asList(mod001));
+    private Course buildCourse() {
+        Lesson activeMessage = new Lesson("msg001", CourseUnitState.Active, "message desc");
+        Lesson inactiveMessage = new Lesson("msg002", CourseUnitState.Inactive, "message desc");
+        Question question = new Question("Q001", "correct-answer.wav");
+        //Quiz quiz001 = new Quiz("Quiz001",  CourseUnitState.Active, null, Arrays.asList(question), 85.0);
+        Chapter ch001 = new Chapter("ch001", CourseUnitState.Active, "chap-aud.wav", Arrays.asList(activeMessage, inactiveMessage));
+        return new Course("CS001", CourseUnitState.Active, "course-aud.wav", Arrays.asList(ch001));
     }
 }

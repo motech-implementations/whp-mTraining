@@ -3,7 +3,7 @@ package org.motechproject.whp.mtraining.csv.validator;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.request.ProviderCsvRequest;
 import org.motechproject.whp.mtraining.domain.Provider;
-import org.motechproject.whp.mtraining.repository.Providers;
+import org.motechproject.whp.mtraining.service.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,11 +22,14 @@ import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.from;
 public class ProviderStructureValidator {
 
 
-    private Providers providers;
-
     @Autowired
-    public ProviderStructureValidator(Providers providers) {
-        this.providers = providers;
+    private ProviderService providerService;
+
+    public ProviderStructureValidator() {
+    }
+
+    public ProviderStructureValidator(ProviderService providerService){
+        this.providerService = providerService;
     }
 
     public List<CsvImportError> validate(List<ProviderCsvRequest> providerCsvRequests) {
@@ -57,7 +60,7 @@ public class ProviderStructureValidator {
     }
 
     private void validateFromDB(List<ProviderCsvRequest> providerCsvRequests, ArrayList<CsvImportError> errors) {
-        List<Provider> allProvidersFromDB = providers.all();
+        List<Provider> allProvidersFromDB = providerService.getAllProviders();
 
         Map<Long, String> providersMap = new HashMap<>();
         for (Provider provider : allProvidersFromDB) {

@@ -6,6 +6,7 @@ public enum CallLogRecordType {
     COURSE(null),
     MODULE(COURSE),
     CHAPTER(MODULE),
+    LESSON(CHAPTER),
     MESSAGE(CHAPTER),
     QUESTION(CHAPTER),
     QUIZ(CHAPTER);
@@ -45,8 +46,9 @@ public enum CallLogRecordType {
         return CallLogRecordType.COURSE.equals(from(nodeType));
     }
 
-    public static boolean isMessage(String nodeType) {
-        return CallLogRecordType.MESSAGE.equals(from(nodeType));
+    public static boolean isLesson(String nodeType) {
+        return CallLogRecordType.LESSON.equals(from(nodeType)) ||
+                CallLogRecordType.MESSAGE.equals(from(nodeType));
     }
 
     public static boolean isQuestion(String nodeType) {

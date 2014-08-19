@@ -1,0 +1,79 @@
+<div id="inner-center" ng-controller="fileUploadController" class="table col-lg-10 main-content">
+    <div class="box-header">UPLOAD COURSE</div>
+    <div class="box-content gutter-border">
+        <div class="row btnContainer">
+            <form role="form" class="form-inline">
+                <div class="form-group col-xs-offset-1 col-lg-5">
+                    <input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"
+                           file-model="multipartFile"/>
+                </div>
+                <div class="form-group">
+                    <input type="button" class="form-control btn btn-default" value="Upload & Publish to IVR"
+                           ng-click="uploadCourse()" ng-disabled="uploadingCourse || !multipartFile"/>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingCourse"/>
+            </form>
+        </div>
+    </div>
+
+    <div class="box-header providerUpload">UPLOAD PROVIDER</div>
+    <div class="box-content gutter-border">
+        <div class="row btnContainer">
+            <form role="form" class="form-inline">
+                <div class="form-group col-xs-offset-1 col-lg-5">
+                    <input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"
+                           file-model="multipartFile"/>
+                </div>
+                <div class="form-group">
+                    <input type="button" class="form-control btn btn-default" value="Upload Provider"
+                           ng-click="uploadProvider()" ng-disabled="uploadingProvider || !multipartFile"/>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingProvider"/>
+            </form>
+        </div>
+    </div>
+
+    <div class="box-header providerUpload">UPLOAD COURSE CONFIGURATION</div>
+    <div class="box-content gutter-border">
+        <div class="row btnContainer">
+            <form role="form" class="form-inline">
+                <div class="form-group col-xs-offset-1 col-lg-5">
+                    <input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"
+                           file-model="multipartFile"/>
+                </div>
+                <div class="form-group">
+                    <input type="button" class="form-control btn btn-default" value="Upload Course Configuration"
+                           ng-click="uploadCourseConfig()" ng-disabled="uploadingCourseConfig || !multipartFile"/>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingCourseConfig"/>
+            </form>
+        </div>
+    </div>
+
+    <div class="response" ng-hide="multipartFile">
+        <div ng-show="response.status=='SUCCESS'">
+            <ul class="alert alert-success">{{response.message}}</ul>
+        </div>
+        <div ng-show="response.status=='FAILURE'">
+            <ul class="alert alert-danger">{{response.message}}</ul>
+            <table class="table table-hover table-bordered">
+                <tr ng-show="uploadedCourse">
+                    <th class="col-lg-2">Node Name</th>
+                    <th class="col-lg-2">Node Type</th>
+                    <th class="col-lg-6">Reason</th>
+                </tr>
+                <tr ng-show="uploadedProvider">
+                    <th class="col-lg-2">RemediID</th>
+                    <th class="col-lg-2">Contact Number</th>
+                    <th class="col-lg-6">Reason</th>
+                </tr>
+                <tr ng-repeat="error in response.errors">
+                    <td class="col-lg-2">{{error.nodeName}}</td>
+                    <td class="col-lg-2">{{error.nodeType}}</td>
+                    <td class="col-lg-6">{{error.message}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+

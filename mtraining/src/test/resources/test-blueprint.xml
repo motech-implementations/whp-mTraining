@@ -6,20 +6,56 @@
         http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd
        ">
 
+    <import resource="classpath*:META-INF/motech/testWHPmTrainingApplicationContext.xml"/>
+
     <!--Osgi Services Start Here-->
-    <osgi:reference interface="org.motechproject.whp.mtraining.service.ProviderService" id="providerService"/>
+    <osgi:service ref="emailService"
+                  interface="org.motechproject.whp.mtraining.service.EmailService"
+                  auto-export="interfaces"/>
 
-    <osgi:reference interface="org.motechproject.mtraining.service.CourseService" id="courseService"/>
+    <osgi:reference interface="org.motechproject.security.service.MotechUserService" id="motechUserService"/>
 
-    <osgi:reference interface="org.motechproject.mtraining.service.BookmarkService" id="bookmarkService"/>
+    <osgi:reference id="mTrainingService" interface="org.motechproject.mtraining.service.MTrainingService" />
 
-    <osgi:reference interface="org.motechproject.whp.mtraining.service.EmailService" id="emailService"/>
+    <osgi:reference id="bookmarkService" interface="org.motechproject.mtraining.service.BookmarkService" />
 
-    <osgi:reference interface="org.motechproject.mtraining.service.QuizService" id="quizService"/>
+    <osgi:reference id="activityService" interface="org.motechproject.mtraining.service.ActivityService" />
 
-    <osgi:reference interface="org.motechproject.mtraining.service.CourseConfigurationService" id="courseConfigService"/>
+    <osgi:service id="providerServiceOsgi" ref="providerService"
+                  interface="org.motechproject.whp.mtraining.service.ProviderService" />
 
-    <osgi:reference interface="org.motechproject.mtraining.service.CourseProgressService" id="courseProgressService"/>
+    <osgi:service id="courseConfigurationServiceOsgi" ref="courseConfigurationService"
+                  interface="org.motechproject.whp.mtraining.service.CourseConfigurationService" />
+
+    <osgi:service id="coursePlanServiceOsgi" ref="coursePlanService"
+                  interface="org.motechproject.whp.mtraining.service.CoursePlanService" />
+
+    <osgi:service id="callDurationServiceOsgi" ref="callDurationService"
+                  interface="org.motechproject.whp.mtraining.service.CallDurationService" />
+
+    <osgi:service id="callLogServiceOsgi" ref="callLogService"
+                  interface="org.motechproject.whp.mtraining.service.CallLogService" />
+
+    <osgi:service id="coursePublicationAttemptServiceOsgi" ref="coursePublicationAttemptService"
+                  interface="org.motechproject.whp.mtraining.service.CoursePublicationAttemptService" />
+
+    <osgi:reference id="providerDataService"
+                    interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
+
+    <osgi:reference id="courseConfigurationDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CourseConfigurationDataService" />
+
+    <osgi:reference id="coursePlanDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CoursePlanDataService" />
+
+    <osgi:reference id="callDurationDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CallDurationDataService" />
+
+    <osgi:reference id="callLogDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CallLogDataService" />
+
+    <osgi:reference id="coursePublicationAttemptDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService" />
     <!--Osgi Services end-->
 
     <!--Mail Configuration Here-->

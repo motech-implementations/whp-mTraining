@@ -1,20 +1,21 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.motechproject.mtraining.constants.CourseStatus.UNKNOWN;
-import static org.motechproject.mtraining.constants.CourseStatus.enumFor;
+import static org.motechproject.whp.mtraining.constants.CourseStatus.UNKNOWN;
+import static org.motechproject.whp.mtraining.constants.CourseStatus.enumFor;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.*;
 
 public class CourseProgress {
     @JsonProperty
-    Bookmark bookmark;
+    Flag flag;
     @JsonProperty
     private String courseStartTime;
     @JsonProperty
@@ -25,9 +26,9 @@ public class CourseProgress {
     public CourseProgress() {
     }
 
-    public CourseProgress(String courseStartTime, Bookmark bookmark, int timeLeftToCompleteCourse, String courseStatus) {
+    public CourseProgress(String courseStartTime, Flag flag, int timeLeftToCompleteCourse, String courseStatus) {
         this.courseStartTime = courseStartTime;
-        this.bookmark = bookmark;
+        this.flag = flag;
         this.timeLeftToCompleteCourse = timeLeftToCompleteCourse;
         this.courseStatus = courseStatus;
     }
@@ -37,8 +38,8 @@ public class CourseProgress {
         return courseStartTime;
     }
 
-    public Bookmark getBookmark() {
-        return bookmark;
+    public Flag getFlag() {
+        return flag;
     }
 
     public int getTimeLeftToCompleteCourse() {
@@ -60,11 +61,11 @@ public class CourseProgress {
         if (!ISODateTimeUtil.validate(courseStartTime)) {
             validationErrors.add(new ValidationError(INVALID_DATE_TIME.getCode(), INVALID_DATE_TIME.getMessage().concat(" for: Course Start Time")));
         }
-        if (bookmark == null) {
-            validationErrors.add(new ValidationError(INVALID_BOOKMARK));
+        if (flag == null) {
+            validationErrors.add(new ValidationError(INVALID_FLAG));
             return validationErrors;
         }
-        validationErrors.addAll(bookmark.validate());
+        validationErrors.addAll(flag.validate());
         return validationErrors;
 
     }

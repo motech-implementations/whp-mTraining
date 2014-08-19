@@ -1,8 +1,7 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
 
@@ -14,15 +13,13 @@ public class Bookmark {
 
 
     @JsonProperty("course")
-    private ContentIdentifierDto courseIdentifierDto;
-    @JsonProperty("module")
-    private ContentIdentifierDto moduleIdentifierDto;
+    private Long courseIdentifier;
     @JsonProperty("chapter")
-    private ContentIdentifierDto chapterIdentifierDto;
-    @JsonProperty("message")
-    private ContentIdentifierDto messageIdentifierDto;
+    private Long chapterIdentifier;
+    @JsonProperty("lesson")
+    private Long lessonIdentifier;
     @JsonProperty("quiz")
-    private ContentIdentifierDto quizIdentifierDto;
+    private Long quizIdentifier;
 
     @JsonProperty
     private String dateModified;
@@ -31,34 +28,29 @@ public class Bookmark {
     public Bookmark() {
     }
 
-    public Bookmark(ContentIdentifierDto courseIdentifierDto, ContentIdentifierDto moduleIdentifierDto, ContentIdentifierDto chapterIdentifierDto,
-                    ContentIdentifierDto messageIdentifierDto, ContentIdentifierDto quizIdentifierDto, String dateModified) {
-        this.courseIdentifierDto = courseIdentifierDto;
-        this.moduleIdentifierDto = moduleIdentifierDto;
-        this.chapterIdentifierDto = chapterIdentifierDto;
-        this.messageIdentifierDto = messageIdentifierDto;
-        this.quizIdentifierDto = quizIdentifierDto;
+    public Bookmark(Long courseIdentifier, Long chapterIdentifier,
+                    Long lessonIdentifier, Long quizIdentifier, String dateModified) {
+        this.courseIdentifier = courseIdentifier;
+        this.chapterIdentifier = chapterIdentifier;
+        this.lessonIdentifier = lessonIdentifier;
+        this.quizIdentifier = quizIdentifier;
         this.dateModified = dateModified;
     }
 
-    public ContentIdentifierDto getCourseIdentifierDto() {
-        return courseIdentifierDto;
+    public Long getCourseIdentifierDto() {
+        return courseIdentifier;
     }
 
-    public ContentIdentifierDto getModuleIdentifierDto() {
-        return moduleIdentifierDto;
+    public Long getChapterIdentifierDto() {
+        return chapterIdentifier;
     }
 
-    public ContentIdentifierDto getChapterIdentifierDto() {
-        return chapterIdentifierDto;
+    public Long getMessageIdentifierDto() {
+        return lessonIdentifier;
     }
 
-    public ContentIdentifierDto getMessageIdentifierDto() {
-        return messageIdentifierDto;
-    }
-
-    public ContentIdentifierDto getQuizIdentifierDto() {
-        return quizIdentifierDto;
+    public Long getQuizIdentifierDto() {
+        return quizIdentifier;
     }
 
     public String getDateModified() {
@@ -68,14 +60,12 @@ public class Bookmark {
 
     public List<ValidationError> validate() {
         List<ValidationError> validationErrors = newArrayList();
-        if (courseIdentifierDto == null || courseIdentifierDto.getContentId() == null || courseIdentifierDto.getVersion() == null)
+        if (courseIdentifier == null || courseIdentifier == 0)// || courseIdentifier.getContentId() == null || courseIdentifier.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Course"));
-        if (moduleIdentifierDto == null || moduleIdentifierDto.getContentId() == null || moduleIdentifierDto.getVersion() == null)
-            validationErrors.add(errorMessage(MISSING_NODE, "Module"));
-        if (chapterIdentifierDto == null || chapterIdentifierDto.getContentId() == null || chapterIdentifierDto.getVersion() == null)
+        if (chapterIdentifier == null || courseIdentifier == 0)// || chapterIdentifier.getContentId() == null || chapterIdentifier.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Chapter"));
-        if ((messageIdentifierDto == null || messageIdentifierDto.getContentId() == null || messageIdentifierDto.getVersion() == null) &&
-                (quizIdentifierDto == null || quizIdentifierDto.getContentId() == null || quizIdentifierDto.getVersion() == null))
+        if (((lessonIdentifier == null || courseIdentifier == 0) && // || lessonIdentifier.getContentId() == null || lessonIdentifier.getVersion() == null) &&
+                (quizIdentifier == null || courseIdentifier == 0)))// || quizIdentifierDto.getContentId() == null || quizIdentifierDto.getVersion() == null))
             validationErrors.add(new ValidationError(MISSING_NODE.getCode(), "Quiz or Message should be present"));
         if (isBlank(dateModified) || !ISODateTimeUtil.validate(dateModified))
             validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME));

@@ -1,20 +1,20 @@
 package org.motechproject.whp.mtraining;
 
-import org.joda.time.DateTime;
-import org.motechproject.mtraining.dto.BookmarkDto;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.util.ISODateTimeUtil;
+import org.motechproject.mtraining.domain.*;
+import org.motechproject.whp.mtraining.builder.FlagBuilder;
+import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
-
-import java.util.UUID;
 
 public class BookmarkBuilder {
 
-    private ContentIdentifierDto course = new ContentIdentifierDto(UUID.randomUUID(), 1);
-    private ContentIdentifierDto module = new ContentIdentifierDto(UUID.randomUUID(), 1);
-    private ContentIdentifierDto chapter = new ContentIdentifierDto(UUID.randomUUID(), 1);
-    private ContentIdentifierDto message = new ContentIdentifierDto(UUID.randomUUID(), 1);
-    private ContentIdentifierDto quiz = new ContentIdentifierDto(UUID.randomUUID(), 1);
+    private long courseId = new Course("New course", CourseUnitState.Active, "Content").getId();
+    private long chapterId = new Chapter().getId();
+    private long lessonId = new Lesson("New lesson", CourseUnitState.Active, "Content").getId();
+    private Course course = new Course("New course", CourseUnitState.Active, "Content");
+    private Chapter chapter = new Chapter();
+    private Lesson lesson = new Lesson("New lesson", CourseUnitState.Active, "Content");
+    private long quizId = new Quiz().getId();
     private String dateModified = ISODateTimeUtil.nowInTimeZoneUTC().toString();
     private String externalId = "RMD001";
 
@@ -29,37 +29,31 @@ public class BookmarkBuilder {
         return this;
     }
 
-
     public Bookmark build() {
-        return new Bookmark(course, module, chapter, message, quiz, dateModified);
+        return new Bookmark(courseId, chapterId, lessonId, quizId, dateModified);
     }
 
-    public BookmarkDto buildDTO() {
-        return new BookmarkDto(externalId, course, module, chapter, message, quiz, DateTime.now());
+    public Flag buildFlag() {
+        return new FlagBuilder().buildFlagFrom(null, course, chapter, lesson);
     }
 
-    public BookmarkBuilder withCourse(ContentIdentifierDto course) {
-        this.course = course;
+    public BookmarkBuilder withCourse(long course) {
+        this.courseId = course;
         return this;
     }
 
-    public BookmarkBuilder withModule(ContentIdentifierDto module) {
-        this.module = module;
+    public BookmarkBuilder withChapter(long chapter) {
+        this.chapterId = chapter;
         return this;
     }
 
-    public BookmarkBuilder withChapter(ContentIdentifierDto chapter) {
-        this.chapter = chapter;
+    public BookmarkBuilder withMessage(long lesson) {
+        this.lessonId = lesson;
         return this;
     }
 
-    public BookmarkBuilder withMessage(ContentIdentifierDto message) {
-        this.message = message;
-        return this;
-    }
-
-    public BookmarkBuilder withQuiz(ContentIdentifierDto quiz) {
-        this.quiz = quiz;
+    public BookmarkBuilder withQuiz(long quiz) {
+        this.quizId = quiz;
         return this;
     }
 }

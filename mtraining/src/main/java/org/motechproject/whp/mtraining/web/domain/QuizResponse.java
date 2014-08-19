@@ -1,6 +1,6 @@
 package org.motechproject.whp.mtraining.web.domain;
 
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
+import org.motechproject.mtraining.domain.Question;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class QuizResponse implements MotechResponse {
     private Long callerId;
     private String sessionId;
     private String uniqueId;
-    private List<ContentIdentifierDto> questions;
+    private List<Question> questions;
     private String responseMessage;
     private int responseCode;
 
@@ -18,7 +18,7 @@ public class QuizResponse implements MotechResponse {
 
     }
 
-    public QuizResponse(Long callerId, String sessionId, String uniqueId, List<ContentIdentifierDto> questions) {
+    public QuizResponse(Long callerId, String sessionId, String uniqueId, List<Question> questions) {
         this.callerId = callerId;
         this.sessionId = sessionId;
         this.uniqueId = uniqueId;
@@ -39,7 +39,7 @@ public class QuizResponse implements MotechResponse {
         return uniqueId;
     }
 
-    public List<ContentIdentifierDto> getQuestions() {
+    public List<Question> getQuestions() {
         return questions;
     }
 

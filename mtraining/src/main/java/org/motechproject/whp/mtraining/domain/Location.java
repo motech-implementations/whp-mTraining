@@ -1,26 +1,20 @@
 package org.motechproject.whp.mtraining.domain;
 
-import javax.jdo.annotations.EmbeddedOnly;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
+import org.motechproject.mds.annotations.Entity;
+import org.motechproject.mds.annotations.Field;
+import org.motechproject.mtraining.domain.MdsEntity;
 
-@PersistenceCapable
-@EmbeddedOnly
-public class Location {
+@Entity
+public class Location extends MdsEntity {
 
-    @Persistent
+    @Field
     private String block;
 
-    @Persistent
+    @Field
     private String district;
 
-    @Persistent
+    @Field
     private String state;
-
-
-    //For tests
-    public Location() {
-    }
 
     public Location(String block, String district, String state) {
         this.block = block;
@@ -31,7 +25,6 @@ public class Location {
     public Location(String state) {
         this.state = state;
     }
-
 
     public String getBlock() {
         return block;

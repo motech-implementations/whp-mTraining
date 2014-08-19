@@ -1,81 +1,55 @@
-<div ng-controller="fileUploadController" class="table col-lg-10 main-content">
-    <main role="main">
-        <div class="box-header">UPLOAD COURSE</div>
-        <div class="box-content gutter-border">
-            <div class="row btnContainer">
-                <form role="form" class="form-inline">
-                    <div class="form-group col-xs-offset-1 col-lg-5">
-                        <input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"
-                               file-model="multipartFile"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="button" class="form-control btn btn-default" value="Upload & Publish to IVR"
-                               ng-click="uploadCourse()" ng-disabled="uploadingCourse || !multipartFile"/>
-                    </div>
-                    <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingCourse"/>
-                </form>
+<div id="inner-center" class="email inner-center ui-layout-center ui-layout-pane ui-layout-pane-center">
+    <div class="header-footer-breadcrumb">
+        <ul class="breadcrumb" role="navigation">
+            <li><a role="menu" href=".">{{msg('server.home')}}</a></li>
+            <li><a role="menu" href="#/mtraining/">{{msg('mtraining.module')}}</a></li>
+            <li ng-show="active('#/mtraining/treeView')" ng-class="active('#/mtraining/treeView')">{{msg('mtraining.treeView')}}</li>
+            <li ng-show="active('#/mtraining/schedules')" ng-class="active('#/mtraining/schedules')">{{msg('mtraining.schedules')}}</li>
+            <li ng-show="active('#/mtraining/courses')" ng-class="active('#/mtraining/courses')">{{msg('mtraining.courses')}}</li>
+            <li ng-show="active('#/mtraining/modules')" ng-class="active('#/mtraining/modules')">{{msg('mtraining.modules')}}</li>
+            <li ng-show="active('#/mtraining/chapters')" ng-class="active('#/mtraining/chapters')">{{msg('mtraining.chapters')}}</li>
+            <li ng-show="active('#/mtraining/messages')" ng-class="active('#/mtraining/messages')">{{msg('mtraining.messages')}}</li>
+            <li ng-show="active('#/mtraining/quizzes')" ng-class="active('#/mtraining/quizzes')">{{msg('mtraining.quizzes')}}</li>
+            <li ng-show="active('#/mtraining/upload')" ng-class="active('#/mtraining/upload')">{{msg('mtraining.upload')}}</li>
+        </ul>
+    </div>
+    <div class="header-footer">
+        <ul id="content-tabs" class="nav nav-tabs tasks ">
+            <li ng-class="active('#/mtraining/treeView')"><a  ng-href="#/mtraining/treeView">{{msg('mtraining.treeView')}}</a></li>
+            <li ng-class="active('#/mtraining/schedules')"><a ng-href="#/mtraining/schedules">{{msg('mtraining.schedules')}}</a></li>
+            <li ng-class="active('#/mtraining/courses')"><a  ng-href="#/mtraining/courses">{{msg('mtraining.courses')}}</a></li>
+            <li ng-class="active('#/mtraining/modules')"><a  ng-href="#/mtraining/modules">{{msg('mtraining.modules')}}</a></li>
+            <li ng-class="active('#/mtraining/chapters')"><a  ng-href="#/mtraining/chapters">{{msg('mtraining.chapters')}}</a></li>
+            <li ng-class="active('#/mtraining/messages')"><a  ng-href="#/mtraining/messages">{{msg('mtraining.messages')}}</a></li>
+            <li ng-class="active('#/mtraining/quizzes')"><a  ng-href="#/mtraining/quizzes">{{msg('mtraining.quizzes')}}</a></li>
+            <li ng-class="active('#/mtraining/upload')"><a  ng-href="#/mtraining/upload">{{msg('mtraining.upload')}}</a></li>
+        </ul>
+    </div>
+
+    <div class="ui-layout-content">
+
+        <div class="tab-content" id="tab-content">
+            <div id="main-content" class="tab-pane active">
+                <div ng-view></div>
             </div>
         </div>
 
-        <div class="box-header providerUpload">UPLOAD PROVIDER</div>
-        <div class="box-content gutter-border">
-            <div class="row btnContainer">
-                <form role="form" class="form-inline">
-                    <div class="form-group col-xs-offset-1 col-lg-5">
-                        <input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"
-                               file-model="multipartFile"/>
+        <div class="modal fade" id="errorDialog" tabindex="-1" role="dialog" aria-labelledby="errorLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="errorLabel">{{msg('mtraining.error')}}</h4>
                     </div>
-                    <div class="form-group">
-                        <input type="button" class="form-control btn btn-default" value="Upload Provider"
-                               ng-click="uploadProvider()" ng-disabled="uploadingProvider || !multipartFile"/>
+                    <div class="modal-body">
+                        <span id="errorMessage">
+                        </span>
                     </div>
-                    <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingProvider"/>
-                </form>
+                    <div class="modal-footer centered">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{msg('mtraining.ok')}}</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="box-header providerUpload">UPLOAD COURSE CONFIGURATION</div>
-        <div class="box-content gutter-border">
-            <div class="row btnContainer">
-                <form role="form" class="form-inline">
-                    <div class="form-group col-xs-offset-1 col-lg-5">
-                        <input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"
-                               file-model="multipartFile"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="button" class="form-control btn btn-default" value="Upload Course Configuration"
-                               ng-click="uploadCourseConfig()" ng-disabled="uploadingCourseConfig || !multipartFile"/>
-                    </div>
-                    <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingCourseConfig"/>
-                </form>
-            </div>
-        </div>
-
-        <div class="response" ng-hide="multipartFile">
-            <div ng-show="response.status=='SUCCESS'">
-                <ul class="alert alert-success">{{response.message}}</ul>
-            </div>
-            <div ng-show="response.status=='FAILURE'">
-                <ul class="alert alert-danger">{{response.message}}</ul>
-                <table class="table table-hover table-bordered">
-                    <tr ng-show="uploadedCourse">
-                        <th class="col-lg-2">Node Name</th>
-                        <th class="col-lg-2">Node Type</th>
-                        <th class="col-lg-6">Reason</th>
-                    </tr>
-                    <tr ng-show="uploadedProvider">
-                        <th class="col-lg-2">RemediID</th>
-                        <th class="col-lg-2">Contact Number</th>
-                        <th class="col-lg-6">Reason</th>
-                    </tr>
-                    <tr ng-repeat="error in response.errors">
-                        <td class="col-lg-2">{{error.nodeName}}</td>
-                        <td class="col-lg-2">{{error.nodeType}}</td>
-                        <td class="col-lg-6">{{error.message}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </main>
+    </div>
 </div>
-

@@ -6,15 +6,21 @@ import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.commons.api.MotechException;
 import org.motechproject.server.config.SettingsFacade;
+import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.RequestInfo;
 import org.motechproject.whp.mtraining.WebClient;
-import org.motechproject.whp.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.Course;
+import org.ops4j.pax.exam.ExamFactory;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -24,8 +30,10 @@ import java.io.StringWriter;
 
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:testWHPmTrainingApplicationContext.xml")
+@Ignore
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerSuite.class)
+@ExamFactory(MotechNativeTestContainerFactory.class)
 public class IVRGatewayIT {
 
 

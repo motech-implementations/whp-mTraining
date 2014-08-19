@@ -2,7 +2,7 @@ package org.motechproject.whp.mtraining.listener;
 
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
-import org.motechproject.mtraining.constants.MTrainingEventConstants;
+import org.motechproject.whp.mtraining.constants.MTrainingEventConstants;
 import org.motechproject.whp.mtraining.ivr.CoursePublisher;
 import org.motechproject.whp.mtraining.reports.CourseReporter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +27,10 @@ public class CourseEventListener {
     @MotechListener(subjects = MTrainingEventConstants.COURSE_CREATION_EVENT)
     public void courseAdded(MotechEvent event) {
         Map<String, Object> eventData = event.getParameters();
-        UUID courseId = (UUID) eventData.get(MTrainingEventConstants.CONTENT_ID);
+        Long courseId = (Long) eventData.get(MTrainingEventConstants.CONTENT_ID);
         Integer version = (Integer) eventData.get(MTrainingEventConstants.VERSION);
-        courseReporter.reportCourseAdded(courseId, version);
-        coursePublisher.publish(courseId, version);
+        courseReporter.reportCourseAdded(courseId);
+        coursePublisher.publish(courseId);
     }
 
 }

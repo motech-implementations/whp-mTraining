@@ -1,0 +1,53 @@
+<div class="row col-md-12">
+
+    <div>
+        <ul ng-show="alertMessage" class="alert alert-success">{{alertMessage}}</ul>
+        <button id="createCourse" class="btn btn-success" ng-hide="creatingCourse || updatingCourse" ng-click="createCourse()">{{msg('mtraining.createCourse')}}</button>
+    </div>
+
+    <form class="form-horizontal" ng-show="creatingCourse || updatingCourse">
+        <fieldset>
+            <legend ng-show="creatingCourse">{{msg('mtraining.createCourse')}}</legend>
+            <legend ng-show="updatingCourse">{{msg('mtraining.updateCourse')}}</legend>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="courseName">{{msg('mtraining.courseName')}}</label>
+                <div class="form-inline col-md-8">
+                    <input id="courseName" name="courseName" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="course.name" >
+                    <span ng-show="errorName" class="form-hint">{{errorName}}</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="courseDescription">{{msg('mtraining.description')}}</label>
+                <div class="col-md-4">
+                    <textarea class="form-control input-xlarge-fluid" id="courseDescription" name="courseDescription" ng-model="course.description" maxlength="180"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="audioFilename">{{msg('mtraining.filename')}}</label>
+                <div class="col-md-4">
+                    <input id="audioFileName" name="audioFileName" class="form-control input-xlarge-fluid" type="text" ng-model="course.filename" maxlength="43">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-8 pull-right">
+                    <button id="saveButton" ng-show="creatingCourse" name="saveButton" class="btn btn-primary" ng-click="saveCourse()">{{msg('mtraining.save')}}</button>
+                    <button id="updateButton" ng-show="updatingCourse" name="updateButton" class="btn btn-warning" ng-click="updateCourse()">{{msg('mtraining.update')}}</button>
+                    <button id="deleteButton" ng-show="updatingCourse"name="deleteButton" class="btn btn-danger" ng-click="deleteCourse()">{{msg('mtraining.delete')}}</button>
+                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="clearCourse()">{{msg('mtraining.cancel')}}</button>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingCourse"/>
+            </div>
+
+        </fieldset>
+    </form>
+
+    <div id="outsideCoursesListTable" class="overrideJqgridTable">
+        <table id="coursesListTable" courses-grid="pageCoursesResourceTable"></table>
+        <div id="pageCoursesResourceTable"></div>
+    </div>
+
+</div>

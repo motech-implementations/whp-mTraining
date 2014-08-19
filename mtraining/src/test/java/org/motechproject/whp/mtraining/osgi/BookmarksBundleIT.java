@@ -10,22 +10,18 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.constants.CourseStatus;
-import org.motechproject.mtraining.dto.BookmarkDto;
-import org.motechproject.mtraining.dto.ChapterDto;
-import org.motechproject.mtraining.dto.ContentIdentifierDto;
-import org.motechproject.mtraining.dto.CourseConfigurationDto;
-import org.motechproject.mtraining.dto.CourseDto;
-import org.motechproject.mtraining.dto.EnrolleeCourseProgressDto;
-import org.motechproject.mtraining.dto.LocationDto;
-import org.motechproject.mtraining.dto.MessageDto;
-import org.motechproject.mtraining.dto.ModuleDto;
-import org.motechproject.mtraining.service.CourseConfigurationService;
-import org.motechproject.mtraining.service.CourseProgressService;
-import org.motechproject.mtraining.service.CourseService;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
+import org.motechproject.whp.mtraining.CourseBuilder;
+import org.motechproject.mtraining.domain.*;
+import org.motechproject.whp.mtraining.domain.CourseConfiguration;
+import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
-import org.motechproject.whp.mtraining.CourseDTOBuilder;
 import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
@@ -40,18 +36,28 @@ import org.motechproject.whp.mtraining.web.domain.CourseProgressResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.ops4j.pax.exam.ExamFactory;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.NOT_WORKING_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.WORKING_PROVIDER;
 
-
-public class BookmarksBundleIT extends AuthenticationAwareIT {
+@Ignore
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerSuite.class)
+@ExamFactory(MotechNativeTestContainerFactory.class)
+public class BookmarksBundleIT {
 
     static final String BOOKMARK_QUERY_WITH_SESSION_ID = "http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s&sessionId=%s";
     static final String BOOKMARK_QUERY_WITHOUT_SESSION_ID = "http://localhost:%s/mtraining/web-api/bookmark?callerId=%s&uniqueId=%s";
@@ -60,56 +66,43 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private List<Long> providersAdded = new ArrayList<>();
 
-    private CourseService courseService;
+    @Inject
+    private MTrainingService mTrainingService;
 
+    @Inject
     private ProviderService providerService;
+
+    @Inject
     private CourseConfigurationService courseConfigService;
-    private CourseProgressService courseProgressService;
 
     private Provider activeProvider;
     protected IVRServer ivrServer;
-    private CourseDto course002;
+    private Course course002;
 
 
-    @Override
-    public void onSetUp() throws InterruptedException, IOException {
-        super.onSetUp();
+    @Before
+    public void setUp() throws InterruptedException, IOException {
         ivrServer = new IVRServer(8888, "/ivr-wgn").start();
-        courseService = (CourseService) getService("courseService");
-        assertNotNull(courseService);
-
-        providerService = (ProviderService) getApplicationContext().getBean("providerService");
-        assertNotNull(providerService);
-
-        courseConfigService = (CourseConfigurationService) getApplicationContext().getBean("courseConfigService");
-        assertNotNull(courseConfigService);
-
-        courseProgressService = (CourseProgressService) getApplicationContext().getBean("courseProgressService");
-        assertNotNull(courseProgressService);
-
 
         String courseName = String.format("CS002-%s", UUID.randomUUID());
-        course002 = courseService.getCourse(createCourse(courseName));
-        courseConfigService.addOrUpdateCourseConfiguration(new CourseConfigurationDto(course002.getName(), 60, new LocationDto("block", "district", "state")));
+        course002 = mTrainingService.getCourseById(createCourse(courseName).getId());
+        courseConfigService.createCourseConfiguration(new CourseConfiguration(course002.getName(), 60, new Location("block", "district", "state")));
 
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);
-
-        ModuleDto moduleDto = course002.firstActiveModule();
-        BookmarkDto bookmarkDto = new BookmarkDto("remediId1", course002.toContentIdentifierDto(), moduleDto.toContentIdentifierDto(), moduleDto.findFirstActiveChapter().toContentIdentifierDto(), moduleDto.findFirstActiveChapter().findFirstActiveMessage().toContentIdentifierDto(), null, DateTime.now());
-        EnrolleeCourseProgressDto courseProgressDto = new EnrolleeCourseProgressDto("remediId1", DateTime.now(), bookmarkDto, CourseStatus.ONGOING);
-        courseProgressService.addOrUpdateCourseProgress(courseProgressDto);
     }
 
 
-    private ContentIdentifierDto createCourse(final String courseName) {
-        return courseService.addOrUpdateCourse(new CourseDTOBuilder().withName(courseName).build());
+    private Course createCourse(final String courseName) {
+        return mTrainingService.createCourse(new CourseBuilder().withName(courseName).build());
     }
 
     public void testThatStatusURLDoesIsAvailableWithoutAuthentication() throws IOException, InterruptedException {
         HttpResponse response = httpClient.get(String.format("http://localhost:%s/mtraining/web-api/status", TestContext.getJettyPort()));
         assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
     }
+
+    public HttpUriRequest httpRequestWithAuthHeaders(String url, String method) { return null; }
 
     public void testThatResponseIs800WhenProviderIsKnown() throws IOException, InterruptedException {
         String bookmarkRequestURLForAKnownUser = getBookmarkRequestUrlWith(activeProvider.getCallerId(), "un1qId", "s001");
@@ -172,15 +165,10 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private String getBookmarkAsJSON() throws IOException {
 
-        ModuleDto moduleDto = course002.getModules().get(0);
-        ChapterDto chapterDto = moduleDto.getChapters().get(0);
-        MessageDto messageDto = chapterDto.getMessages().get(0);
+        Chapter chapter = course002.getChapters().get(0);
+        Lesson lesson = chapter.getLessons().get(0);
 
-        ContentIdentifierDto module = moduleDto.toContentIdentifierDto();
-        ContentIdentifierDto chapter = chapterDto.toContentIdentifierDto();
-        ContentIdentifierDto message = messageDto.toContentIdentifierDto();
-
-        Bookmark bookmark = new Bookmark(new ContentIdentifierDto(course002.getContentId(), course002.getVersion()), module, chapter, message, null, DateTime.now().toString());
+        Flag bookmark = new Flag(String.valueOf(course002.getId()), String.valueOf(chapter.getId()), String.valueOf(lesson.getId()), null, null, null ,null);
         CourseProgress courseProgress = new CourseProgress(DateTime.now().toString(), bookmark, 2, "ONGOING");
         CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", courseProgress);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -189,8 +177,8 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
 
     private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {
         Provider provider = new Provider(remediId, callerId, providerStatus, new Location("block", "district", "state"));
-        providersAdded.add(providerService.add(provider));
-        return providerService.byCallerId(callerId);
+        providersAdded.add(providerService.createProvider(provider).getId());
+        return providerService.getProviderByCallerId(callerId);
     }
 
     private String getBookmarkRequestUrlWith(long callerId, String uniqueId, String sessionId) {
@@ -200,46 +188,11 @@ public class BookmarksBundleIT extends AuthenticationAwareIT {
         return String.format(BOOKMARK_QUERY_WITHOUT_SESSION_ID, TestContext.getJettyPort(), callerId, uniqueId);
     }
 
-    @Override
-    protected List<String> getImports() {
-        List<String> imports = new ArrayList<>();
-        imports.add("org.motechproject.commons.api");
-        imports.add("org.apache.http.util");
-        imports.add("org.mortbay.jetty");
-        imports.add("org.mortbay.jetty.servlet");
-        imports.add("javax.servlet");
-        imports.add("javax.servlet.http");
-        imports.add("org.apache.commons.io");
-        imports.add("org.motechproject.whp.mtraining.domain");
-        imports.add("org.motechproject.whp.mtraining.web.domain");
-        imports.add("org.jasypt.encryption.pbe.config");
-        imports.add("org.jasypt.encryption.pbe");
-        imports.add("org.jasypt.spring.properties");
-        imports.add("org.motechproject.whp.mtraining.mail");
-        imports.add("com.google.common.collect");
-        return imports;
-    }
-
-    @Override
-    protected String[] getConfigLocations() {
-        return new String[]{"test-blueprint.xml"};
-    }
-
-    private Object getService(String serviceBeanName) {
-        return getApplicationContext().getBean(serviceBeanName);
-    }
-
-    @Override
-    protected void onTearDown() throws Exception {
-        removeAllProviders();
-        if (ivrServer != null) {
-            ivrServer.stop();
-        }
-    }
-
     private void removeAllProviders() {
+        Provider provider;
         for (Long providerId : providersAdded) {
-            providerService.delete(providerId);
+            provider = providerService.getProviderById(providerId);
+            providerService.deleteProvider(provider);
         }
     }
 

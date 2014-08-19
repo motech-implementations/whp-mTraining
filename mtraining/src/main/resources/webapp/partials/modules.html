@@ -1,0 +1,63 @@
+<div class="row col-md-12">
+
+    <div>
+        <ul ng-show="alertMessage" class="alert alert-success">{{alertMessage}}</ul>
+        <button id="createModule" class="btn btn-success" ng-hide="creatingModule || updatingModule" ng-click="createModule()">{{msg('mtraining.createModule')}}</button>
+    </div>
+
+    <form class="form-horizontal" ng-show="creatingModule || updatingModule">
+        <fieldset>
+            <legend ng-show="creatingModule">{{msg('mtraining.createModule')}}</legend>
+            <legend ng-show="updatingModule">{{msg('mtraining.updateModule')}}</legend>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="moduleName">{{msg('mtraining.moduleName')}}</label>
+                <div class="form-inline col-md-8">
+                    <input id="moduleName" name="moduleName" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="module.name" >
+                    <span ng-show="errorName" class="form-hint">{{errorName}}</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="moduleDescription">{{msg('mtraining.description')}}</label>
+                <div class="col-md-4">
+                    <textarea class="form-control input-xlarge-fluid" id="moduleDescription" name="moduleDescription" ng-model="module.description" maxlength="180"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="audioFilename">{{msg('mtraining.filename')}}</label>
+                <div class="col-md-4">
+                    <input id="audioFileName" name="audioFileName" class="form-control input-xlarge-fluid" type="text" ng-model="module.filename" maxlength="43">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="courses">{{msg('mtraining.courses')}}</label>
+                <div class="col-md-4">
+                    <select id="courses" class="input-xlarge-fluid" hidden multiple ng-model="selectedCourses">
+                        <option ng-repeat="course in courses" value="{{course.id}}">{{course.name}}</option>
+                    </select>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="fetchingCourses"/>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-8 pull-right">
+                    <button id="saveButton" ng-show="creatingModule" name="saveButton" class="btn btn-primary" ng-click="saveModule()">{{msg('mtraining.save')}}</button>
+                    <button id="updateButton" ng-show="updatingModule" name="updateButton" class="btn btn-warning" ng-click="updateModule()">{{msg('mtraining.update')}}</button>
+                    <button id="deleteButton" ng-show="updatingModule"name="deleteButton" class="btn btn-danger" ng-click="deleteModule()">{{msg('mtraining.delete')}}</button>
+                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="clearModule()">{{msg('mtraining.cancel')}}</button>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingModule"/>
+            </div>
+
+        </fieldset>
+    </form>
+
+    <div id="outsideModulesListTable" class="overrideJqgridTable">
+        <table id="modulesListTable" modules-grid="pageModulesResourceTable"></table>
+        <div id="pageModulesResourceTable"></div>
+    </div>
+
+</div>

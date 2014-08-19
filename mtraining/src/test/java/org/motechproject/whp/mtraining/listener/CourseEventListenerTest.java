@@ -8,7 +8,6 @@ import org.motechproject.whp.mtraining.reports.CourseReporter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -22,7 +21,7 @@ public class CourseEventListenerTest {
     private CoursePublisher coursePublisher;
     private CourseReporter courseReporter;
     private CourseEventListener courseEventListener;
-    static UUID cs001 = UUID.randomUUID();
+    static long cs001 = 12;
 
     @Before
     public void before() {
@@ -41,7 +40,7 @@ public class CourseEventListenerTest {
 
         courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
 
-        verify(coursePublisher).publish(cs001, 3);
+        verify(coursePublisher).publish(cs001);
     }
 
     @Test
@@ -52,7 +51,7 @@ public class CourseEventListenerTest {
         eventData.put(VERSION, 3);
 
         courseEventListener.courseAdded(new MotechEvent(COURSE_ADDED_EVENT, eventData));
-        verify(courseReporter).reportCourseAdded(cs001, 3);
+        verify(courseReporter).reportCourseAdded(cs001);
     }
 
 
