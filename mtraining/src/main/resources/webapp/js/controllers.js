@@ -47,7 +47,7 @@
             $scope.course.$save(function(c) {
                 // c => saved course object
                 $scope.alertMessage = $scope.msg('mtraining.createdCourse');
-                $("#coursesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearCourse();
         }
@@ -60,7 +60,7 @@
             $scope.course.$update({ id:$scope.course.id }, function (c) {
                 // c => updated course object
                 $scope.alertMessage = $scope.msg('mtraining.updatedCourse');
-                $("#coursesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearCourse();
         }
@@ -71,7 +71,7 @@
                     $scope.savingCourse = true;
                     $scope.course.$delete({ id:$scope.course.id }, function () {
                         $scope.alertMessage = $scope.msg('mtraining.deletedCourse');
-                        $("#coursesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                        $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
                     });
                     $scope.clearCourse();
                 }
@@ -147,7 +147,7 @@
             $scope.module.$save(function(m) {
                 // m => saved module object
                 $scope.alertMessage = $scope.msg('mtraining.createdModule');
-                $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearModule();
         }
@@ -161,7 +161,7 @@
             $scope.module.$update({ id:$scope.module.id }, function (m) {
                 // m => updated module object
                 $scope.alertMessage = $scope.msg('mtraining.updatedModule');
-                $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearModule();
         }
@@ -176,7 +176,7 @@
                         $scope.savingModule = true;
                         $scope.module.$delete({ id:$scope.module.id }, function () {
                             $scope.alertMessage = $scope.msg('mtraining.deletedModule');
-                            $("#modulesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                            $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
                         });
                         $scope.clearModule();
                     }
@@ -253,7 +253,7 @@
             $scope.chapter.$save(function(c) {
                 // c => saved chapter object
                 $scope.alertMessage = $scope.msg('mtraining.createdChapter');
-                $("#chaptersListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearChapter();
         }
@@ -267,7 +267,7 @@
             $scope.chapter.$update({ id:$scope.chapter.id }, function (c) {
                 // c => updated chapter object
                 $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
-                $("#chaptersListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearChapter();
         }
@@ -282,7 +282,7 @@
                         $scope.savingChapter = true;
                         $scope.chapter.$delete({ id:$scope.chapter.id }, function () {
                             $scope.alertMessage = $scope.msg('mtraining.deletedChapter');
-                            $("#chaptersListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                            $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
                         });
                         $scope.clearChapter();
                     }
@@ -359,7 +359,7 @@
             $scope.message.$save(function(m) {
                 // m => saved message object
                 $scope.alertMessage = $scope.msg('mtraining.createdMessage');
-                $("#messagesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearMessage();
         }
@@ -373,7 +373,7 @@
             $scope.message.$update({ id:$scope.message.id }, function (m) {
                 // m => updated message object
                 $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
-                $("#messagesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearMessage();
         }
@@ -388,7 +388,7 @@
                         $scope.savingMessage = true;
                         $scope.message.$delete({ id:$scope.message.id }, function () {
                             $scope.alertMessage = $scope.msg('mtraining.deletedMessage');
-                            $("#messagesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                            $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
                         });
                         $scope.clearMessage();
                     }
@@ -502,7 +502,7 @@
             $scope.quiz.$save(function(q) {
                 // q => saved quiz object
                 $scope.alertMessage = $scope.msg('mtraining.createdQuiz');
-                $("#quizzesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearQuiz();
         }
@@ -515,7 +515,7 @@
             $scope.quiz.$update({ id:$scope.quiz.id }, function (q) {
                 // q => updated quiz object
                 $scope.alertMessage = $scope.msg('mtraining.updatedQuiz');
-                $("#quizzesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearQuiz();
         }
@@ -530,7 +530,7 @@
                         $scope.savingQuiz = true;
                         $scope.quiz.$delete({ id:$scope.quiz.id }, function () {
                             $scope.alertMessage = $scope.msg('mtraining.deletedQuiz');
-                            $("#quizzesListTable").setGridParam({datatype:'json'}).trigger('reloadGrid');
+                            $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
                         });
                         $scope.clearQuiz();
                     }

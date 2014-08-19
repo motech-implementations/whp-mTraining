@@ -100,12 +100,15 @@
                     sortorder: 'desc',
                     viewrecords: true,
                     loadonce: true,
+                    gridview: true,
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
-                        setTimeout(function () {
-                           elem.trigger("reloadGrid");
-                        }, 10);
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
                     },
                     gridComplete: function () {
                       elem.jqGrid('setGridWidth', '100%');
@@ -198,12 +201,15 @@
                     sortorder: 'desc',
                     viewrecords: true,
                     loadonce: true,
+                    gridview: true,
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
-                        setTimeout(function () {
-                           elem.trigger("reloadGrid");
-                        }, 10);
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
                     },
                     gridComplete: function () {
                       elem.jqGrid('setGridWidth', '100%');
@@ -296,12 +302,15 @@
                     sortorder: 'desc',
                     viewrecords: true,
                     loadonce: true,
+                    gridview: true,
                     loadComplete : function(array) {
                         $('.ui-jqgrid-htable').addClass('table-lightblue');
                         $('.ui-jqgrid-btable').addClass("table-lightblue");
-                        setTimeout(function () {
-                           elem.trigger("reloadGrid");
-                        }, 10);
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
                     },
                     gridComplete: function () {
                       elem.jqGrid('setGridWidth', '100%');
@@ -394,12 +403,15 @@
                         sortorder: 'desc',
                         viewrecords: true,
                         loadonce: true,
+                        gridview: true,
                         loadComplete : function(array) {
                             $('.ui-jqgrid-htable').addClass('table-lightblue');
                             $('.ui-jqgrid-btable').addClass("table-lightblue");
-                            setTimeout(function () {
-                               elem.trigger("reloadGrid");
-                            }, 10);
+                            if (elem.getGridParam('datatype') === "json") {
+                                setTimeout(function () {
+                                   elem.trigger("reloadGrid");
+                                }, 10);
+                            }
                         },
                         gridComplete: function () {
                           elem.jqGrid('setGridWidth', '100%');
@@ -497,12 +509,15 @@
                                 sortorder: 'desc',
                                 viewrecords: true,
                                 loadonce: true,
+                                gridview: true,
                                 loadComplete : function(array) {
                                     $('.ui-jqgrid-htable').addClass('table-lightblue');
                                     $('.ui-jqgrid-btable').addClass("table-lightblue");
-                                    setTimeout(function () {
-                                       elem.trigger("reloadGrid");
-                                    }, 10);
+                                    if (elem.getGridParam('datatype') === "json") {
+                                        setTimeout(function () {
+                                           elem.trigger("reloadGrid");
+                                        }, 10);
+                                    }
                                 },
                                 gridComplete: function () {
                                   elem.jqGrid('setGridWidth', '100%');
