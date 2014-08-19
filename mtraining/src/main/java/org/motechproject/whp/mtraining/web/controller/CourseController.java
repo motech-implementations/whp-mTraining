@@ -46,13 +46,13 @@ public class CourseController {
     @RequestMapping(value = "/course", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void createCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        dtoFactoryService.createOrUpdateCoursePlanFromDto(coursePlanDto);
+        dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public void updateCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        dtoFactoryService.createOrUpdateCoursePlanFromDto(coursePlanDto);
+        dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.DELETE)

@@ -40,12 +40,12 @@ public class LessonController {
 
     @RequestMapping(value = "/lesson", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createLesson(@RequestBody LessonDto lesson) { dtoFactoryService.createOrUpdateLessonFromDto(lesson); }
+    public void createLesson(@RequestBody LessonDto lesson) { dtoFactoryService.createOrUpdateFromDto(lesson); }
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public void updateLesson(@RequestBody LessonDto lesson) {
-        dtoFactoryService.createOrUpdateLessonFromDto(lesson);
+        dtoFactoryService.createOrUpdateFromDto(lesson);
     }
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.DELETE)

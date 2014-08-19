@@ -41,13 +41,13 @@ public class ChapterController {
     @RequestMapping(value = "/chapter", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void createChapterDto(@RequestBody ChapterDto chapter) {
-        dtoFactoryService.createOrUpdateChapterFromDto(chapter);
+        dtoFactoryService.createOrUpdateFromDto(chapter);
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public  void updateChapterDto(@RequestBody ChapterDto chapter) {
-        dtoFactoryService.createOrUpdateChapterFromDto(chapter);
+        dtoFactoryService.createOrUpdateFromDto(chapter);
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.DELETE)

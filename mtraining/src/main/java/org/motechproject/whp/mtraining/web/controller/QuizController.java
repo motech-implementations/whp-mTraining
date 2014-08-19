@@ -36,13 +36,13 @@ public class QuizController {
     @RequestMapping(value = "/quiz", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void createQuiz(@RequestBody QuizDto quiz) {
-        dtoFactoryService.createOrUpdateQuizFromDto(quiz);
+        dtoFactoryService.createOrUpdateFromDto(quiz);
     }
 
     @RequestMapping(value = "/quiz/{quizId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public void updateQuiz(@RequestBody QuizDto quiz) {
-        dtoFactoryService.createOrUpdateQuizFromDto(quiz);
+        dtoFactoryService.createOrUpdateFromDto(quiz);
     }
 
     @RequestMapping(value = "/quiz/{quizId}", method = RequestMethod.DELETE)

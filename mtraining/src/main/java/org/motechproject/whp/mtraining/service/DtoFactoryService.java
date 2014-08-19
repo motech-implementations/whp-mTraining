@@ -11,6 +11,9 @@ import java.util.List;
  */
 public interface DtoFactoryService {
 
+    void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto);
+
+
     List<CoursePlanDto> getAllCoursePlanDtos();
 
     CoursePlanDto convertCoursePlanToDto(CoursePlan coursePlan);
@@ -18,14 +21,6 @@ public interface DtoFactoryService {
     List<CoursePlanDto> convertCoursePlanListToDtos (List<CoursePlan> coursePlans);
 
     CoursePlanDto getCoursePlanDtoById(long courseId);
-
-    void createOrUpdateCoursePlanFromDto(CoursePlanDto coursePlanDto);
-
-    CoursePlan generateCoursePlanFromDto(CoursePlanDto coursePlanDto);
-
-    Course convertDtoToCourse(ModuleDto dto) ;
-
-    List<Course> convertDtosToCourses (List<ModuleDto> courseDtos);
 
 
     List<ModuleDto> getAllModuleDtos();
@@ -36,10 +31,6 @@ public interface DtoFactoryService {
 
     ModuleDto getModuleDtoById(long moduleId);
 
-    Course createOrUpdateModuleFromDto(ModuleDto moduleDto);
-
-    Course generateModuleFromDto(ModuleDto moduleDto);
-
 
     List<ChapterDto> getAllChapterDtos();
 
@@ -48,10 +39,6 @@ public interface DtoFactoryService {
     List<ChapterDto> convertChapterListToDtos (List<Chapter> chapters);
 
     ChapterDto getChapterDtoById(long chapterId);
-
-    void createOrUpdateChapterFromDto(ChapterDto chapterDto);
-
-    Chapter generateChapterFromDto(ChapterDto chapterDto);
 
 
     List<LessonDto> getAllLessonDtos();
@@ -62,10 +49,6 @@ public interface DtoFactoryService {
 
     LessonDto getLessonDtoById(long lessonId);
 
-    void createOrUpdateLessonFromDto(LessonDto lessonDto);
-
-    Lesson generateLessonFromDto(LessonDto lessonDto);
-
 
     List<QuizDto> getAllQuizDtos();
 
@@ -75,15 +58,9 @@ public interface DtoFactoryService {
 
     QuizDto getQuizDtoById(long quizId);
 
-    void createOrUpdateQuizFromDto(QuizDto quizDto);
-
-    Quiz generateQuizFromDto(QuizDto quizDto);
-
     QuestionDto convertQuestionToDto(Question question);
 
     List<QuestionDto> convertQuestionListToDtos (List<Question> questions);
-
-    Question convertDtoToQuestion(QuestionDto questionDto);
 
     List<Question> convertDtosToQuestionList (List<QuestionDto> questionDtos);
 

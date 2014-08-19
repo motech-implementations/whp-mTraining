@@ -30,8 +30,15 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Autowired
     ManyToManyRelationService manyToManyRelationService;
 
-    public static final String DESCRIPTION_MAPPING_NAME = "description";
-    public static final String FILENAME_MAPPING_NAME = "filename";
+    @Override
+    public void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
+        if (courseUnitMetadataDto.getId() == 0) {
+            createCourseUnitMetadataFromDto(courseUnitMetadataDto);
+        }
+        else {
+            updateCourseUnitMetadataFromDto(courseUnitMetadataDto);
+        }
+    }
 
     @Override
     public List<CoursePlanDto> getAllCoursePlanDtos() {
@@ -42,28 +49,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public CoursePlanDto getCoursePlanDtoById(long courseId) {
         return convertCoursePlanToDto(coursePlanService.getCoursePlanById(courseId));
-    }
-
-    @Override
-    public void createOrUpdateCoursePlanFromDto(CoursePlanDto coursePlanDto) {
-        CoursePlan coursePlan;
-        if (coursePlanDto.getId() == 0) {
-            coursePlanService.createCoursePlan(generateCoursePlanFromDto(coursePlanDto));
-        } else {
-            coursePlan = coursePlanService.getCoursePlanById(coursePlanDto.getId());
-            coursePlan.setName(coursePlanDto.getName());
-            coursePlan.setState(coursePlanDto.getState());
-            coursePlan.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
-                    (coursePlanDto.getFilename(), coursePlanDto.getDescription()));
-            coursePlanService.updateCoursePlan(coursePlan);
-        }
-    }
-
-    @Override
-    public CoursePlan generateCoursePlanFromDto(CoursePlanDto coursePlanDto) {
-        CoursePlan coursePlan = new CoursePlan(coursePlanDto.getName(), coursePlanDto.getState(),
-                contentOperationService.codeFileNameAndDescriptionIntoContent(coursePlanDto.getFilename(), coursePlanDto.getDescription()));
-        return coursePlan;
     }
 
     @Override
@@ -86,31 +71,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return coursePlanDtos;
     }
 
-    @Override
-    public Course convertDtoToCourse(ModuleDto dto) {
-        String content = contentOperationService.codeFileNameAndDescriptionIntoContent(dto.getFilename(), dto.getDescription());
-        return new Course(dto.getName(), dto.getState(), content);
-    }
-
-    @Override
-    public List<Course> convertDtosToCourses(List<ModuleDto> courseDtos) {
-        List<Course> courses = new ArrayList<>();
-
-        for (ModuleDto dto : courseDtos) {
-            if (dto.getId() == 0) {
-                courses.add(convertDtoToCourse(dto));
-            } else {
-                Course course = mTrainingService.getCourseById(dto.getId());
-                course.setName(dto.getName());
-                course.setState(dto.getState());
-                course.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent(dto.getFilename(), dto.getDescription()));
-                courses.add(course);
-            }
-        }
-
-        return courses;
-    }
-
 
     @Override
     public List<ModuleDto> getAllModuleDtos() {
@@ -121,37 +81,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public ModuleDto getModuleDtoById(long moduleId) {
         return convertModuleToDto(mTrainingService.getCourseById(moduleId));
-    }
-
-    @Override
-    public Course createOrUpdateModuleFromDto(ModuleDto moduleDto) {
-        Course module;
-        if (moduleDto.getId() == 0) {
-            module = mTrainingService.createCourse(generateModuleFromDto(moduleDto));
-            for (Long id : moduleDto.getParentIds()) {
-                ManyToManyRelation relation = new ManyToManyRelation(id, module.getId(), ParentType.CoursePlan);
-                manyToManyRelationService.createRelation(relation);
-            }
-        } else {
-            module = mTrainingService.getCourseById(moduleDto.getId());
-            module.setName(moduleDto.getName());
-            module.setState(moduleDto.getState());
-            module.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
-                    (moduleDto.getFilename(), moduleDto.getDescription()));
-            mTrainingService.updateCourse(module);
-            manyToManyRelationService.deleteRelationsByChildId(ParentType.CoursePlan, module.getId());
-            for (Long id : moduleDto.getParentIds()) {
-                ManyToManyRelation relation = new ManyToManyRelation(id, module.getId(), ParentType.CoursePlan);
-                manyToManyRelationService.createRelation(relation);
-            }
-        }
-        return module;
-    }
-
-    @Override
-    public Course generateModuleFromDto(ModuleDto moduleDto) {
-        return new Course(moduleDto.getName(), moduleDto.getState(),
-                contentOperationService.codeFileNameAndDescriptionIntoContent(moduleDto.getFilename(), moduleDto.getDescription()));
     }
 
     @Override
@@ -189,36 +118,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
-    public void createOrUpdateChapterFromDto(ChapterDto chapterDto) {
-        Chapter chapter;
-        if (chapterDto.getId() == 0) {
-            chapter = mTrainingService.createChapter(generateChapterFromDto(chapterDto));
-            for (Long id : chapterDto.getParentIds()) {
-                ManyToManyRelation relation = new ManyToManyRelation(id, chapter.getId(), ParentType.Course);
-                manyToManyRelationService.createRelation(relation);
-            }
-        } else {
-            chapter = mTrainingService.getChapterById(chapterDto.getId());
-            chapter.setName(chapterDto.getName());
-            chapter.setState(chapterDto.getState());
-            chapter.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
-                    (chapterDto.getFilename(), chapterDto.getDescription()));
-            mTrainingService.updateChapter(chapter);
-            manyToManyRelationService.deleteRelationsByChildId(ParentType.Course, chapter.getId());
-            for (Long id : chapterDto.getParentIds()) {
-                ManyToManyRelation relation = new ManyToManyRelation(id, chapter.getId(), ParentType.Course);
-                manyToManyRelationService.createRelation(relation);
-            }
-        }
-    }
-
-    @Override
-    public Chapter generateChapterFromDto(ChapterDto chapterDto) {
-        return new Chapter(chapterDto.getName(), chapterDto.getState(),
-                contentOperationService.codeFileNameAndDescriptionIntoContent(chapterDto.getFilename(), chapterDto.getDescription()));
-    }
-
-    @Override
     public ChapterDto convertChapterToDto(Chapter chapter) {
         ChapterDto chapterDto = new ChapterDto(chapter.getId(), chapter.getName(), chapter.getState(),
                 chapter.getCreationDate(), chapter.getModificationDate());
@@ -253,36 +152,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
-    public void createOrUpdateLessonFromDto(LessonDto lessonDto) {
-        Lesson lesson;
-        if (lessonDto.getId() == 0) {
-            lesson = mTrainingService.createLesson(generateLessonFromDto(lessonDto));
-            for (Long id : lessonDto.getParentIds()) {
-                ManyToManyRelation relation = new ManyToManyRelation(id, lesson.getId(), ParentType.Chapter);
-                manyToManyRelationService.createRelation(relation);
-            }
-        } else {
-            lesson = mTrainingService.getLessonById(lessonDto.getId());
-            lesson.setName(lessonDto.getName());
-            lesson.setState(lessonDto.getState());
-            lesson.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
-                    (lessonDto.getFilename(), lessonDto.getDescription()));
-            mTrainingService.updateLesson(lesson);
-            manyToManyRelationService.deleteRelationsByChildId(ParentType.Chapter, lesson.getId());
-            for (Long id : lessonDto.getParentIds()) {
-                ManyToManyRelation relation = new ManyToManyRelation(id, lesson.getId(), ParentType.Chapter);
-                manyToManyRelationService.createRelation(relation);
-            }
-        }
-    }
-
-    @Override
-    public Lesson generateLessonFromDto(LessonDto lessonDto) {
-        return new Lesson(lessonDto.getName(), lessonDto.getState(),
-                contentOperationService.codeFileNameAndDescriptionIntoContent(lessonDto.getFilename(), lessonDto.getDescription()));
-    }
-
-    @Override
     public LessonDto convertLessonToDto(Lesson lesson) {
         LessonDto lessonDto = new LessonDto(lesson.getId(), lesson.getName(), lesson.getState(),
                 lesson.getCreationDate(), lesson.getModificationDate());
@@ -314,32 +183,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public QuizDto getQuizDtoById(long quizId) {
         return convertQuizToDto(mTrainingService.getQuizById(quizId));
-    }
-
-    @Override
-    public void createOrUpdateQuizFromDto(QuizDto quizDto) {
-        Quiz quiz;
-        if (quizDto.getId() == 0) {
-            mTrainingService.createQuiz(generateQuizFromDto(quizDto));
-        } else {
-            quiz = mTrainingService.getQuizById(quizDto.getId());
-            quiz.setName(quizDto.getName());
-            quiz.setState(quizDto.getState());
-            quiz.setPassPercentage(quizDto.getPassPercentage());
-            quiz.setQuestions(convertDtosToQuestionList(quizDto.getQuestions()));
-            quiz.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
-                    (quizDto.getFilename(), quizDto.getDescription()));
-            mTrainingService.updateQuiz(quiz);
-        }
-    }
-
-    @Override
-    public Quiz generateQuizFromDto(QuizDto quizDto) {
-        Quiz quiz = new Quiz(quizDto.getName(), quizDto.getState(),
-                contentOperationService.codeFileNameAndDescriptionIntoContent(quizDto.getFilename(), quizDto.getDescription()));
-        quiz.setPassPercentage(quizDto.getPassPercentage());
-        quiz.setQuestions(convertDtosToQuestionList(quizDto.getQuestions()));
-        return quiz;
     }
 
     @Override
@@ -381,15 +224,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
-    public Question convertDtoToQuestion(QuestionDto questionDto) {
-        String question = contentOperationService.codeQuestionNameAndDescriptionIntoQuestion(questionDto.getName(), questionDto.getDescription());
-        String answer = contentOperationService.codeAnswersAndFilesNamesIntoAnswer(questionDto.getCorrectAnswer(), questionDto.getOptions(),
-                questionDto.getFilename(), questionDto.getExplainingAnswerFilename());
-        Question questionObject = new Question(question, answer);
-        return questionObject;
-    }
-
-    @Override
     public List<Question> convertDtosToQuestionList(List<QuestionDto> questionDtos) {
         List<Question> questions = new ArrayList<>();
 
@@ -399,6 +233,120 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return questions;
     }
 
+    private Question convertDtoToQuestion(QuestionDto questionDto) {
+        String question = contentOperationService.codeQuestionNameAndDescriptionIntoQuestion(questionDto.getName(), questionDto.getDescription());
+        String answer = contentOperationService.codeAnswersAndFilesNamesIntoAnswer(questionDto.getCorrectAnswer(), questionDto.getOptions(),
+                questionDto.getFilename(), questionDto.getExplainingAnswerFilename());
+        Question questionObject = new Question(question, answer);
+        return questionObject;
+    }
+
+    private void createCourseUnitMetadataFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
+        if (courseUnitMetadataDto instanceof CoursePlanDto) {
+            CoursePlan coursePlan =  new CoursePlan(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
+                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+            coursePlanService.createCoursePlan(coursePlan);
+        }
+
+        else if (courseUnitMetadataDto instanceof ModuleDto) {
+            Course module = new Course(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
+                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+            module = mTrainingService.createCourse(module);
+            createRelation(module, courseUnitMetadataDto);
+        }
+
+        else if (courseUnitMetadataDto instanceof ChapterDto) {
+            Chapter chapter = new Chapter(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
+                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+            chapter = mTrainingService.createChapter(chapter);
+            createRelation(chapter, courseUnitMetadataDto);
+        }
+
+        else if (courseUnitMetadataDto instanceof LessonDto) {
+            Lesson lesson = new Lesson(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
+                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+            lesson = mTrainingService.createLesson(lesson);
+            createRelation(lesson, courseUnitMetadataDto);
+        }
+
+        else {
+            Quiz quiz = new Quiz(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
+                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()),
+                    convertDtosToQuestionList(((QuizDto) courseUnitMetadataDto).getQuestions()), ((QuizDto) courseUnitMetadataDto).getPassPercentage());
+            mTrainingService.createQuiz(quiz);
+        }
+    }
+
+    private void updateCourseUnitMetadataFromDto (CourseUnitMetadataDto courseUnitMetadataDto) {
+        if (courseUnitMetadataDto instanceof CoursePlanDto) {
+            CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseUnitMetadataDto.getId());
+            populateCourseUnitMetadataFields(coursePlan, courseUnitMetadataDto);
+            coursePlanService.updateCoursePlan(coursePlan);
+        }
+
+        else if (courseUnitMetadataDto instanceof ModuleDto) {
+            Course module = mTrainingService.getCourseById(courseUnitMetadataDto.getId());
+            populateCourseUnitMetadataFields(module, courseUnitMetadataDto);
+            mTrainingService.updateCourse(module);
+            manyToManyRelationService.deleteRelationsByChildId(ParentType.CoursePlan, module.getId());
+            createRelation(module, courseUnitMetadataDto);
+        }
+
+        else if (courseUnitMetadataDto instanceof ChapterDto) {
+            Chapter chapter = mTrainingService.getChapterById(courseUnitMetadataDto.getId());
+            populateCourseUnitMetadataFields(chapter, courseUnitMetadataDto);
+            mTrainingService.updateChapter(chapter);
+            manyToManyRelationService.deleteRelationsByChildId(ParentType.Course, chapter.getId());
+            createRelation(chapter, courseUnitMetadataDto);
+        }
+
+        else if (courseUnitMetadataDto instanceof LessonDto) {
+            Lesson lesson = mTrainingService.getLessonById(courseUnitMetadataDto.getId());
+            populateCourseUnitMetadataFields(lesson, courseUnitMetadataDto);
+            mTrainingService.updateLesson(lesson);
+            manyToManyRelationService.deleteRelationsByChildId(ParentType.Chapter, lesson.getId());
+            createRelation(lesson, courseUnitMetadataDto);
+        }
+
+        else {
+            Quiz quiz = mTrainingService.getQuizById(courseUnitMetadataDto.getId());
+            populateCourseUnitMetadataFields(quiz, courseUnitMetadataDto);
+            quiz.setPassPercentage(((QuizDto) courseUnitMetadataDto).getPassPercentage());
+            quiz.setQuestions(convertDtosToQuestionList(((QuizDto) courseUnitMetadataDto).getQuestions()));
+            mTrainingService.updateQuiz(quiz);
+        }
+    }
+
+    private void createRelation(CourseUnitMetadata courseUnitMetadata, CourseUnitMetadataDto courseUnitMetadataDto) {
+        if (courseUnitMetadataDto instanceof ModuleDto) {
+            for (Long id : ((ModuleDto) courseUnitMetadataDto).getParentIds()) {
+                ManyToManyRelation relation = new ManyToManyRelation(id, courseUnitMetadata.getId(), ParentType.CoursePlan);
+                manyToManyRelationService.createRelation(relation);
+            }
+        }
+
+        else if (courseUnitMetadataDto instanceof ChapterDto) {
+            for (Long id : ((ChapterDto) courseUnitMetadataDto).getParentIds()) {
+                ManyToManyRelation relation = new ManyToManyRelation(id, courseUnitMetadata.getId(), ParentType.Course);
+                manyToManyRelationService.createRelation(relation);
+            }
+        }
+
+        else if (courseUnitMetadataDto instanceof LessonDto) {
+            for (Long id : ((LessonDto) courseUnitMetadataDto).getParentIds()) {
+                ManyToManyRelation relation = new ManyToManyRelation(id, courseUnitMetadata.getId(), ParentType.Chapter);
+                manyToManyRelationService.createRelation(relation);
+            }
+        }
+    }
+
+    private void populateCourseUnitMetadataFields (CourseUnitMetadata courseUnitMetadata, CourseUnitMetadataDto courseUnitMetadataDto) {
+        courseUnitMetadata.setName(courseUnitMetadataDto.getName());
+        courseUnitMetadata.setState(courseUnitMetadataDto.getState());
+        courseUnitMetadata.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
+                (courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+    }
+
     private Set<Long> convertToIdSet(List<?> courseUnitMetadata) {
         Set<Long> ids = new LinkedHashSet<Long>();
         for(Object metadata : courseUnitMetadata) {
@@ -406,5 +354,4 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         }
         return ids;
     }
-
 }

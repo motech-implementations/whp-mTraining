@@ -41,13 +41,13 @@ public class ModuleController {
     @RequestMapping(value = "/module", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void createModule(@RequestBody ModuleDto module) {
-        dtoFactoryService.createOrUpdateModuleFromDto(module);
+        dtoFactoryService.createOrUpdateFromDto(module);
     }
 
     @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public void updateModule(@RequestBody ModuleDto module) {
-        dtoFactoryService.createOrUpdateModuleFromDto(module);
+        dtoFactoryService.createOrUpdateFromDto(module);
     }
 
     @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.DELETE)
