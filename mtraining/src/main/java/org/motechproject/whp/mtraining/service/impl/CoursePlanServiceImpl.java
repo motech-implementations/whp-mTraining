@@ -39,4 +39,9 @@ public class CoursePlanServiceImpl implements CoursePlanService {
        return coursePlanDataService.findCoursePlanById(id);
     }
 
+    @Override
+    public List<CoursePlan> getCoursePlanByName(String coursePlanName) {
+        return coursePlanDataService.findCourseByName(coursePlanName);
+    }
+
 }

@@ -16,6 +16,10 @@ import java.util.List;
 public interface CoursePlanDataService extends MotechDataService<CoursePlan> {
 
     @Lookup
+    List<CoursePlan> findCourseByName(@LookupField(name = "name") String coursePlanName);
+
+    @Lookup
     CoursePlan findCoursePlanById(@LookupField(name = "id") long id);
+
 
 }

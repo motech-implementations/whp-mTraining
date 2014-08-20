@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.dto;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,12 @@ public class ModuleDto extends CourseUnitMetadataDto {
                      DateTime creationDate, DateTime modificationDate, List<ChapterDto> chapters, Set<Long> parentIds) {
         super(id, name, description, state, filename, creationDate, modificationDate);
         this.chapters = chapters;
-        this.parentIds = parentIds;
+
+        if (parentIds == null) {
+            this.parentIds = new LinkedHashSet<>();
+        } else {
+            this.parentIds = parentIds;
+        }
     }
 
     public ModuleDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate) {

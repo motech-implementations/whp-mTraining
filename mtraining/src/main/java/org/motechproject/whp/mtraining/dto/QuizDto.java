@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.dto;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +21,11 @@ public class QuizDto extends CourseUnitMetadataDto {
     public QuizDto(Integer id, String name, String description, CourseUnitState state, String filename,
                    DateTime creationDate, DateTime modificationDate, List<QuestionDto> questions) {
         super(id, name, description, state, filename, creationDate, modificationDate);
-        this.questions = questions;
+        if (questions == null) {
+            this.questions = new ArrayList<>();
+        } else {
+            this.questions = questions;
+        }
     }
 
     public List<QuestionDto> getQuestions() {
