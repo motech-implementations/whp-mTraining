@@ -10,6 +10,12 @@ import org.motechproject.mtraining.domain.Lesson;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.testing.osgi.BasePaxIT;
 import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
+import org.motechproject.whp.mtraining.domain.CoursePlan;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
@@ -38,12 +44,14 @@ public class CourseImportServiceIT extends BasePaxIT {
     private MotechUserService motechUserService;
     @Inject
     private CourseConfigurationService courseConfigService;
+    @Inject
+    private ContentOperationService contentOperationService;
 
     private CourseImportService courseImportService;
 
     @Before
     public void before() {
-        courseImportService = new CourseImportService(coursePlanService, courseConfigService, motechUserService);
+        courseImportService = new CourseImportService(coursePlanService, courseConfigService, motechUserService, contentOperationService);
     }
 
     @Test
@@ -51,8 +59,9 @@ public class CourseImportServiceIT extends BasePaxIT {
         List<CourseCsvRequest> requests = asList(
                 new CourseCsvRequest("courseplan", "course", CourseUnitState.Active, null, "courseplan description", "coursePlanFileName"),
                 new CourseCsvRequest("course1", "module", CourseUnitState.Active, "courseplan", "course description", "courseFileName"),
+                new CourseCsvRequest("course2", "module", CourseUnitState.Active, "courseplan", "course2 description", "course2FileName"),
                 new CourseCsvRequest("chapter1", "CHAPTER", CourseUnitState.Active, "course1", "chapter1 description", "chapter1FileName"),
-                new CourseCsvRequest("chapter2", "CHAPTER", CourseUnitState.Active, "course1", "chapter2 description", "chapter2FileName"),
+                new CourseCsvRequest("chapter2", "CHAPTER", CourseUnitState.Active, "course2", "chapter2 description", "chapter2FileName"),
                 new CourseCsvRequest("lesson1", "lesson", CourseUnitState.Active, "chapter1", "lesson1 description", "filename1"),
                 new CourseCsvRequest("lesson2", "lesson", CourseUnitState.Active, "chapter1", "lesson2 description", "filename2"),
                 new CourseCsvRequest("lesson3", "lesson", CourseUnitState.Active, "chapter2", "lesson3 description", "filename3"),
@@ -61,42 +70,69 @@ public class CourseImportServiceIT extends BasePaxIT {
         );
 
         Long id = courseImportService.importCoursePlan(requests).getId();
-        Course savedCourse = coursePlanService.getCoursePlanById(id).getCourses().get(0);
+        CoursePlan coursePlan = coursePlanService.getCoursePlanById(id);
 
-        assertCourseDetails(savedCourse);
-        assertChapter(asList(savedCourse.getChapters().get(0)), asList(savedCourse.getChapters().get(1)));
+        assertCoursePlanDetails(coursePlan);
     }
 
-    private void assertCourseDetails(Course savedCourse) {
-        assertEquals("course1", savedCourse.getName());
-        assertEquals("courseFileName", savedCourse.getContent());
+    private void assertCoursePlanDetails(CoursePlan coursePlan) {
+        CoursePlanDto coursePlanDto = new CoursePlanDto();
+        contentOperationService.getFileNameAndDescriptionFromContent(coursePlanDto, coursePlan.getContent());
+        assertEquals("courseplan", coursePlan.getName());
+        assertEquals("courseplan description", coursePlanDto.getDescription());
+        assertEquals("coursePlanFileName", coursePlanDto.getFilename());
+
+        assertCourse(coursePlan.getCourses().get(0), coursePlan.getCourses().get(1));
     }
 
-    private void assertChapter(List<Chapter> module1Chapters, List<Chapter> module2Chapters) {
-        assertChapterDetails(module1Chapters, "chapter1", "chapter1FileName");
-        assertChapterDetails(module2Chapters, "chapter2", "chapter2FileName");
-        assertMessageDto(module1Chapters.get(0).getLessons(), module2Chapters.get(0).getLessons());
+    private void assertCourse(Course course1, Course course2) {
+        assertCourseDetails(course1, "course1", "courseFileName", "course description");
+        assertCourseDetails(course2, "course2", "course2FileName", "course2 description");
+        assertChapter(course1.getChapters(), course2.getChapters());
     }
 
-    private void assertChapterDetails(List<Chapter> chapters, String expectedName, String expectedFileName) {
+    private void assertCourseDetails(Course course, String expectedName, String expectedFileName, String expectedDescription) {
+        ModuleDto moduleDto = new ModuleDto();
+        contentOperationService.getFileNameAndDescriptionFromContent(moduleDto, course.getContent());
+
+        assertEquals(expectedName, course.getName());
+        assertEquals(expectedFileName, moduleDto.getFilename());
+        assertEquals(expectedDescription, moduleDto.getDescription());
+    }
+
+    private void assertChapter(List<Chapter> chapterList1, List<Chapter> chapterList2) {
+        assertChapterDetails(chapterList1, "chapter1", "chapter1FileName", "chapter1 description");
+        assertChapterDetails(chapterList2, "chapter2", "chapter2FileName", "chapter2 description");
+        assertLesson(chapterList1.get(0).getLessons(), chapterList2.get(0).getLessons());
+    }
+
+    private void assertChapterDetails(List<Chapter> chapters, String expectedName, String expectedFileName, String expectedDescription) {
         assertEquals(1, chapters.size());
+        ChapterDto chapterDto = new ChapterDto();
+        contentOperationService.getFileNameAndDescriptionFromContent(chapterDto, chapters.get(0).getContent());
+
         assertEquals(expectedName, chapters.get(0).getName());
-        assertEquals(expectedFileName, chapters.get(0).getContent());
+        assertEquals(expectedFileName, chapterDto.getFilename());
+        assertEquals(expectedDescription, chapterDto.getDescription());
     }
 
-    private void assertMessageDto(List<Lesson> chapter1Lessons, List<Lesson> chapter2Lessons) {
+    private void assertLesson(List<Lesson> chapter1Lessons, List<Lesson> chapter2Lessons) {
         assertEquals(2, chapter1Lessons.size());
-        assertMessageDetails(chapter1Lessons.get(0), "lesson1", "lesson1 description", "filename1", CourseUnitState.Active);
-        assertMessageDetails(chapter1Lessons.get(1), "lesson2", "lesson2 description", "filename2", CourseUnitState.Active);
+        assertLessonDetails(chapter1Lessons.get(0), "lesson1", "filename1", "lesson1 description", CourseUnitState.Active);
+        assertLessonDetails(chapter1Lessons.get(1), "lesson2", "filename2", "lesson2 description", CourseUnitState.Active);
         assertEquals(3, chapter2Lessons.size());
-        assertMessageDetails(chapter2Lessons.get(0), "lesson3", "lesson3 description", "filename3", CourseUnitState.Active);
-        assertMessageDetails(chapter2Lessons.get(1), "lesson4", "lesson4 description", "filename4", CourseUnitState.Active);
-        assertMessageDetails(chapter2Lessons.get(2), "lesson5", "lesson5 description", "filename4", CourseUnitState.Inactive);
+        assertLessonDetails(chapter2Lessons.get(0), "lesson3", "filename3", "lesson3 description", CourseUnitState.Active);
+        assertLessonDetails(chapter2Lessons.get(1), "lesson4", "filename4", "lesson4 description", CourseUnitState.Active);
+        assertLessonDetails(chapter2Lessons.get(2), "lesson5", "filename4","lesson5 description",  CourseUnitState.Inactive);
     }
 
-    private void assertMessageDetails(Lesson lesson, String expectedName, String expectedDescription, String expectedFileName, CourseUnitState expectedStatus) {
+    private void assertLessonDetails(Lesson lesson, String expectedName, String expectedFileName, String expectedDescription, CourseUnitState expectedStatus) {
+        LessonDto lessonDto = new LessonDto();
+        contentOperationService.getFileNameAndDescriptionFromContent(lessonDto, lesson.getContent());
+
         assertEquals(expectedName, lesson.getName());
-        assertEquals(expectedFileName, lesson.getContent());
         assertEquals(expectedStatus, lesson.getState());
+        assertEquals(expectedFileName, lessonDto.getFilename());
+        assertEquals(expectedDescription, lessonDto.getDescription());
     }
 }

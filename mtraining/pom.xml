@@ -308,6 +308,7 @@
                         <Resource-Path>mtraining</Resource-Path>
                         <Blueprint-Enabled>true</Blueprint-Enabled>
                         <Export-Package>
+                            org.motechproject.whp.mtraining.dto;version=${project.version},
                             org.motechproject.whp.mtraining.repository;version=${project.version},
                             org.motechproject.whp.mtraining.reports.domain;version=${project.version},
                             org.motechproject.whp.mtraining.csv.domain;version=${project.version},

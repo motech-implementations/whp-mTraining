@@ -47,10 +47,11 @@ public class CourseImportService {
     public CourseImportService() { }
 
     public CourseImportService(CoursePlanService coursePlanService, CourseConfigurationService courseConfigurationService,
-                               MotechUserService motechUserService) {
+                               MotechUserService motechUserService, ContentOperationService contentOperationService) {
         this.coursePlanService = coursePlanService;
         this.courseConfigurationService = courseConfigurationService;
         this.motechUserService = motechUserService;
+        this.contentOperationService = contentOperationService;
     }
 
     public CoursePlan importCoursePlan(List<CourseCsvRequest> requests) {

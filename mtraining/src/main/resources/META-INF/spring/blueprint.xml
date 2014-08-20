@@ -15,6 +15,10 @@
                   interface="org.motechproject.whp.mtraining.service.EmailService"
                   auto-export="interfaces"/>
 
+    <osgi:service ref="contentOperationService"
+                  interface="org.motechproject.whp.mtraining.service.ContentOperationService"
+                  auto-export="interfaces"/>
+
     <osgi:reference id="motechUserService"
                     interface="org.motechproject.security.service.MotechUserService" />
 

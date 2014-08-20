@@ -157,4 +157,37 @@
         </property>
     </bean>
 
+    <bean id="contentOperationService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.ContentOperationService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.ContentOperationService</value>
+        </property>
+    </bean>
+
+    <bean id="dtoFactoryService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.DtoFactoryService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.DtoFactoryService</value>
+        </property>
+    </bean>
+
+    <bean id="manyToManyRelationService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.ManyToManyRelationService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.ManyToManyRelationService</value>
+        </property>
+    </bean>
+
 </beans>
