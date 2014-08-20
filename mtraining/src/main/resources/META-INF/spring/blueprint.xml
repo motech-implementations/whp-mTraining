@@ -19,6 +19,10 @@
                   interface="org.motechproject.whp.mtraining.service.ContentOperationService"
                   auto-export="interfaces"/>
 
+    <osgi:service ref="dtoFactoryService"
+                  interface="org.motechproject.whp.mtraining.service.DtoFactoryService"
+                  auto-export="interfaces"/>
+
     <osgi:reference id="motechUserService"
                     interface="org.motechproject.security.service.MotechUserService" />
 
