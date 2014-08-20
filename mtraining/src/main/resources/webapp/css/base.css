@@ -92,3 +92,7 @@ main, .providerUpload, .response {
     box-shadow        : 0 0 5px rgba(0,0,0,.3);
     border: 1px solid #66afe9;
 }
+
+.admin {
+    margin-top: 40px;
+}

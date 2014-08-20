@@ -710,4 +710,11 @@
         };
     });
 
+    controllers.controller('errorLogController', function ($scope, $http) {
+         $http({method: 'GET', url: '/motech-platform-server/module/mtraining/web-api/errorLog'}).
+            success(function(data, status, headers, config) {
+              $scope.errorLog = data;
+            });
+    });
+
 }());

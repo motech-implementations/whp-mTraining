@@ -29,6 +29,9 @@
                   }).when('/mtraining/upload', {
                     templateUrl: '../mtraining/partials/upload.html',
                     controller: 'fileUploadController'
+                  }).when('/mtraining/errorLog', {
+                    templateUrl: '../mtraining/partials/errorLog.html',
+                    controller: 'errorLogController'
                   });
     });
 
