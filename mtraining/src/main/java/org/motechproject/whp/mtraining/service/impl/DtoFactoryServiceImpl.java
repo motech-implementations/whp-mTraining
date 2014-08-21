@@ -31,6 +31,32 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     ManyToManyRelationService manyToManyRelationService;
 
     @Override
+    public List<CoursePlanDto> getAllCourseDtosWithChildCollections() {
+        List<CoursePlan> allCourses = coursePlanService.getAllCoursePlans();
+        List<CoursePlanDto> allCoursesPlanDto = convertCoursePlanListToDtos(allCourses);
+
+        for (CoursePlanDto coursePlanDto: allCoursesPlanDto) {
+            setChildCollections(coursePlanDto);
+        }
+        return allCoursesPlanDto;
+    }
+
+    private void setChildCollections(CoursePlanDto coursePlanDto) {
+        List<ModuleDto> childModuleDtos;
+        List<ChapterDto> childChapterDtos;
+
+        childModuleDtos = convertModuleListToDtos(manyToManyRelationService.getCoursesByParentId(coursePlanDto.getId()));
+        for (ModuleDto moduleDto : childModuleDtos) {
+            childChapterDtos = convertChapterListToDtos(manyToManyRelationService.getChaptersByParentId(moduleDto.getId()));
+            for (ChapterDto chapterDto : childChapterDtos) {
+                chapterDto.setLessons(convertLessonListToDtos(manyToManyRelationService.getLessonsByParentId(chapterDto.getId())));
+            }
+            moduleDto.setChapters(childChapterDtos);
+        }
+        coursePlanDto.setCourses(childModuleDtos);
+    }
+
+    @Override
     public void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
         if (courseUnitMetadataDto.getId() == 0) {
             createCourseUnitMetadataFromDto(courseUnitMetadataDto);

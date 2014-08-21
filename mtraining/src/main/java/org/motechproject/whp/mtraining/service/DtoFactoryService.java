@@ -11,8 +11,9 @@ import java.util.List;
  */
 public interface DtoFactoryService {
 
-    void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto);
+    List<CoursePlanDto> getAllCourseDtosWithChildCollections();
 
+    void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto);
 
     List<CoursePlanDto> getAllCoursePlanDtos();
 
