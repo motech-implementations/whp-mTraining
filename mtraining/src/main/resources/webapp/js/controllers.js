@@ -711,10 +711,24 @@
     });
 
     controllers.controller('errorLogController', function ($scope, $http) {
-         $http({method: 'GET', url: '/motech-platform-server/module/mtraining/web-api/errorLog'}).
+         $http({method: 'GET', url: '../mtraining/web-api/errorLog'}).
             success(function(data, status, headers, config) {
               $scope.errorLog = data;
             });
+    });
+
+    controllers.controller('callLogController', function ($scope) {
+        $.getJSON('../mtraining/web-api/callLogs', function(data) {
+            $scope.callLogs = data;
+        });
+    });
+
+    controllers.controller('coursePublicationController', function ($scope) {
+
+    });
+
+    controllers.controller('bookmarkRequestController', function ($scope) {
+
     });
 
 }());

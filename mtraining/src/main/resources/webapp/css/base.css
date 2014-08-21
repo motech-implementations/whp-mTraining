@@ -93,6 +93,6 @@ main, .providerUpload, .response {
     border: 1px solid #66afe9;
 }
 
-.admin {
-    margin-top: 40px;
+.header-footer {
+    height: auto !important;
 }

@@ -2,6 +2,8 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.CallLogReporter;
+import org.motechproject.whp.mtraining.reports.domain.CallLog;
+import org.motechproject.whp.mtraining.service.CallLogService;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.CallLogRequest;
@@ -30,11 +32,19 @@ public class CallLogController {
     private CallLogReporter callLogReporter;
 
     private ProviderService providerService;
+    private CallLogService callLogService;
 
     @Autowired
-    public CallLogController(CallLogReporter callLogReporter, ProviderService providerService) {
+    public CallLogController(CallLogReporter callLogReporter, ProviderService providerService, CallLogService callLogService) {
         this.callLogReporter = callLogReporter;
         this.providerService = providerService;
+        this.callLogService = callLogService;
+    }
+
+    @RequestMapping(value = "/callLogs", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<CallLog> getCallLogs() {
+        return callLogService.getAllCallLog();
     }
 
     @RequestMapping(value = "/callLog", method = RequestMethod.POST, consumes = "application/json")

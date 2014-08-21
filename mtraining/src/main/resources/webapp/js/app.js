@@ -32,6 +32,15 @@
                   }).when('/mtraining/errorLog', {
                     templateUrl: '../mtraining/partials/errorLog.html',
                     controller: 'errorLogController'
+                  }).when('/mtraining/callLog', {
+                    templateUrl: '../mtraining/partials/callLog.html',
+                    controller: 'callLogController'
+                  }).when('/mtraining/coursePublication', {
+                    templateUrl: '../mtraining/partials/coursePublication.html',
+                    controller: 'coursePublicationController'
+                  }).when('/mtraining/bookmarkRequest', {
+                    templateUrl: '../mtraining/partials/bookmarkRequest.html',
+                    controller: 'bookmarkRequestController'
                   });
     });
 
