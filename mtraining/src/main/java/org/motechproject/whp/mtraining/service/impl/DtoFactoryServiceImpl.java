@@ -151,6 +151,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         contentOperationService.getFileNameAndDescriptionFromContent(chapterDto, chapter.getContent());
 
         chapterDto.setParentIds(convertToIdSet(manyToManyRelationService.getCoursesByChildId(chapter.getId())));
+        if (chapter.getQuiz() != null) {
+            chapterDto.setQuiz(convertQuizToDto(chapter.getQuiz()));
+        }
 
         return chapterDto;
     }
@@ -284,6 +287,10 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         else if (courseUnitMetadataDto instanceof ChapterDto) {
             Chapter chapter = new Chapter(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+            if (((ChapterDto) courseUnitMetadataDto).getQuiz() != null) {
+                Quiz quiz = mTrainingService.getQuizById(((ChapterDto) courseUnitMetadataDto).getQuiz().getId());
+                chapter.setQuiz(quiz);
+            }
             chapter = mTrainingService.createChapter(chapter);
             createRelation(chapter, courseUnitMetadataDto);
         }
@@ -321,6 +328,12 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         else if (courseUnitMetadataDto instanceof ChapterDto) {
             Chapter chapter = mTrainingService.getChapterById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(chapter, courseUnitMetadataDto);
+            if (((ChapterDto) courseUnitMetadataDto).getQuiz() != null) {
+                Quiz quiz = mTrainingService.getQuizById(((ChapterDto) courseUnitMetadataDto).getQuiz().getId());
+                chapter.setQuiz(quiz);
+            } else {
+                chapter.setQuiz(null);
+            }
             mTrainingService.updateChapter(chapter);
             manyToManyRelationService.deleteRelationsByChildId(ParentType.Course, chapter.getId());
             createRelation(chapter, courseUnitMetadataDto);

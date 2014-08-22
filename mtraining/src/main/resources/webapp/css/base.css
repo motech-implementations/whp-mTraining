@@ -71,7 +71,7 @@ main, .providerUpload, .response {
     list-style: none;
 }
 
-.select2-search-choice-close {
+.question-close.select2-search-choice-close {
     left: 3px;
 }
 

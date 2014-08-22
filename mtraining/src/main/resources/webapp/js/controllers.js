@@ -196,7 +196,7 @@
         $scope.clearModule();
     }]);
 
-    controllers.controller('chaptersController', ['$scope', 'Chapter', 'Module', function ($scope, Chapter, Module) {
+    controllers.controller('chaptersController', ['$scope', 'Chapter', 'Module', 'Quiz', function ($scope, Chapter, Module, Quiz) {
 
         $scope.getModules = function() {
             $scope.fetchingModules = true;
@@ -208,13 +208,33 @@
             });
         }
 
+        $scope.getQuizzes = function() {
+            $scope.fetchingQuizzes = true;
+            $.getJSON('../mtraining/web-api/quizzes', function(data) {
+                $scope.quizzes = data;
+                $scope.fetchingQuizzes = false;
+                $scope.$apply();
+                $("#quiz").select2({
+                    allowClear: true,
+                    placeholder: "Select a quiz"
+                    });
+            });
+        }
+
         $scope.clearChapter = function() {
             $scope.creatingChapter = false;
             $scope.updatingChapter = false;
             $scope.savingChapter = false;
             $scope.selectedModules = [];
+            $scope.selectedQuiz = undefined;
             $scope.createChapter();
             $scope.getModules();
+            $scope.getQuizzes();
+        }
+
+        $scope.getQuizFromQuizzes = function () {
+            var idx = $scope.selectedQuiz;
+            $scope.chapter.quiz = $scope.quizzes[idx];
         }
 
         $scope.$on('chapterClick', function(event, chapterId) {
@@ -227,7 +247,18 @@
                         $scope.selectedModules.push("" + module.id);
                     }
                 })
+
+                if ($scope.chapter.quiz)
+                {
+                    var result = $.grep($scope.quizzes, function(e){ return e.id == $scope.chapter.quiz.id; });
+                    var idx = $scope.quizzes.indexOf(result[0]);
+                    $scope.selectedQuiz = idx;
+                } else {
+                    $scope.selectedQuiz = undefined;
+                }
+
                 $("#modules").select2('val', $scope.selectedModules);
+                $("#quiz").select2('val', $scope.selectedQuiz);
             });
             $scope.updatingChapter = true;
             $scope.creatingChapter = false;
@@ -250,6 +281,7 @@
             $scope.savingChapter = true;
             $scope.chapter.state = 'Inactive';
             $scope.chapter.parentIds = $scope.selectedModules;
+            $scope.getQuizFromQuizzes();
             $scope.chapter.$save(function(c) {
                 // c => saved chapter object
                 $scope.alertMessage = $scope.msg('mtraining.createdChapter');
@@ -263,7 +295,8 @@
                 return;
             }
             $scope.savingChapter = true;
-            $scope.chapter.parentIds = $scope.selectedModules;;
+            $scope.chapter.parentIds = $scope.selectedModules;
+            $scope.getQuizFromQuizzes();
             $scope.chapter.$update({ id:$scope.chapter.id }, function (c) {
                 // c => updated chapter object
                 $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
@@ -617,7 +650,7 @@
 
         $scope.createOption = function (option) {
             $(".options-input").before('<li class="valid-option" value="' + option + '"><div>' + option +
-                '</div><a onclick="angular.element(\'#optionList\').scope().removeOption($(this));" class="select2-search-choice-close"></a></li>');
+                '</div><a onclick="angular.element(\'#optionList\').scope().removeOption($(this));" class="question-close select2-search-choice-close"></a></li>');
         }
 
         $scope.removeOption = function (t) {

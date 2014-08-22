@@ -43,6 +43,17 @@
             </div>
 
             <div class="form-group">
+                <label class="col-md-4 control-label" for="quiz">{{msg('mtraining.quiz')}}</label>
+                <div class="col-md-4">
+                    <select id="quiz" class="form-control input-xlarge-fluid" ng-model="selectedQuiz">
+                        <option></option>
+                        <option ng-repeat="quiz in quizzes" value="{{$index}}">{{quiz.name}}</option>
+                    </select>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="fetchingQuizzes"/>
+            </div>
+
+            <div class="form-group">
                 <div class="col-md-8 pull-right">
                     <button id="saveButton" ng-show="creatingChapter" name="saveButton" class="btn btn-primary" ng-click="saveChapter()">{{msg('mtraining.save')}}</button>
                     <button id="updateButton" ng-show="updatingChapter" name="updateButton" class="btn btn-warning" ng-click="updateChapter()">{{msg('mtraining.update')}}</button>
