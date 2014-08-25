@@ -54,9 +54,7 @@ public class ProviderImportServiceIT extends BasePaxIT {
         Location providerLocation = provider.getLocation();
 
         assertNotNull(providerLocation);
-        assertEquals(providerLocation.getState(), state);
-        assertEquals(providerLocation.getBlock(), block);
-        assertEquals(providerLocation.getDistrict(), district);
+        assertEquals(providerLocation.getName(), state);
     }
 
 }

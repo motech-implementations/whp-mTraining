@@ -49,21 +49,21 @@ public class CourseTest {
 //        assertThat(cp001.getCourses().size(), Is.is(1));
 //
 //        Course course = cp001.getCourses().get(0);
-//        assertThat(course.getState(), Is.is(CourseUnitState.Active));
+//        assertThat(course.getName(), Is.is(CourseUnitState.Active));
 //        assertThat(course.getName(), Is.is("c001"));
 //
 //        List<Chapter> chapters = course.getChapters();
 //        assertThat(chapters.size(), Is.is(2));
 //
 //        Chapter chapter = chapters.get(0);
-//        assertThat(chapter.getState(), Is.is(CourseUnitState.Active));
+//        assertThat(chapter.getName(), Is.is(CourseUnitState.Active));
 //        assertThat(chapter.getName(), Is.is("ch002"));
 //
 //        List<Lesson> lessons = chapter.getLessons();
 //        assertThat(lessons.isEmpty(), Is.is(true));
 //
 //        Quiz quiz = chapter.getQuiz();
-//        assertThat(quiz.getState(), Is.is(CourseUnitState.Active));
+//        assertThat(quiz.getName(), Is.is(CourseUnitState.Active));
 //
 //        List<Question> questions = quiz.getQuestions();
 //        assertThat(questions.size(), Is.is(1));
@@ -79,7 +79,7 @@ public class CourseTest {
 //        assertThat(secondChapterLessons.size(), Is.is(1));
 //
 //        Lesson lesson = secondChapterLessons.get(0);
-//        assertThat(lesson.getState(), Is.is(CourseUnitState.Active));
+//        assertThat(lesson.getName(), Is.is(CourseUnitState.Active));
 //        assertThat(lesson.getName(), Is.is("les001"));
     }
 

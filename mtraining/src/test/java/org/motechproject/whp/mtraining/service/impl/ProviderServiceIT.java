@@ -32,7 +32,7 @@ public class ProviderServiceIT extends BasePaxIT {
 
     @Test
     public void shouldAddProvider() {
-        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, new Location("state"));
 
         Long id = providerService.createProvider(provider).getId();
 
@@ -42,7 +42,7 @@ public class ProviderServiceIT extends BasePaxIT {
 
     @Test
     public void shouldDeleteProvider() {
-        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, new Location("state"));
         providerService.createProvider(provider).getId();
         provider = providerService.getAllProviders().get(0);
         assertNotNull(provider);
@@ -63,7 +63,7 @@ public class ProviderServiceIT extends BasePaxIT {
     @Test
     public void shouldMarkErrorIfProviderIsNotValid() {
         long callerId = 76465464L;
-        Provider provider = new Provider("remediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, new Location("block", "district", "state"));
+        Provider provider = new Provider("remediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, new Location("state"));
         providerService.createProvider(provider);
 
         ResponseStatus response = providerService.validateProvider(callerId);
@@ -74,7 +74,7 @@ public class ProviderServiceIT extends BasePaxIT {
     @Test
     public void shouldAddAndRetrieveAProvider() {
         String remediId = "remedix";
-        Provider provider = new Provider(remediId, 717777L, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        Provider provider = new Provider(remediId, 717777L, ProviderStatus.WORKING_PROVIDER, new Location("state"));
 
         providerService.updateProvider(provider);
 
@@ -89,10 +89,10 @@ public class ProviderServiceIT extends BasePaxIT {
         long callerIdNew = 7653333L;
         String remediId = "remediId";
 
-        Provider oldProvider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        Provider oldProvider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, new Location("state"));
         providerService.createProvider(oldProvider);
 
-        Provider newProvider = new Provider(remediId, callerIdNew, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        Provider newProvider = new Provider(remediId, callerIdNew, ProviderStatus.WORKING_PROVIDER, new Location("state"));
         providerService.createProvider(newProvider);
 
         Provider savedProvider = providerService.getProviderByCallerId(callerIdNew);

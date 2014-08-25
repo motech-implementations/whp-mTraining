@@ -29,7 +29,6 @@ import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
-import org.motechproject.whp.mtraining.web.domain.Bookmark;
 import org.motechproject.whp.mtraining.web.domain.CourseProgress;
 import org.motechproject.whp.mtraining.web.domain.CourseProgressPostRequest;
 import org.motechproject.whp.mtraining.web.domain.CourseProgressResponse;
@@ -86,7 +85,7 @@ public class BookmarksBundleIT {
 
         String courseName = String.format("CS002-%s", UUID.randomUUID());
         course002 = mTrainingService.getCourseById(createCourse(courseName).getId());
-        courseConfigService.createCourseConfiguration(new CourseConfiguration(course002.getName(), 60, new Location("block", "district", "state")));
+        courseConfigService.createCourseConfiguration(new CourseConfiguration(course002.getName(), 60, new Location("state")));
 
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);
@@ -114,9 +113,7 @@ public class BookmarksBundleIT {
         assertEquals(activeProvider.getCallerId(), bookmarkForKnownUser.getCallerId());
         assertEquals("un1qId", bookmarkForKnownUser.getUniqueId());
         assertEquals("s001", bookmarkForKnownUser.getSessionId());
-        assertEquals("state", bookmarkForKnownUser.getLocation().getState());
-        assertEquals("block", bookmarkForKnownUser.getLocation().getBlock());
-        assertEquals("district", bookmarkForKnownUser.getLocation().getDistrict());
+        assertEquals("state", bookmarkForKnownUser.getLocation().getName());
     }
 
     public void testThatResponseIs901WhenProviderIsInvalid() throws IOException, InterruptedException {
@@ -176,7 +173,7 @@ public class BookmarksBundleIT {
     }
 
     private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {
-        Provider provider = new Provider(remediId, callerId, providerStatus, new Location("block", "district", "state"));
+        Provider provider = new Provider(remediId, callerId, providerStatus, new Location("state"));
         providersAdded.add(providerService.createProvider(provider).getId());
         return providerService.getProviderByCallerId(callerId);
     }
