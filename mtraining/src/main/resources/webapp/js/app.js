@@ -8,9 +8,6 @@
             $routeProvider.when('/mtraining/treeView', {
                     templateUrl: '../mtraining/partials/treeView.html',
                     controller: 'treeViewController'
-                  }).when('/mtraining/schedules', {
-                    templateUrl: '../mtraining/partials/schedules.html',
-                    controller: 'schedulesController'
                   }).when('/mtraining/courses', {
                     templateUrl: '../mtraining/partials/courses.html',
                     controller: 'coursesController'

@@ -9,10 +9,6 @@
 
     });
 
-    controllers.controller('schedulesController', function ($scope) {
-
-     });
-
     controllers.controller('coursesController', ['$scope', 'Course', function ($scope, Course) {
 
         $scope.clearCourse = function() {
