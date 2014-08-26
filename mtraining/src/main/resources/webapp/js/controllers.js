@@ -550,7 +550,7 @@
         }
 
         $scope.deleteQuiz = function() {
-            if ($scope.selectedChapter != undefined) {
+            if ($scope.quiz.inRelation) {
                 $("#errorMessage").text($scope.msg('mtraining.cannotDeleteQuiz'));
                 $("#errorDialog").modal('show');
             } else {

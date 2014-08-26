@@ -15,6 +15,8 @@ public class QuizDto extends CourseUnitMetadataDto {
 
     private double passPercentage;
 
+    private boolean isInRelation;
+
     public QuizDto() {
     }
 
@@ -42,6 +44,14 @@ public class QuizDto extends CourseUnitMetadataDto {
 
     public void setPassPercentage(double passPercentage) {
         this.passPercentage = passPercentage;
+    }
+
+    public boolean isInRelation() {
+        return isInRelation;
+    }
+
+    public void setInRelation(boolean isInRelation) {
+        this.isInRelation = isInRelation;
     }
 
     public QuizDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate,

@@ -255,12 +255,22 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return lessonDtos;
     }
 
+    private boolean quizIsInRelation (long quizId) {
+        List<Chapter> chapters = mTrainingService.getAllChapters();
+        for (Chapter chapter : chapters) {
+            if (chapter.getQuiz() != null && chapter.getQuiz().getId() == quizId) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private QuizDto convertToQuizDto(Quiz quiz) {
         QuizDto quizDto = new QuizDto(quiz.getId(), quiz.getName(), quiz.getState(),
                 quiz.getCreationDate(), quiz.getModificationDate(), quiz.getPassPercentage(), convertToQuestionDtos(quiz.getQuestions()));
 
         contentOperationService.getFileNameAndDescriptionFromContent(quizDto, quiz.getContent());
+        quizDto.setInRelation(quizIsInRelation(quiz.getId()));
 
         return quizDto;
     }
@@ -410,6 +420,4 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         }
         return ids;
     }
-
-
 }

@@ -12,9 +12,10 @@ import java.util.List;
 public interface DtoFactoryService {
 
     List<CoursePlanDto> getAllCourseDtosWithChildCollections();
+
     void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto);
 
-        public CourseUnitMetadataDto getDto(CourseUnitMetadata courseUnitMetadata);
+    public CourseUnitMetadataDto getDto(CourseUnitMetadata courseUnitMetadata);
 
     public QuestionDto getDto(Question question);
 
