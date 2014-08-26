@@ -1,10 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="mtraining.treeview">
 <head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
+	
+    	<meta charset="UTF-8">
+    	<title></title>
+	<link rel="stylesheet" href="../mtraining/css/style.min.css" />
 </head>
 <body>
+	<h4>Tree View</h4>
+	<div class="ui-jqgrid-hbox" style="padding-right: 0px; width: 100%;">
+		<table class="ui-jqgrid-htable table-lightblue-nohover" style="width: 100%; height: 500px" role="grid" aria-labelledby="gbox_treeTable" cellspacing="0" cellpadding="0" border="0">
+			<thead>
+				<tr class="ui-jqgrid-labels" role="rowheader">
+					<th id="treeTable_treeModel" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width: 22%;" aria-selected="true">
+						<span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span>
+						<div id="jqgh_treeTable_treeModel" class="ui-jqgrid-sortable"><span class="s-ico" style=""><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-icon ui-icon-triangle-1-n ui-sort-ltr ui-state-disabled"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
+						</div>
+					</th>
+					<th id="treeTable_Members" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width:13%;">
+						<span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span>
+						<div id="jqgh_treeTable_Members" class="ui-jqgrid-sortable">Members<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
+						</div>
+					</th>
+					<th id="treeTable_Name" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width: 13%;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span>
+						<div id="jqgh_treeTable_Name" class="ui-jqgrid-sortable">Name<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
+						</div>
+					</th>
+					<th id="treeTable_Chapter" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width: 13%;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span>
+						<div id="jqgh_treeTable_Chapter" class="ui-jqgrid-sortable">Chapter<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
+						</div>
+					</th>
+					<th id="treeTable_Module" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width: 13%;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span>
+						<div id="jqgh_treeTable_Module" class="ui-jqgrid-sortable">Module<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
+						</div>
+					</th>
+					<th id="treeTable_Course" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width: 13%;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span>
+						<div id="jqgh_treeTable_Course" class="ui-jqgrid-sortable">Course<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
+						</div>
+					</th>
+				</tr>
+				
+			</thead>
+			<tr role="row" id="1" tabindex="0" class="ui-widget-content jqgrow ui-row-ltr ui-state-highlight" aria-selected="true">
+					<td role="gridcell" class="ui-state-default jqgrid-rownum" style="width: 25px;" title="1" aria-describedby="treeTable_treeModel">
+					  <div id="jstree">
+					  </div>
+					</td>
+					<td role="gridcell" class="ui-state-default jqgrid-rownum" title=" " aria-describedby="treeTable_Members"> </td>
+					<td role="gridcell" class="ui-state-default jqgrid-rownum" title=" " aria-describedby="treeTable_Name"> </td>
+					<td role="gridcell" class="ui-state-default jqgrid-rownum" title=" " aria-describedby="treeTable_Chapter"> </td>
+					<td role="gridcell" class="ui-state-default jqgrid-rownum" title=" " aria-describedby="treeTable_Module"> </td>
+					<td role="gridcell" class="ui-state-default jqgrid-rownum" title=" " aria-describedby="treeTable_Course"> </td>
+					
+			</tr>
+		</table>
+	</div>
+	<div class="buttons">
+		<button class="btn btn-info ng-binding">
+                    <i class="icon-align-justify icon-white"></i> Display Messages List
+                </button>
+		<button class="btn btn-success ng-binding" >
+                    <i class="icon-save icon-white"></i> Save
+                </button>
+		<button class="btn btn-primary ng-binding">
+                	<i class="icon-play icon-white"></i> Activate
+            	</button>
+		<button class="btn btn-warning ng-binding">
+                    <i class="icon-stop icon-white"></i> Deactivate
+                </button>
+		<button class="btn btn-danger ng-binding">
+                	<i class="icon-trash icon-white"></i> Remove Member
+            	</button>
+		<button class="btn btn-danger ng-binding">
+                	<i class="icon-remove icon-white"></i> Cancel
+            	</button>	
+	</div>
 
 </body>
 </html>
