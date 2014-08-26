@@ -148,7 +148,7 @@ public class ProviderStructureValidatorTest {
     @Test
     public void shouldVerifyForDifferentContactNumberForSameRemediId() {
         ProviderCsvRequest providerCsvRequest = new ProviderCsvRequest("RemediX", "1234567890", "working provider", "state", "block", "district");
-        when(providerService.getAllProviders()).thenReturn(asList(new Provider("RemediX", 1234567891L, ProviderStatus.NOT_WORKING_PROVIDER,new Location("district"))));
+        when(providerService.getAllProviders()).thenReturn(asList(new Provider("RemediX", 1234567891L, ProviderStatus.NOT_WORKING_PROVIDER,new Location("state","block","district"))));
 
         List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest));
 
@@ -158,7 +158,7 @@ public class ProviderStructureValidatorTest {
     @Test
     public void shouldVerifyForSameContactNumberForDifferentRemediId() {
         ProviderCsvRequest providerCsvRequest = new ProviderCsvRequest("RemediX", "1234567890", "working provider", "state", "block", "district");
-        when(providerService.getAllProviders()).thenReturn(asList(new Provider("RemediY", 1234567890L, ProviderStatus.NOT_WORKING_PROVIDER,new Location("district2"))));
+        when(providerService.getAllProviders()).thenReturn(asList(new Provider("RemediY", 1234567890L, ProviderStatus.NOT_WORKING_PROVIDER,new Location("state2","block2","district2"))));
 
         List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest));
 
@@ -169,7 +169,7 @@ public class ProviderStructureValidatorTest {
     @Test
     public void shouldVerifyForSameContactNumberForSameRemediId() {
         ProviderCsvRequest providerCsvRequest = new ProviderCsvRequest("RemediX", "1234567890", "working provider", "state", "block", "district");
-        when(providerService.getAllProviders()).thenReturn(asList(new Provider("RemediX", 1234567890L, ProviderStatus.NOT_WORKING_PROVIDER,new Location("district"))));
+        when(providerService.getAllProviders()).thenReturn(asList(new Provider("RemediX", 1234567890L, ProviderStatus.NOT_WORKING_PROVIDER,new Location("state","block","district"))));
 
         List<CsvImportError> errors = providerStructureValidator.validate(newArrayList(providerCsvRequest));
 

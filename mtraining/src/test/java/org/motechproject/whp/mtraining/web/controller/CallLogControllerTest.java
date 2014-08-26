@@ -9,7 +9,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.reports.CallLogReporter;
-import org.motechproject.whp.mtraining.service.CallLogService;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.CallLogRecord;
 import org.motechproject.whp.mtraining.web.domain.CallLogRequest;
@@ -38,15 +37,12 @@ public class CallLogControllerTest {
     @Mock
     private ProviderService providerService;
 
-    @Mock
-    private CallLogService callLogService;
-
     private CallLogController callLogController;
     private UUID courseId;
 
     @Before
     public void setUp() {
-        callLogController = new CallLogController(callLogReporter, providerService, callLogService);
+        callLogController = new CallLogController(callLogReporter, providerService);
         courseId = UUID.randomUUID();
     }
 

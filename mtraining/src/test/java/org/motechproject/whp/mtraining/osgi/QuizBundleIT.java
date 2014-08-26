@@ -150,7 +150,7 @@ public class QuizBundleIT {
 
     private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {
         //this provider copy gets detached once saved,hence need to retrieve
-        Provider provider = new Provider(remediId, callerId, providerStatus, new Location("state"));
+        Provider provider = new Provider(remediId, callerId, providerStatus, new Location("block", "district", "state"));
         providersAdded.add(providerService.createProvider(provider).getId());
         return providerService.getProviderByCallerId(callerId);
     }

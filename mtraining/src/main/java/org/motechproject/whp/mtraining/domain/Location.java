@@ -18,5 +18,7 @@ public class Location extends MdsEntity {
         return name;
     }
 
-
+    public void setName(String name) {
+        this.name = name;
+    }
 }

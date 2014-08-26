@@ -64,7 +64,7 @@ public class CourseImportService {
     public void importCourseConfig(List<CourseConfigurationRequest> requests) {
         for (CourseConfigurationRequest request : requests) {
             CourseConfiguration courseConfiguration = new CourseConfiguration(request.getCourseName(),
-                   valueOf(request.getCourseDurationInDays()), new Location(request.getState()));
+                   valueOf(request.getCourseDurationInDays()), new Location(request.getBlock(), request.getDistrict(), request.getState()));
             if (courseConfigurationService.getCourseConfigurationById(courseConfiguration.getId()) == null) {
                 courseConfigurationService.createCourseConfiguration(courseConfiguration);
             } else {
