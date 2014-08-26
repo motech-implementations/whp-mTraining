@@ -44,6 +44,9 @@
     <osgi:service id="coursePlanServiceOsgi" ref="coursePlanService"
                   interface="org.motechproject.whp.mtraining.service.CoursePlanService" />
 
+    <osgi:service id="locationServiceOsgi" ref="locationService"
+                  interface="org.motechproject.whp.mtraining.service.LocationService" />
+
     <osgi:service id="callDurationServiceOsgi" ref="callDurationService"
                   interface="org.motechproject.whp.mtraining.service.CallDurationService" />
 
@@ -82,6 +85,9 @@
 
     <osgi:reference id="manyToManyRelationDataService"
                     interface="org.motechproject.whp.mtraining.repository.ManyToManyRelationDataService" />
+
+    <osgi:reference id="locationDataService"
+                    interface="org.motechproject.whp.mtraining.repository.LocationDataService" />
 
     <!--Mail Configuration-->
 
