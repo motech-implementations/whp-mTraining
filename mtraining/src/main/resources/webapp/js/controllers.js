@@ -760,4 +760,80 @@
 
     });
 
+    controllers.controller('providersController', ['$scope', 'Provider', function ($scope, Provider) {
+
+        $scope.clearProvider = function() {
+            $scope.creatingProvider = false;
+            $scope.updatingProvider = false;
+            $scope.savingProvider = false;
+            $scope.createProvider();
+        }
+
+        $scope.$on('providerClick', function(event, providerId) {
+            $scope.alertMessage = undefined;
+            $scope.errorRemediId = undefined;
+            $scope.provider = Provider.get({ id: providerId });
+            $scope.updatingProvider = true;
+            $scope.creatingProvider = false;
+        });
+
+        $scope.createProvider = function() {
+            $scope.alertMessage = undefined;
+            $scope.errorRemediId = undefined;
+            $scope.creatingProvider = true;
+            $scope.provider = new Provider();
+        }
+
+        $scope.saveProvider = function() {
+            if (!$scope.validate()){
+                return;
+            }
+            $scope.savingProvider = true;
+            $scope.provider.$save(function(c) {
+                // c => saved course object
+                $scope.alertMessage = $scope.msg('mtraining.createdProvider');
+                $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+            });
+            $scope.clearProvider();
+        }
+
+        $scope.updateProvider = function() {
+            if (!$scope.validate()){
+                return;
+            }
+            $scope.savingProvider = true;
+            $scope.provider.$update({ id:$scope.provider.id }, function (c) {
+                // c => updated provider object
+                $scope.alertMessage = $scope.msg('mtraining.updatedProvider');
+                $scope.location = null;
+                $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+            });
+            $scope.clearProvider();
+        }
+
+        $scope.deleteProvider = function() {
+            jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.provider'), $scope.provider.remediId), $scope.msg('mtraining.confirm.remove.header'), function (val) {
+                if (val) {
+                    $scope.savingProvider = true;
+                    $scope.provider.$delete({ id:$scope.provider.id }, function () {
+                        $scope.alertMessage = $scope.msg('mtraining.deletedProvider');
+                        $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+                    });
+                    $scope.clearProvider();
+                }
+            });
+        }
+
+        $scope.validate = function() {
+            if (!$scope.provider.remediId){
+                $scope.alertMessage = undefined;
+                $scope.errorRemediId = $scope.msg('mtraining.field.required', $scope.msg('mtraining.remediId'));
+                return false;
+            }
+            return true;
+        }
+
+        $scope.clearProvider();
+    }]);
+
 }());

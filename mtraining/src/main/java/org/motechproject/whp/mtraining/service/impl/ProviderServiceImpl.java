@@ -28,7 +28,12 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public Provider updateProvider(Provider provider) {
-        return providerDataService.update(provider);
+        Provider providerToUpdate = getProviderById(provider.getId());
+        providerToUpdate.setRemediId(provider.getRemediId());
+        providerToUpdate.setCallerId(provider.getCallerId());
+        providerToUpdate.setProviderStatus(provider.getProviderStatus());
+        providerToUpdate.setLocation(provider.getLocation());
+        return providerDataService.update(providerToUpdate);
     }
 
     @Override

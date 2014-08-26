@@ -38,6 +38,9 @@
                   }).when('/mtraining/bookmarkRequest', {
                     templateUrl: '../mtraining/partials/bookmarkRequest.html',
                     controller: 'bookmarkRequestController'
+                  }).when('/mtraining/providers', {
+                    templateUrl: '../mtraining/partials/providers.html',
+                    controller: 'providersController'
                   });
     });
 

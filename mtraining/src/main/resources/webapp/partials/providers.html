@@ -1,0 +1,63 @@
+<div class="row col-md-12">
+
+    <div>
+        <ul ng-show="alertMessage" class="alert alert-success">{{alertMessage}}</ul>
+        <button id="createProvider" class="btn btn-success" ng-hide="creatingProvider || updatingProvider" ng-click="createProvider()">{{msg('mtraining.createProvider')}}</button>
+    </div>
+
+    <form class="form-horizontal" ng-show="creatingProvider || updatingProvider">
+        <fieldset>
+            <legend ng-show="creatingProvider">{{msg('mtraining.createProvider')}}</legend>
+            <legend ng-show="updatingProvider">{{msg('mtraining.updateProvider')}}</legend>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="remediId">{{msg('mtraining.remediId')}}</label>
+                <div class="form-inline col-md-8">
+                    <input id="remediId" name="remediId" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="provider.remediId" >
+                    <span ng-show="errorRemediId" class="form-hint">{{errorRemediId}}</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="callerId">{{msg('mtraining.callerId')}}</label>
+                <div class="form-inline col-md-8">
+                    <input id="callerId" name="callerId" class="form-control input-xlarge-fluid input-auto" type="number" ng-model="provider.callerId" max="9999999999">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="providerStatus">{{msg('mtraining.providerStatus')}}</label>
+                <div class="col-md-4">
+                    <select id="providerStatus" class="form-control input-xlarge-fluid" ng-model="provider.providerStatus">
+                        <option value="WORKING_PROVIDER">{{msg('mtraining.workingProvider')}}</option>
+                        <option value="NOT_WORKING_PROVIDER">{{msg('mtraining.notWorkingProvider')}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="location">{{msg('mtraining.location')}}</label>
+                <div class="col-md-4">
+                    <input id="location" name="location" class="form-control input-xlarge-fluid" type="text" ng-model="provider.location.name">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-8 pull-right">
+                    <button id="saveButton" ng-show="creatingProvider" name="saveButton" class="btn btn-primary" ng-click="saveProvider()">{{msg('mtraining.save')}}</button>
+                    <button id="updateButton" ng-show="updatingProvider" name="updateButton" class="btn btn-warning" ng-click="updateProvider()">{{msg('mtraining.update')}}</button>
+                    <button id="deleteButton" ng-show="updatingProvider"name="deleteButton" class="btn btn-danger" ng-click="deleteProvider()">{{msg('mtraining.delete')}}</button>
+                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="clearProvider()">{{msg('mtraining.cancel')}}</button>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingCourse"/>
+            </div>
+
+        </fieldset>
+    </form>
+
+    <div id="outsideProvidersListTable" class="overrideJqgridTable">
+        <table id="providersListTable" providers-grid="pageProvidersResourceTable"></table>
+        <div id="pageProvidersResourceTable"></div>
+    </div>
+
+</div>
