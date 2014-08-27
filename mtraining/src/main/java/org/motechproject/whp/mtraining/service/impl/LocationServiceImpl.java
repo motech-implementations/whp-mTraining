@@ -40,7 +40,17 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public List<Location> getLocationByName(String locationName) {
-        return locationDataService.findLocationByName(locationName);
+    public Location getStateByName(String stateName) {
+        return locationDataService.findStateByName(stateName, Location.STATE_LEVEL);
+    }
+
+    @Override
+    public Location getBlockByName(String blockName) {
+        return locationDataService.findBlockByName(blockName, Location.BLOCK_LEVEL);
+    }
+
+    @Override
+    public boolean doesStateExist (String stateName) {
+        return (getStateByName(stateName) != null);
     }
 }

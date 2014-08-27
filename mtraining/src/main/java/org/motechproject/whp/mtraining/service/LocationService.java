@@ -19,5 +19,9 @@ public interface LocationService {
 
     Location getLocationById(long id);
 
-    List<Location> getLocationByName(String locationName);
+    Location getStateByName(String stateName);
+
+    Location getBlockByName(String blockName);
+
+    boolean doesStateExist (String stateName);
 }
