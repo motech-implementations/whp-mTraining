@@ -624,7 +624,7 @@
                     },
                     onCellSelect: function (rowId, iRow, iCol, e) {
                         var rowData = $('#providersListTable').jqGrid('getRowData', rowId);
-                        scope.$emit('providerClick', rowData.id);
+                        scope.$emit('providerClick', rowData.id, rowData.remediId, rowData.callerId);
                     }
                 });
             }

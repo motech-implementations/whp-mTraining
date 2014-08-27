@@ -769,10 +769,14 @@
             $scope.createProvider();
         }
 
-        $scope.$on('providerClick', function(event, providerId) {
+        $scope.$on('providerClick', function(event, providerId, remediId, callerId) {
             $scope.alertMessage = undefined;
             $scope.errorRemediId = undefined;
+            $scope.errorCallerId = undefined;
+            $scope.errorStatus = undefined;
             $scope.provider = Provider.get({ id: providerId });
+            $scope.oldRemediId = remediId;
+            $scope.oldCallerId = callerId;
             $scope.updatingProvider = true;
             $scope.creatingProvider = false;
         });
@@ -780,6 +784,8 @@
         $scope.createProvider = function() {
             $scope.alertMessage = undefined;
             $scope.errorRemediId = undefined;
+            $scope.errorCallerId = undefined;
+            $scope.errorStatus = undefined;
             $scope.creatingProvider = true;
             $scope.provider = new Provider();
         }
@@ -790,7 +796,7 @@
             }
             $scope.savingProvider = true;
             $scope.provider.$save(function(c) {
-                // c => saved course object
+                // c => saved provider object
                 $scope.alertMessage = $scope.msg('mtraining.createdProvider');
                 $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
@@ -825,12 +831,51 @@
         }
 
         $scope.validate = function() {
-            if (!$scope.provider.remediId){
-                $scope.alertMessage = undefined;
+            var data = $("#providersListTable").jqGrid('getGridParam','data');
+            if (!$scope.provider.remediId) {
                 $scope.errorRemediId = $scope.msg('mtraining.field.required', $scope.msg('mtraining.remediId'));
-                return false;
             }
-            return true;
+            else {
+                $scope.errorRemediId = undefined;
+                if ($scope.creatingProvider || $scope.provider.remediId != $scope.oldRemediId) {
+                    data.every(function(row) {
+                        if (row.remediId == $scope.provider.remediId) {
+                            $scope.errorRemediId = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.remediId'));
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+            }
+
+            if (!$scope.provider.callerId) {
+                $scope.errorCallerId = $scope.msg('mtraining.field.required', $scope.msg('mtraining.callerId'));
+            }
+            else {
+                $scope.errorCallerId = undefined;
+                if ($scope.creatingProvider || $scope.provider.callerId != $scope.oldCallerId) {
+                    data.every(function(row) {
+                        if (row.callerId == $scope.provider.callerId) {
+                            $scope.errorCallerId = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.callerId'));
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+            }
+
+            if (!$scope.provider.providerStatus) {
+                $scope.errorStatus = $scope.msg('mtraining.field.required', $scope.msg('mtraining.providerStatus'));
+            }
+            else {
+                $scope.errorStatus = undefined;
+            }
+
+            if (!$scope.errorRemediId && !$scope.errorCallerId && !$scope.errorStatus) {
+                return true;
+            }
+            $scope.alertMessage = undefined;
+            return false;
         }
 
         $scope.clearProvider();
