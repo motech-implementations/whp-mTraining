@@ -1,0 +1,27 @@
+[
+   {
+      "parentId":1,
+      "childId":22,
+      "parentType":"CoursePlan"
+   },
+   {
+      "parentId":11,
+      "childId":21,
+      "parentType":"CoursePlan"
+   },
+   {
+      "parentId":21,
+      "childId":23,
+      "parentType":"Course"
+   },
+   {
+      "parentId":11,
+      "childId":22,
+      "parentType":"CoursePlan"
+   },
+   {
+      "parentId":12,
+      "childId":22,
+      "parentType":"CoursePlan"
+   }
+]

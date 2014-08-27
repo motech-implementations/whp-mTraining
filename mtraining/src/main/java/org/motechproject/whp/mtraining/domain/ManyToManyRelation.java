@@ -21,6 +21,8 @@ public class ManyToManyRelation {
         this.parentType = parentType;
     }
 
+    public ManyToManyRelation() { }
+
     public long getParentId() {
         return parentId;
     }

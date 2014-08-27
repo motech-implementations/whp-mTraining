@@ -5,8 +5,236 @@
 
     var controllers = angular.module("mtraining.controllers", []);
 
-    controllers.controller('treeViewController', function ($scope) {
+    $.postJSON = function(url, data, callback) {
+        return jQuery.ajax({
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        'type': 'POST',
+        'url': url,
+        'data': JSON.stringify(data),
+        'dataType': 'json',
+        'success': callback
+        });
+    };
 
+    controllers.controller('treeViewController', function ($scope) {
+        var jArray = new Array();
+        var iterator = 0;
+        var id_hashmap = new Array();
+
+        $.getJSON('../mtraining/web-api/modules', function(data) {
+            $scope.modules = data;
+        });
+        $.getJSON('../mtraining/web-api/chapters', function(data) {
+            $scope.chapters = data;
+        });
+        $.getJSON('../mtraining/web-api/lessons', function(data) {
+            $scope.lessons = data;
+        });
+
+        initTree();
+         $('.draggable').sortable({
+            connectWith: '.droppable',
+            receive: receiveEventHandler
+         });
+
+         function receiveEventHandler(event, ui) {
+            var item = $scope.nodes[ui.item.attr('idx')];
+            var parent = $scope.data.instance.get_node($scope.data.selected).original;
+            createNode(item.id, item.name, parent.id, parent.level + 1, $scope.childType);
+            $scope.data.instance.create_node(parent.id, jArray[iterator], 'last', false, false);
+         }
+
+        function createRelations(o, type, relations) {
+            var children = o.children;
+            if (children) {
+                $.each(children, function(idx, el) {
+                    var relation = {
+                       "parentId": id_hashmap[o.id],
+                       "childId": id_hashmap[el],
+                       "parentType": type
+                    };
+                    if ($.grep(relations, function (el, index) {
+                                return el.parentId == relation.parentId && el.childId == relation.childId;
+                              }).length == 0) {
+                        relations.push(relation);
+                    }
+                    var item = $scope.data.instance.get_node(el);
+                    if (item.original.type == 'module') {
+                        createRelations(item, 'Course', relations);
+                    } else if (item.original.type == 'chapter') {
+                        createRelations(item, 'Chapter', relations);
+                    }
+                });
+            }
+        }
+
+        $scope.saveRelations = function() {
+            var courses = $scope.data.instance.get_node(0).children;
+            var relations = [];
+            $.each(courses, function(idx, el) {
+                createRelations($scope.data.instance.get_node(el), 'CoursePlan', relations);
+            });
+            $.postJSON('../mtraining/web-api/updateRelations', relations, function(response) { });
+        }
+
+        $scope.removeMember = function() {
+            var idx = $('#jstree').jstree('get_selected');
+            var node = $scope.data.instance.get_node(idx);
+            var children = node.children_d;
+            $scope.data.instance.delete_node(children);
+            $scope.data.instance.delete_node(node);
+        }
+
+        $scope.cancel = function() {
+            initTree();
+        }
+
+        $scope.isChildren = function(name) {
+            var isChildren = false;
+            $.each($scope.children, function(idx, el) {
+                if (name === el.text) {
+                    isChildren = true;
+                }
+            });
+            return isChildren;
+        }
+
+         function createNode(id, text, parent, level, type) {
+            iterator++;
+            jArray[iterator] = {
+                "id" : iterator,
+                "text" : text,
+                "parent" : parent,
+                "state" : {
+                        opened : false,
+                        disabled : false,
+                        selected : false
+                    },
+                li_attr : {},
+                a_attr : {},
+                "level" : level,
+                "type" : type
+            }
+            id_hashmap[iterator] = id;
+         }
+
+        //Get JSON from server and rewrite it to tree's JSON format
+        function initTree() {
+            $('#jstree').jstree("destroy");
+            var jsonURI = "../mtraining/web-api/all";
+            $.getJSON(jsonURI,function (data) {
+                fillJson(data, true, 0, "#");
+                renderTree();
+            });
+        };
+
+        function renderTree () {
+            $('#jstree').jstree({
+                "plugins" : ["state", "dnd", "search", "types"],
+                "core" : {
+                    'data' : jArray,
+                    'check_callback' : function (operation, node, node_parent, node_position) {
+                        if (operation === "move_node") {
+                            return (node.original.level === node_parent.original.level + 1);
+                        }
+                    }
+                },
+                "types" : {
+                    "root": {
+                        "icon" : "glyphicon glyphicon-cloud",
+                    },
+                    "course": {
+                        "icon" : "glyphicon glyphicon-folder-open",
+                    },
+                    "module": {
+                        "icon" : "glyphicon glyphicon-list-alt",
+                    },
+                    "chapter": {
+                        "icon" : "glyphicon glyphicon-book",
+                    },
+                    "lesson": {
+                        "icon" : "glyphicon glyphicon-music",
+                    }
+                }
+            });
+            // selection changed
+            $('#jstree').on("changed.jstree", function (e, data) {
+                $scope.data = data;
+                $scope.children = []
+                $scope.nodes = [];
+                var selected = data.instance.get_node(data.selected);
+                if (selected.children) {
+                    $.each(selected.children, function(idx, el) {
+                        $scope.children.push(data.instance.get_node(el));
+                    });
+                    $scope.$apply();
+                }
+                if (selected.original && selected.original.type) {
+                    var type = selected.original.type;
+                    console.log(selected.original);
+                    if (type === "course") {
+                        $scope.nodes = $scope.modules;
+                        $scope.childType = "module";
+                    } else if (type === "module") {
+                        $scope.nodes = $scope.chapters;
+                        $scope.childType = "chapter";
+                    } else if (type === "chapter") {
+                        $scope.nodes = $scope.lessons;
+                        $scope.childType = "lesson";
+                    }
+                    $scope.$apply();
+                }
+            });
+            $('#jstree').jstree("refresh");
+        }
+
+        function fillJson(data, init, level, par) {
+            //if initialization
+            if (init) {
+                jArray = new Array();
+                iterator = 0;
+                id_hashmap = new Array();
+                jArray[iterator] = {
+                    "id" : iterator,
+                    "text" : "mtrainingModule",
+                    "parent" : par,
+                    "state" : {
+                            opened : true,
+                            disabled : false,
+                            selected : false
+                        },
+                    li_attr : {},
+                    a_attr : {},
+                    "level" : level,
+                    "type" : "root"
+                }
+                par = 0;
+                level++;
+            }
+
+            data.forEach(function(item) {
+                var type = null;
+                if (item.courses) {
+                    type = "course";
+                } else if (item.chapters) {
+                    type = "module";
+                } else if (item.lessons) {
+                    type = "chapter";
+                } else {
+                    type = "lesson";
+                }
+                createNode(item.id, item.name, par, level, type);
+
+                var child_table = item.courses || item.chapters || item.lessons || [];
+                    if (!(child_table === 0)) {
+                        fillJson(child_table, false, level+1, iterator);
+                    };
+
+            });
+        }
     });
 
     controllers.controller('coursesController', ['$scope', 'Course', function ($scope, Course) {

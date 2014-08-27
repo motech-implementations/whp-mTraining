@@ -12,6 +12,8 @@ import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import javax.management.relation.RelationType;
 import java.util.ArrayList;
@@ -144,6 +146,20 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
             chapters.add(mTrainingService.getChapterById(relation.getParentId()));
         }
         return chapters;
+    }
+
+    @Override
+    public void updateAll(final List<ManyToManyRelation> relations) {
+
+        relationDataService.doInTransaction(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                relationDataService.deleteAll();
+                for (ManyToManyRelation relation : relations) {
+                    relationDataService.create(relation);
+                }
+            }
+        });
     }
 
 }

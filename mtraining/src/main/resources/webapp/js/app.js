@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var mtraining = angular.module('mtraining', ['motech-dashboard', 'mtraining.controllers', 'mtraining.directives','mtraining.treeview','mtraining.treeviewlib',
+    var mtraining = angular.module('mtraining', ['motech-dashboard', 'mtraining.controllers', 'mtraining.directives' ,'mtraining.treeviewlib',
         'ngRoute', 'ngResource', 'mtraining.services']);
 
     mtraining.config(function ($routeProvider) {
