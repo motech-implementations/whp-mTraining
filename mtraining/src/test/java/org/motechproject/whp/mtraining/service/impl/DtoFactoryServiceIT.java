@@ -21,6 +21,7 @@ import org.ops4j.pax.exam.spi.reactors.PerSuite;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -61,8 +62,8 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
     @Before
     public void setup() {
-        content = contentOperationService.codeFileNameAndDescriptionIntoContent(FILENAME, DESCRIPTION);
-        newContent = contentOperationService.codeFileNameAndDescriptionIntoContent(NEW_FILENAME, NEW_DESCRIPTION);
+        content = contentOperationService.codeIntoContent(FILENAME, DESCRIPTION, UUID.randomUUID());
+        newContent = contentOperationService.codeIntoContent(NEW_FILENAME, NEW_DESCRIPTION, UUID.randomUUID());
         deleteFromDatabase();
     }
 

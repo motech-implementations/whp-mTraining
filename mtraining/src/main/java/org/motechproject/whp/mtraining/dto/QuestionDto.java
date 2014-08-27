@@ -1,5 +1,7 @@
 package org.motechproject.whp.mtraining.dto;
 
+import java.util.UUID;
+
 /**
  * DTO Representation for Question class
  */
@@ -16,6 +18,8 @@ public class QuestionDto {
     private String filename;
 
     private String explainingAnswerFilename;
+
+    private UUID contentId;
 
     public QuestionDto() {
     }
@@ -75,5 +79,13 @@ public class QuestionDto {
 
     public void setExplainingAnswerFilename(String explainingAnswerFilename) {
         this.explainingAnswerFilename = explainingAnswerFilename;
+    }
+
+    public UUID getContentId() {
+        return contentId;
+    }
+
+    public void setContentId(UUID contentId) {
+        this.contentId = contentId;
     }
 }

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 
 @Service("dtoFactoryService")
@@ -288,6 +289,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         QuestionDto questionDto = new QuestionDto();
         contentOperationService.getQuestionNameAndDescriptionFromQuestion(questionDto, question.getQuestion());
         contentOperationService.getAnswersAndFilesNamesFromAnswer(questionDto, question.getAnswer());
+        questionDto.setContentId(contentOperationService.getUuidFromJsonString(question.getQuestion()));
         return questionDto;
     }
 
@@ -304,13 +306,17 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         List<Question> questions = new ArrayList<>();
 
         for (QuestionDto questionDto : questionDtos) {
-            questions.add(convertDtoToQuestion(questionDto));
+            if (questionDto.getContentId() == null) {
+                questions.add(convertDtoToQuestion(questionDto, UUID.randomUUID()));
+            } else {
+                questions.add(convertDtoToQuestion(questionDto, questionDto.getContentId()));
+            }
         }
         return questions;
     }
 
-    private Question convertDtoToQuestion(QuestionDto questionDto) {
-        String question = contentOperationService.codeQuestionNameAndDescriptionIntoQuestion(questionDto.getName(), questionDto.getDescription());
+    private Question convertDtoToQuestion(QuestionDto questionDto, UUID uuid) {
+        String question = contentOperationService.codeIntoQuestion(questionDto.getName(), questionDto.getDescription(), uuid);
         String answer = contentOperationService.codeAnswersAndFilesNamesIntoAnswer(questionDto.getCorrectAnswer(), questionDto.getOptions(),
                 questionDto.getFilename(), questionDto.getExplainingAnswerFilename());
         Question questionObject = new Question(question, answer);
@@ -320,30 +326,34 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     private void createCourseUnitMetadataFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = new CoursePlan(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
-                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+                    contentOperationService.codeIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
             coursePlanService.createCoursePlan(coursePlan);
+
         } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = new Course(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
-                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+                    contentOperationService.codeIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
             module = mTrainingService.createCourse(module);
             createRelation(module, courseUnitMetadataDto);
+
         } else if (courseUnitMetadataDto instanceof ChapterDto) {
             Chapter chapter = new Chapter(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
-                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+                    contentOperationService.codeIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
             if (((ChapterDto) courseUnitMetadataDto).getQuiz() != null) {
                 Quiz quiz = mTrainingService.getQuizById(((ChapterDto) courseUnitMetadataDto).getQuiz().getId());
                 chapter.setQuiz(quiz);
             }
             chapter = mTrainingService.createChapter(chapter);
             createRelation(chapter, courseUnitMetadataDto);
+
         } else if (courseUnitMetadataDto instanceof LessonDto) {
             Lesson lesson = new Lesson(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
-                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+                    contentOperationService.codeIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
             lesson = mTrainingService.createLesson(lesson);
             createRelation(lesson, courseUnitMetadataDto);
+
         } else {
             Quiz quiz = new Quiz(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
-                    contentOperationService.codeFileNameAndDescriptionIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()),
+                    contentOperationService.codeIntoContent(courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()),
                     convertDtosToQuestionList(((QuizDto) courseUnitMetadataDto).getQuestions()), ((QuizDto) courseUnitMetadataDto).getPassPercentage());
             mTrainingService.createQuiz(quiz);
         }
@@ -354,12 +364,14 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(coursePlan, courseUnitMetadataDto);
             coursePlanService.updateCoursePlan(coursePlan);
+
         } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = mTrainingService.getCourseById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(module, courseUnitMetadataDto);
             mTrainingService.updateCourse(module);
             manyToManyRelationService.deleteRelationsByChildId(ParentType.CoursePlan, module.getId());
             createRelation(module, courseUnitMetadataDto);
+
         } else if (courseUnitMetadataDto instanceof ChapterDto) {
             Chapter chapter = mTrainingService.getChapterById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(chapter, courseUnitMetadataDto);
@@ -372,12 +384,14 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             mTrainingService.updateChapter(chapter);
             manyToManyRelationService.deleteRelationsByChildId(ParentType.Course, chapter.getId());
             createRelation(chapter, courseUnitMetadataDto);
+
         } else if (courseUnitMetadataDto instanceof LessonDto) {
             Lesson lesson = mTrainingService.getLessonById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(lesson, courseUnitMetadataDto);
             mTrainingService.updateLesson(lesson);
             manyToManyRelationService.deleteRelationsByChildId(ParentType.Chapter, lesson.getId());
             createRelation(lesson, courseUnitMetadataDto);
+
         } else {
             Quiz quiz = mTrainingService.getQuizById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(quiz, courseUnitMetadataDto);
@@ -407,10 +421,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     private void populateCourseUnitMetadataFields(CourseUnitMetadata courseUnitMetadata, CourseUnitMetadataDto courseUnitMetadataDto) {
+        UUID uuid = contentOperationService.getUuidFromJsonString(courseUnitMetadata.getContent());
         courseUnitMetadata.setName(courseUnitMetadataDto.getName());
         courseUnitMetadata.setState(courseUnitMetadataDto.getState());
-        courseUnitMetadata.setContent(contentOperationService.codeFileNameAndDescriptionIntoContent
-                (courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription()));
+        courseUnitMetadata.setContent(contentOperationService.codeIntoContent
+                (courseUnitMetadataDto.getFilename(), courseUnitMetadataDto.getDescription(), uuid));
     }
 
     private Set<Long> convertToIdSet(List<?> courseUnitMetadata) {

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.lang.Integer.valueOf;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -75,48 +76,57 @@ public class CourseImportService {
     private CoursePlan formCoursePlan(List<CourseCsvRequest> requests) {
         CourseCsvRequest courseRequest = requests.get(0);
         CoursePlan coursePlan = new CoursePlan(courseRequest.getNodeName(), courseRequest.getStatus(),
-                contentOperationService.codeFileNameAndDescriptionIntoContent(courseRequest.getFileName(), courseRequest.getDescription()));
+                contentOperationService.codeIntoContent(courseRequest.getFileName(), courseRequest.getDescription(), UUID.randomUUID()));
 
         Map<Course, CourseCsvRequest> courses = new LinkedHashMap<>();
         Map<Chapter, CourseCsvRequest> chapters = new LinkedHashMap<>();
         Map<Lesson, CourseCsvRequest> lessons = new LinkedHashMap<>();
         Map<Question, CourseCsvRequest> questions = new LinkedHashMap<>();
+
         for (CourseCsvRequest request : requests) {
             String type = request.getNodeType();
-            if (type.equalsIgnoreCase("Chapter")) {
-                Chapter chapter = new Chapter(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeFileNameAndDescriptionIntoContent(request.getFileName(), request.getDescription()),
-                        new ArrayList<Lesson>());
-                chapters.put(chapter, request);
-            } else if (type.equalsIgnoreCase("Message") || type.equalsIgnoreCase("Lesson")) {
-                Lesson lesson = new Lesson(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeFileNameAndDescriptionIntoContent(request.getFileName(), request.getDescription()));
-                lessons.put(lesson, request);
-            } else if (type.equalsIgnoreCase("Question")) {
-                Question question = new Question(request.getFileName(), request.getCorrectAnswerFileName());
-                questions.put(question, request);
-            } else if (type.equalsIgnoreCase("Module")) {
+
+            if (type.equalsIgnoreCase("Module")) {
                 Course course = new Course(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeFileNameAndDescriptionIntoContent(request.getFileName(), request.getDescription()),
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()),
                         new ArrayList<Chapter>());
                 courses.put(course, request);
+
+            } else if (type.equalsIgnoreCase("Chapter")) {
+                Chapter chapter = new Chapter(request.getNodeName(), request.getStatus(),
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()),
+                        new ArrayList<Lesson>());
+                chapters.put(chapter, request);
+
+            } else if (type.equalsIgnoreCase("Message") || type.equalsIgnoreCase("Lesson")) {
+                Lesson lesson = new Lesson(request.getNodeName(), request.getStatus(),
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()));
+                lessons.put(lesson, request);
+
+            } else if (type.equalsIgnoreCase("Question")) {
+                Question question = new Question(contentOperationService.codeIntoQuestion(request.getNodeName(), request.getDescription(), UUID.randomUUID()),
+                        contentOperationService.codeAnswersAndFilesNamesIntoAnswer(request.getCorrectAnswer(), request.getOptions(), request.getFileName(), request.getCorrectAnswerFileName()));
+                questions.put(question, request);
             }
         }
 
         for(Map.Entry<Chapter, CourseCsvRequest> chapterMap : chapters.entrySet()) {
             Chapter chapter = chapterMap.getKey();
             CourseCsvRequest chapterRow = chapterMap.getValue();
+
             for(Map.Entry<Lesson, CourseCsvRequest> lesson : lessons.entrySet()) {
                 if (lesson.getValue().getParentNode().contentEquals(chapter.getName())) {
                     chapter.getLessons().add(lesson.getKey());
                 }
             }
+
             String noOfQuizQuestions = chapterRow.getNoOfQuizQuestions();
             Integer numberOfQuizQuestions = isBlank(noOfQuizQuestions) ? 0 : Integer.parseInt(noOfQuizQuestions);
             if(numberOfQuizQuestions > 0) {
-                Quiz quiz = new Quiz();
-                quiz.setPassPercentage(Double.valueOf(chapterRow.getPassPercentage()));
-                quiz.setQuestions(new ArrayList<Question>());
+                Quiz quiz = new Quiz(chapterRow.getNodeName(), chapterRow.getStatus(),
+                        contentOperationService.codeIntoContent(chapterRow.getFileName(), chapterRow.getDescription(), UUID.randomUUID()),
+                        new ArrayList<Question>(), Double.valueOf(chapterRow.getPassPercentage()));
+
                 for(Map.Entry<Question, CourseCsvRequest> question : questions.entrySet()) {
                     if (question.getValue().getParentNode().contentEquals(chapter.getName())) {
                         quiz.getQuestions().add(question.getKey());
