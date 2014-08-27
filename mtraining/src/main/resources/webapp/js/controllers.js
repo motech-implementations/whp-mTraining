@@ -442,6 +442,7 @@
         $scope.$on('quizClick', function(event, quizId) {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
+            $scope.errorPercentage = undefined;
             $scope.quiz = Quiz.get({ id: quizId });
             $scope.updatingQuiz = true;
             $scope.creatingQuiz = false;
@@ -454,6 +455,7 @@
             $scope.savingQuiz = false;
             $scope.questionIndex = -1;
             $scope.question = {};
+            $("#passPercentage").val('');
             $scope.createQuiz();
         }
 
@@ -515,6 +517,7 @@
         $scope.createQuiz = function() {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
+            $scope.errorPercentage = undefined;
             $scope.creatingQuiz = true;
             $scope.quiz = new Quiz();
             if ($scope.quiz.questions == undefined) {
@@ -568,14 +571,26 @@
         }
 
         $scope.validate = function() {
-            $scope.errorQuestion = undefined;
-            $scope.errorAnswer = undefined;
+
             if (!$scope.quiz.name) {
-                $scope.alertMessage = undefined;
                 $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.quizName'));
-                return false;
             }
-            return true;
+            else {
+                $scope.errorName = undefined;
+            }
+
+            if (!$scope.quiz.passPercentage && $scope.quiz.passPercentage != 0) {
+                $scope.errorPercentage = $scope.msg('mtraining.set.percentage');
+            }
+            else {
+                $scope.errorPercentage = undefined;
+            }
+
+            if (!$scope.errorName && !$scope.errorPercentage) {
+                return true
+            }
+            $scope.alertMessage = undefined;
+            return false;
         }
 
         $scope.validateQuestion = function() {
@@ -786,6 +801,7 @@
             $scope.errorRemediId = undefined;
             $scope.errorCallerId = undefined;
             $scope.errorStatus = undefined;
+            $("#callerId").val('');
             $scope.creatingProvider = true;
             $scope.provider = new Provider();
         }

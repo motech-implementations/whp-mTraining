@@ -35,8 +35,9 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="passPercentage">{{msg('mtraining.passPercentage')}}</label>
-                <div class="col-md-4">
-                    <input id="passPercentage" name="passPercentage" class="form-control input-xlarge-fluid" type="number" ng-model="quiz.passPercentage" min="0" max="100">
+                <div class="form-inline col-md-8">
+                    <input id="passPercentage" name="passPercentage" class="form-control input-xlarge-fluid input-auto" type="number" ng-model="quiz.passPercentage" min="0" max="100">
+                    <span ng-show="errorPercentage" class="form-hint">{{errorPercentage}}</span>
                 </div>
             </div>
 
