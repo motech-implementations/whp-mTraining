@@ -11,11 +11,11 @@
 					</th>
 					<th id="treeTable_Members" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width:13%;">
 						<span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span>
-						<div id="jqgh_treeTable_Members" class="ui-jqgrid-sortable">Members<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
+						<div id="jqgh_treeTable_Members" class="ui-jqgrid-sortable">{{msg('mtraining.members')}}<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
 						</div>
 					</th>
 					<th id="treeTable_Units" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width: 13%;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span>
-						<div id="jqgh_treeTable_Course" class="ui-jqgrid-sortable">Nodes<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
+						<div id="jqgh_treeTable_Course" class="ui-jqgrid-sortable">{{msg('mtraining.nodes')}}<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-ltr"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-ltr"></span></span>
 						</div>
 					</th>
 				</tr>
@@ -37,15 +37,18 @@
 		</table>
 	</div>
 	<div class="buttons">
+        <button class="btn btn-primary ng-binding" ng-click="publishCourse()">
+            <i class="icon-cloud-upload icon-white"></i> {{msg('mtraining.publish')}}
+        </button>
 		<button class="btn btn-success ng-binding" ng-click="saveRelations()">
-                    <i class="icon-save icon-white"></i> Save
-                </button>
+            <i class="icon-save icon-white"></i> {{msg('mtraining.save')}}
+        </button>
 		<button class="btn btn-danger ng-binding" ng-click="removeMember()">
-                	<i class="icon-trash icon-white"></i> Remove Member
-            	</button>
+            <i class="icon-trash icon-white"></i> {{msg('mtraining.removeMember')}}
+        </button>
 		<button class="btn btn-danger ng-binding" ng-click="cancel()">
-                	<i class="icon-remove icon-white"></i> Cancel
-            	</button>	
+            <i class="icon-remove icon-white"></i> {{msg('mtraining.cancel')}}
+        </button>
 	</div>
 
 </div>

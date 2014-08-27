@@ -40,6 +40,8 @@
             receive: receiveEventHandler
          });
 
+         function publish() { }
+
          function receiveEventHandler(event, ui) {
             var item = $scope.nodes[ui.item.attr('idx')];
             var parent = $scope.data.instance.get_node($scope.data.selected).original;
@@ -174,7 +176,6 @@
                 }
                 if (selected.original && selected.original.type) {
                     var type = selected.original.type;
-                    console.log(selected.original);
                     if (type === "course") {
                         $scope.nodes = $scope.modules;
                         $scope.childType = "module";
