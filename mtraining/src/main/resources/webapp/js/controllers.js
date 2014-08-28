@@ -759,9 +759,9 @@
         $scope.rewriteQuestion = function(question) {
             question.name = $scope.question.name;
             question.description = $scope.question.description;
-            question.correctAnswer = $scope.question.correctAnswer;
+            question.correctOption = $scope.question.correctOption;
             question.options = $scope.question.options.toString();
-            question.filename = $scope.question.filename;
+            question.externalId = $scope.question.externalId;
             question.explainingAnswerFilename = $scope.question.explainingAnswerFilename;
         }
 
@@ -865,15 +865,15 @@
                 $scope.errorOptions = undefined;
             }
 
-            if (!$scope.question.correctAnswer && $scope.question.correctAnswer !== 0) {
-                $scope.errorAnswer = $scope.msg('mtraining.field.required', $scope.msg('mtraining.correctAnswer'));
+            if (!$scope.question.correctOption && $scope.question.correctOption !== 0) {
+                $scope.errorAnswer = $scope.msg('mtraining.field.required', $scope.msg('mtraining.correctOption'));
             }
             else {
                 $scope.errorAnswer = $scope.msg('mtraining.invalid.answer');
                 if ($scope.question.options.length > 0) {
-                    var correctAnswer = $scope.question.correctAnswer.toString();
+                    var correctOption = $scope.question.correctOption.toString();
                     for (var i=0; i < $scope.question.options.length; i++) {
-                        if ($scope.question.options[i] == correctAnswer){
+                        if ($scope.question.options[i] == correctOption){
                             $scope.errorAnswer = undefined;
                             break;
                         }
@@ -881,7 +881,7 @@
                 }
             }
 
-            if (!$scope.question.filename) {
+            if (!$scope.question.externalId) {
                 $scope.errorFilename = $scope.msg('mtraining.field.required', $scope.msg('mtraining.question.filename'));
             }
             else {
@@ -940,13 +940,13 @@
             $(".valid-option").remove();
             $scope.question.name = $scope.quiz.questions[index].name;
             $scope.question.description = $scope.quiz.questions[index].description;
-            $scope.question.correctAnswer = parseInt($scope.quiz.questions[index].correctAnswer);
+            $scope.question.correctOption = parseInt($scope.quiz.questions[index].correctOption);
             $scope.question.options = $scope.quiz.questions[index].options.split(",");
             for (var i=0; i < $scope.question.options.length; i++) {
                 $scope.createOption($scope.question.options[i]);
             }
 
-            $scope.question.filename = $scope.quiz.questions[index].filename;
+            $scope.question.externalId = $scope.quiz.questions[index].filename;
             $scope.question.explainingAnswerFilename = $scope.quiz.questions[index].explainingAnswerFilename;
             $scope.errorQuestion = undefined;
             $scope.clearErrorSpans();

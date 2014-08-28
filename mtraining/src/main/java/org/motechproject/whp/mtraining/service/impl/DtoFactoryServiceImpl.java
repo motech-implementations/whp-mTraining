@@ -354,8 +354,8 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     private Question convertDtoToQuestion(QuestionDto questionDto, UUID uuid) {
         String question = contentOperationService.codeIntoQuestion(questionDto.getName(), questionDto.getDescription(), uuid);
-        String answer = contentOperationService.codeAnswersAndFilesNamesIntoAnswer(questionDto.getCorrectAnswer(), questionDto.getOptions(),
-                questionDto.getFilename(), questionDto.getExplainingAnswerFilename());
+        String answer = contentOperationService.codeAnswersAndFilesNamesIntoAnswer(questionDto.getCorrectOption(), questionDto.getOptions(),
+                questionDto.getExternalId(), questionDto.getExplainingAnswerFilename());
         Question questionObject = new Question(question, answer);
         return questionObject;
     }

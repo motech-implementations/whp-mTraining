@@ -1,5 +1,8 @@
 package org.motechproject.whp.mtraining.dto;
 
+import org.codehaus.jackson.map.annotate.JsonView;
+import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
+
 import java.util.UUID;
 
 /**
@@ -7,29 +10,34 @@ import java.util.UUID;
  */
 public class QuestionDto {
 
+    @JsonView(PublishCourseView.class)
     private String name;
 
+    @JsonView({PublishCourseView.class})
     private String description;
 
-    private String correctAnswer;
+    private String correctOption;
 
     private String options;
 
-    private String filename;
+    @JsonView({PublishCourseView.class})
+    private String externalId;
 
+    @JsonView({PublishCourseView.class})
     private String explainingAnswerFilename;
 
+    @JsonView({PublishCourseView.class})
     private UUID contentId;
 
     public QuestionDto() {
     }
 
-    public QuestionDto(String name, String description, String correctAnswer, String options, String filename, String explainingAnswerFilename) {
+    public QuestionDto(String name, String description, String correctOption, String options, String externalId, String explainingAnswerFilename) {
         this.name = name;
         this.description = description;
-        this.correctAnswer = correctAnswer;
+        this.correctOption = correctOption;
         this.options = options;
-        this.filename = filename;
+        this.externalId = externalId;
         this.explainingAnswerFilename = explainingAnswerFilename;
     }
 
@@ -49,12 +57,12 @@ public class QuestionDto {
         this.description = description;
     }
 
-    public String getCorrectAnswer() {
-        return correctAnswer;
+    public String getCorrectOption() {
+        return correctOption;
     }
 
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
+    public void setCorrectOption(String correctOption) {
+        this.correctOption = correctOption;
     }
 
     public String getOptions() {
@@ -65,12 +73,12 @@ public class QuestionDto {
         this.options = options;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getExternalId() {
+        return externalId;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public String getExplainingAnswerFilename() {

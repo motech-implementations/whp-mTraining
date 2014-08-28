@@ -62,16 +62,16 @@ public class ContentOperationServiceImpl implements ContentOperationService {
 
     @Override
     public void getAnswersAndFilesNamesFromAnswer(QuestionDto questionDto, String answer) {
-        questionDto.setCorrectAnswer(getFromJsonString(answer, ANSWER_MAPPING_NAME));
+        questionDto.setCorrectOption(getFromJsonString(answer, ANSWER_MAPPING_NAME));
         questionDto.setOptions(getFromJsonString(answer, OPTIONS_MAPPING_NAME));
-        questionDto.setFilename(getFromJsonString(answer, FILENAME_MAPPING_NAME));
+        questionDto.setExternalId(getFromJsonString(answer, FILENAME_MAPPING_NAME));
         questionDto.setExplainingAnswerFilename(getFromJsonString(answer, ANSWER_FILENAME_MAPPING_NAME));
     }
 
     @Override
-    public String codeAnswersAndFilesNamesIntoAnswer(String correctAnswer, String options, String filename, String explainingAnswerFilename) {
+    public String codeAnswersAndFilesNamesIntoAnswer(String correctOption, String options, String filename, String explainingAnswerFilename) {
         String answer = "";
-        answer = codeIntoJsonString(answer, ANSWER_MAPPING_NAME, correctAnswer);
+        answer = codeIntoJsonString(answer, ANSWER_MAPPING_NAME, correctOption);
         answer = codeIntoJsonString(answer, OPTIONS_MAPPING_NAME, options);
         answer = codeIntoJsonString(answer, FILENAME_MAPPING_NAME, filename);
         answer = codeIntoJsonString(answer, ANSWER_FILENAME_MAPPING_NAME, explainingAnswerFilename);

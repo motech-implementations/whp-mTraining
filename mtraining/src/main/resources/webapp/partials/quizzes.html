@@ -60,7 +60,7 @@
                 <div class="col-md-4 col-centered">
                     <a ng-repeat="question in quiz.questions" class="list-group-item" ng-click="questionClick($index)" ng-class="{active: $index==questionIndex}">
                         <h4 class="list-group-item-heading">{{question.name}}</h4>
-                        <p class="list-group-item-text">{{question.correctAnswer}}</p>
+                        <p class="list-group-item-text">{{question.correctOption}}</p>
                     </a>
                 </div>
             </div>

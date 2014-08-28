@@ -22,7 +22,7 @@ public interface ContentOperationService {
 
     void getAnswersAndFilesNamesFromAnswer(QuestionDto questionDto, String answer);
 
-    String codeAnswersAndFilesNamesIntoAnswer(String correctAnswer, String options, String filename, String explainingAnswerFilename);
+    String codeAnswersAndFilesNamesIntoAnswer(String correctOption, String options, String filename, String explainingAnswerFilename);
 
 
     UUID getUuidFromJsonString(String content);
