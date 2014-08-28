@@ -50,23 +50,17 @@ public class CoursePublisher {
         }
 
         CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseId);
-//        if (course.getState() != CourseUnitState.Active) {
-//            LOGGER.warn(String.format("[%s] Course with contentId %s inactive and hence not being published to IVR ", currentDateTime(), courseId));
-//            return;
-//        }
 
         LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s", numberOfAttempts, currentDateTime(), courseId));
-
-//TODO        course.removeInactiveContent();
 
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s", numberOfAttempts, currentDateTime(), course.getName(), courseId));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
         coursePublicationAttemptService.createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess()));
-//TODO
-//        if (ivrResponse.isSuccess()) {
-//            courseService.publish(new ContentIdentifierDto());
-//        }
+
+        if (ivrResponse.isSuccess()) {
+            dtoFactoryService.activateCourse(course);
+        }
 
         if (ivrResponse.isNetworkFailure()) {
             retryPublishing(courseId);

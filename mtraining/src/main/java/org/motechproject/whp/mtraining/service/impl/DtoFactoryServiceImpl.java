@@ -181,6 +181,29 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return (QuizDto) getDto(mTrainingService.getQuizById(quizId));
     }
 
+    @Override
+    public void activateCourse(CoursePlanDto course) {
+        course.setState(CourseUnitState.Active);
+        for(ModuleDto module : course.getModules()) {
+            module.setState(CourseUnitState.Active);
+            createOrUpdateFromDto(module);
+            for(ChapterDto chapter : module.getChapters()) {
+                chapter.setState(CourseUnitState.Active);
+                createOrUpdateFromDto(chapter);
+                for(LessonDto lesson : chapter.getLessons()) {
+                    lesson.setState(CourseUnitState.Active);
+                    createOrUpdateFromDto(lesson);
+                }
+                QuizDto quiz = chapter.getQuiz();
+                if (quiz != null) {
+                    quiz.setState(CourseUnitState.Active);
+                    createOrUpdateFromDto(quiz);
+                }
+            }
+        }
+        createOrUpdateFromDto(course);
+    }
+
     private CoursePlanDto convertToCoursePlanDto(CoursePlan coursePlan) {
         CoursePlanDto coursePlanDto = new CoursePlanDto(coursePlan.getId(), coursePlan.getName(), coursePlan.getState(),
                 coursePlan.getCreationDate(), coursePlan.getModificationDate());
