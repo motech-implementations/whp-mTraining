@@ -1,7 +1,9 @@
 package org.motechproject.whp.mtraining.dto;
 
+import org.codehaus.jackson.map.annotate.JsonView;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Set;
  */
 public class ModuleDto extends CourseUnitMetadataDto {
 
+    @JsonView({PublishCourseView.class})
     private List<ChapterDto> chapters;
 
     private Set<Long> parentIds;

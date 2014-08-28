@@ -2,8 +2,10 @@ package org.motechproject.whp.mtraining.dto;
 
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonView;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
 import org.motechproject.whp.mtraining.util.CustomDateSerializer;
 
@@ -15,13 +17,22 @@ import java.util.UUID;
 public class CourseUnitMetadataDto {
 
     private long id;
+
+    @JsonView(PublishCourseView.class)
     private String name;
+
+    @JsonView({PublishCourseView.class})
     private String description;
+
     private CourseUnitState state;
+
+    @JsonView({PublishCourseView.class})
     private String externalId;
+
     private DateTime creationDate;
     private DateTime modificationDate;
 
+    @JsonView({PublishCourseView.class})
     private UUID contentId;
 
     public CourseUnitMetadataDto() {

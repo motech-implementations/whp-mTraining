@@ -3,12 +3,12 @@ package org.motechproject.whp.mtraining.ivr;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.WebClient;
-import org.motechproject.mtraining.domain.Course;
+import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.exception.MTrainingException;
 import org.slf4j.Logger;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Properties;
 
 @Component
@@ -31,6 +30,8 @@ public class IVRGateway {
     private SettingsFacade settingsFacade;
     private WebClient webClient;
     private IVRResponseParser ivrResponseParser;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public IVRGateway(SettingsFacade settingsFacade, WebClient webClient, IVRResponseParser ivrResponseParser) {
@@ -71,10 +72,11 @@ public class IVRGateway {
     }
 
     private String toJson(Object obj) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationConfig.Feature.DEFAULT_VIEW_INCLUSION, false);
+        ObjectWriter objectWriter = objectMapper.writerWithView(PublishCourseView.class);
         try {
-            JsonNode jsonObj = objectMapper.valueToTree(obj);
-            return jsonObj.toString();
+            String json = objectWriter.writeValueAsString(obj);
+            return json;
         } catch (Exception exception) {
             throw new MTrainingException("Error while converting course to JSON", exception);
         }

@@ -1,8 +1,11 @@
 package org.motechproject.whp.mtraining.dto;
 
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonView;
 import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,7 +13,7 @@ import java.util.UUID;
  */
 public class QuestionDto {
 
-    @JsonView(PublishCourseView.class)
+    @JsonView({PublishCourseView.class})
     private String name;
 
     @JsonView({PublishCourseView.class})
@@ -23,7 +26,6 @@ public class QuestionDto {
     @JsonView({PublishCourseView.class})
     private String externalId;
 
-    @JsonView({PublishCourseView.class})
     private String explainingAnswerFilename;
 
     @JsonView({PublishCourseView.class})
@@ -95,5 +97,17 @@ public class QuestionDto {
 
     public void setContentId(UUID contentId) {
         this.contentId = contentId;
+    }
+
+    @JsonView({PublishCourseView.class})
+    @JsonProperty("options")
+    public List<String> getOptionsAsList() {
+        return  Arrays.asList(options.split("\\s*,\\s*"));
+    }
+
+    @JsonView({PublishCourseView.class})
+    @JsonProperty("answer")
+    public AnswerDto getAnswerDto() {
+        return new AnswerDto(correctOption, explainingAnswerFilename);
     }
 }
