@@ -5,6 +5,8 @@ import org.motechproject.mds.annotations.LookupField;
 import org.motechproject.mds.service.MotechDataService;
 import org.motechproject.whp.mtraining.domain.Location;
 
+import java.util.List;
+
 /**
  * Interface for repository that persists simple records and allows CRUD.
  * MotechDataService base class will provide the implementation of this class as well
@@ -23,4 +25,7 @@ public interface LocationDataService extends MotechDataService<Location> {
     @Lookup
     Location findBlockByName(@LookupField(name = "block") String block,
                              @LookupField(name = "level") Integer level);
+
+    @Lookup
+    List<Location> retrieveLocationsByLevel(@LookupField(name = "level") Integer level);
 }

@@ -53,4 +53,14 @@ public class LocationServiceImpl implements LocationService {
     public boolean doesStateExist (String stateName) {
         return (getStateByName(stateName) != null);
     }
+
+    @Override
+    public List<Location> getBlockLocations() {
+        return locationDataService.retrieveLocationsByLevel(Location.BLOCK_LEVEL);
+    }
+
+    @Override
+    public List<Location> getStateLocations() {
+        return locationDataService.retrieveLocationsByLevel(Location.STATE_LEVEL);
+    }
 }

@@ -24,4 +24,8 @@ public interface LocationService {
     Location getBlockByName(String blockName);
 
     boolean doesStateExist (String stateName);
+
+    List<Location> getBlockLocations();
+
+    List<Location> getStateLocations();
 }

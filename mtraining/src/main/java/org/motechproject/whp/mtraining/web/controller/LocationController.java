@@ -21,10 +21,16 @@ public class LocationController {
     @Autowired
     LocationService locationService;
 
-    @RequestMapping("/location")
+    @RequestMapping("/blockLocations")
     @ResponseBody
-    public List<Location> getAllLocations() {
-        return locationService.getAllLocations();
+    public List<Location> getBlockLocations() {
+        return locationService.getBlockLocations();
+    }
+
+    @RequestMapping("/stateLocations")
+    @ResponseBody
+    public List<Location> getStateLocations() {
+        return locationService.getStateLocations();
     }
 
     @RequestMapping(value = "/location/{locationId}", method = RequestMethod.GET, produces = "application/json")
