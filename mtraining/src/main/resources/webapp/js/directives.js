@@ -75,8 +75,8 @@
                         align: 'center',
                         width: 60
                     },{
-                        name: 'filename',
-                        index: 'filename',
+                        name: 'externalId',
+                        index: 'externalId',
                         align: 'center',
                         sortable: false,
                         width: 100
@@ -176,8 +176,8 @@
                         align: 'center',
                         width: 60
                     },{
-                        name: 'filename',
-                        index: 'filename',
+                        name: 'externalId',
+                        index: 'externalId',
                         align: 'center',
                         sortable: false,
                         width: 100
@@ -277,8 +277,8 @@
                         align: 'center',
                         width: 60
                     },{
-                        name: 'filename',
-                        index: 'filename',
+                        name: 'externalId',
+                        index: 'externalId',
                         align: 'center',
                         sortable: false,
                         width: 100
@@ -378,8 +378,8 @@
                         align: 'center',
                         width: 60
                     },{
-                        name: 'filename',
-                        index: 'filename',
+                        name: 'externalId',
+                        index: 'externalId',
                         align: 'center',
                         sortable: false,
                         width: 100
@@ -484,8 +484,8 @@
                             align: 'center',
                             width: 60
                         },{
-                            name: 'filename',
-                            index: 'filename',
+                            name: 'externalId',
+                            index: 'externalId',
                             align: 'center',
                             sortable: false,
                             width: 100

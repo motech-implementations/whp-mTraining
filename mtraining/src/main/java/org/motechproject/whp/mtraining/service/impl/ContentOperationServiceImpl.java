@@ -4,7 +4,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.type.TypeReference;
-import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
 import org.motechproject.whp.mtraining.dto.QuestionDto;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
@@ -33,7 +32,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     @Override
     public void getFileNameAndDescriptionFromContent(CourseUnitMetadataDto courseUnitMetadataDto, String content) {
         courseUnitMetadataDto.setDescription(getFromJsonString(content, DESCRIPTION_MAPPING_NAME));
-        courseUnitMetadataDto.setFilename(getFromJsonString(content, FILENAME_MAPPING_NAME));
+        courseUnitMetadataDto.setExternalId(getFromJsonString(content, FILENAME_MAPPING_NAME));
     }
 
     @Override

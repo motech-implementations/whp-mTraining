@@ -16,18 +16,18 @@ public class CourseUnitMetadataDto {
     private String name;
     private String description;
     private CourseUnitState state;
-    private String filename;
+    private String externalId;
     private DateTime creationDate;
     private DateTime modificationDate;
 
     public CourseUnitMetadataDto() {
     }
 
-    public CourseUnitMetadataDto(long id, String name, String description, CourseUnitState state, String filename,
+    public CourseUnitMetadataDto(long id, String name, String description, CourseUnitState state, String externalId,
                                  DateTime creationDate, DateTime modificationDate) {
         this(id, name, state, creationDate, modificationDate);
         this.description = description;
-        this.filename = filename;
+        this.externalId = externalId;
     }
 
     public CourseUnitMetadataDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate) {
@@ -70,12 +70,12 @@ public class CourseUnitMetadataDto {
         this.state = state;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getExternalId() {
+        return externalId;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     @JsonSerialize(using = CustomDateSerializer.class)

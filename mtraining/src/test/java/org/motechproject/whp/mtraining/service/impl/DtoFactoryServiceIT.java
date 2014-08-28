@@ -118,7 +118,7 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
         coursePlanDto.setId(coursePlan.getId());
         coursePlanDto.setDescription(NEW_DESCRIPTION);
-        coursePlanDto.setFilename(NEW_FILENAME);
+        coursePlanDto.setExternalId(NEW_FILENAME);
 
         dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
         coursePlans = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
@@ -141,7 +141,7 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
         moduleDto.setId(course.getId());
         moduleDto.setDescription(NEW_DESCRIPTION);
-        moduleDto.setFilename(NEW_FILENAME);
+        moduleDto.setExternalId(NEW_FILENAME);
 
         dtoFactoryService.createOrUpdateFromDto(moduleDto);
         courses = mTrainingService.getCourseByName(COURSE_NAME);
@@ -164,7 +164,7 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
         chapterDto.setId(chapter.getId());
         chapterDto.setDescription(NEW_DESCRIPTION);
-        chapterDto.setFilename(NEW_FILENAME);
+        chapterDto.setExternalId(NEW_FILENAME);
 
         dtoFactoryService.createOrUpdateFromDto(chapterDto);
         chapters = mTrainingService.getChapterByName(CHAPTER_NAME);
@@ -187,7 +187,7 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
         lessonDto.setId(lesson.getId());
         lessonDto.setDescription(NEW_DESCRIPTION);
-        lessonDto.setFilename(NEW_FILENAME);
+        lessonDto.setExternalId(NEW_FILENAME);
 
         dtoFactoryService.createOrUpdateFromDto(lessonDto);
         lessons = mTrainingService.getLessonByName(LESSON_NAME);
@@ -210,7 +210,7 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
         quizDto.setId(quiz.getId());
         quizDto.setDescription(NEW_DESCRIPTION);
-        quizDto.setFilename(NEW_FILENAME);
+        quizDto.setExternalId(NEW_FILENAME);
 
         dtoFactoryService.createOrUpdateFromDto(quizDto);
         quizzes = mTrainingService.getQuizByName(QUIZ_NAME);

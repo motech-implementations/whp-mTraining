@@ -111,7 +111,7 @@ public class CourseImportServiceIT extends BasePaxIT {
         contentOperationService.getFileNameAndDescriptionFromContent(coursePlanDto, coursePlan.getContent());
         assertEquals("CourseImportServiceIT coursePlan", coursePlan.getName());
         assertEquals("coursePlan description", coursePlanDto.getDescription());
-        assertEquals("coursePlanFileName", coursePlanDto.getFilename());
+        assertEquals("coursePlanFileName", coursePlanDto.getExternalId());
 
         assertCourse(coursePlan.getCourses().get(0), coursePlan.getCourses().get(1));
     }
@@ -127,7 +127,7 @@ public class CourseImportServiceIT extends BasePaxIT {
         contentOperationService.getFileNameAndDescriptionFromContent(moduleDto, course.getContent());
 
         assertEquals(expectedName, course.getName());
-        assertEquals(expectedFileName, moduleDto.getFilename());
+        assertEquals(expectedFileName, moduleDto.getExternalId());
         assertEquals(expectedDescription, moduleDto.getDescription());
     }
 
@@ -143,7 +143,7 @@ public class CourseImportServiceIT extends BasePaxIT {
         contentOperationService.getFileNameAndDescriptionFromContent(chapterDto, chapters.get(0).getContent());
 
         assertEquals(expectedName, chapters.get(0).getName());
-        assertEquals(expectedFileName, chapterDto.getFilename());
+        assertEquals(expectedFileName, chapterDto.getExternalId());
         assertEquals(expectedDescription, chapterDto.getDescription());
     }
 
@@ -163,7 +163,7 @@ public class CourseImportServiceIT extends BasePaxIT {
 
         assertEquals(expectedName, lesson.getName());
         assertEquals(expectedStatus, lesson.getState());
-        assertEquals(expectedFileName, lessonDto.getFilename());
+        assertEquals(expectedFileName, lessonDto.getExternalId());
         assertEquals(expectedDescription, lessonDto.getDescription());
     }
 }
