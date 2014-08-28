@@ -1,5 +1,9 @@
 <div class="row col-md-12">
 
+    <div>
+        <ul ng-show="alertMessage" class="alert alert-success">{{alertMessage}}</ul>
+    </div>
+
 	<div class="ui-jqgrid-hbox" style="padding-right: 0px; width: 100%;">
 		<table class="ui-jqgrid-htable table-lightblue-nohover" style="width: 100%; height: 500px" role="grid" aria-labelledby="gbox_treeTable" cellspacing="0" cellpadding="0" border="0">
 			<thead>
@@ -30,7 +34,7 @@
                         <div ng-repeat="item in children"><i class="{{item.icon}}" />{{item.text}}</div>
                     </td>
 					<td role="gridcell" id="units" class="ui-state-default jqgrid-rownum draggable" aria-describedby="treeTable_Units">
-                        <div ng-repeat="item in nodes" ng-show="!isChildren(item.name)" idx="{{$index}}"><i class="glyphicon glyphicon-file" />{{item.name}}</div>
+                        <div ng-repeat="item in nodes" ng-show="!isChildren(item.name)" idx="{{$index}}"><i class="{{childIcon}}" />{{item.name}}</div>
                     </td>
 					
 			</tr>
@@ -38,9 +42,11 @@
 	</div>
 	<div class="buttons">
         <button class="btn btn-primary ng-binding" ng-click="publishCourse()">
+            <i class="icon-spin icon-refresh" ng-show="publishingCourse"/>
             <i class="icon-cloud-upload icon-white"></i> {{msg('mtraining.publish')}}
         </button>
 		<button class="btn btn-success ng-binding" ng-click="saveRelations()">
+            <i class="icon-spin icon-refresh" ng-show="savingRelations"/>
             <i class="icon-save icon-white"></i> {{msg('mtraining.save')}}
         </button>
 		<button class="btn btn-danger ng-binding" ng-click="removeMember()">

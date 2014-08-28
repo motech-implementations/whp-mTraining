@@ -41,10 +41,12 @@
          });
 
          function receiveEventHandler(event, ui) {
+            $scope.alertMessage = undefined;
             var item = $scope.nodes[ui.item.attr('idx')];
-            var parent = $scope.data.instance.get_node($scope.data.selected).original;
+            console.log($scope.jstree);
+            var parent = $scope.jstree.get_node($scope.jstree.get_selected()).original;
             createNode(item.id, item.name, parent.id, parent.level + 1, $scope.childType);
-            $scope.data.instance.create_node(parent.id, jArray[iterator], 'last', false, false);
+            $scope.jstree.create_node(parent.id, jArray[iterator], 'last', false, false);
          }
 
         function createRelations(o, type, relations) {
@@ -61,7 +63,7 @@
                               }).length == 0) {
                         relations.push(relation);
                     }
-                    var item = $scope.data.instance.get_node(el);
+                    var item = $scope.jstree.get_node(el);
                     if (item.original.type == 'module') {
                         createRelations(item, 'Course', relations);
                     } else if (item.original.type == 'chapter') {
@@ -73,28 +75,42 @@
 
         $scope.publishCourse = function() {
             var idx = $('#jstree').jstree('get_selected');
-            var node = $scope.data.instance.get_node(idx);
-            if (node.original && node.original.type === 'course') {
+            var node = $scope.jstree.get_node(idx);
+            if (node && node.original && node.original.type === 'course') {
                 var id = id_hashmap[idx];
-                $.get("../mtraining/web-api/publish/" + id, function( data ) { });
+                $scope.publishingCourse = true;
+                $.get("../mtraining/web-api/publish/" + id, function() {
+                    $scope.publishingCourse = false;
+                    $scope.alertMessage = $scope.msg('mtraining.publishedCourse');
+                    $scope.$apply();
+                 });
+            } else {
+                $("#errorMessage").text($scope.msg('mtraining.error.noCourseSelected'));
+                $("#errorDialog").modal('show');
             }
          }
 
         $scope.saveRelations = function() {
-            var courses = $scope.data.instance.get_node(0).children;
+            var courses = $scope.jstree.get_node(0).children;
             var relations = [];
             $.each(courses, function(idx, el) {
-                createRelations($scope.data.instance.get_node(el), 'CoursePlan', relations);
+                createRelations($scope.jstree.get_node(el), 'CoursePlan', relations);
             });
-            $.postJSON('../mtraining/web-api/updateRelations', relations, function(response) { });
+            $scope.savingRelations = true;
+            $.postJSON('../mtraining/web-api/updateRelations', relations, function() {
+                $scope.savingRelations = false;
+                $scope.alertMessage = $scope.msg('mtraining.savedRelations');
+                $scope.$apply();
+            });
         }
 
         $scope.removeMember = function() {
             var idx = $('#jstree').jstree('get_selected');
-            var node = $scope.data.instance.get_node(idx);
+            var node = $scope.jstree.get_node(idx);
             var children = node.children_d;
-            $scope.data.instance.delete_node(children);
-            $scope.data.instance.delete_node(node);
+            $scope.jstree.delete_node(children);
+            $scope.jstree.delete_node(node);
+            $scope.alertMessage = undefined;
         }
 
         $scope.cancel = function() {
@@ -133,6 +149,7 @@
         //Get JSON from server and rewrite it to tree's JSON format
         function initTree() {
             $('#jstree').jstree("destroy");
+            $scope.alertMessage = undefined;
             var jsonURI = "../mtraining/web-api/all";
             $.getJSON(jsonURI,function (data) {
                 fillJson(data, true, 0, "#");
@@ -171,9 +188,9 @@
             });
             // selection changed
             $('#jstree').on("changed.jstree", function (e, data) {
-                $scope.data = data;
                 $scope.children = []
                 $scope.nodes = [];
+                $scope.alertMessage = undefined;
                 var selected = data.instance.get_node(data.selected);
                 if (selected.children) {
                     $.each(selected.children, function(idx, el) {
@@ -185,18 +202,22 @@
                     var type = selected.original.type;
                     if (type === "course") {
                         $scope.nodes = $scope.modules;
+                        $scope.childIcon = $scope.jstree.settings.types.module.icon;
                         $scope.childType = "module";
                     } else if (type === "module") {
                         $scope.nodes = $scope.chapters;
+                        $scope.childIcon = $scope.jstree.settings.types.chapter.icon;
                         $scope.childType = "chapter";
                     } else if (type === "chapter") {
                         $scope.nodes = $scope.lessons;
+                        $scope.childIcon = $scope.jstree.settings.types.lesson.icon;
                         $scope.childType = "lesson";
                     }
                     $scope.$apply();
                 }
             });
             $('#jstree').jstree("refresh");
+            $scope.jstree = $.jstree.reference('#jstree');
         }
 
         function fillJson(data, init, level, par) {
