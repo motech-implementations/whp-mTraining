@@ -104,8 +104,9 @@ public class CourseImportService {
                 lessons.put(lesson, request);
 
             } else if (type.equalsIgnoreCase("Question")) {
+                String options = request.getOptions().replace(';', ',');
                 Question question = new Question(contentOperationService.codeIntoQuestion(request.getNodeName(), request.getDescription(), UUID.randomUUID()),
-                        contentOperationService.codeAnswersAndFilesNamesIntoAnswer(request.getCorrectAnswer(), request.getOptions(), request.getFileName(), request.getCorrectAnswerFileName()));
+                        contentOperationService.codeAnswersAndFilesNamesIntoAnswer(request.getCorrectAnswer(), options, request.getFileName(), request.getCorrectAnswerFileName()));
                 questions.put(question, request);
             }
         }
