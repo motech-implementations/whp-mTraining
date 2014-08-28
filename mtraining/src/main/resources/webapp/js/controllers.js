@@ -1006,11 +1006,31 @@
 
     controllers.controller('providersController', ['$scope', 'Provider', function ($scope, Provider) {
 
+        $scope.getLocations = function() {
+            $scope.fetchingLocations = true;
+            $.getJSON('../mtraining/web-api/blockLocations', function(data) {
+                $scope.locations = data;
+                $scope.fetchingLocations = false;
+                $scope.$apply();
+                $("#location").select2({
+                    allowClear: true,
+                    placeholder: "Select a location"
+                    });
+            });
+        }
+
         $scope.clearProvider = function() {
             $scope.creatingProvider = false;
             $scope.updatingProvider = false;
             $scope.savingProvider = false;
+            $scope.selectedLocation = undefined;
             $scope.createProvider();
+            $scope.getLocations();
+        }
+
+        $scope.getLocationFromLocations = function () {
+            var idx = $scope.selectedLocation;
+            $scope.provider.location = $scope.locations[idx];
         }
 
         $scope.$on('providerClick', function(event, providerId, remediId, callerId) {
@@ -1018,7 +1038,19 @@
             $scope.errorRemediId = undefined;
             $scope.errorCallerId = undefined;
             $scope.errorStatus = undefined;
-            $scope.provider = Provider.get({ id: providerId });
+            $scope.provider = Provider.get({ id: providerId }, function () {
+                if ($scope.provider.location) {
+                    var result = $.grep($scope.locations, function(e) {
+                        return e.id == $scope.provider.location.id;
+                    });
+                    var idx = $scope.locations.indexOf(result[0]);
+                    $scope.selectedLocation = idx;
+                }
+                else {
+                    $scope.selectedLocation = undefined;
+                }
+                $("#location").select2('val', $scope.selectedLocation);
+            });
             $scope.oldRemediId = remediId;
             $scope.oldCallerId = callerId;
             $scope.updatingProvider = true;
@@ -1040,6 +1072,7 @@
                 return;
             }
             $scope.savingProvider = true;
+            $scope.getLocationFromLocations();
             $scope.provider.$save(function(c) {
                 // c => saved provider object
                 $scope.alertMessage = $scope.msg('mtraining.createdProvider');
@@ -1053,6 +1086,7 @@
                 return;
             }
             $scope.savingProvider = true;
+            $scope.getLocationFromLocations();
             $scope.provider.$update({ id:$scope.provider.id }, function (c) {
                 // c => updated provider object
                 $scope.alertMessage = $scope.msg('mtraining.updatedProvider');

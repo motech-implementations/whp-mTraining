@@ -572,7 +572,7 @@
                         name: 'remediId',
                         index: 'remediId',
                         align: 'center',
-                        width: 100
+                        width: 70
                     }, {
                         name: 'callerId',
                         index: 'callerId',
@@ -583,23 +583,24 @@
                         name: 'providerStatus',
                         index: 'providerStatus',
                         align: 'center',
-                        width: 120
+                        width: 110
                     }, {
-                        name: 'location.name',
-                        index: 'location.name',
+                        name: 'location',
+                        index: 'location',
                         align: 'center',
-                        width: 90
+                        width: 130,
+                        formatter: locationFormatter
                     }, {
                         name: 'creationDate',
                         index: 'creationDate',
                         align: 'center',
-                        width: 70,
+                        width: 50,
                         formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     }, {
                         name: 'modificationDate',
                         index: 'modificationDate',
                         align: 'center',
-                        width: 70,
+                        width: 50,
                         formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     }],
                     pager: '#' + attrs.providersGrid,
@@ -627,6 +628,10 @@
                         scope.$emit('providerClick', rowData.id, rowData.remediId, rowData.callerId);
                     }
                 });
+
+                function locationFormatter(cellValue, options, rowObject) {
+                    return cellValue.state + " - " + cellValue.district + " - " + cellValue.block;
+                }
             }
         };
     });
