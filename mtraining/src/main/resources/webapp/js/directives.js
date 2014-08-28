@@ -630,6 +630,9 @@
                 });
 
                 function locationFormatter(cellValue, options, rowObject) {
+                    if (!cellValue){
+                        return '';
+                    }
                     return cellValue.state + " - " + cellValue.district + " - " + cellValue.block;
                 }
             }

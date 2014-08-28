@@ -44,6 +44,7 @@ public class ProviderImportService {
         Location location = locationService.getBlockByName(providerCsvRequest.getBlock());
         if (location == null) {
             location = new Location(providerCsvRequest.getBlock(), providerCsvRequest.getDistrict(), providerCsvRequest.getState());
+            locationService.createLocation(location);
         }
 
         return new Provider(providerCsvRequest.getRemedi_id(), Long.valueOf(providerCsvRequest.getPrimary_contact()),

@@ -1,7 +1,9 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.ProviderDataService;
+import org.motechproject.whp.mtraining.service.LocationService;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
@@ -21,8 +23,12 @@ public class ProviderServiceImpl implements ProviderService {
     @Autowired
     private ProviderDataService providerDataService;
 
+    @Autowired
+    private LocationService locationService;
+
     @Override
     public Provider createProvider(Provider provider) {
+        provider.setLocation(getLocationFromDatabase(provider.getLocation()));
         return providerDataService.create(provider);
     }
 
@@ -32,7 +38,7 @@ public class ProviderServiceImpl implements ProviderService {
         providerToUpdate.setRemediId(provider.getRemediId());
         providerToUpdate.setCallerId(provider.getCallerId());
         providerToUpdate.setProviderStatus(provider.getProviderStatus());
-        providerToUpdate.setLocation(provider.getLocation());
+        providerToUpdate.setLocation(getLocationFromDatabase(provider.getLocation()));
         return providerDataService.update(providerToUpdate);
     }
 
@@ -70,5 +76,12 @@ public class ProviderServiceImpl implements ProviderService {
         if (provider.getProviderStatus() == ProviderStatus.NOT_WORKING_PROVIDER)
             return NOT_WORKING_PROVIDER;
         return OK;
+    }
+
+    private Location getLocationFromDatabase(Location location) {
+        if (location != null) {
+            return locationService.getLocationById(location.getId());
+        }
+        return null;
     }
 }
