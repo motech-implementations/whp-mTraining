@@ -7,6 +7,8 @@ import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
 import org.motechproject.whp.mtraining.util.CustomDateSerializer;
 
+import java.util.UUID;
+
 /**
  * Generic DTO for mTraining units
  */
@@ -19,6 +21,8 @@ public class CourseUnitMetadataDto {
     private String externalId;
     private DateTime creationDate;
     private DateTime modificationDate;
+
+    private UUID contentId;
 
     public CourseUnitMetadataDto() {
     }
@@ -96,5 +100,13 @@ public class CourseUnitMetadataDto {
 
     public void setModificationDate(DateTime modificationDate) {
         this.modificationDate = modificationDate;
+    }
+
+    public UUID getContentId() {
+        return contentId;
+    }
+
+    public void setContentId(UUID contentId) {
+        this.contentId = contentId;
     }
 }

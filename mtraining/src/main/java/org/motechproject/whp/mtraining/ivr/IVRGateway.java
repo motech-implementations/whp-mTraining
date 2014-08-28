@@ -3,10 +3,13 @@ package org.motechproject.whp.mtraining.ivr;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.whp.mtraining.WebClient;
 import org.motechproject.mtraining.domain.Course;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.exception.MTrainingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +39,7 @@ public class IVRGateway {
         this.ivrResponseParser = ivrResponseParser;
     }
 
-    public IVRResponse postCourse(Course course) {
+    public IVRResponse postCourse(CoursePlanDto course) {
         try {
             LOGGER.info(String.format("Publishing Course to IVR Course name %s", course.getName()));
             String courseToPublish = toJson(course);
@@ -69,13 +72,12 @@ public class IVRGateway {
 
     private String toJson(Object obj) {
         ObjectMapper objectMapper = new ObjectMapper();
-        StringWriter writer = new StringWriter();
         try {
-            objectMapper.writeValue(writer, obj);
-        } catch (IOException exception) {
+            JsonNode jsonObj = objectMapper.valueToTree(obj);
+            return jsonObj.toString();
+        } catch (Exception exception) {
             throw new MTrainingException("Error while converting course to JSON", exception);
         }
-        return writer.toString();
     }
 
     //Expect IVR to return 200 as per doc but handling for 201 as well

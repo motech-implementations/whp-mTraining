@@ -41,15 +41,15 @@ public class CourseTest {
     public void shouldRemoveInactiveContent() {
 //        CoursePlan cp001 = buildCourse();
 //
-//        assertThat(cp001.getCourses().size(), Is.is(2));
+//        assertThat(cp001.getModules().size(), Is.is(2));
 //
 //        //TODO Uncomment or remove test
 //        //cp001.removeInactiveContent();
 //
-//        assertThat(cp001.getCourses().size(), Is.is(1));
+//        assertThat(cp001.getModules().size(), Is.is(1));
 //
-//        Course course = cp001.getCourses().get(0);
-//        assertThat(course.getState(), Is.is(CourseUnitState.Active));
+//        Course course = cp001.getModules().get(0);
+//        assertThat(course.getName(), Is.is(CourseUnitState.Active));
 //        assertThat(course.getName(), Is.is("c001"));
 //
 //        List<Chapter> chapters = course.getChapters();

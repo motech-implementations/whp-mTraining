@@ -40,8 +40,6 @@
             receive: receiveEventHandler
          });
 
-         function publish() { }
-
          function receiveEventHandler(event, ui) {
             var item = $scope.nodes[ui.item.attr('idx')];
             var parent = $scope.data.instance.get_node($scope.data.selected).original;
@@ -72,6 +70,15 @@
                 });
             }
         }
+
+        $scope.publishCourse = function() {
+            var idx = $('#jstree').jstree('get_selected');
+            var node = $scope.data.instance.get_node(idx);
+            if (node.original && node.original.type === 'course') {
+                var id = id_hashmap[idx];
+                $.get("../mtraining/web-api/publish/" + id, function( data ) { });
+            }
+         }
 
         $scope.saveRelations = function() {
             var courses = $scope.data.instance.get_node(0).children;
@@ -218,7 +225,7 @@
 
             data.forEach(function(item) {
                 var type = null;
-                if (item.courses) {
+                if (item.modules) {
                     type = "course";
                 } else if (item.chapters) {
                     type = "module";
@@ -229,7 +236,7 @@
                 }
                 createNode(item.id, item.name, par, level, type);
 
-                var child_table = item.courses || item.chapters || item.lessons || [];
+                var child_table = item.modules || item.chapters || item.lessons || [];
                     if (!(child_table === 0)) {
                         fillJson(child_table, false, level+1, iterator);
                     };
@@ -260,7 +267,7 @@
             $scope.errorName = undefined;
             $scope.creatingCourse = true;
             $scope.course = new Course();
-            $scope.course.courses = [];
+            $scope.course.modules = [];
         }
 
         $scope.saveCourse = function() {

@@ -48,6 +48,15 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return allCoursesPlanDto;
     }
 
+    public CoursePlanDto getCourseDtoWithChildCollections(long courseId) {
+        CoursePlan course = coursePlanService.getCoursePlanById(courseId);
+        CoursePlanDto coursePlanDto = convertToCoursePlanDto(course);
+
+        setChildCollections(coursePlanDto);
+
+        return coursePlanDto;
+    }
+
     private void setChildCollections(CoursePlanDto coursePlanDto) {
         List<ModuleDto> childModuleDtos;
         List<ChapterDto> childChapterDtos;
@@ -60,7 +69,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             }
             moduleDto.setChapters(childChapterDtos);
         }
-        coursePlanDto.setCourses(childModuleDtos);
+        coursePlanDto.setModules(childModuleDtos);
     }
 
     @Override
@@ -175,6 +184,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     private CoursePlanDto convertToCoursePlanDto(CoursePlan coursePlan) {
         CoursePlanDto coursePlanDto = new CoursePlanDto(coursePlan.getId(), coursePlan.getName(), coursePlan.getState(),
                 coursePlan.getCreationDate(), coursePlan.getModificationDate());
+        coursePlanDto.setContentId(contentOperationService.getUuidFromJsonString(coursePlan.getContent()));
 
         contentOperationService.getFileNameAndDescriptionFromContent(coursePlanDto, coursePlan.getContent());
 
@@ -194,6 +204,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     private ModuleDto convertToModuleDto(Course module) {
         ModuleDto moduleDto = new ModuleDto(module.getId(), module.getName(), module.getState(),
                 module.getCreationDate(), module.getModificationDate());
+        moduleDto.setContentId(contentOperationService.getUuidFromJsonString(module.getContent()));
 
         contentOperationService.getFileNameAndDescriptionFromContent(moduleDto, module.getContent());
 
@@ -215,6 +226,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     private ChapterDto convertToChapterDto(Chapter chapter) {
         ChapterDto chapterDto = new ChapterDto(chapter.getId(), chapter.getName(), chapter.getState(),
                 chapter.getCreationDate(), chapter.getModificationDate());
+        chapterDto.setContentId(contentOperationService.getUuidFromJsonString(chapter.getContent()));
 
         contentOperationService.getFileNameAndDescriptionFromContent(chapterDto, chapter.getContent());
 
@@ -239,6 +251,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     private LessonDto convertToLessonDto(Lesson lesson) {
         LessonDto lessonDto = new LessonDto(lesson.getId(), lesson.getName(), lesson.getState(),
                 lesson.getCreationDate(), lesson.getModificationDate());
+        lessonDto.setContentId(contentOperationService.getUuidFromJsonString(lesson.getContent()));
 
         contentOperationService.getFileNameAndDescriptionFromContent(lessonDto, lesson.getContent());
 
@@ -269,6 +282,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     private QuizDto convertToQuizDto(Quiz quiz) {
         QuizDto quizDto = new QuizDto(quiz.getId(), quiz.getName(), quiz.getState(),
                 quiz.getCreationDate(), quiz.getModificationDate(), quiz.getPassPercentage(), convertToQuestionDtos(quiz.getQuestions()));
+        quizDto.setContentId(contentOperationService.getUuidFromJsonString(quiz.getContent()));
 
         contentOperationService.getFileNameAndDescriptionFromContent(quizDto, quiz.getContent());
         quizDto.setInRelation(quizIsInRelation(quiz.getId()));

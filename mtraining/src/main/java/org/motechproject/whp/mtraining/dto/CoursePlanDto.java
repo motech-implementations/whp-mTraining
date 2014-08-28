@@ -38,11 +38,11 @@ public class CoursePlanDto extends CourseUnitMetadataDto {
         super(id, name, state, creationDate, modificationDate);
     }
 
-    public List<ModuleDto> getCourses() {
+    public List<ModuleDto> getModules() {
         return modules;
     }
 
-    public void setCourses(List<ModuleDto> modules) {
+    public void setModules(List<ModuleDto> modules) {
         this.modules = modules;
     }
 

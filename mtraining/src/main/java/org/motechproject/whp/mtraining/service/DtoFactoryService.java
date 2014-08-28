@@ -13,6 +13,8 @@ public interface DtoFactoryService {
 
     List<CoursePlanDto> getAllCourseDtosWithChildCollections();
 
+    CoursePlanDto getCourseDtoWithChildCollections(long courseId);
+
     void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto);
 
     public CourseUnitMetadataDto getDto(CourseUnitMetadata courseUnitMetadata);

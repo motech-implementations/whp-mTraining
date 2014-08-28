@@ -3,7 +3,9 @@ package org.motechproject.whp.mtraining.ivr;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.mtraining.service.MTrainingService;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.CourseAdmin;
 import org.motechproject.mtraining.domain.Course;
@@ -13,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CoursePublisher {
@@ -24,28 +28,32 @@ public class CoursePublisher {
     private IVRGateway ivrGateway;
     private CourseAdmin courseAdmin;
     private CoursePublicationAttemptService coursePublicationAttemptService;
+    private DtoFactoryService dtoFactoryService;
 
     private Integer numberOfAttempts = 1;
 
     @Autowired
-    public CoursePublisher(MTrainingService courseService, IVRGateway ivrGateway, CourseAdmin courseAdmin, CoursePublicationAttemptService coursePublicationAttemptService) {
+    public CoursePublisher(MTrainingService courseService, IVRGateway ivrGateway, CourseAdmin courseAdmin,
+                           CoursePublicationAttemptService coursePublicationAttemptService, DtoFactoryService dtoFactoryService) {
         this.courseService = courseService;
         this.ivrGateway = ivrGateway;
         this.courseAdmin = courseAdmin;
         this.coursePublicationAttemptService = coursePublicationAttemptService;
+        this.dtoFactoryService = dtoFactoryService;
     }
 
     public void publish(long courseId) {
         if (numberOfAttempts > MAX_ATTEMPTS) {
             LOGGER.info(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s", numberOfAttempts, currentDateTime(), courseId));
+            numberOfAttempts = 1;
             return;
         }
 
-        Course course = courseService.getCourseById(courseId);
-        if (course.getState() != CourseUnitState.Active) {
-            LOGGER.warn(String.format("[%s] Course with contentId %s inactive and hence not being published to IVR ", currentDateTime(), courseId));
-            return;
-        }
+        CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseId);
+//        if (course.getState() != CourseUnitState.Active) {
+//            LOGGER.warn(String.format("[%s] Course with contentId %s inactive and hence not being published to IVR ", currentDateTime(), courseId));
+//            return;
+//        }
 
         LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s", numberOfAttempts, currentDateTime(), courseId));
 
