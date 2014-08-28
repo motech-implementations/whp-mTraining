@@ -10,20 +10,20 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.commons.api.MotechException;
+import org.motechproject.mtraining.domain.Course;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.RequestInfo;
 import org.motechproject.whp.mtraining.WebClient;
-import org.motechproject.mtraining.domain.Course;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -40,6 +40,8 @@ public class IVRGatewayIT {
     private IVRServer ivrServer;
 
     @Autowired
+    private DtoFactoryService dtoFactoryService;
+    @Autowired
     private SettingsFacade settingsFacade;
 
     IVRResponseParser ivrResponseHandler = new IVRResponseParser();
@@ -55,7 +57,7 @@ public class IVRGatewayIT {
     public void shouldPostCourseJSONToIVR() throws IOException {
         Course course = new CourseBuilder().build();
 
-        new IVRGateway(settingsFacade, new WebClient(), ivrResponseHandler).postCourse(course);
+        new IVRGateway(settingsFacade, new WebClient(), ivrResponseHandler).postCourse((CoursePlanDto)dtoFactoryService.getDto(course));
 
         RequestInfo requestInfo = ivrServer.detailForRequest("/ivr");
         String post_data = requestInfo.getRequestData().get("post_body");

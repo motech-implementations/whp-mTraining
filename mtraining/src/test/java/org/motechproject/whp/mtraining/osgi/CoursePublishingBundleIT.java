@@ -5,8 +5,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.mtraining.domain.Chapter;
+import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.mtraining.domain.Lesson;
+import org.motechproject.mtraining.domain.Question;
 import org.motechproject.mtraining.service.MTrainingService;
-import org.motechproject.mtraining.domain.*;
 import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.testing.osgi.BasePaxIT;
 import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
@@ -15,15 +19,16 @@ import org.motechproject.testing.utils.WaitCondition;
 import org.motechproject.whp.mtraining.IVRServer;
 import org.motechproject.whp.mtraining.RequestInfo;
 import org.motechproject.whp.mtraining.WebClient;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.ivr.IVRGateway;
 import org.motechproject.whp.mtraining.ivr.IVRResponseParser;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerSuite;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -45,6 +50,7 @@ public class CoursePublishingBundleIT extends BasePaxIT {
 
     protected IVRServer ivrServer;
     protected List<String> coursesPublished;
+    protected DtoFactoryService dtoFactoryService;
 
     @Inject
     private MTrainingService mTrainingService;
@@ -72,7 +78,7 @@ public class CoursePublishingBundleIT extends BasePaxIT {
     public void testThatCourseIsPublishedToIVR() throws IOException, InterruptedException {
         Course cs001 = buildCourse();
         mTrainingService.createCourse(cs001);
-        new IVRGateway(mTrainingSettings, new WebClient(), ivrResponseHandler).postCourse(cs001);
+        new IVRGateway(mTrainingSettings, new WebClient(), ivrResponseHandler).postCourse((CoursePlanDto)dtoFactoryService.getDto(cs001));
 
         new Wait(new WaitCondition() {
             @Override

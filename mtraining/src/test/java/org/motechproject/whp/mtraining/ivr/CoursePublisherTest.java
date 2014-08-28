@@ -12,7 +12,9 @@ import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.CourseAdmin;
 import org.motechproject.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +35,7 @@ public class CoursePublisherTest {
     private CoursePublicationAttemptService coursePublicationAttemptService;
     private CourseAdmin courseAdmin;
     private CoursePublisher coursePublisher;
+    private DtoFactoryService dtoFactoryService;
 
     @Before
     public void before() {
@@ -40,7 +43,8 @@ public class CoursePublisherTest {
         ivrGateway = mock(IVRGateway.class);
         coursePublicationAttemptService = mock(CoursePublicationAttemptService.class);
         courseAdmin = mock(CourseAdmin.class);
-        coursePublisher = new CoursePublisher(mTrainingService, ivrGateway, courseAdmin, coursePublicationAttemptService);
+
+        coursePublisher = new CoursePublisher(mTrainingService, ivrGateway, courseAdmin, coursePublicationAttemptService, dtoFactoryService);
     }
 
     @Test
@@ -50,11 +54,11 @@ public class CoursePublisherTest {
 
 
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.OK);
-        when(ivrGateway.postCourse(any(Course.class))).thenReturn(ivrResponse);
+        when(ivrGateway.postCourse(any(CoursePlanDto.class))).thenReturn(ivrResponse);
 
         coursePublisher.publish(cs001);
 
-        ArgumentCaptor<Course> courseArgumentCaptor = ArgumentCaptor.forClass(Course.class);
+        ArgumentCaptor<CoursePlanDto> courseArgumentCaptor = ArgumentCaptor.forClass(CoursePlanDto.class);
         verify(ivrGateway).postCourse(courseArgumentCaptor.capture());
 
         ArgumentCaptor<CoursePublicationAttempt> coursePublicationAttemptArgumentCaptor = ArgumentCaptor.forClass(CoursePublicationAttempt.class);
@@ -64,11 +68,10 @@ public class CoursePublisherTest {
         inOrder.verify(coursePublicationAttemptService).createCoursePublicationAttempt(coursePublicationAttemptArgumentCaptor.capture());
         //TODO inOrder.verify(mTrainingService).publish(contentIdentifierDto);
 
-        Course publishedCourse = courseArgumentCaptor.getValue();
+        CoursePlanDto publishedCourse = courseArgumentCaptor.getValue();
 
         assertThat(publishedCourse.getName(), Is.is("NA001"));
-        assertThat(publishedCourse.getContent(), Is.is("This is a test course"));
-        assertThat(publishedCourse.getChapters().isEmpty(), Is.is(true));
+        assertThat(publishedCourse.getDescription(), Is.is("This is a test course"));
 
         CoursePublicationAttempt coursePublicationAttempt = coursePublicationAttemptArgumentCaptor.getValue();
         assertThat(coursePublicationAttempt.getCourseId(), Is.is(cs001));
@@ -87,11 +90,11 @@ public class CoursePublisherTest {
         when(mTrainingService.getCourseById(courseId)).thenReturn(course);
 
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.OK);
-        when(ivrGateway.postCourse(any(Course.class))).thenReturn(ivrResponse);
+        when(ivrGateway.postCourse(any(CoursePlanDto.class))).thenReturn(ivrResponse);
 
         coursePublisher.publish(courseId);
 
-        verify(ivrGateway).postCourse(any(Course.class));
+        verify(ivrGateway).postCourse(any(CoursePlanDto.class));
         verify(mTrainingService).getCourseById(courseId);
         verify(coursePublicationAttemptService).createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, true));
     }
@@ -101,7 +104,7 @@ public class CoursePublisherTest {
         Course course = new Course("CS001", CourseUnitState.Inactive, "Course file name");
         when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
-        when(ivrGateway.postCourse(any(Course.class))).thenReturn(new IVRResponse(800, "OK"));
+        when(ivrGateway.postCourse(any(CoursePlanDto.class))).thenReturn(new IVRResponse(800, "OK"));
 
         coursePublisher.publish(cs001);
 
@@ -115,7 +118,7 @@ public class CoursePublisherTest {
         Course course = new Course("CS001", CourseUnitState.Inactive, "Course file name", null);
         when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
-        given(ivrGateway.postCourse(any(Course.class))).willReturn(ivrResponse);
+        given(ivrGateway.postCourse(any(CoursePlanDto.class))).willReturn(ivrResponse);
 
         coursePublisher.publish(cs001);
 
@@ -130,11 +133,11 @@ public class CoursePublisherTest {
         Course course = new Course("CS001", CourseUnitState.valueOf(""), "Course file name", null);
         when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
-        given(ivrGateway.postCourse(any(Course.class))).willReturn(ivrResponse);
+        given(ivrGateway.postCourse(any(CoursePlanDto.class))).willReturn(ivrResponse);
 
         coursePublisher.publish(cs001);
 
-        verify(ivrGateway, times(CoursePublisher.MAX_ATTEMPTS)).postCourse(any(Course.class));
+        verify(ivrGateway, times(CoursePublisher.MAX_ATTEMPTS)).postCourse(any(CoursePlanDto.class));
         verify(courseAdmin, times(CoursePublisher.MAX_ATTEMPTS)).notifyCoursePublishFailure("CS001", ivrResponse);
     }
 
@@ -145,7 +148,7 @@ public class CoursePublisherTest {
 
         coursePublisher.publish(cs001);
 
-        verify(ivrGateway, never()).postCourse(any(Course.class));
+        verify(ivrGateway, never()).postCourse(any(CoursePlanDto.class));
     }
 
 
@@ -153,7 +156,7 @@ public class CoursePublisherTest {
     public void shouldNotPublishToMTrainingIfCourseIsNotPublishedToIVR() throws Exception {
         Course course = new Course("CS001", CourseUnitState.valueOf(""), "Course file name", null);
         when(mTrainingService.getCourseById(cs001)).thenReturn(course);
-        when(ivrGateway.postCourse(any(Course.class))).thenReturn(new IVRResponse(1001, "Missing Files"));
+        when(ivrGateway.postCourse(any(CoursePlanDto.class))).thenReturn(new IVRResponse(1001, "Missing Files"));
 
         coursePublisher.publish(cs001);
 
