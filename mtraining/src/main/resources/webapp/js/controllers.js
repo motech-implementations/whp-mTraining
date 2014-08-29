@@ -68,11 +68,10 @@
                                         $scope.jstree.delete_node(i);
                                         createNode(item.id, item.name, node.parent, parent.level + 1, type);
                                         $scope.jstree.create_node(node.parent, jArray[iterator], 'last', false, false);
+                                        onChanged();
                                     }
                                 }
                             }
-                            onChanged();
-                            $scope.$apply();
                         }
                     }
                 });
@@ -80,10 +79,18 @@
                 var item = $scope.nodes[ui.item.attr('idx')];
             }
             if (!cancelled) {
-                createNode(item.id, item.name, parent.id, parent.level + 1, type);
-                $scope.jstree.create_node(parent.id, jArray[iterator], 'last', false, false);
-                onChanged();
-                $scope.$apply();
+                // create nodes
+                for(var i = 0; i < id_hashmap.length; i++) {
+                     if (id_hashmap[i] == id_hashmap[parent.id]) {
+                        createNode(item.id, item.name, i, parent.level + 1, type);
+                        $scope.jstree.create_node(i, jArray[iterator], 'last', false, false);
+                    }
+                }
+                if (type === 'quiz') {
+                    onChanged();
+                } else {
+                    $scope.$apply();
+                }
             }
          }
 
@@ -150,18 +157,16 @@
         $scope.removeMember = function() {
             var idx = $('#jstree').jstree('get_selected');
             var node = $scope.jstree.get_node(idx);
-            if (node.type === 'quiz') {
-                var quizId = id_hashmap[node.id];
-                for(var i = 0; i < id_hashmap.length; i++) {
-                    if (id_hashmap[i] == id_hashmap[node.id]) {
+            $scope.alertMessage = undefined;
+            var id = id_hashmap[node.id];
+            for(var i = 0; i < id_hashmap.length; i++) {
+                if (id_hashmap[i] == id_hashmap[node.id]) {
+                    var n = $scope.jstree.get_node(i);
+                    if (id_hashmap[n.parent] == id_hashmap[node.parent]) {
                         $scope.jstree.delete_node(i);
+                        $scope.jstree.delete_node(n.children);
                     }
                 }
-            } else {
-                var children = node.children_d;
-                $scope.jstree.delete_node(children);
-                $scope.jstree.delete_node(node);
-                $scope.alertMessage = undefined;
             }
         }
 
