@@ -68,7 +68,6 @@
                                         $scope.jstree.delete_node(i);
                                         createNode(item.id, item.name, node.parent, parent.level + 1, type);
                                         $scope.jstree.create_node(node.parent, jArray[iterator], 'last', false, false);
-                                        onChanged();
                                     }
                                 }
                             }
@@ -86,12 +85,11 @@
                         $scope.jstree.create_node(i, jArray[iterator], 'last', false, false);
                     }
                 }
-                if (type === 'quiz') {
-                    onChanged();
-                } else {
-                    $scope.$apply();
-                }
             }
+            if (type === 'quiz') {
+                onChanged();
+            }
+            $scope.$apply();
          }
 
         var chaptersWithQuizzes = [];
@@ -264,25 +262,25 @@
                 $.each(selected.children, function(idx, el) {
                     $scope.children.push($scope.jstree.get_node(el));
                 });
-                $scope.$apply();
+                $scope.$digest();
             }
             if (selected.original && selected.original.type) {
                 var type = selected.original.type;
-                if (type === "course") {
+                if (type == "course") {
                     $scope.nodes = $scope.modules;
                     $scope.childIcon = $scope.jstree.settings.types.module.icon;
                     $scope.childType = "module";
-                } else if (type === "module") {
+                } else if (type == "module") {
                     $scope.nodes = $scope.chapters;
                     $scope.childIcon = $scope.jstree.settings.types.chapter.icon;
                     $scope.childType = "chapter";
-                } else if (type === "chapter") {
+                } else if (type == "chapter") {
                     $scope.nodes = $scope.lessons;
                     $scope.childIcon = $scope.jstree.settings.types.lesson.icon;
                     $scope.childType = "lesson";
                     $scope.quizNodes = $scope.quizzes;
                 }
-                $scope.$apply();
+                $scope.$digest();
             }
         }
 
