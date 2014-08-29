@@ -1,7 +1,6 @@
 package org.motechproject.whp.mtraining.dto;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonView;
 import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 
@@ -100,13 +99,11 @@ public class QuestionDto {
     }
 
     @JsonView({PublishCourseView.class})
-    @JsonProperty("answer")
-    public AnswerDto getAnswerDto() {
+    public AnswerDto getAnswer() {
         return new AnswerDto(correctOption, explainingAnswerFilename);
     }
 
     @JsonIgnore
-    @JsonProperty("answer")
-    public void setAnswerDTOMock() {
+    public void setAnswer(AnswerDto answerDto) {
     }
 }

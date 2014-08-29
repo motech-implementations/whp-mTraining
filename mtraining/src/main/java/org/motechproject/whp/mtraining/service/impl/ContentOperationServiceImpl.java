@@ -64,7 +64,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     @Override
     public void getAnswersAndFilesNamesFromAnswer(QuestionDto questionDto, String answer) {
         questionDto.setCorrectOption(getFromJsonString(answer, ANSWER_MAPPING_NAME));
-        questionDto.setOptions((List<Integer>)getListFromJsonString(answer, OPTIONS_MAPPING_NAME));
+        questionDto.setOptions(getIntegerListFromJsonString(answer, OPTIONS_MAPPING_NAME));
         questionDto.setExternalId(getFromJsonString(answer, FILENAME_MAPPING_NAME));
         questionDto.setExplainingAnswerFilename(getFromJsonString(answer, ANSWER_FILENAME_MAPPING_NAME));
     }
@@ -84,7 +84,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         return UUID.fromString(getFromJsonString(content, CONTENT_ID_MAPPING_NAME));
     }
 
-    private List<Integer> getListFromJsonString(String jsonString, String mappingName) {
+    private List<Integer> getIntegerListFromJsonString(String jsonString, String mappingName) {
         if (jsonString == null){
             return null;
         }
@@ -98,11 +98,9 @@ public class ContentOperationServiceImpl implements ContentOperationService {
             LOG.error("mtraining.error.getFromJsonString" + e.getMessage());
             return null;
         }
-        arrayNode.toString();
         for (final JsonNode objNode : arrayNode) {
             integerList.add(objNode.getIntValue());
         }
-
         return integerList;
     }
 

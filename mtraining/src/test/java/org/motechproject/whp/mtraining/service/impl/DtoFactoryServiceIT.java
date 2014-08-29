@@ -4,12 +4,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.mtraining.domain.*;
+import org.motechproject.mtraining.domain.Chapter;
+import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.mtraining.domain.Lesson;
+import org.motechproject.mtraining.domain.Quiz;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.testing.osgi.BasePaxIT;
 import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
-import org.motechproject.whp.mtraining.dto.*;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
@@ -200,7 +208,7 @@ public class DtoFactoryServiceIT extends BasePaxIT {
         List<Quiz> quizzes;
         Quiz quiz;
         QuizDto quizDto = new QuizDto(0, QUIZ_NAME, DESCRIPTION, CourseUnitState.Inactive, FILENAME,
-                ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null);
+                ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null);
 
         dtoFactoryService.createOrUpdateFromDto(quizDto);
         quizzes = mTrainingService.getQuizByName(QUIZ_NAME);
