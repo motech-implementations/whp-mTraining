@@ -19,7 +19,7 @@
         });
     };
 
-    controllers.controller('treeViewController', function ($scope) {
+    controllers.controller('treeViewController', function ($scope, Chapter, Quiz) {
         var jArray = new Array();
         var iterator = 0;
         var id_hashmap = new Array();
@@ -33,6 +33,9 @@
         $.getJSON('../mtraining/web-api/lessons', function(data) {
             $scope.lessons = data;
         });
+        $.getJSON('../mtraining/web-api/quizzes', function(data) {
+            $scope.quizzes = data;
+        });
 
         initTree();
          $('.draggable').sortable({
@@ -42,17 +45,54 @@
 
          function receiveEventHandler(event, ui) {
             $scope.alertMessage = undefined;
-            var item = $scope.nodes[ui.item.attr('idx')];
-            console.log($scope.jstree);
+            var type = $scope.childType;
+            var cancelled = false;
             var parent = $scope.jstree.get_node($scope.jstree.get_selected()).original;
-            createNode(item.id, item.name, parent.id, parent.level + 1, $scope.childType);
-            $scope.jstree.create_node(parent.id, jArray[iterator], 'last', false, false);
+            if (ui.item.attr('class').indexOf("quiz") >= 0) {
+                type = 'quiz';
+                var item = $scope.quizNodes[ui.item.attr('idx')];
+                var qid = ui.item.attr('qid');
+                $.each($scope.children, function(idx, el) {
+                    if (el.type === 'quiz') {
+                        var childId = id_hashmap[el.id];
+                        cancelled = true;
+                        if (childId == qid) {
+                            ui.sender.sortable('cancel');
+                            return false;
+                        } else {
+                            // swap nodes
+                            for(var i = 0; i < id_hashmap.length; i++) {
+                                if (id_hashmap[i] == id_hashmap[el.id]) {
+                                    var node = $scope.jstree.get_node(i);
+                                    if (id_hashmap[node.parent] == id_hashmap[parent.id]) {
+                                        $scope.jstree.delete_node(i);
+                                        createNode(item.id, item.name, node.parent, parent.level + 1, type);
+                                        $scope.jstree.create_node(node.parent, jArray[iterator], 'last', false, false);
+                                    }
+                                }
+                            }
+                            onChanged();
+                            $scope.$apply();
+                        }
+                    }
+                });
+            } else {
+                var item = $scope.nodes[ui.item.attr('idx')];
+            }
+            if (!cancelled) {
+                createNode(item.id, item.name, parent.id, parent.level + 1, type);
+                $scope.jstree.create_node(parent.id, jArray[iterator], 'last', false, false);
+                onChanged();
+                $scope.$apply();
+            }
          }
 
+        var chaptersWithQuizzes = [];
         function createRelations(o, type, relations) {
             var children = o.children;
             if (children) {
                 $.each(children, function(idx, el) {
+                    var item = $scope.jstree.get_node(el);
                     var relation = {
                        "parentId": id_hashmap[o.id],
                        "childId": id_hashmap[el],
@@ -60,10 +100,12 @@
                     };
                     if ($.grep(relations, function (el, index) {
                                 return el.parentId == relation.parentId && el.childId == relation.childId;
-                              }).length == 0) {
+                              }).length == 0 && (item.type != 'quiz' || $.inArray(o.id, chaptersWithQuizzes) == -1)) {
                         relations.push(relation);
+                        if (item.type == 'quiz') {
+                            chaptersWithQuizzes.push(o.id);
+                        }
                     }
-                    var item = $scope.jstree.get_node(el);
                     if (item.original.type == 'module') {
                         createRelations(item, 'Course', relations);
                     } else if (item.original.type == 'chapter') {
@@ -71,6 +113,21 @@
                     }
                 });
             }
+        }
+
+        $scope.saveRelations = function() {
+            var courses = $scope.jstree.get_node(0).children;
+            var relations = [];
+            chaptersWithQuizzes = [];
+            $.each(courses, function(idx, el) {
+                createRelations($scope.jstree.get_node(el), 'CoursePlan', relations);
+            });
+            $scope.savingRelations = true;
+            $.postJSON('../mtraining/web-api/updateRelations', relations, function() {
+                $scope.savingRelations = false;
+                $scope.alertMessage = $scope.msg('mtraining.savedRelations');
+                $scope.$apply();
+            });
         }
 
         $scope.publishCourse = function() {
@@ -90,27 +147,22 @@
             }
          }
 
-        $scope.saveRelations = function() {
-            var courses = $scope.jstree.get_node(0).children;
-            var relations = [];
-            $.each(courses, function(idx, el) {
-                createRelations($scope.jstree.get_node(el), 'CoursePlan', relations);
-            });
-            $scope.savingRelations = true;
-            $.postJSON('../mtraining/web-api/updateRelations', relations, function() {
-                $scope.savingRelations = false;
-                $scope.alertMessage = $scope.msg('mtraining.savedRelations');
-                $scope.$apply();
-            });
-        }
-
         $scope.removeMember = function() {
             var idx = $('#jstree').jstree('get_selected');
             var node = $scope.jstree.get_node(idx);
-            var children = node.children_d;
-            $scope.jstree.delete_node(children);
-            $scope.jstree.delete_node(node);
-            $scope.alertMessage = undefined;
+            if (node.type === 'quiz') {
+                var quizId = id_hashmap[node.id];
+                for(var i = 0; i < id_hashmap.length; i++) {
+                    if (id_hashmap[i] == id_hashmap[node.id]) {
+                        $scope.jstree.delete_node(i);
+                    }
+                }
+            } else {
+                var children = node.children_d;
+                $scope.jstree.delete_node(children);
+                $scope.jstree.delete_node(node);
+                $scope.alertMessage = undefined;
+            }
         }
 
         $scope.cancel = function() {
@@ -127,7 +179,7 @@
             return isChildren;
         }
 
-         function createNode(id, text, parent, level, type) {
+        function createNode(id, text, parent, level, type) {
             iterator++;
             jArray[iterator] = {
                 "id" : iterator,
@@ -170,54 +222,63 @@
                 },
                 "types" : {
                     "root": {
-                        "icon" : "glyphicon glyphicon-cloud",
+                        "icon" : "glyphicon glyphicon-cloud"
                     },
                     "course": {
-                        "icon" : "glyphicon glyphicon-folder-open",
+                        "icon" : "glyphicon glyphicon-folder-open"
                     },
                     "module": {
-                        "icon" : "glyphicon glyphicon-list-alt",
+                        "icon" : "glyphicon glyphicon-list-alt"
                     },
                     "chapter": {
-                        "icon" : "glyphicon glyphicon-book",
+                        "icon" : "glyphicon glyphicon-book"
                     },
                     "lesson": {
-                        "icon" : "glyphicon glyphicon-music",
+                        "icon" : "glyphicon glyphicon-music"
+                    },
+                    "quiz": {
+                        "icon" : "glyphicon glyphicon-question-sign"
                     }
                 }
             });
             // selection changed
             $('#jstree').on("changed.jstree", function (e, data) {
-                $scope.children = []
-                $scope.nodes = [];
-                $scope.alertMessage = undefined;
-                var selected = data.instance.get_node(data.selected);
-                if (selected.children) {
-                    $.each(selected.children, function(idx, el) {
-                        $scope.children.push(data.instance.get_node(el));
-                    });
-                    $scope.$apply();
-                }
-                if (selected.original && selected.original.type) {
-                    var type = selected.original.type;
-                    if (type === "course") {
-                        $scope.nodes = $scope.modules;
-                        $scope.childIcon = $scope.jstree.settings.types.module.icon;
-                        $scope.childType = "module";
-                    } else if (type === "module") {
-                        $scope.nodes = $scope.chapters;
-                        $scope.childIcon = $scope.jstree.settings.types.chapter.icon;
-                        $scope.childType = "chapter";
-                    } else if (type === "chapter") {
-                        $scope.nodes = $scope.lessons;
-                        $scope.childIcon = $scope.jstree.settings.types.lesson.icon;
-                        $scope.childType = "lesson";
-                    }
-                    $scope.$apply();
-                }
+                onChanged();
             });
             $('#jstree').jstree("refresh");
             $scope.jstree = $.jstree.reference('#jstree');
+        }
+
+        function onChanged() {
+            $scope.children = []
+            $scope.nodes = [];
+            $scope.quizNodes = [];
+            $scope.alertMessage = undefined;
+            var selected = $scope.jstree.get_node($scope.jstree.get_selected());
+            if (selected.children) {
+                $.each(selected.children, function(idx, el) {
+                    $scope.children.push($scope.jstree.get_node(el));
+                });
+                $scope.$apply();
+            }
+            if (selected.original && selected.original.type) {
+                var type = selected.original.type;
+                if (type === "course") {
+                    $scope.nodes = $scope.modules;
+                    $scope.childIcon = $scope.jstree.settings.types.module.icon;
+                    $scope.childType = "module";
+                } else if (type === "module") {
+                    $scope.nodes = $scope.chapters;
+                    $scope.childIcon = $scope.jstree.settings.types.chapter.icon;
+                    $scope.childType = "chapter";
+                } else if (type === "chapter") {
+                    $scope.nodes = $scope.lessons;
+                    $scope.childIcon = $scope.jstree.settings.types.lesson.icon;
+                    $scope.childType = "lesson";
+                    $scope.quizNodes = $scope.quizzes;
+                }
+                $scope.$apply();
+            }
         }
 
         function fillJson(data, init, level, par) {
@@ -252,15 +313,21 @@
                     type = "module";
                 } else if (item.lessons) {
                     type = "chapter";
+                } else if (item.questions) {
+                    type = "quiz";
                 } else {
                     type = "lesson";
                 }
                 createNode(item.id, item.name, par, level, type);
 
                 var child_table = item.modules || item.chapters || item.lessons || [];
-                    if (!(child_table === 0)) {
-                        fillJson(child_table, false, level+1, iterator);
-                    };
+                var quiz = item.quiz;
+                if (quiz) {
+                    child_table.push(quiz);
+                }
+                if (!(child_table === 0)) {
+                    fillJson(child_table, false, level+1, iterator);
+                };
 
             });
         }
@@ -487,7 +554,13 @@
 
         $scope.getQuizFromQuizzes = function () {
             var idx = $scope.selectedQuiz;
-            $scope.chapter.quiz = $scope.quizzes[idx];
+            var chapterId = $scope.chapter.id;
+            var quiz = Quiz.get({ id: $scope.quizzes[idx].id }, function() {
+                quiz.parentIds = [chapterId];
+                quiz.$update({ id: quiz.id }, function() {
+                    $scope.quizzes[idx] = quiz;
+                });
+            });
         }
 
         $scope.$on('chapterClick', function(event, chapterId) {
@@ -501,14 +574,12 @@
                     }
                 })
 
-                if ($scope.chapter.quiz)
-                {
-                    var result = $.grep($scope.quizzes, function(e){ return e.id == $scope.chapter.quiz.id; });
-                    var idx = $scope.quizzes.indexOf(result[0]);
-                    $scope.selectedQuiz = idx;
-                } else {
-                    $scope.selectedQuiz = undefined;
-                }
+                $scope.selectedQuiz = undefined;
+                $.each($scope.quizzes, function(i, quiz) {
+                    if ($.inArray($scope.chapter.id, quiz.parentIds) != -1) {
+                        $scope.selectedQuiz = i;
+                    }
+                });
 
                 $("#modules").select2('val', $scope.selectedModules);
                 $("#quiz").select2('val', $scope.selectedQuiz);
@@ -522,6 +593,7 @@
             $scope.errorName = undefined;
             $scope.creatingChapter = true;
             $scope.chapter = new Chapter();
+            $scope.selectedQuiz = undefined;
             if ($scope.chapter.parentIds == undefined) {
                 $scope.chapter.parentIds = [];
             }

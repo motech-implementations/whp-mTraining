@@ -6,7 +6,9 @@ import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * DTO representation for Quiz class
@@ -15,6 +17,8 @@ public class QuizDto extends CourseUnitMetadataDto {
 
     @JsonView({PublishCourseView.class})
     private List<QuestionDto> questions;
+
+    private Set<Long> parentIds;
 
     @JsonView({PublishCourseView.class})
     private double passPercentage;
@@ -25,12 +29,17 @@ public class QuizDto extends CourseUnitMetadataDto {
     }
 
     public QuizDto(Integer id, String name, String description, CourseUnitState state, String filename,
-                   DateTime creationDate, DateTime modificationDate, List<QuestionDto> questions) {
+                   DateTime creationDate, DateTime modificationDate, List<QuestionDto> questions, Set<Long> parentIds) {
         super(id, name, description, state, filename, creationDate, modificationDate);
         if (questions == null) {
             this.questions = new ArrayList<>();
         } else {
             this.questions = questions;
+        }
+        if (parentIds == null) {
+            this.parentIds = new LinkedHashSet<>();
+        } else {
+            this.parentIds = parentIds;
         }
     }
 
@@ -42,6 +51,9 @@ public class QuizDto extends CourseUnitMetadataDto {
             this.questions = new ArrayList<>();
         } else {
             this.questions = questions;
+        }
+        if (parentIds == null) {
+            this.parentIds = new LinkedHashSet<>();
         }
     }
 
@@ -72,5 +84,13 @@ public class QuizDto extends CourseUnitMetadataDto {
     @JsonView({PublishCourseView.class})
     public int getNoOfQuestionsToBePlayed() {
         return questions.size();
+    }
+
+    public Set<Long> getParentIds() {
+        return parentIds;
+    }
+
+    public void setParentIds(Set<Long> parentIds) {
+        this.parentIds = parentIds;
     }
 }

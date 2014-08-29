@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.service.impl;
 import org.motechproject.mtraining.domain.Chapter;
 import org.motechproject.mtraining.domain.Course;
 import org.motechproject.mtraining.domain.Lesson;
+import org.motechproject.mtraining.domain.Quiz;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
@@ -149,6 +150,19 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
     }
 
     @Override
+    public Quiz getQuizByParentId(long parentId) {
+        List<ManyToManyRelation> relations = relationDataService.findRelations(ParentType.Chapter, parentId, null);
+
+        for(ManyToManyRelation relation : relations) {
+            Quiz quiz = mTrainingService.getQuizById(relation.getChildId());
+            if (quiz != null) {
+                return quiz;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void updateAll(final List<ManyToManyRelation> relations) {
 
         relationDataService.doInTransaction(new TransactionCallbackWithoutResult() {
@@ -156,7 +170,9 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 relationDataService.deleteAll();
                 for (ManyToManyRelation relation : relations) {
-                    relationDataService.create(relation);
+                    if(relationDataService.findRelations(relation.getParentType(), relation.getParentId(), relation.getChildId()).size() == 0) {
+                        relationDataService.create(relation);
+                    }
                 }
             }
         });

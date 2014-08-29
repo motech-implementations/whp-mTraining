@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.service;
 import org.motechproject.mtraining.domain.Chapter;
 import org.motechproject.mtraining.domain.Course;
 import org.motechproject.mtraining.domain.Lesson;
+import org.motechproject.mtraining.domain.Quiz;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
 import org.motechproject.whp.mtraining.domain.ParentType;
@@ -43,5 +44,8 @@ public interface ManyToManyRelationService {
     List<Lesson> getLessonsByParentId(long parentId);
 
     List<Chapter> getChaptersByChildId(long childId);
+
+    // Chapter - Quiz
+    Quiz getQuizByParentId(long parentId);
 
 }
