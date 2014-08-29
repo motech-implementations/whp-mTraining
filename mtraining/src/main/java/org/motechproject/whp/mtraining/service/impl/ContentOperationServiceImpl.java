@@ -1,9 +1,10 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
-import org.codehaus.jackson.type.TypeReference;
 import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
 import org.motechproject.whp.mtraining.dto.QuestionDto;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
@@ -12,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service("contentOperationService")
@@ -63,16 +64,16 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     @Override
     public void getAnswersAndFilesNamesFromAnswer(QuestionDto questionDto, String answer) {
         questionDto.setCorrectOption(getFromJsonString(answer, ANSWER_MAPPING_NAME));
-        questionDto.setOptions(getFromJsonString(answer, OPTIONS_MAPPING_NAME));
+        questionDto.setOptions((List<Integer>)getListFromJsonString(answer, OPTIONS_MAPPING_NAME));
         questionDto.setExternalId(getFromJsonString(answer, FILENAME_MAPPING_NAME));
         questionDto.setExplainingAnswerFilename(getFromJsonString(answer, ANSWER_FILENAME_MAPPING_NAME));
     }
 
     @Override
-    public String codeAnswersAndFilesNamesIntoAnswer(String correctOption, String options, String filename, String explainingAnswerFilename) {
+    public String codeAnswersAndFilesNamesIntoAnswer(String correctOption, List<Integer> options, String filename, String explainingAnswerFilename) {
         String answer = "";
         answer = codeIntoJsonString(answer, ANSWER_MAPPING_NAME, correctOption);
-        answer = codeIntoJsonString(answer, OPTIONS_MAPPING_NAME, options);
+        answer = codeIntegerListIntoJsonString(answer, OPTIONS_MAPPING_NAME, options);
         answer = codeIntoJsonString(answer, FILENAME_MAPPING_NAME, filename);
         answer = codeIntoJsonString(answer, ANSWER_FILENAME_MAPPING_NAME, explainingAnswerFilename);
         return  answer;
@@ -83,21 +84,39 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         return UUID.fromString(getFromJsonString(content, CONTENT_ID_MAPPING_NAME));
     }
 
-    private String getFromJsonString(String jsonString, String mappingName) {
+    private List<Integer> getListFromJsonString(String jsonString, String mappingName) {
         if (jsonString == null){
             return null;
         }
-        Map<String,String> map = new HashMap<String,String>();
         ObjectMapper mapper = new ObjectMapper();
+        ArrayNode arrayNode;
+        List<Integer> integerList = new ArrayList<>();
 
         try {
-            map = mapper.readValue(jsonString,
-                    new TypeReference<HashMap<String,String>>(){});
+            arrayNode = (ArrayNode)mapper.readTree(jsonString).get(mappingName);
         } catch (IOException e) {
             LOG.error("mtraining.error.getFromJsonString" + e.getMessage());
             return null;
         }
-        return map.get(mappingName);
+        arrayNode.toString();
+        for (final JsonNode objNode : arrayNode) {
+            integerList.add(objNode.getIntValue());
+        }
+
+        return integerList;
+    }
+
+    private String getFromJsonString(String jsonString, String mappingName) {
+        if (jsonString == null){
+            return null;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readTree(jsonString).get(mappingName).getTextValue();
+        } catch (IOException e) {
+            LOG.error("mtraining.error.getFromJsonString" + e.getMessage());
+            return null;
+        }
     }
 
     private String codeIntoJsonString(String jsonString, String mappingName, String value) {
@@ -115,6 +134,30 @@ public class ContentOperationServiceImpl implements ContentOperationService {
             }
         }
         objectNode.put(mappingName, value);
+        return objectNode.toString();
+    }
+
+    private String codeIntegerListIntoJsonString(String jsonString, String mappingName, List<Integer> integerList) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode objectNode;
+
+        if (jsonString.isEmpty()){
+            objectNode = new ObjectNode(JsonNodeFactory.instance);
+        }
+        else {
+            try {
+                objectNode = (ObjectNode) mapper.readTree(jsonString);
+            } catch (IOException e) {
+                LOG.error("mtraining.error.codeIntoJsonString" + e.getMessage());
+                return jsonString;
+            }
+        }
+        ArrayNode arrayNode = new ArrayNode(JsonNodeFactory.instance);
+        for ( Integer integer : integerList) {
+            arrayNode.add(integer);
+        }
+
+        objectNode.put(mappingName, arrayNode);
         return objectNode.toString();
     }
 }

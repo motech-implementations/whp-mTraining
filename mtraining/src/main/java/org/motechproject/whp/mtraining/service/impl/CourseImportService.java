@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,8 +106,15 @@ public class CourseImportService {
 
             } else if (type.equalsIgnoreCase("Question")) {
                 String options = request.getOptions().replace(';', ',');
+                String[] strArray = options.split("\\s*,\\s*");
+                Integer[] intArray = new Integer[strArray.length];
+
+                for(int i = 0; i < strArray.length; i++) {
+                    intArray[i] = Integer.valueOf(strArray[i]);
+                }
+
                 Question question = new Question(contentOperationService.codeIntoQuestion(request.getNodeName(), request.getDescription(), UUID.randomUUID()),
-                        contentOperationService.codeAnswersAndFilesNamesIntoAnswer(request.getCorrectAnswer(), options, request.getFileName(), request.getCorrectAnswerFileName()));
+                        contentOperationService.codeAnswersAndFilesNamesIntoAnswer(request.getCorrectAnswer(), Arrays.asList(intArray), request.getFileName(), request.getCorrectAnswerFileName()));
                 questions.put(question, request);
             }
         }

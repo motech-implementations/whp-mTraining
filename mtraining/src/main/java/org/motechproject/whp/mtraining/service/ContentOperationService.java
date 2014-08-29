@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.service;
 import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
 import org.motechproject.whp.mtraining.dto.QuestionDto;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -22,7 +23,7 @@ public interface ContentOperationService {
 
     void getAnswersAndFilesNamesFromAnswer(QuestionDto questionDto, String answer);
 
-    String codeAnswersAndFilesNamesIntoAnswer(String correctOption, String options, String filename, String explainingAnswerFilename);
+    String codeAnswersAndFilesNamesIntoAnswer(String correctOption, List<Integer> options, String filename, String explainingAnswerFilename);
 
 
     UUID getUuidFromJsonString(String content);

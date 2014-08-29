@@ -1,10 +1,10 @@
 package org.motechproject.whp.mtraining.dto;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonView;
 import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +21,7 @@ public class QuestionDto {
 
     private String correctOption;
 
-    private String options;
+    private List<Integer> options;
 
     @JsonView({PublishCourseView.class})
     private String externalId;
@@ -34,7 +34,7 @@ public class QuestionDto {
     public QuestionDto() {
     }
 
-    public QuestionDto(String name, String description, String correctOption, String options, String externalId, String explainingAnswerFilename) {
+    public QuestionDto(String name, String description, String correctOption, List<Integer> options, String externalId, String explainingAnswerFilename) {
         this.name = name;
         this.description = description;
         this.correctOption = correctOption;
@@ -67,11 +67,11 @@ public class QuestionDto {
         this.correctOption = correctOption;
     }
 
-    public String getOptions() {
+    public List<Integer> getOptions() {
         return options;
     }
 
-    public void setOptions(String options) {
+    public void setOptions(List<Integer> options) {
         this.options = options;
     }
 
@@ -100,14 +100,13 @@ public class QuestionDto {
     }
 
     @JsonView({PublishCourseView.class})
-    @JsonProperty("options")
-    public List<String> getOptionsAsList() {
-        return  Arrays.asList(options.split("\\s*,\\s*"));
-    }
-
-    @JsonView({PublishCourseView.class})
     @JsonProperty("answer")
     public AnswerDto getAnswerDto() {
         return new AnswerDto(correctOption, explainingAnswerFilename);
+    }
+
+    @JsonIgnore
+    @JsonProperty("answer")
+    public void setAnswerDTOMock() {
     }
 }

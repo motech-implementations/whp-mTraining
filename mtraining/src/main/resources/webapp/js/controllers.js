@@ -835,7 +835,7 @@
             question.name = $scope.question.name;
             question.description = $scope.question.description;
             question.correctOption = $scope.question.correctOption;
-            question.options = $scope.question.options.toString();
+            question.options = $scope.question.options;
             question.externalId = $scope.question.externalId;
             question.explainingAnswerFilename = $scope.question.explainingAnswerFilename;
         }
@@ -1016,12 +1016,12 @@
             $scope.question.name = $scope.quiz.questions[index].name;
             $scope.question.description = $scope.quiz.questions[index].description;
             $scope.question.correctOption = parseInt($scope.quiz.questions[index].correctOption);
-            $scope.question.options = $scope.quiz.questions[index].options.split(",");
+            $scope.question.options = $scope.quiz.questions[index].options;
             for (var i=0; i < $scope.question.options.length; i++) {
                 $scope.createOption($scope.question.options[i]);
             }
 
-            $scope.question.externalId = $scope.quiz.questions[index].filename;
+            $scope.question.externalId = $scope.quiz.questions[index].externalId;
             $scope.question.explainingAnswerFilename = $scope.quiz.questions[index].explainingAnswerFilename;
             $scope.errorQuestion = undefined;
             $scope.clearErrorSpans();
