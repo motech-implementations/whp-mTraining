@@ -1,1 +1,0 @@
-ALTER TABLE mtraining.course_publication_status RENAME TO course_publication_attempt;

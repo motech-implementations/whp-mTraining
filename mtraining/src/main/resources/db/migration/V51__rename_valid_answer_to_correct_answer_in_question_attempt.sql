@@ -1,1 +1,0 @@
-ALTER TABLE mtraining.question_attempt RENAME COLUMN valid_answer to correct_answer;

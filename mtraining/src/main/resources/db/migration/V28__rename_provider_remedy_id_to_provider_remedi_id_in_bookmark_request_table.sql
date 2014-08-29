@@ -1,1 +1,0 @@
-ALTER TABLE mtraining.bookmark_request RENAME COLUMN provider_remedy_id TO provider_remedi_id;

@@ -1,1 +1,0 @@
-ALTER TABLE mtraining.bookmark_request ADD COLUMN course_start_time timestamp with time zone ;

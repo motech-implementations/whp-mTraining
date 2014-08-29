@@ -1,1 +1,0 @@
-ALTER TABLE mtraining.call_log ADD COLUMN course_id varchar(40);

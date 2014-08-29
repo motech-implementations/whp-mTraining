@@ -1,1 +1,0 @@
-ALTER TABLE mtraining.bookmark_request_log ADD COLUMN created_on timestamp ;

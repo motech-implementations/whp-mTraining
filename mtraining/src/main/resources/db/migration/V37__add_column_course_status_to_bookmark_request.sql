@@ -1,1 +1,0 @@
-ALTER TABLE mtraining.bookmark_request ADD COLUMN course_status VARCHAR(20);

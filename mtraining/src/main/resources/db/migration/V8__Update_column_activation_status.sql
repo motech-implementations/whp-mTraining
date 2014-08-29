@@ -1,1 +1,0 @@
-ALTER TABLE mtraining.provider ALTER activation_status SET NOT NULL;
