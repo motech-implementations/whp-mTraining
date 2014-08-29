@@ -26,6 +26,7 @@ import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
@@ -69,6 +70,9 @@ public class QuizBundleIT {
     @Inject
     private BookmarkService bookmarkService;
 
+    @Inject
+    private DtoFactoryService dtoFactoryService;
+
 
     private IVRServer ivrServer;
     private Provider provider;
@@ -84,10 +88,10 @@ public class QuizBundleIT {
 
         provider = addProvider("remediId23", 222292L, WORKING_PROVIDER);
         course = mTrainingService.createCourse(new CourseBuilder().build());
-        chapter = BuilderHelper.findFirstActive(course.getChapters());
+        chapter = course.getChapters().get(0);
 
         Bookmark bookmark = new Bookmark("remediId23", Objects.toString(course.getId()), Objects.toString(chapter.getId()),
-                Objects.toString(BuilderHelper.findFirstActive(chapter.getLessons()).getId()), null);
+                Objects.toString(chapter.getLessons().get(0).getId()), null);
         bookmarkService.createBookmark(bookmark);
         startTime = nowAsStringInTimeZoneUTC();
         endTime = nowAsStringInTimeZoneUTC();

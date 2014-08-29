@@ -1,11 +1,14 @@
 package org.motechproject.whp.mtraining.builder;
 
-import org.motechproject.mtraining.domain.Course;
-import org.motechproject.mtraining.domain.Chapter;
-import org.motechproject.mtraining.domain.Lesson;
-import org.motechproject.mtraining.domain.Quiz;
 import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
+import org.motechproject.whp.mtraining.service.ContentOperationService;
+import org.motechproject.whp.mtraining.domain.ContentIdentifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -21,14 +24,17 @@ import java.util.Objects;
 @Component
 public class FlagBuilder {
 
+    @Autowired
+    private ContentOperationService contentOperationService;
+
     /**
      * Build flag from the first active chapter of a course for the given parameter
      * @param externalId
      * @param course
      * @return
      */
-    public Flag buildFlagFromFirstActiveMetadata(String externalId, Course course) {
-        Chapter chapter = BuilderHelper.findFirstActive(course.getChapters());
+    public Flag buildFlagFromFirstActiveMetadata(String externalId, ModuleDto course) {
+        ChapterDto chapter = BuilderHelper.findFirstActive(course.getChapters());
         return buildFlagFromFirstActiveMetadata(externalId, course, chapter);
     }
 
@@ -41,11 +47,11 @@ public class FlagBuilder {
      * @param chapter
      * @return
      */
-    public Flag buildFlagFromFirstActiveMetadata(String externalId, Course course, Chapter chapter) {
+    public Flag buildFlagFromFirstActiveMetadata(String externalId, ModuleDto course, ChapterDto chapter) {
         if (chapter == null) {
             return null;
         }
-        Lesson firstActiveLesson = BuilderHelper.findFirstActive(chapter.getLessons());
+        LessonDto firstActiveLesson = BuilderHelper.findFirstActive(chapter.getLessons());
         if (firstActiveLesson != null) {
             return buildFlagFrom(externalId, course, chapter, firstActiveLesson);
         }
@@ -60,11 +66,13 @@ public class FlagBuilder {
      * @param lesson
      * @return
      */
-    public Flag buildFlagFrom(String externalId, Course course, Chapter chapter, Lesson lesson) {
+    public Flag buildFlagFrom(String externalId, ModuleDto course, ChapterDto chapter, LessonDto lesson) {
         if (lesson == null) {
             return null;
         }
-        return new Flag(externalId, Objects.toString(course.getId()), null, Objects.toString(chapter.getId()), Objects.toString(lesson.getId()), null, null);
+        return new Flag(externalId, contentOperationService.codeContentIdentifierIntoString(new ContentIdentifier(course.getId(), course.getContentId())),
+                null, contentOperationService.codeContentIdentifierIntoString(new ContentIdentifier(chapter.getId(), chapter.getContentId())),
+                contentOperationService.codeContentIdentifierIntoString(new ContentIdentifier(lesson.getId(), lesson.getContentId())), null, null);
     }
 
     /**
@@ -75,11 +83,13 @@ public class FlagBuilder {
      * @param quiz
      * @return
      */
-    public Flag buildFlagFrom(String externalId, Course course, Chapter chapter, Quiz quiz) {
+    public Flag buildFlagFrom(String externalId, ModuleDto course, ChapterDto chapter, QuizDto quiz) {
         if (quiz == null) {
             return null;
         }
-        return new Flag(externalId, Objects.toString(course.getId()), null, Objects.toString(chapter.getId()), null, Objects.toString(quiz.getId()), null);
+        return new Flag(externalId, contentOperationService.codeContentIdentifierIntoString(new ContentIdentifier(course.getId(), course.getContentId())), null,
+                contentOperationService.codeContentIdentifierIntoString(new ContentIdentifier(chapter.getId(), chapter.getContentId())),
+                null, new ContentIdentifier(quiz.getId(), quiz.getContentId()), null);
     }
 
     /**
@@ -89,7 +99,7 @@ public class FlagBuilder {
      * @param course
      * @return
      */
-    public Flag buildCourseCompletionFlag(String externalId, Course course) {
+    public Flag buildCourseCompletionFlag(String externalId, ModuleDto course) {
         return new Flag(externalId, Objects.toString(course.getId()), null, null, null, null, null);
     }
 
@@ -101,9 +111,9 @@ public class FlagBuilder {
      * @param course
      * @return
      */
-    public Flag buildFlagFromLastActiveMetadata(String externalId, Course course) {
-        Chapter lastActiveChapter = BuilderHelper.findLastActive(course.getChapters());
-        Lesson lastActiveLesson = BuilderHelper.findLastActive(lastActiveChapter.getLessons());
+    public Flag buildFlagFromLastActiveMetadata(String externalId, ModuleDto course) {
+        ChapterDto lastActiveChapter = BuilderHelper.findLastActive(course.getChapters());
+        LessonDto lastActiveLesson = BuilderHelper.findLastActive(lastActiveChapter.getLessons());
         if (lastActiveLesson != null) {
             if (lastActiveChapter.getQuiz() != null && lastActiveChapter.getQuiz().getState() == CourseUnitState.Active){
                 buildFlagFrom(externalId, course, lastActiveChapter, lastActiveChapter.getQuiz());

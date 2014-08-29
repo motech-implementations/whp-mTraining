@@ -27,13 +27,14 @@ public class Flag extends Bookmark {
      * module identifier
      */
     @Field
-    private String moduleIdentifier;
+    private ContentIdentifier moduleIdentifier;
 
-    /**
+    /**Objects.toString(lesson.getId())
      * quiz identifier
      */
     @Field
-    private String quizIdentifier;
+    private ContentIdentifier quizIdentifier;
+
 
     /**
      * Open, extensible map object field to let implementation store more details relevant
@@ -42,26 +43,26 @@ public class Flag extends Bookmark {
     @Field
     private Map<String, Object> progress;
 
-    public Flag(String externalId, String courseIdentifier, String moduleIdentifier, String chapterIdentifier,
-                String lessonIdentifier, String quizIdentifier, Map<String, Object> progress) {
-        super(externalId, courseIdentifier,chapterIdentifier,lessonIdentifier, progress);
+    public Flag(String externalId, String courseIdentifier, ContentIdentifier moduleIdentifier, String chapterIdentifier,
+                String lessonIdentifier, ContentIdentifier quizIdentifier, Map<String, Object> progress) {
+        super(externalId, courseIdentifier, chapterIdentifier, lessonIdentifier, progress);
         this.moduleIdentifier = moduleIdentifier;
         this.quizIdentifier = quizIdentifier;
     }
 
-    public String getModuleIdentifier() {
+    public ContentIdentifier getModuleIdentifier() {
         return moduleIdentifier;
     }
 
-    public void setModuleIdentifier(String moduleIdentifier) {
+    public void setModuleIdentifier(ContentIdentifier moduleIdentifier) {
         this.moduleIdentifier = moduleIdentifier;
     }
 
-    public String getQuizIdentifier() {
+    public ContentIdentifier getQuizIdentifier() {
         return quizIdentifier;
     }
 
-    public void setQuizIdentifier(String quizIdentifier) {
+    public void setQuizIdentifier(ContentIdentifier quizIdentifier) {
         this.quizIdentifier = quizIdentifier;
     }
 

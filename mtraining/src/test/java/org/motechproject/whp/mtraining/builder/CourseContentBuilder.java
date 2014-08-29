@@ -3,6 +3,8 @@ package org.motechproject.whp.mtraining.builder;
 import org.motechproject.mtraining.domain.Course;
 import org.motechproject.mtraining.domain.Chapter;
 import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ public class CourseContentBuilder {
     private String description = "Default Chapter Description";
     private CourseUnitState state = CourseUnitState.Inactive;
 
-    private List<Chapter> chapters = new ArrayList<>();
+    private List<ChapterDto> chapters = new ArrayList<>();
 
     public CourseContentBuilder withName(String name) {
         this.name = name;
@@ -31,16 +33,15 @@ public class CourseContentBuilder {
         return this;
     }
 
-    public CourseContentBuilder withChapters(List<Chapter> chapters) {
+    public CourseContentBuilder withChapters(List<ChapterDto> chapters) {
         this.chapters.clear();
         this.chapters.addAll(chapters);
         return this;
     }
 
-    public Course buildCourse() {
-        if (chapters.size() == 0) {
-            return new Course(name, state, description);
-        }
-        return new Course(name, state, description, chapters);
+    public ModuleDto buildCourse() {
+        ModuleDto course = new ModuleDto(0, name, state, null, null);
+        course.setChapters(chapters);
+        return course;
     }
 }

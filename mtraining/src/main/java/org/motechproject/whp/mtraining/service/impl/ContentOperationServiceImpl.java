@@ -5,6 +5,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
+import org.codehaus.jackson.type.TypeReference;
+import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
 import org.motechproject.whp.mtraining.dto.QuestionDto;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service("contentOperationService")
@@ -29,6 +33,8 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     public static final String OPTIONS_MAPPING_NAME = "options";
     public static final String ANSWER_FILENAME_MAPPING_NAME = "answerFilename";
     public static final String CONTENT_ID_MAPPING_NAME = "contentId";
+    public static final String ID_MAPPING_NAME = "id";
+    public static final String VERSION_MAPPING_NAME = "version";
 
     @Override
     public void getFileNameAndDescriptionFromContent(CourseUnitMetadataDto courseUnitMetadataDto, String content) {
@@ -88,6 +94,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         if (jsonString == null){
             return null;
         }
+        Map<String,String> map = new HashMap<String,String>();
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode;
         List<Integer> integerList = new ArrayList<>();
@@ -157,5 +164,19 @@ public class ContentOperationServiceImpl implements ContentOperationService {
 
         objectNode.put(mappingName, arrayNode);
         return objectNode.toString();
+    }
+
+    public ContentIdentifier getContentIdentifierFromString(String content) {
+        return new ContentIdentifier(Long.parseLong(getFromJsonString(content, ID_MAPPING_NAME)),
+                getUuidFromJsonString(content).toString(), Long.parseLong(getFromJsonString(content, VERSION_MAPPING_NAME)));
+    }
+
+    public String codeContentIdentifierIntoString(ContentIdentifier content) {
+        String json = "";
+        json = codeIntoJsonString(json, ID_MAPPING_NAME, String.valueOf(content.getId()));
+        json = codeIntoJsonString(json, CONTENT_ID_MAPPING_NAME, String.valueOf(content.getContentId()));
+        json = codeIntoJsonString(json, VERSION_MAPPING_NAME, String.valueOf(content.getVersion()));
+
+        return json;
     }
 }

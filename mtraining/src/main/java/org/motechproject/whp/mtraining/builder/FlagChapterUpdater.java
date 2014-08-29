@@ -6,11 +6,15 @@ import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.mtraining.service.impl.MTrainingServiceImpl;
 import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.service.ContentOperationService;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Updater to re-validate and set the chapter in a Flag against the provided Course Structure for a given enrollee.
+ * Updater to re-validate and set the chapter in a Flag against the provided ModuleDto Structure for a given enrollee.
  * In cases where the {@link org.motechproject.whp.mtraining.domain.Flag} already refers to a valid chapter, then jump to {@link FlagLessonUpdater}
  * or {@link FlagQuizUpdater} depending on whether the {@link org.motechproject.whp.mtraining.domain.Flag} is for a lesson or a quiz.
  * @see FlagBuilder
@@ -24,6 +28,12 @@ public class FlagChapterUpdater {
 
     @Autowired
     private MTrainingService mTrainingService;
+
+    @Autowired
+    private DtoFactoryService dtoFactoryService;
+
+    @Autowired
+    ContentOperationService contentOperationService;
 
     @Autowired
     public FlagChapterUpdater(FlagBuilder flagBuilder, FlagLessonUpdater flagLessonUpdater,
@@ -46,14 +56,14 @@ public class FlagChapterUpdater {
      * @param course
      * @return
      */
-    public Flag update(Flag flag, Course course) {
-        Chapter chapter = mTrainingService.getChapterById(Integer.parseInt(flag.getChapterIdentifier()));
+    public Flag update(Flag flag, ModuleDto course) {
+        ChapterDto chapter = dtoFactoryService.getChapterDtoById(Integer.parseInt(flag.getChapterIdentifier()));
         String externalId = flag.getExternalId();
         if (chapter == null) {
             return flagBuilder.buildFlagFromFirstActiveMetadata(externalId, course);
         }
         if (chapter.getState() != CourseUnitState.Active) {
-            Chapter nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
+            ChapterDto nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
             if (nextActiveChapter != null) {
                 return flagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, nextActiveChapter);
             }

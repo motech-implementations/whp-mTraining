@@ -1,20 +1,27 @@
 package org.motechproject.whp.mtraining;
 
+import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.*;
 import org.motechproject.whp.mtraining.builder.FlagBuilder;
 import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.Bookmark;
+import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 
 public class BookmarkBuilder {
 
     private long courseId = new Course("New course", CourseUnitState.Active, "Content").getId();
     private long chapterId = new Chapter().getId();
     private long lessonId = new Lesson("New lesson", CourseUnitState.Active, "Content").getId();
-    private Course course = new Course("New course", CourseUnitState.Active, "Content");
-    private Chapter chapter = new Chapter();
-    private Lesson lesson = new Lesson("New lesson", CourseUnitState.Active, "Content");
     private long quizId = new Quiz().getId();
+    private ModuleDto course = new ModuleDto(courseId, "New course", CourseUnitState.Active, DateTime.now(), DateTime.now());
+    private ChapterDto chapter = new ChapterDto();
+    private LessonDto lesson = new LessonDto(lessonId, "New lesson", CourseUnitState.Active, DateTime.now(), DateTime.now());
+    private QuizDto quiz = new QuizDto();
     private String dateModified = ISODateTimeUtil.nowInTimeZoneUTC().toString();
     private String externalId = "RMD001";
 
@@ -30,7 +37,8 @@ public class BookmarkBuilder {
     }
 
     public Bookmark build() {
-        return new Bookmark(courseId, chapterId, lessonId, quizId, dateModified);
+        return new Bookmark(new ContentIdentifier(course.getContentId(), 1), new ContentIdentifier(chapter.getContentId(), 1),
+                new ContentIdentifier(lesson.getContentId(), 1), new ContentIdentifier(quiz.getContentId(), 1), dateModified);
     }
 
     public Flag buildFlag() {

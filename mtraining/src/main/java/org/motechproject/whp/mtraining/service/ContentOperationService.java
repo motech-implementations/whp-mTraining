@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.service;
 
 import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
 import org.motechproject.whp.mtraining.dto.QuestionDto;
+import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,4 +28,8 @@ public interface ContentOperationService {
 
 
     UUID getUuidFromJsonString(String content);
+
+    ContentIdentifier getContentIdentifierFromString(String content);
+
+    String codeContentIdentifierIntoString(ContentIdentifier content);
 }

@@ -8,11 +8,15 @@ import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.mtraining.service.impl.MTrainingServiceImpl;
 import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Updater to re-validate and set the lesson in a Flag against the provided Course Structure for a given enrollee.
+ * Updater to re-validate and set the lesson in a Flag against the provided ModuleDto Structure for a given enrollee.
  * In cases where a valid lesson cannot be set, build the Flag with a valid Quiz.
  * @see FlagBuilder
  */
@@ -24,6 +28,9 @@ public class FlagLessonUpdater {
 
     @Autowired
     private MTrainingService mTrainingService;
+
+    @Autowired
+    private DtoFactoryService dtoFactoryService;
 
     @Autowired
     public FlagLessonUpdater(FlagBuilder flagBuilder) {
@@ -44,18 +51,18 @@ public class FlagLessonUpdater {
      * @param chapter
      * @return
      */
-    public Flag update(Flag flag, Course course, Chapter chapter) {
-        Lesson lesson = mTrainingService.getLessonById(Integer.parseInt(flag.getLessonIdentifier()));
+    public Flag update(Flag flag, ModuleDto course, ChapterDto chapter) {
+        LessonDto lesson = dtoFactoryService.getLessonDtoById(Integer.parseInt(flag.getLessonIdentifier()));
         String externalId = flag.getExternalId();
         if (lesson == null) {
             return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, chapter);
         }
         if (lesson.getState() != CourseUnitState.Active) {
-            Lesson nextActiveLesson = BuilderHelper.getNextActive(lesson, chapter.getLessons());
+            LessonDto nextActiveLesson = BuilderHelper.getNextActive(lesson, chapter.getLessons());
             if (nextActiveLesson != null) {
                 return courseFlagBuilder.buildFlagFrom(externalId, course, chapter, nextActiveLesson);
             }
-            Chapter nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
+            ChapterDto nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
             if (nextActiveChapter != null) {
                 return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, nextActiveChapter);
             }
