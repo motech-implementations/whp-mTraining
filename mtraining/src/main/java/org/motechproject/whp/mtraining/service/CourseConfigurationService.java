@@ -17,4 +17,6 @@ public interface CourseConfigurationService {
     CourseConfiguration getCourseConfigurationById(long id);
 
     CourseConfiguration getCourseConfigurationByCourseName(String courseName);
+
+    CourseConfiguration getCourseConfigurationByCourseId(long id);
 }

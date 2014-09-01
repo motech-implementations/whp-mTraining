@@ -18,6 +18,10 @@ public enum ProviderStatus {
         return NOT_WORKING_PROVIDER.getStatus().equalsIgnoreCase(status);
     }
 
+    public static boolean isInvalid(ProviderStatus status) {
+        return NOT_WORKING_PROVIDER.equals(status);
+    }
+
     public static ProviderStatus from(String status) {
         ProviderStatus[] values = ProviderStatus.values();
         for (ProviderStatus value : values) {

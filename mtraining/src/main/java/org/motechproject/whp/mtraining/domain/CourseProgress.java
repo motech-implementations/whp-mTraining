@@ -1,9 +1,15 @@
-package org.motechproject.whp.mtraining.web.domain;
+package org.motechproject.whp.mtraining.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.mds.annotations.Field;
+import org.motechproject.mtraining.domain.MdsEntity;
+import org.motechproject.whp.mtraining.constants.CourseStatus;
 import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
+import org.motechproject.whp.mtraining.web.domain.ValidationError;
 
+import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,20 +19,36 @@ import static org.motechproject.whp.mtraining.constants.CourseStatus.UNKNOWN;
 import static org.motechproject.whp.mtraining.constants.CourseStatus.enumFor;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.*;
 
-public class CourseProgress {
-    @JsonProperty
+@Entity
+public class CourseProgress extends MdsEntity {
+
+    @Field
     Flag flag;
-    @JsonProperty
+
+    @Field
     private String courseStartTime;
-    @JsonProperty
+
+    @Field
     private int timeLeftToCompleteCourse;
-    @JsonProperty
+
+    @Field
     private String courseStatus;
+
+    @Field
+    private String externalId;
 
     public CourseProgress() {
     }
 
     public CourseProgress(String courseStartTime, Flag flag, int timeLeftToCompleteCourse, String courseStatus) {
+        this.courseStartTime = courseStartTime;
+        this.flag = flag;
+        this.timeLeftToCompleteCourse = timeLeftToCompleteCourse;
+        this.courseStatus = courseStatus;
+    }
+
+    public CourseProgress(String externalId, String courseStartTime, Flag flag, int timeLeftToCompleteCourse, String courseStatus) {
+        this.externalId = externalId;
         this.courseStartTime = courseStartTime;
         this.flag = flag;
         this.timeLeftToCompleteCourse = timeLeftToCompleteCourse;
@@ -50,6 +72,22 @@ public class CourseProgress {
         return courseStatus;
     }
 
+    public void setFlag(Flag flag) {
+        this.flag = flag;
+    }
+
+    public void setCourseStartTime(String courseStartTime) {
+        this.courseStartTime = courseStartTime;
+    }
+
+    public void setTimeLeftToCompleteCourse(int timeLeftToCompleteCourse) {
+        this.timeLeftToCompleteCourse = timeLeftToCompleteCourse;
+    }
+
+    public void setCourseStatus(String courseStatus) {
+        this.courseStatus = courseStatus;
+    }
+
     public Collection<? extends ValidationError> validate() {
         List<ValidationError> validationErrors = new ArrayList<>();
         if (isBlank(courseStatus) || enumFor(courseStatus).equals(UNKNOWN)) {
@@ -68,5 +106,18 @@ public class CourseProgress {
         validationErrors.addAll(flag.validate());
         return validationErrors;
 
+    }
+
+    @JsonIgnore
+    public boolean isCourseClosed() {
+        return courseStatus != null && courseStatus.equalsIgnoreCase(CourseStatus.CLOSED.value());
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 }

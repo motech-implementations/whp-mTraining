@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.service;
 
+import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.Flag;
 
 import java.util.List;
@@ -55,4 +56,9 @@ public interface FlagService {
      * @param externalId external tracking id for the user
      */
     void deleteAllFlagsForUser(String externalId);
+
+    Flag getFlagByExternalId(String externalId);
+
+    Flag getInitialFlag(String externalId, ContentIdentifier courseIdentifier);
+
 }

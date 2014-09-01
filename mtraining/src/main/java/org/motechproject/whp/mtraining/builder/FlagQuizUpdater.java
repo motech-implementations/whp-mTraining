@@ -6,6 +6,7 @@ import org.motechproject.mtraining.domain.Quiz;
 import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.dto.ModuleDto;
 import org.motechproject.whp.mtraining.dto.QuizDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
@@ -42,22 +43,22 @@ public class FlagQuizUpdater {
      * @param chapter
      * @return
      */
-    public Flag update(Flag flag, ModuleDto course, ChapterDto chapter) {
+    public Flag update(Flag flag, CoursePlanDto course, ModuleDto module, ChapterDto chapter) {
         QuizDto quiz = dtoFactoryService.getQuizDtoById(flag.getId());
         String externalId = flag.getExternalId();
         
         if (quiz == null) {
-            return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, chapter);
+            return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, module, chapter);
         }
         
         if (quiz.getState() != CourseUnitState.Active) {
-            ChapterDto nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
+            ChapterDto nextActiveChapter = BuilderHelper.getNextActive(chapter, module.getChapters());
             if (nextActiveChapter != null) {
-                return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, nextActiveChapter);
+                return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, module, nextActiveChapter);
             }
             return courseFlagBuilder.buildCourseCompletionFlag(externalId, course);
         }
-        return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, chapter);
+        return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, module, chapter);
     }
 
 }

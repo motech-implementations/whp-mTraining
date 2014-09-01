@@ -28,8 +28,4 @@ public interface ContentOperationService {
 
 
     UUID getUuidFromJsonString(String content);
-
-    ContentIdentifier getContentIdentifierFromString(String content);
-
-    String codeContentIdentifierIntoString(ContentIdentifier content);
 }

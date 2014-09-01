@@ -7,6 +7,7 @@ import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.mtraining.service.impl.MTrainingServiceImpl;
 import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.dto.ModuleDto;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
@@ -56,25 +57,25 @@ public class FlagChapterUpdater {
      * @param course
      * @return
      */
-    public Flag update(Flag flag, ModuleDto course) {
-        ChapterDto chapter = dtoFactoryService.getChapterDtoById(Integer.parseInt(flag.getChapterIdentifier()));
+    public Flag update(Flag flag, CoursePlanDto course, ModuleDto module) {
+        ChapterDto chapter = dtoFactoryService.getChapterDtoById(flag.getChapterIdentifier().getUnitId());
         String externalId = flag.getExternalId();
         if (chapter == null) {
-            return flagBuilder.buildFlagFromFirstActiveMetadata(externalId, course);
+            return flagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, module);
         }
         if (chapter.getState() != CourseUnitState.Active) {
-            ChapterDto nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
+            ChapterDto nextActiveChapter = BuilderHelper.getNextActive(chapter, module.getChapters());
             if (nextActiveChapter != null) {
-                return flagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, nextActiveChapter);
+                return flagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, module, nextActiveChapter);
             }
             return flagBuilder.buildCourseCompletionFlag(externalId, course);
         }
         if (flag.getLessonIdentifier() != null) {
-            return flagLessonUpdater.update(flag, course, chapter);
+            return flagLessonUpdater.update(flag, course, module, chapter);
         }
         if (flag.getQuizIdentifier() != null) {
-            return flagQuizUpdater.update(flag, course, chapter);
+            return flagQuizUpdater.update(flag, course, module, chapter);
         }
-        return flagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, chapter);
+        return flagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, module, chapter);
     }
 }

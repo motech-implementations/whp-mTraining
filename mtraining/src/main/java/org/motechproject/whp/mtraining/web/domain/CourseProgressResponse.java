@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Location;
 
 public class CourseProgressResponse implements MotechResponse {

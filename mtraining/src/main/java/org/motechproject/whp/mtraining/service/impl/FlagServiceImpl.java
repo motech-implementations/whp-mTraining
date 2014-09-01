@@ -1,8 +1,13 @@
 package org.motechproject.whp.mtraining.service.impl;
 
 import org.joda.time.DateTime;
+import org.motechproject.whp.mtraining.builder.FlagBuilder;
+import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
+import org.motechproject.whp.mtraining.exception.CourseNotFoundException;
 import org.motechproject.whp.mtraining.repository.FlagDataService;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.FlagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +22,9 @@ public class FlagServiceImpl implements FlagService{
 
     @Autowired
     private FlagDataService flagDataService;
+
+    @Autowired
+    private DtoFactoryService dtoFactoryService;
 
     /**
      * Create a flag fora user
@@ -104,5 +112,23 @@ public class FlagServiceImpl implements FlagService{
             flagDataService.delete(current);
         }
 
+    }
+
+    /**
+     * Given a course identifier,return the first bookmark from first active content of the course
+     * If course not found then throw CourseNotFoundException
+     *
+     * @param externalId
+     * @param courseIdentifier
+     * @return
+     */
+    @Override
+    public Flag getInitialFlag(String externalId, ContentIdentifier courseIdentifier) {
+        CoursePlanDto course = dtoFactoryService.getLatestPublishedCourse(courseIdentifier.getUnitId());
+        if (course == null) {
+            throw new CourseNotFoundException();
+        }
+        Flag flag = (new FlagBuilder()).buildFlagFromFirstActiveMetadata(externalId, course);
+        return flag;
     }
 }

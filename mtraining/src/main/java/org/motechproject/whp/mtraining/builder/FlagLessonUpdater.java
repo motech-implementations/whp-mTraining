@@ -1,14 +1,11 @@
 package org.motechproject.whp.mtraining.builder;
 
-import org.motechproject.mtraining.domain.Course;
-import org.motechproject.mtraining.domain.Chapter;
-import org.motechproject.mtraining.domain.Lesson;
 import org.motechproject.mtraining.domain.CourseUnitState;
 
 import org.motechproject.mtraining.service.MTrainingService;
-import org.motechproject.mtraining.service.impl.MTrainingServiceImpl;
 import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.dto.LessonDto;
 import org.motechproject.whp.mtraining.dto.ModuleDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
@@ -48,27 +45,28 @@ public class FlagLessonUpdater {
      * 5) If no next active module is left in the course then build course completion flag
      * @param flag
      * @param course
+     * @param module
      * @param chapter
      * @return
      */
-    public Flag update(Flag flag, ModuleDto course, ChapterDto chapter) {
-        LessonDto lesson = dtoFactoryService.getLessonDtoById(Integer.parseInt(flag.getLessonIdentifier()));
+    public Flag update(Flag flag, CoursePlanDto course, ModuleDto module, ChapterDto chapter) {
+        LessonDto lesson = dtoFactoryService.getLessonDtoById(flag.getLessonIdentifier().getUnitId());
         String externalId = flag.getExternalId();
         if (lesson == null) {
-            return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, chapter);
+            return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, module, chapter);
         }
         if (lesson.getState() != CourseUnitState.Active) {
             LessonDto nextActiveLesson = BuilderHelper.getNextActive(lesson, chapter.getLessons());
             if (nextActiveLesson != null) {
-                return courseFlagBuilder.buildFlagFrom(externalId, course, chapter, nextActiveLesson);
+                return courseFlagBuilder.buildFlagFrom(externalId, course, module, chapter, nextActiveLesson);
             }
-            ChapterDto nextActiveChapter = BuilderHelper.getNextActive(chapter, course.getChapters());
+            ChapterDto nextActiveChapter = BuilderHelper.getNextActive(chapter, module.getChapters());
             if (nextActiveChapter != null) {
-                return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, nextActiveChapter);
+                return courseFlagBuilder.buildFlagFromFirstActiveMetadata(externalId, course, module, nextActiveChapter);
             }
             return courseFlagBuilder.buildCourseCompletionFlag(externalId, course);
         }
-        return courseFlagBuilder.buildFlagFrom(externalId, course, chapter, lesson);
+        return courseFlagBuilder.buildFlagFrom(externalId, course, module, chapter, lesson);
     }
 
 }

@@ -17,4 +17,6 @@ public interface CoursePublicationAttemptService {
     CoursePublicationAttempt getCoursePublicationAttemptById(long id);
 
     CoursePublicationAttempt getCoursePublicationAttemptByCourseId(long courseId);
+
+    CoursePublicationAttempt getLastSuccessfulCoursePublicationAttempt();
 }

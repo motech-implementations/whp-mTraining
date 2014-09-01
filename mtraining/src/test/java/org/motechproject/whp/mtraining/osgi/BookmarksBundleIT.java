@@ -17,20 +17,16 @@ import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.whp.mtraining.CourseBuilder;
 import org.motechproject.mtraining.domain.*;
-import org.motechproject.whp.mtraining.domain.CourseConfiguration;
-import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.domain.*;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
 import org.motechproject.whp.mtraining.IVRServer;
-import org.motechproject.whp.mtraining.domain.Location;
-import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponseHandler;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
-import org.motechproject.whp.mtraining.web.domain.Bookmark;
-import org.motechproject.whp.mtraining.web.domain.CourseProgress;
+import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.web.domain.CourseProgressPostRequest;
 import org.motechproject.whp.mtraining.web.domain.CourseProgressResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
@@ -168,7 +164,9 @@ public class BookmarksBundleIT {
         Chapter chapter = course002.getChapters().get(0);
         Lesson lesson = chapter.getLessons().get(0);
 
-        Flag bookmark = new Flag(String.valueOf(course002.getId()), String.valueOf(chapter.getId()), String.valueOf(lesson.getId()), null, null, null ,null);
+        Flag bookmark = new Flag(String.valueOf(course002.getId()), null, new ContentIdentifier(course002.getId(), UUID.randomUUID().toString(), 1),
+                new ContentIdentifier(chapter.getId(), UUID.randomUUID().toString(), 1),
+                new ContentIdentifier(lesson.getId(), UUID.randomUUID().toString(), 1), null, null);
         CourseProgress courseProgress = new CourseProgress(DateTime.now().toString(), bookmark, 2, "ONGOING");
         CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", courseProgress);
         ObjectMapper objectMapper = new ObjectMapper();

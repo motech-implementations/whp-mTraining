@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.web.domain;
 
+import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.util.JSONUtil;
 
 import java.util.List;

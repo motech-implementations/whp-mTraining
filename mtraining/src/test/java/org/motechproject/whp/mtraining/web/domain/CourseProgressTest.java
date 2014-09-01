@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.web.domain;
 
 import org.junit.Test;
+import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.BookmarkBuilder;

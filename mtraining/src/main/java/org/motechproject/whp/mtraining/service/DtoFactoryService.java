@@ -44,4 +44,6 @@ public interface DtoFactoryService {
     QuizDto getQuizDtoById(long quizId);
 
     void activateCourse(CoursePlanDto course);
+
+    CoursePlanDto getLatestPublishedCourse(long courseId);
 }

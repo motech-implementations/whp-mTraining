@@ -10,11 +10,14 @@ import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
 import org.motechproject.whp.mtraining.util.CustomDateSerializer;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
 
+import javax.jdo.annotations.Unique;
+
 @Entity
 public class Provider extends MdsEntity {
 
     // primary contact number
     @Field
+    @Unique
     private Long callerId;
 
     @Field

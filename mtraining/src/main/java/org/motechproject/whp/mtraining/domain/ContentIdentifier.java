@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.motechproject.mds.annotations.Entity;
+import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
 
 import java.util.UUID;
@@ -10,8 +11,11 @@ import java.util.UUID;
 public class ContentIdentifier extends MdsEntity {
 
     @JsonIgnore
+    @Field
     private long unitId;
+    @Field
     private String contentId;
+    @Field
     private long version;
 
     public ContentIdentifier(long id, String contentId, long version) {

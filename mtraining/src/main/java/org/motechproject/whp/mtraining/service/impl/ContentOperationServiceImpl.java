@@ -33,8 +33,6 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     public static final String OPTIONS_MAPPING_NAME = "options";
     public static final String ANSWER_FILENAME_MAPPING_NAME = "answerFilename";
     public static final String CONTENT_ID_MAPPING_NAME = "contentId";
-    public static final String ID_MAPPING_NAME = "id";
-    public static final String VERSION_MAPPING_NAME = "version";
 
     @Override
     public void getFileNameAndDescriptionFromContent(CourseUnitMetadataDto courseUnitMetadataDto, String content) {
@@ -164,19 +162,5 @@ public class ContentOperationServiceImpl implements ContentOperationService {
 
         objectNode.put(mappingName, arrayNode);
         return objectNode.toString();
-    }
-
-    public ContentIdentifier getContentIdentifierFromString(String content) {
-        return new ContentIdentifier(Long.parseLong(getFromJsonString(content, ID_MAPPING_NAME)),
-                getUuidFromJsonString(content).toString(), Long.parseLong(getFromJsonString(content, VERSION_MAPPING_NAME)));
-    }
-
-    public String codeContentIdentifierIntoString(ContentIdentifier content) {
-        String json = "";
-        json = codeIntoJsonString(json, ID_MAPPING_NAME, String.valueOf(content.getId()));
-        json = codeIntoJsonString(json, CONTENT_ID_MAPPING_NAME, String.valueOf(content.getContentId()));
-        json = codeIntoJsonString(json, VERSION_MAPPING_NAME, String.valueOf(content.getVersion()));
-
-        return json;
     }
 }

@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.domain;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.Bookmark;
+import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.motechproject.whp.mtraining.web.domain.ValidationError;
@@ -21,17 +22,23 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
  * If the value of the lesson is set then that of quiz will be NULL and vice-versa
  */
 @Entity
-public class Flag extends Bookmark {
+public class Flag extends MdsEntity {
 
-    /**
-     * module identifier
-     */
+    @Field
+    private String externalId;
+
+    @Field
+    private ContentIdentifier courseIdentifier;
+
     @Field
     private ContentIdentifier moduleIdentifier;
 
-    /**Objects.toString(lesson.getId())
-     * quiz identifier
-     */
+    @Field
+    private ContentIdentifier chapterIdentifier;
+
+    @Field
+    private ContentIdentifier lessonIdentifier;
+
     @Field
     private ContentIdentifier quizIdentifier;
 
@@ -43,10 +50,13 @@ public class Flag extends Bookmark {
     @Field
     private Map<String, Object> progress;
 
-    public Flag(String externalId, String courseIdentifier, ContentIdentifier moduleIdentifier, String chapterIdentifier,
-                String lessonIdentifier, ContentIdentifier quizIdentifier, Map<String, Object> progress) {
-        super(externalId, courseIdentifier, chapterIdentifier, lessonIdentifier, progress);
+    public Flag(String externalId, ContentIdentifier courseIdentifier, ContentIdentifier moduleIdentifier, ContentIdentifier chapterIdentifier,
+                ContentIdentifier lessonIdentifier, ContentIdentifier quizIdentifier, Map<String, Object> progress) {
+        this.externalId = externalId;
+        this.courseIdentifier = courseIdentifier;
         this.moduleIdentifier = moduleIdentifier;
+        this.chapterIdentifier = chapterIdentifier;
+        this.lessonIdentifier = lessonIdentifier;
         this.quizIdentifier = quizIdentifier;
     }
 
@@ -64,6 +74,38 @@ public class Flag extends Bookmark {
 
     public void setQuizIdentifier(ContentIdentifier quizIdentifier) {
         this.quizIdentifier = quizIdentifier;
+    }
+
+    public ContentIdentifier getChapterIdentifier() {
+        return chapterIdentifier;
+    }
+
+    public void setChapterIdentifier(ContentIdentifier chapterIdentifier) {
+        this.chapterIdentifier = chapterIdentifier;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    public void setCourseIdentifier(ContentIdentifier courseIdentifier) {
+        this.courseIdentifier = courseIdentifier;
+    }
+
+    public ContentIdentifier getCourseIdentifier() {
+        return courseIdentifier;
+    }
+
+    public ContentIdentifier getLessonIdentifier() {
+        return lessonIdentifier;
+    }
+
+    public void setLessonIdentifier(ContentIdentifier lessonIdentifier) {
+        this.lessonIdentifier = lessonIdentifier;
     }
 
     public List<ValidationError> validate() {

@@ -20,6 +20,9 @@ public class CoursePublicationAttempt {
     @Field
     private DateTime publishAttemptedOn;
 
+    @Field
+    private long version;
+
 
     public CoursePublicationAttempt(Long courseId,boolean publishedToIvr) {
         this.courseId = courseId;
@@ -53,5 +56,13 @@ public class CoursePublicationAttempt {
 
     public boolean isPublishedToIvr() {
         return publishedToIvr;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 }

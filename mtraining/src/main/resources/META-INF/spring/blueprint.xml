@@ -62,6 +62,12 @@
     <osgi:service id="manyToManyRelationServiceOsgi" ref="manyToManyRelationService"
                   interface="org.motechproject.whp.mtraining.service.ManyToManyRelationService" />
 
+    <osgi:service id="bookmarkRequestServiceOsgi" ref="bookmarkRequestService"
+                  interface="org.motechproject.whp.mtraining.service.BookmarkRequestService" />
+
+    <osgi:service id="courseProgressServiceOsgi" ref="courseProgressService"
+                  interface="org.motechproject.whp.mtraining.service.CourseProgressService" />
+
     <osgi:reference id="providerDataService"
                     interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
 
@@ -88,6 +94,13 @@
 
     <osgi:reference id="locationDataService"
                     interface="org.motechproject.whp.mtraining.repository.LocationDataService" />
+
+    <osgi:reference id="bookmarkRequestDataService"
+                    interface="org.motechproject.whp.mtraining.repository.BookmarkRequestDataService" />
+
+    <osgi:reference id="courseProgressDataService"
+                    interface="org.motechproject.whp.mtraining.repository.CourseProgressDataService" />
+
 
     <!--Mail Configuration-->
 
