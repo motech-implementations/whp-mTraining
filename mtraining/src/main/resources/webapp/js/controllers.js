@@ -557,6 +557,9 @@
 
         $scope.getQuizFromQuizzes = function () {
             var idx = $scope.selectedQuiz;
+            if (!idx) {
+                return;
+            }
             var chapterId = $scope.chapter.id;
             var quiz = Quiz.get({ id: $scope.quizzes[idx].id }, function() {
                 quiz.parentIds = [chapterId];
