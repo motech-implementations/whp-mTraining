@@ -3,10 +3,11 @@ package org.motechproject.whp.mtraining.domain;
 import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
+import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 @Entity
-public class CoursePublicationAttempt {
+public class CoursePublicationAttempt extends MdsEntity{
 
     @Field
     private Long id;
@@ -18,16 +19,12 @@ public class CoursePublicationAttempt {
     private boolean publishedToIvr;
 
     @Field
-    private DateTime publishAttemptedOn;
-
-    @Field
     private long version;
 
 
     public CoursePublicationAttempt(Long courseId,boolean publishedToIvr) {
         this.courseId = courseId;
         this.publishedToIvr = publishedToIvr;
-        this.publishAttemptedOn = ISODateTimeUtil.nowInTimeZoneUTC();
     }
 
     @Override

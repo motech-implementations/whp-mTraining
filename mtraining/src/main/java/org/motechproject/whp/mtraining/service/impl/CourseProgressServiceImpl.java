@@ -6,6 +6,7 @@ import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.CourseConfiguration;
 import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.repository.CourseProgressDataService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.whp.mtraining.service.CourseProgressService;
 import org.motechproject.whp.mtraining.service.FlagService;
@@ -21,9 +22,20 @@ public class CourseProgressServiceImpl implements CourseProgressService {
 
     @Autowired
     CourseProgressService courseProgressService;
-
+    
     @Autowired
-    CourseProgressUpdater courseProgressUpdater;
+    CourseProgressDataService courseProgressDataService;
+
+    @Override
+    public CourseProgress createCourseProgress(CourseProgress courseProgress) {
+        
+        return courseProgressDataService.create(courseProgress);
+    }
+
+    @Override
+    public CourseProgress updateCourseProgress(CourseProgress courseProgress) {
+        return courseProgressDataService.update(courseProgress);
+    }
 
     /**
      * Return the course progress dto for the given courseId for the enrollee.
@@ -32,6 +44,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
      * If the enrollee has course progress information for only courses that has been successfully completed by enrollee and certification released i.e the course
      * has been 'CLOSED' with respect to the enrollee,then null is returned.
      * Please have a look at @CourseStatus for more information.
+     *
      * @param externalId
      * @param courseIdentifier
      * @return CourseProgressDto

@@ -11,7 +11,7 @@ import java.util.List;
 public interface FlagService {
 
     /**
-     * Create a flag fora user
+     * Create a flag for a user
      * @param flag flag object to save
      * @return flag object created in the store
      */
@@ -57,8 +57,21 @@ public interface FlagService {
      */
     void deleteAllFlagsForUser(String externalId);
 
+    /**
+     * Get flag by externalId
+     * @param externalId external tracking id for the user
+     * @return flag object
+     */
     Flag getFlagByExternalId(String externalId);
 
+    /**
+     * Given a course identifier,return the first bookmark from first active content of the course
+     * If course not found then throw CourseNotFoundException
+     *
+     * @param externalId
+     * @param courseIdentifier
+     * @return
+     */
     Flag getInitialFlag(String externalId, ContentIdentifier courseIdentifier);
 
 }

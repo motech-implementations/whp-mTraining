@@ -114,6 +114,21 @@ public class FlagServiceImpl implements FlagService{
 
     }
 
+    @Override
+    public Flag getFlagByExternalId(String externalId) {
+        long id = 0;
+        try {
+            id = Long.parseLong(externalId);
+        }
+        catch(NumberFormatException ex)
+        {
+            throw ex;
+        }
+        finally {
+            return flagDataService.findFlagById(id);
+        }
+    }
+
     /**
      * Given a course identifier,return the first bookmark from first active content of the course
      * If course not found then throw CourseNotFoundException
@@ -124,7 +139,7 @@ public class FlagServiceImpl implements FlagService{
      */
     @Override
     public Flag getInitialFlag(String externalId, ContentIdentifier courseIdentifier) {
-        CoursePlanDto course = dtoFactoryService.getLatestPublishedCourse(courseIdentifier.getUnitId());
+        CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseIdentifier.getUnitId());
         if (course == null) {
             throw new CourseNotFoundException();
         }

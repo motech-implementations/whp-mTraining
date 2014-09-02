@@ -44,4 +44,9 @@ public class CourseConfigurationServiceImpl implements CourseConfigurationServic
         List<CourseConfiguration> configurations = courseConfigurationDataService.findCourseConfigurationByCourseName(courseName);
         return (configurations.size() > 0) ? configurations.get(0) : null;
     }
+
+    @Override
+    public CourseConfiguration getCourseConfigurationByCourseId(long id) {
+        return courseConfigurationDataService.findCourseConfigurationById(id);
+    }
 }

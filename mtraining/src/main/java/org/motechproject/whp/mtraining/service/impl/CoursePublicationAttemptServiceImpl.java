@@ -1,5 +1,8 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+import org.motechproject.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
 import org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService;
 import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
@@ -14,6 +17,9 @@ public class CoursePublicationAttemptServiceImpl implements CoursePublicationAtt
     @Autowired
     private CoursePublicationAttemptDataService coursePublicationAttemptDataService;
     
+    @Autowired
+    private CoursePublicationAttemptService coursePublicationAttemptService;
+
     @Override
     public CoursePublicationAttempt createCoursePublicationAttempt(CoursePublicationAttempt coursePublicationAttempt) {
         return coursePublicationAttemptDataService.create(coursePublicationAttempt);
@@ -42,5 +48,32 @@ public class CoursePublicationAttemptServiceImpl implements CoursePublicationAtt
     @Override
     public CoursePublicationAttempt getCoursePublicationAttemptByCourseId(long courseId) {
         return coursePublicationAttemptDataService.findCoursePublicationAttemptByCourseId(courseId);
+    }
+
+    //TODO impl
+    @Override
+    public CoursePublicationAttempt getLastSuccessfulCoursePublicationAttempt() {
+        List<CoursePublicationAttempt> courses=coursePublicationAttemptDataService.retrieveAll();
+        CoursePublicationAttempt last=null;
+        for (CoursePublicationAttempt course : courses)
+        {
+            if (course.isPublishedToIvr())
+            {
+                if (last==null)
+                {
+                    last=course;
+                    continue;
+                }
+                else
+                
+                {
+                    DateTime d1=last.getCreationDate();
+                    DateTime d2=course.getCreationDate();
+                    if(DateTimeComparator.getInstance().compare(d1,d2)==-1)
+                        last=course;
+                }
+            }
+        }
+        return last;
     }
 }
