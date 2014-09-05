@@ -16,8 +16,8 @@ import java.util.List;
 public interface FlagDataService extends MotechDataService<Flag>{
 
     @Lookup
-    Flag findFlagById(@LookupField(name = "moduleIdentifier") long id);
+    Flag findFlagById(@LookupField(name = "id") long id);
 
     @Lookup
-    List<Flag> findFlagForUser(@LookupField(name = "moduleIdentifier") String externalId);
+    List<Flag> findFlagForUser(@LookupField(name = "externalId") String externalId);
 }
