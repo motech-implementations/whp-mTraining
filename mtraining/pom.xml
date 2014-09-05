@@ -320,7 +320,8 @@
                             org.motechproject.whp.mtraining.reports;version=${project.version},
                             org.motechproject.whp.mtraining.ivr;version=${project.version},
                             org.motechproject.whp.mtraining.util;version=${project.version},
-                            org.motechproject.whp.mtraining;version=${project.version}
+                            org.motechproject.whp.mtraining;version=${project.version},
+                            org.motechproject.whp.mtraining.constants;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.motechproject.server.config;version=${motech.version},

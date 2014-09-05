@@ -118,7 +118,7 @@ public class FlagController {
         } catch (InvalidBookmarkException ex) {
             return responseAfterLogging(callerId, uniqueId, sessionId, POST, INVALID_FLAG);
         }
-        bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId, OK, POST, courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseStatus.value(), new BookmarkReport(bookmark)));
+        bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId, OK, POST, courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseStatus.getValue(), new BookmarkReport(bookmark)));
         return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 

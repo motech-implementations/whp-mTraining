@@ -7,7 +7,7 @@ import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 @Entity
-public class CoursePublicationAttempt extends MdsEntity{
+public class CoursePublicationAttempt extends MdsEntity {
 
     @Field
     private Long id;

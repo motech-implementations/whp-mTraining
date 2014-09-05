@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.service.impl;
 
-import org.motechproject.whp.mtraining.builder.CourseProgressUpdater;
 import org.motechproject.whp.mtraining.constants.CourseStatus;
 import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.CourseConfiguration;
@@ -10,6 +9,7 @@ import org.motechproject.whp.mtraining.repository.CourseProgressDataService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.whp.mtraining.service.CourseProgressService;
 import org.motechproject.whp.mtraining.service.FlagService;
+import org.motechproject.whp.mtraining.validator.CourseProgressValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CourseProgressServiceImpl implements CourseProgressService {
@@ -58,7 +58,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
                 return null;
             }
             CourseProgress curseProgress = new CourseProgress(externalId, courseProgress.getCourseStartTime(), flag, 0, courseProgress.getCourseStatus());
-            if (courseProgress.isCourseClosed()) {
+            if (CourseProgressValidator.isCourseClosed(courseProgress)) {
                 return courseProgress;
             }
             setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
@@ -78,7 +78,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
     @Override
     public CourseProgress getInitialCourseProgressForProvider(String externalId, ContentIdentifier courseIdentifier) {
         Flag flag = flagService.getInitialFlag(externalId, courseIdentifier);
-        CourseProgress courseProgress = new CourseProgress(externalId, null, flag, 0, CourseStatus.STARTED.value());
+        CourseProgress courseProgress = new CourseProgress(externalId, null, flag, 0, CourseStatus.STARTED.getValue());
         setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
         return courseProgress;
     }

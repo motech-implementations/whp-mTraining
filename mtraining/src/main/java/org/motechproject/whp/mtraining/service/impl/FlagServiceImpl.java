@@ -18,7 +18,7 @@ import java.util.List;
  * Service implementation for flags
  */
 @Service("flagService")
-public class FlagServiceImpl implements FlagService{
+public class FlagServiceImpl implements FlagService {
 
     @Autowired
     private FlagDataService flagDataService;

@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.web.domain;
 
 import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.util.JSONUtil;
+import org.motechproject.whp.mtraining.validator.CourseProgressValidator;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class CourseProgressPostRequest extends IVRRequest {
             validationErrors.add(new ValidationError(MISSING_NODE.getCode(), MISSING_NODE.getMessage().concat(" for: CourseProgress")));
             return validationErrors;
         }
-        validationErrors.addAll(courseProgress.validate());
+        validationErrors.addAll(CourseProgressValidator.validate(courseProgress));
         return validationErrors;
     }
 
