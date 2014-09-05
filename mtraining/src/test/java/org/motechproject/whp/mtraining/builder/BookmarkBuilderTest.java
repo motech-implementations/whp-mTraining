@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.builder;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.motechproject.mtraining.domain.*;
+import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.dto.*;
 
 import java.util.Arrays;
@@ -24,8 +25,8 @@ public class BookmarkBuilderTest {
                 .withChapters(asList(chapter01))
                 .buildCourse();
 
-        Bookmark bookmark = new FlagBuilder().buildFlagFromFirstActiveMetadata("roll001", course01, chapter01);
-
+        Bookmark bookmark = new Bookmark("roll001", Objects.toString(course01.getId()), Objects.toString(chapter01.getId()),
+                Objects.toString(chapter01.getLessons().get(0).getId()), null);
         assertThat(bookmark.getExternalId(), Is.is("roll001"));
         assertThat(bookmark.getLessonIdentifier(), Is.is(Objects.toString(activeLesson.getId())));
     }

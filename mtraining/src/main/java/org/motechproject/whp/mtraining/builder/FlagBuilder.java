@@ -24,6 +24,7 @@ public class FlagBuilder {
 
     /**
      * Build flag from the first active module of a course for the given parameter
+     *
      * @param externalId
      * @param course
      * @return
@@ -35,6 +36,7 @@ public class FlagBuilder {
 
     /**
      * Build flag from the first active chapter of a module for the given parameter
+     *
      * @param externalId
      * @param course
      * @return
@@ -45,9 +47,11 @@ public class FlagBuilder {
     }
 
     //TODO Add method with module
+
     /**
-     * Build flag from the first activ-e Lesson of a chapter in a given module
+     * Build flag from the first active Lesson of a chapter in a given module
      * If chapter does not have active lesson then try building  from  the chapter quiz
+     *
      * @param externalId
      * @param course
      * @param chapter
@@ -66,6 +70,7 @@ public class FlagBuilder {
 
     /**
      * Build flag from the provided lesson in a given chapter,course
+     *
      * @param externalId
      * @param course
      * @param chapter
@@ -76,13 +81,21 @@ public class FlagBuilder {
         if (lesson == null) {
             return null;
         }
-        return new Flag(externalId, new ContentIdentifier(course.getId(), course.getContentId()),
-                new ContentIdentifier(module.getId(), module.getContentId()), new ContentIdentifier(chapter.getId(), chapter.getContentId()),
-                new ContentIdentifier(lesson.getId(), lesson.getContentId()), null, null);
+        ContentIdentifier courseCI = (course.getContentId() == null) ? null : new ContentIdentifier(course.getId(), course.getContentId());
+        ContentIdentifier moduleCI = (module.getContentId() == null) ? null : new ContentIdentifier(module.getId(), module.getContentId());
+        ContentIdentifier chapterCI = (chapter.getContentId() == null) ? null : new ContentIdentifier(chapter.getId(), chapter.getContentId());
+        ContentIdentifier lessonCI = (lesson.getContentId() == null) ? null : new ContentIdentifier(lesson.getId(), lesson.getContentId());
+        return new Flag(externalId,
+                courseCI,
+                moduleCI,
+                chapterCI,
+                lessonCI,
+                null, null);
     }
 
     /**
      * Build flag from the provided quiz in a given chapter,course
+     *
      * @param externalId
      * @param course
      * @param chapter
@@ -102,6 +115,7 @@ public class FlagBuilder {
     /**
      * Build a flag that implies course completion
      * A course completed flag points only to the course with other values as null
+     *
      * @param externalId
      * @param course
      * @return
@@ -114,6 +128,7 @@ public class FlagBuilder {
      * Build flag from last active metadata of a given course
      * if a course has both active lesson and quiz, then build flag from the quiz
      * otherwise build flag from the last active lesson
+     *
      * @param externalId
      * @param course
      * @return
@@ -123,7 +138,7 @@ public class FlagBuilder {
         ChapterDto lastActiveChapter = BuilderHelper.findLastActive(lastActiveModule.getChapters());
         LessonDto lastActiveLesson = BuilderHelper.findLastActive(lastActiveChapter.getLessons());
         if (lastActiveLesson != null) {
-            if (lastActiveChapter.getQuiz() != null && lastActiveChapter.getQuiz().getState() == CourseUnitState.Active){
+            if (lastActiveChapter.getQuiz() != null && lastActiveChapter.getQuiz().getState() == CourseUnitState.Active) {
                 buildFlagFrom(externalId, course, lastActiveModule, lastActiveChapter, lastActiveChapter.getQuiz());
             }
             return buildFlagFrom(externalId, course, lastActiveModule, lastActiveChapter, lastActiveLesson);

@@ -10,7 +10,7 @@ public class ProviderStatusTest {
     @Test
     public void verifyForInvalidProviderStatus() {
         assertFalse(ProviderStatus.isInvalid(ProviderStatus.WORKING_PROVIDER.getStatus()));
-        assertFalse(ProviderStatus.isInvalid(null));
+        assertFalse(ProviderStatus.isInvalid((ProviderStatus)null));
         assertTrue(ProviderStatus.isInvalid(ProviderStatus.NOT_WORKING_PROVIDER.getStatus()));
     }
 
