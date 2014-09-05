@@ -1,15 +1,13 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.constants.CourseStatus;
-import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.ValidationError;
 
-import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,7 +15,10 @@ import java.util.List;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.constants.CourseStatus.UNKNOWN;
 import static org.motechproject.whp.mtraining.constants.CourseStatus.enumFor;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.*;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_COURSE_STATUS;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_DATE_TIME;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_FLAG;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_COURSE_START_TIME;
 
 @Entity
 public class CourseProgress extends MdsEntity {
