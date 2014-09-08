@@ -5,6 +5,7 @@ import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.BookmarkBuilder;
+import org.motechproject.whp.mtraining.validator.CourseProgressValidator;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -19,10 +20,10 @@ public class CourseProgressTest {
         CourseProgress courseProgressWithBookmarkWithNullCourse = new CourseProgress(ISODateTimeUtil.nowAsStringInTimeZoneUTC(), new BookmarkBuilder().withCourse(0).buildFlag(), 1000, "STARTED");
         CourseProgress courseProgressWithInvalidStatus = new CourseProgress(null, flag, 1000, null);
 
-        assertTrue(courseProgressWithMissingStartTime.validate().contains(new ValidationError(ResponseStatus.MISSING_COURSE_START_TIME)));
-        assertTrue(courseProgressWithInvalidStartTime.validate().contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME)));
-        assertTrue(courseProgressWithInvalidBookmark.validate().contains(new ValidationError(ResponseStatus.INVALID_FLAG)));
-        assertTrue(courseProgressWithBookmarkWithNullCourse.validate().contains(new ValidationError(910, "Missing Content Id or Version for: Course")));
-        assertTrue(courseProgressWithInvalidStatus.validate().contains(new ValidationError(ResponseStatus.INVALID_COURSE_STATUS)));
+        assertTrue(CourseProgressValidator.validate(courseProgressWithMissingStartTime).contains(new ValidationError(ResponseStatus.MISSING_COURSE_START_TIME)));
+        assertTrue(CourseProgressValidator.validate(courseProgressWithInvalidStartTime).contains(new ValidationError(ResponseStatus.INVALID_DATE_TIME)));
+        assertTrue(CourseProgressValidator.validate(courseProgressWithInvalidBookmark).contains(new ValidationError(ResponseStatus.INVALID_FLAG)));
+        assertTrue(CourseProgressValidator.validate(courseProgressWithBookmarkWithNullCourse).contains(new ValidationError(910, "Missing Content Id or Version for: Course")));
+        assertTrue(CourseProgressValidator.validate(courseProgressWithInvalidStatus).contains(new ValidationError(ResponseStatus.INVALID_COURSE_STATUS)));
     }
 }
