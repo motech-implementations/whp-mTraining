@@ -850,7 +850,6 @@
         }
 
         $scope.createQuiz = function() {
-            $scope.alertMessage = undefined;
             $scope.errorName = undefined;
             $scope.errorPercentage = undefined;
             $scope.creatingQuiz = true;
@@ -858,9 +857,13 @@
             if ($scope.quiz.questions == undefined) {
                 $scope.quiz.questions = [];
             }
+            if ($scope.quiz.parentIds == undefined) {
+                $scope.quiz.parentIds = [];
+            }
         }
 
         $scope.saveQuiz = function() {
+            $scope.alertMessage = undefined;
             if (!$scope.validate()){
                 return;
             }
@@ -875,6 +878,7 @@
         }
 
         $scope.updateQuiz = function() {
+            $scope.alertMessage = undefined;
             if (!$scope.validate()){
                 return;
             }
@@ -888,6 +892,7 @@
         }
 
         $scope.deleteQuiz = function() {
+            $scope.alertMessage = undefined;
             if ($scope.quiz.inRelation) {
                 $("#errorMessage").text($scope.msg('mtraining.cannotDeleteQuiz'));
                 $("#errorDialog").modal('show');
