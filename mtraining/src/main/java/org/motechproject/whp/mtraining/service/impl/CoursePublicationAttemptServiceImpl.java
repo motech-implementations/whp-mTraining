@@ -2,7 +2,6 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
-import org.motechproject.mtraining.domain.Course;
 import org.motechproject.whp.mtraining.domain.CoursePublicationAttempt;
 import org.motechproject.whp.mtraining.repository.CoursePublicationAttemptDataService;
 import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
@@ -16,9 +15,6 @@ public class CoursePublicationAttemptServiceImpl implements CoursePublicationAtt
 
     @Autowired
     private CoursePublicationAttemptDataService coursePublicationAttemptDataService;
-    
-    @Autowired
-    private CoursePublicationAttemptService coursePublicationAttemptService;
 
     @Override
     public CoursePublicationAttempt createCoursePublicationAttempt(CoursePublicationAttempt coursePublicationAttempt) {
@@ -50,7 +46,6 @@ public class CoursePublicationAttemptServiceImpl implements CoursePublicationAtt
         return coursePublicationAttemptDataService.findCoursePublicationAttemptByCourseId(courseId);
     }
 
-    //TODO impl
     @Override
     public CoursePublicationAttempt getLastSuccessfulCoursePublicationAttempt() {
         List<CoursePublicationAttempt> courses=coursePublicationAttemptDataService.retrieveAll();

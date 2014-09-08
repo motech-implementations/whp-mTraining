@@ -9,9 +9,10 @@ import org.motechproject.whp.mtraining.repository.CourseProgressDataService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.whp.mtraining.service.CourseProgressService;
 import org.motechproject.whp.mtraining.service.FlagService;
-import org.motechproject.whp.mtraining.validator.CourseProgressValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service("courseProgressService")
 public class CourseProgressServiceImpl implements CourseProgressService {
 
     @Autowired
@@ -19,9 +20,6 @@ public class CourseProgressServiceImpl implements CourseProgressService {
 
     @Autowired
     FlagService flagService;
-
-    @Autowired
-    CourseProgressService courseProgressService;
     
     @Autowired
     CourseProgressDataService courseProgressDataService;
@@ -51,19 +49,19 @@ public class CourseProgressServiceImpl implements CourseProgressService {
      */
     @Override
     public CourseProgress getCourseProgressForProvider(String externalId, ContentIdentifier courseIdentifier) {
-        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(externalId, courseIdentifier);
-        if (courseProgress != null) {
-            Flag flag = flagService.getFlagByExternalId(externalId);
-            if (flag == null) {
-                return null;
-            }
-            CourseProgress curseProgress = new CourseProgress(externalId, courseProgress.getCourseStartTime(), flag, 0, courseProgress.getCourseStatus());
-            if (CourseProgressValidator.isCourseClosed(courseProgress)) {
-                return courseProgress;
-            }
-            setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
-            return courseProgressService.updateCourseProgress(courseProgress);
-        }
+//        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(externalId, courseIdentifier);
+//        if (courseProgress != null) {
+//            Flag flag = flagService.getFlagByExternalId(externalId);
+//            if (flag == null) {
+//                return null;
+//            }
+//            CourseProgress curseProgress = new CourseProgress(externalId, courseProgress.getCourseStartTime(), flag, 0, courseProgress.getCourseStatus());
+//            if (CourseProgressValidator.isCourseClosed(courseProgress)) {
+//                return courseProgress;
+//            }
+//            setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
+//            return courseProgressService.updateCourseProgress(courseProgress);
+//        }
         return null;
     }
 
