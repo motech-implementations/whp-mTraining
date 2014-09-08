@@ -474,4 +474,16 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         }
         return ids;
     }
+
+    @Override
+    public CoursePlan getCoursePlanByExternalId(String externalId) {
+        List<CoursePlan> coursePlans = coursePlanService.getAllCoursePlans();
+        for(CoursePlan coursePlan : coursePlans) {
+            if (contentOperationService.getUuidFromJsonString(coursePlan.getContent()).toString().equalsIgnoreCase(externalId)) {
+                return coursePlan;
+            }
+        }
+        return null;
+    }
+
 }

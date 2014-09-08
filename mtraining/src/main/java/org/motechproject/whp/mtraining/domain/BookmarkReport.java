@@ -4,6 +4,8 @@ import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
+import org.motechproject.whp.mtraining.service.FlagService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity
@@ -26,6 +28,8 @@ public class BookmarkReport extends MdsEntity {
 
     @Field
     private DateTime dateModified;
+
+    public BookmarkReport() { }
 
     public BookmarkReport(Flag flag) {
         this.courseIdentifier = flag.getCourseIdentifier();

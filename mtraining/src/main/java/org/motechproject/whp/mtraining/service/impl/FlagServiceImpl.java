@@ -139,6 +139,7 @@ public class FlagServiceImpl implements FlagService {
      */
     @Override
     public Flag getInitialFlag(long callerId, ContentIdentifier courseIdentifier) {
+
         CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseIdentifier.getUnitId());
         if (course == null) {
             throw new CourseNotFoundException();

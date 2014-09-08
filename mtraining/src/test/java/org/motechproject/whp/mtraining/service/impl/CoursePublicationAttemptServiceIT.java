@@ -38,8 +38,6 @@ public class CoursePublicationAttemptServiceIT extends BasePaxIT {
 
     @Test
     public void shouldAddAndRetrieveACourse() {
-        assertThat(coursePublicationAttemptService.getAllCoursePublicationAttempt().size(), Is.is(0));
-
         long courseId = 123L;
         CoursePublicationAttempt coursePublicationAttempt = new CoursePublicationAttempt(courseId, true);
 
@@ -47,30 +45,8 @@ public class CoursePublicationAttemptServiceIT extends BasePaxIT {
 
         CoursePublicationAttempt retrievedCoursePublicationAttempt = coursePublicationAttemptService.getCoursePublicationAttemptByCourseId(courseId);
         assertNotNull(retrievedCoursePublicationAttempt);
+
+        coursePublicationAttemptService.deleteCoursePublicationAttempt(retrievedCoursePublicationAttempt);
     }
 
-    @Before
-    @After
-    public void clearAllCoursePublicationStatus() {
-        List<CoursePublicationAttempt> attempts = coursePublicationAttemptService.getAllCoursePublicationAttempt();
-        for(CoursePublicationAttempt attempt : attempts) {
-            coursePublicationAttemptService.deleteCoursePublicationAttempt(attempt);
-        }
-    }
-
-    @Test
-    public void shouldReturnLastSuccessfulPublicationAttempt() {
-        assertThat(coursePublicationAttemptService.getAllCoursePublicationAttempt().size(), Is.is(0));
-        long courseId = 123L;
-        CoursePublicationAttempt coursePublicationAttemptOld = new CoursePublicationAttempt(courseId, true);
-        CoursePublicationAttempt coursePublicationAttemptNew = new CoursePublicationAttempt(courseId, true);
-        CoursePublicationAttempt coursePublicationAttemptNewest = new CoursePublicationAttempt(courseId, false);
-        coursePublicationAttemptService.createCoursePublicationAttempt(coursePublicationAttemptOld);
-        coursePublicationAttemptService.createCoursePublicationAttempt(coursePublicationAttemptNew);
-        coursePublicationAttemptService.createCoursePublicationAttempt(coursePublicationAttemptNewest);
-        
-        //TODO
-        //CoursePublicationAttempt lastSuccessfulCoursePublicationAttempt = coursePublicationAttemptService.getLastSuccessfulCoursePublicationAttempt();
-        //assertEquals(courseId, lastSuccessfulCoursePublicationAttempt.getCourseId());
-    }
 }

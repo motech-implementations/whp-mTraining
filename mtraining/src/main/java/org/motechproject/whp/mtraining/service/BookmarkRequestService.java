@@ -6,6 +6,4 @@ public interface BookmarkRequestService {
 
     BookmarkRequest createBookmarkRequest(BookmarkRequest bookmarkRequest);
 
-    BookmarkRequest updateBookmarkRequest(BookmarkRequest bookmarkRequest);
-
 }

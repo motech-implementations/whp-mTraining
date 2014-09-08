@@ -12,6 +12,8 @@ import org.motechproject.whp.mtraining.service.FlagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service("courseProgressService")
 public class CourseProgressServiceImpl implements CourseProgressService {
 
@@ -44,24 +46,16 @@ public class CourseProgressServiceImpl implements CourseProgressService {
      * Please have a look at @CourseStatus for more information.
      *
      * @param callerId
-     * @param courseIdentifier
      * @return CourseProgressDto
      */
     @Override
-    public CourseProgress getCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier) {
-//        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(externalId, courseIdentifier);
-//        if (courseProgress != null) {
-//            Flag flag = flagService.getFlagByExternalId(externalId);
-//            if (flag == null) {
-//                return null;
-//            }
-//            CourseProgress curseProgress = new CourseProgress(externalId, courseProgress.getCourseStartTime(), flag, 0, courseProgress.getCourseStatus());
-//            if (CourseProgressValidator.isCourseClosed(courseProgress)) {
-//                return courseProgress;
-//            }
-//            setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
-//            return courseProgressService.updateCourseProgress(courseProgress);
-//        }
+    public CourseProgress getCourseProgressForProvider(long callerId) {
+        List<CourseProgress> courseProgresses = courseProgressDataService.findCourseProgressesByCallerId(callerId);
+        for(CourseProgress courseProgress : courseProgresses) {
+            if (courseProgress != null && courseProgress.getFlag() != null) {
+                return courseProgress;
+            }
+        }
         return null;
     }
 

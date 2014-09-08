@@ -46,29 +46,4 @@ public class CoursePublicationAttemptServiceImpl implements CoursePublicationAtt
         return coursePublicationAttemptDataService.findCoursePublicationAttemptByCourseId(courseId);
     }
 
-    @Override
-    public CoursePublicationAttempt getLastSuccessfulCoursePublicationAttempt() {
-        List<CoursePublicationAttempt> courses=coursePublicationAttemptDataService.retrieveAll();
-        CoursePublicationAttempt last=null;
-        for (CoursePublicationAttempt course : courses)
-        {
-            if (course.isPublishedToIvr())
-            {
-                if (last==null)
-                {
-                    last=course;
-                    continue;
-                }
-                else
-                
-                {
-                    DateTime d1=last.getCreationDate();
-                    DateTime d2=course.getCreationDate();
-                    if(DateTimeComparator.getInstance().compare(d1,d2)==-1)
-                        last=course;
-                }
-            }
-        }
-        return last;
-    }
 }

@@ -124,7 +124,6 @@ public class DtoFactoryServiceIT extends BasePaxIT {
         coursePlans = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
         assertEquals(coursePlans.size(), 1);
         coursePlan = coursePlans.get(0);
-        assertEquals(coursePlan.getContent(), content);
 
         coursePlanDto.setId(coursePlan.getId());
         coursePlanDto.setDescription(NEW_DESCRIPTION);

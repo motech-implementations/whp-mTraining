@@ -37,6 +37,8 @@ public class FlagControllerTest {
     @Mock
     private CoursePublicationAttemptService coursePublicationAttemptService;
     @Mock
+    private FlagService flagService;
+    @Mock
     private Sessions sessions;
 
     private long callerId = 1234567890L;
@@ -49,7 +51,7 @@ public class FlagControllerTest {
     @Before
     public void setUp() {
         flagController = new FlagController(dtoFactoryService, flagBuilder, providerService, bookmarkRequestService,
-                courseProgressService, coursePublicationAttemptService, sessions);
+                courseProgressService, coursePublicationAttemptService, flagService, sessions);
         course = new ContentIdentifier("16asvebd83-d1db-4c8c-ac92-1136c4601cd6", 1);
         module = new ContentIdentifier("0a37255a-57ff-4cc5-9c7e-2caba8968ef2", 1);
         chapter = new ContentIdentifier("6841ded4-6391-4c1c-8fa8-6635cf59a07d", 1);
@@ -57,7 +59,8 @@ public class FlagControllerTest {
         quiz = null;
         flag = new Flag(course, module, chapter, lesson, quiz, "2014-04-10T10:50:10.796Z");
         courseProgress = new CourseProgress("2014-04-10T10:50:10.796Z", flag, 60, "ONGOING");
-        when(providerService.getProviderByCallerId(callerId)).thenReturn(new Provider());
+        when(providerService.getProviderByCallerId(callerId)).thenReturn(new Provider(null, callerId, null, null));
+        when(flagService.getFlagById(anyLong())).thenReturn(flag);
     }
 
     @Test
@@ -72,6 +75,7 @@ public class FlagControllerTest {
     @Test
     public void shouldReturnSuccessWhenBookmarkIsAdded() {
         CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(callerId, uniqueId, sessionId, courseProgress);
+        when(courseProgressService.createCourseProgress(any(CourseProgress.class))).thenReturn(courseProgress);
 
         ResponseEntity<? extends MotechResponse> response = flagController.postBookmark(courseProgressPostRequest);
 
@@ -82,9 +86,8 @@ public class FlagControllerTest {
     public void shouldReturnBookmark() {
         CourseProgressGetRequest courseProgressGetRequest = new CourseProgressGetRequest(callerId, sessionId, uniqueId);
         CoursePublicationAttempt coursePublicationAttempt = new CoursePublicationAttempt(0L, true);
-        when(coursePublicationAttemptService.getLastSuccessfulCoursePublicationAttempt()).thenReturn(coursePublicationAttempt);
         when(dtoFactoryService.getCoursePlanDtoById(anyLong())).thenReturn(new CoursePlanDto());
-        when(courseProgressService.getCourseProgressForProvider(anyLong(), any(ContentIdentifier.class))).thenReturn(courseProgress);
+        when(courseProgressService.getCourseProgressForProvider(anyLong())).thenReturn(courseProgress);
 
         ResponseEntity<? extends MotechResponse> response = flagController.getBookmark(courseProgressGetRequest);
 

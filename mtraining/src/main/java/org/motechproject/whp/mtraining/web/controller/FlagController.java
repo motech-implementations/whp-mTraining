@@ -37,6 +37,7 @@ public class FlagController {
     BookmarkRequestService bookmarkRequestService;
     CourseProgressService courseProgressService;
     CoursePublicationAttemptService coursePublicationAttemptService;
+    FlagService flagService;
     Sessions sessions;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlagController.class);
@@ -46,13 +47,14 @@ public class FlagController {
     @Autowired
     public FlagController(DtoFactoryService dtoFactoryService, FlagBuilder flagBuilder, ProviderService providerService,
                           BookmarkRequestService bookmarkRequestService, CourseProgressService courseProgressService,
-                          CoursePublicationAttemptService coursePublicationAttemptService, Sessions sessions) {
+                          CoursePublicationAttemptService coursePublicationAttemptService, FlagService flagService, Sessions sessions) {
         this.dtoFactoryService = dtoFactoryService;
         this.flagBuilder = flagBuilder;
         this.providerService = providerService;
         this.bookmarkRequestService = bookmarkRequestService;
         this.courseProgressService = courseProgressService;
         this.coursePublicationAttemptService = coursePublicationAttemptService;
+        this.flagService = flagService;
         this.sessions = sessions;
     }
 
@@ -74,11 +76,11 @@ public class FlagController {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, UNKNOWN_PROVIDER);
         if (isInvalid(provider.getProviderStatus()))
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER);
-        CourseProgress courseProgress = getCourseProgress(provider.getCallerId());
+        CourseProgress courseProgress = getCourseProgress(provider.getCallerId(), null);
         if(courseProgress == null){
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, ResponseStatus.COURSE_NOT_FOUND);
         }
-        Flag bookmark = courseProgress.getFlag();
+        Flag bookmark = flagService.getFlagById(courseProgress.getFlag().getId());
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET, courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseProgress.getCourseStatus(), new BookmarkReport(bookmark)));
         return new ResponseEntity<>(new CourseProgressResponse(callerId, currentSessionId, uniqueId,
                 provider.getLocation(), courseProgress), HttpStatus.OK);
@@ -103,37 +105,38 @@ public class FlagController {
             return responseAfterLogging(callerId, uniqueId, sessionId, POST, UNKNOWN_PROVIDER);
         }
         CourseStatus courseStatus = CourseStatus.enumFor(courseProgress.getCourseStatus());
+        CourseProgress savedCourseProgress = null;
         try {
-            CourseProgress actualCourseProgress = getCourseProgress(provider.getCallerId());
+            CourseProgress actualCourseProgress = getCourseProgress(provider.getCallerId(), bookmark.getCourseIdentifier());
             if (actualCourseProgress == null) {
                 courseProgress.setCallerId(provider.getCallerId());
-                courseProgressService.createCourseProgress(courseProgress);
+                savedCourseProgress = courseProgressService.createCourseProgress(courseProgress);
             } else {
                 actualCourseProgress.setCourseStartTime(courseProgress.getCourseStartTime());
                 actualCourseProgress.setCourseStatus(courseProgress.getCourseStatus());
                 actualCourseProgress.setFlag(courseProgress.getFlag());
                 actualCourseProgress.setTimeLeftToCompleteCourse(courseProgress.getTimeLeftToCompleteCourse());
                 actualCourseProgress.setCallerId(provider.getCallerId());
-                courseProgressService.updateCourseProgress(courseProgress);
+                savedCourseProgress = courseProgressService.updateCourseProgress(actualCourseProgress);
             }
         } catch (InvalidBookmarkException ex) {
             return responseAfterLogging(callerId, uniqueId, sessionId, POST, INVALID_FLAG);
         }
-        bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId, OK, POST, courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseStatus.getValue(), new BookmarkReport(bookmark)));
+
+        Flag flag = flagService.getFlagById(savedCourseProgress.getFlag().getId());
+        bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId,
+                OK, POST, savedCourseProgress.getCourseStartTime(), savedCourseProgress.getTimeLeftToCompleteCourse(), courseStatus.getValue(), new BookmarkReport(flag)));
         return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 
-    private CourseProgress getCourseProgress(long callerId) {
-        CoursePublicationAttempt latestCoursePublicationAttempt = coursePublicationAttemptService.getLastSuccessfulCoursePublicationAttempt();
-        if(latestCoursePublicationAttempt == null)
-            return null;
-        ContentIdentifier contentIdentifier = new ContentIdentifier(latestCoursePublicationAttempt.getCourseId(),
-                dtoFactoryService.getCoursePlanDtoById(latestCoursePublicationAttempt.getCourseId()).getExternalId(), latestCoursePublicationAttempt.getVersion());
-        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(callerId, contentIdentifier);
+    private CourseProgress getCourseProgress(long callerId, ContentIdentifier courseIdentifier) {
+        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(callerId);
         if (courseProgress == null) {
-            try{
-                courseProgress = courseProgressService.getInitialCourseProgressForProvider(callerId, contentIdentifier);
-            }catch (CourseNotFoundException ex){
+            try {
+                long courseId = dtoFactoryService.getCoursePlanByExternalId(courseIdentifier.getContentId()).getId();
+                courseIdentifier.setUnitId(courseId);
+                courseProgress = courseProgressService.getInitialCourseProgressForProvider(callerId, courseIdentifier);
+            } catch (Exception ex) {
                 return null;
             }
         }
