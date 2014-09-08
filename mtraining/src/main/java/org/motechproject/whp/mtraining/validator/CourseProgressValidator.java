@@ -23,7 +23,7 @@ public class CourseProgressValidator {
         if (isBlank(courseProgress.getCourseStartTime())) {
             validationErrors.add(new ValidationError(MISSING_COURSE_START_TIME.getCode(), MISSING_COURSE_START_TIME.getMessage()));
         }
-        if (!ISODateTimeUtil.validate(courseProgress.getCourseStatus())) {
+        if (!ISODateTimeUtil.validate(courseProgress.getCourseStartTime())) {
             validationErrors.add(new ValidationError(INVALID_DATE_TIME.getCode(), INVALID_DATE_TIME.getMessage().concat(" for: Course Start Time")));
         }
         if (courseProgress.getFlag() == null) {

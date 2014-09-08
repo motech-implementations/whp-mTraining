@@ -90,7 +90,7 @@ public class FlagBuilder {
                 moduleCI,
                 chapterCI,
                 lessonCI,
-                null, null);
+                null);
     }
 
     /**
@@ -109,7 +109,7 @@ public class FlagBuilder {
         return new Flag(externalId, new ContentIdentifier(course.getId(), course.getContentId()),
                 new ContentIdentifier(module.getId(), module.getContentId()),
                 new ContentIdentifier(chapter.getId(), chapter.getContentId()),
-                null, new ContentIdentifier(quiz.getId(), quiz.getContentId()), null);
+                null, new ContentIdentifier(quiz.getId(), quiz.getContentId()));
     }
 
     /**
@@ -121,7 +121,7 @@ public class FlagBuilder {
      * @return
      */
     public Flag buildCourseCompletionFlag(String externalId, CoursePlanDto course) {
-        return new Flag(externalId, new ContentIdentifier(course.getId(), course.getContentId()), null, null, null, null, null);
+        return new Flag(externalId, new ContentIdentifier(course.getId(), course.getContentId()), null, null, null, null);
     }
 
     /**

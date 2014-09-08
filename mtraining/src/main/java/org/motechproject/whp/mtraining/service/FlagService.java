@@ -68,10 +68,10 @@ public interface FlagService {
      * Given a course identifier,return the first bookmark from first active content of the course
      * If course not found then throw CourseNotFoundException
      *
-     * @param externalId
+     * @param callerId
      * @param courseIdentifier
      * @return
      */
-    Flag getInitialFlag(String externalId, ContentIdentifier courseIdentifier);
+    Flag getInitialFlag(long callerId, ContentIdentifier courseIdentifier);
 
 }

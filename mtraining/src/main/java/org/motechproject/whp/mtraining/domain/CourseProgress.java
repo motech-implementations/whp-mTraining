@@ -1,5 +1,7 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
@@ -8,6 +10,7 @@ import org.motechproject.mtraining.domain.MdsEntity;
 public class CourseProgress extends MdsEntity {
 
     @Field
+    @JsonProperty("bookmark")
     Flag flag;
 
     @Field
@@ -20,7 +23,8 @@ public class CourseProgress extends MdsEntity {
     private String courseStatus;
 
     @Field
-    private String externalId;
+    @JsonIgnore
+    private long callerId;
 
     public CourseProgress() {
     }
@@ -32,8 +36,8 @@ public class CourseProgress extends MdsEntity {
         this.courseStatus = courseStatus;
     }
 
-    public CourseProgress(String externalId, String courseStartTime, Flag flag, int timeLeftToCompleteCourse, String courseStatus) {
-        this.externalId = externalId;
+    public CourseProgress(long callerId, String courseStartTime, Flag flag, int timeLeftToCompleteCourse, String courseStatus) {
+        this.callerId = callerId;
         this.courseStartTime = courseStartTime;
         this.flag = flag;
         this.timeLeftToCompleteCourse = timeLeftToCompleteCourse;
@@ -73,11 +77,11 @@ public class CourseProgress extends MdsEntity {
         this.courseStatus = courseStatus;
     }
 
-    public String getExternalId() {
-        return externalId;
+    public long getCallerId() {
+        return callerId;
     }
 
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
+    public void setCallerId(long callerId) {
+        this.callerId = callerId;
     }
 }

@@ -166,7 +166,7 @@ public class BookmarksBundleIT {
 
         Flag bookmark = new Flag(String.valueOf(course002.getId()), null, new ContentIdentifier(course002.getId(), UUID.randomUUID().toString(), 1),
                 new ContentIdentifier(chapter.getId(), UUID.randomUUID().toString(), 1),
-                new ContentIdentifier(lesson.getId(), UUID.randomUUID().toString(), 1), null, null);
+                new ContentIdentifier(lesson.getId(), UUID.randomUUID().toString(), 1), null);
         CourseProgress courseProgress = new CourseProgress(DateTime.now().toString(), bookmark, 2, "ONGOING");
         CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(activeProvider.getCallerId(), "unk001", "ssn001", courseProgress);
         ObjectMapper objectMapper = new ObjectMapper();

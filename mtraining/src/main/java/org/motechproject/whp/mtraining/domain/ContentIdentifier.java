@@ -18,6 +18,8 @@ public class ContentIdentifier extends MdsEntity {
     @Field
     private long version;
 
+    public ContentIdentifier() { }
+
     public ContentIdentifier(long id, String contentId, long version) {
         this.unitId = id;
         this.contentId = contentId;
@@ -34,6 +36,11 @@ public class ContentIdentifier extends MdsEntity {
         this.unitId = id;
         this.contentId = contentId.toString();
         this.version = 1;
+    }
+
+    public ContentIdentifier(String contentId, long version) {
+        this.contentId = contentId.toString();
+        this.version = version;
     }
 
     public long getUnitId() {

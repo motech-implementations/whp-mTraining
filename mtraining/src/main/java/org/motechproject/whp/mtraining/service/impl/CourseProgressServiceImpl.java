@@ -43,12 +43,12 @@ public class CourseProgressServiceImpl implements CourseProgressService {
      * has been 'CLOSED' with respect to the enrollee,then null is returned.
      * Please have a look at @CourseStatus for more information.
      *
-     * @param externalId
+     * @param callerId
      * @param courseIdentifier
      * @return CourseProgressDto
      */
     @Override
-    public CourseProgress getCourseProgressForProvider(String externalId, ContentIdentifier courseIdentifier) {
+    public CourseProgress getCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier) {
 //        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(externalId, courseIdentifier);
 //        if (courseProgress != null) {
 //            Flag flag = flagService.getFlagByExternalId(externalId);
@@ -69,14 +69,14 @@ public class CourseProgressServiceImpl implements CourseProgressService {
      * Returns the initial course progress DTO for a given course.
      * The DTO also contains the current bookmark
      *
-     * @param externalId
+     * @param callerId
      * @param courseIdentifier
      * @return CourseProgressDto
      */
     @Override
-    public CourseProgress getInitialCourseProgressForProvider(String externalId, ContentIdentifier courseIdentifier) {
-        Flag flag = flagService.getInitialFlag(externalId, courseIdentifier);
-        CourseProgress courseProgress = new CourseProgress(externalId, null, flag, 0, CourseStatus.STARTED.getValue());
+    public CourseProgress getInitialCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier) {
+        Flag flag = flagService.getInitialFlag(callerId, courseIdentifier);
+        CourseProgress courseProgress = new CourseProgress(callerId, null, flag, 0, CourseStatus.STARTED.getValue());
         setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
         return courseProgress;
     }

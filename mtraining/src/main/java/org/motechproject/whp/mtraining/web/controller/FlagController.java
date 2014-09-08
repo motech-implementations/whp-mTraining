@@ -31,30 +31,30 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Controller
 public class FlagController {
 
-    @Autowired
     DtoFactoryService dtoFactoryService;
-
-    @Autowired
     FlagBuilder flagBuilder;
-
-    @Autowired
     ProviderService providerService;
-
-    @Autowired
     BookmarkRequestService bookmarkRequestService;
-
-    @Autowired
     CourseProgressService courseProgressService;
-
-    @Autowired
     CoursePublicationAttemptService coursePublicationAttemptService;
-
-    @Autowired
     Sessions sessions;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlagController.class);
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    public FlagController(DtoFactoryService dtoFactoryService, FlagBuilder flagBuilder, ProviderService providerService,
+                          BookmarkRequestService bookmarkRequestService, CourseProgressService courseProgressService,
+                          CoursePublicationAttemptService coursePublicationAttemptService, Sessions sessions) {
+        this.dtoFactoryService = dtoFactoryService;
+        this.flagBuilder = flagBuilder;
+        this.providerService = providerService;
+        this.bookmarkRequestService = bookmarkRequestService;
+        this.courseProgressService = courseProgressService;
+        this.coursePublicationAttemptService = coursePublicationAttemptService;
+        this.sessions = sessions;
+    }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
@@ -74,7 +74,7 @@ public class FlagController {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, UNKNOWN_PROVIDER);
         if (isInvalid(provider.getProviderStatus()))
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER);
-        CourseProgress courseProgress = getCourseProgress(provider.getRemediId());
+        CourseProgress courseProgress = getCourseProgress(provider.getCallerId());
         if(courseProgress == null){
             return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, ResponseStatus.COURSE_NOT_FOUND);
         }
@@ -85,6 +85,7 @@ public class FlagController {
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")
+    @ResponseBody
     public ResponseEntity<MotechResponse> postBookmark(@RequestBody CourseProgressPostRequest courseProgressPostRequest) {
         LOGGER.debug(String.format("Received bookmark update request for %s with bookmark %s", courseProgressPostRequest.getCallerId(), courseProgressPostRequest));
         Long callerId = courseProgressPostRequest.getCallerId();
@@ -103,16 +104,16 @@ public class FlagController {
         }
         CourseStatus courseStatus = CourseStatus.enumFor(courseProgress.getCourseStatus());
         try {
-            CourseProgress actualCourseProgress = getCourseProgress(provider.getRemediId());
+            CourseProgress actualCourseProgress = getCourseProgress(provider.getCallerId());
             if (actualCourseProgress == null) {
-                courseProgress.setExternalId(provider.getRemediId());
+                courseProgress.setCallerId(provider.getCallerId());
                 courseProgressService.createCourseProgress(courseProgress);
             } else {
                 actualCourseProgress.setCourseStartTime(courseProgress.getCourseStartTime());
                 actualCourseProgress.setCourseStatus(courseProgress.getCourseStatus());
                 actualCourseProgress.setFlag(courseProgress.getFlag());
                 actualCourseProgress.setTimeLeftToCompleteCourse(courseProgress.getTimeLeftToCompleteCourse());
-                actualCourseProgress.setExternalId(provider.getRemediId());
+                actualCourseProgress.setCallerId(provider.getCallerId());
                 courseProgressService.updateCourseProgress(courseProgress);
             }
         } catch (InvalidBookmarkException ex) {
@@ -122,16 +123,16 @@ public class FlagController {
         return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 
-    private CourseProgress getCourseProgress(String externalId) {
+    private CourseProgress getCourseProgress(long callerId) {
         CoursePublicationAttempt latestCoursePublicationAttempt = coursePublicationAttemptService.getLastSuccessfulCoursePublicationAttempt();
         if(latestCoursePublicationAttempt == null)
             return null;
         ContentIdentifier contentIdentifier = new ContentIdentifier(latestCoursePublicationAttempt.getCourseId(),
                 dtoFactoryService.getCoursePlanDtoById(latestCoursePublicationAttempt.getCourseId()).getExternalId(), latestCoursePublicationAttempt.getVersion());
-        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(externalId, contentIdentifier);
+        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(callerId, contentIdentifier);
         if (courseProgress == null) {
             try{
-                courseProgress = courseProgressService.getInitialCourseProgressForProvider(externalId, contentIdentifier);
+                courseProgress = courseProgressService.getInitialCourseProgressForProvider(callerId, contentIdentifier);
             }catch (CourseNotFoundException ex){
                 return null;
             }

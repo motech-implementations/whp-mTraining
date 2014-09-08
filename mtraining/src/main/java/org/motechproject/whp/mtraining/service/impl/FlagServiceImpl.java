@@ -133,17 +133,17 @@ public class FlagServiceImpl implements FlagService {
      * Given a course identifier,return the first bookmark from first active content of the course
      * If course not found then throw CourseNotFoundException
      *
-     * @param externalId
+     * @param callerId
      * @param courseIdentifier
      * @return
      */
     @Override
-    public Flag getInitialFlag(String externalId, ContentIdentifier courseIdentifier) {
+    public Flag getInitialFlag(long callerId, ContentIdentifier courseIdentifier) {
         CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseIdentifier.getUnitId());
         if (course == null) {
             throw new CourseNotFoundException();
         }
-        Flag flag = (new FlagBuilder()).buildFlagFromFirstActiveMetadata(externalId, course);
+        Flag flag = (new FlagBuilder()).buildFlagFromFirstActiveMetadata(String.valueOf(callerId), course);
         return flag;
     }
 }

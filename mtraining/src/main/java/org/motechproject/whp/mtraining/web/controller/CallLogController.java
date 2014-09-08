@@ -66,8 +66,8 @@ public class CallLogController {
         if (provider == null) {
             return new ResponseEntity<>(basicResponse.withResponse(UNKNOWN_PROVIDER), OK);
         } else {
-        callLogReporter.report(callLogRequest, provider);
-        return new ResponseEntity<>(basicResponse.withResponse(ResponseStatus.OK), OK);
-    }
+            callLogReporter.report(callLogRequest, provider);
+            return new ResponseEntity<>(basicResponse.withResponse(ResponseStatus.OK), OK);
+        }
     }
 }

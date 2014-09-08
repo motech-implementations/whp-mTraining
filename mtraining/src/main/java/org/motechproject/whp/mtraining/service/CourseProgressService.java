@@ -9,7 +9,7 @@ public interface CourseProgressService {
 
     CourseProgress updateCourseProgress(CourseProgress courseProgress);
 
-    CourseProgress getCourseProgressForProvider(String externalId, ContentIdentifier courseIdentifier);
+    CourseProgress getCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier);
 
-    CourseProgress getInitialCourseProgressForProvider(String externalId, ContentIdentifier courseIdentifier);
+    CourseProgress getInitialCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier);
 }

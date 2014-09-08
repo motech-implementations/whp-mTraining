@@ -1,5 +1,8 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.Bookmark;
@@ -25,34 +28,55 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
 public class Flag extends MdsEntity {
 
     @Field
+    @JsonIgnore
     private String externalId;
 
     @Field
+    @JsonProperty("course")
     private ContentIdentifier courseIdentifier;
 
     @Field
+    @JsonProperty("module")
     private ContentIdentifier moduleIdentifier;
 
     @Field
+    @JsonProperty("chapter")
     private ContentIdentifier chapterIdentifier;
 
     @Field
+    @JsonProperty("message")
     private ContentIdentifier lessonIdentifier;
 
     @Field
+    @JsonProperty("quiz")
     private ContentIdentifier quizIdentifier;
 
+    @Field
+    private String dateModified;
 
     /**
      * Open, extensible map object field to let implementation store more details relevant
      * to flag
      */
     @Field
+    @JsonIgnore
     private Map<String, Object> progress;
 
+    public Flag() { }
+
     public Flag(String externalId, ContentIdentifier courseIdentifier, ContentIdentifier moduleIdentifier, ContentIdentifier chapterIdentifier,
-                ContentIdentifier lessonIdentifier, ContentIdentifier quizIdentifier, Map<String, Object> progress) {
+                ContentIdentifier lessonIdentifier, ContentIdentifier quizIdentifier) {
         this.externalId = externalId;
+        this.courseIdentifier = courseIdentifier;
+        this.moduleIdentifier = moduleIdentifier;
+        this.chapterIdentifier = chapterIdentifier;
+        this.lessonIdentifier = lessonIdentifier;
+        this.quizIdentifier = quizIdentifier;
+    }
+
+    public Flag(ContentIdentifier courseIdentifier, ContentIdentifier moduleIdentifier, ContentIdentifier chapterIdentifier,
+                ContentIdentifier lessonIdentifier, ContentIdentifier quizIdentifier, String dateModified) {
+        this.dateModified = dateModified;
         this.courseIdentifier = courseIdentifier;
         this.moduleIdentifier = moduleIdentifier;
         this.chapterIdentifier = chapterIdentifier;
@@ -108,6 +132,14 @@ public class Flag extends MdsEntity {
         this.lessonIdentifier = lessonIdentifier;
     }
 
+    public String getDateModified() {
+        return dateModified;
+    }
+
+    public void setDateModified(String dateModified) {
+        this.dateModified = dateModified;
+    }
+
     public List<ValidationError> validate() {
         List<ValidationError> validationErrors = newArrayList();
         if (getCourseIdentifier() == null)
@@ -118,7 +150,7 @@ public class Flag extends MdsEntity {
             validationErrors.add(errorMessage(MISSING_NODE, "Chapter"));
         if ((getLessonIdentifier() == null && quizIdentifier == null))
             validationErrors.add(new ValidationError(MISSING_NODE.getCode(), "Quiz or Lesson should be present"));
-        if (getModificationDate() == null || isBlank(getModificationDate().toString()) || !ISODateTimeUtil.validate(getModificationDate().toString()))
+        if (getDateModified() == null || isBlank(getDateModified().toString()) || !ISODateTimeUtil.validate(getDateModified().toString()))
             validationErrors.add(new ValidationError(ResponseStatus.INVALID_DATE_TIME));
         return validationErrors;
     }
@@ -127,4 +159,5 @@ public class Flag extends MdsEntity {
         String message = status.getMessage().concat(" for: " + content);
         return new ValidationError(status.getCode(), message);
     }
+
 }
