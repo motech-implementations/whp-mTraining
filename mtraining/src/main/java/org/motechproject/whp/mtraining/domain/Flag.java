@@ -26,7 +26,6 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
  * If the value of the lesson is set then that of quiz will be NULL and vice-versa
  */
 @Entity
-@JsonIgnoreProperties({"id", "creationDate", "modificationDate", "creator", "owner", "modifiedBy"})
 public class Flag extends MdsEntity {
 
     @Field

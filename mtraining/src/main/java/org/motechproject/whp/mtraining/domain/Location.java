@@ -1,8 +1,14 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonFilter;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
+import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
+import org.motechproject.whp.mtraining.util.CustomDateSerializer;
 
 @Entity
 public class Location extends MdsEntity {
@@ -30,13 +36,6 @@ public class Location extends MdsEntity {
         this.block = block;
         this.district = district;
         this.state = state;
-        if (block == null && district == null) {
-            this.level = STATE_LEVEL;
-        } else if (block == null) {
-            this.level = DISTRICT_LEVEL;
-        } else {
-            this.level = BLOCK_LEVEL;
-        }
     }
 
     public Location(String state) {
@@ -56,6 +55,28 @@ public class Location extends MdsEntity {
     }
 
     public int getLevel() {
+        if (level == null) {
+            if (block == null && district == null) {
+                this.level = STATE_LEVEL;
+            } else if (block == null) {
+                this.level = DISTRICT_LEVEL;
+            } else {
+                this.level = BLOCK_LEVEL;
+            }
+        }
         return level;
     }
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    public DateTime getCreationDate() {
+        return super.getCreationDate();
+    }
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    public DateTime getModificationDate() {
+        return super.getModificationDate();
+    }
+
 }

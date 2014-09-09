@@ -1119,7 +1119,7 @@
 
         $scope.getLocations = function() {
             $scope.fetchingLocations = true;
-            $.getJSON('../mtraining/web-api/blockLocations', function(data) {
+            $.getJSON('../mtraining/web-api/locations', function(data) {
                 $scope.locations = data;
                 $scope.fetchingLocations = false;
                 $scope.$apply();
@@ -1269,6 +1269,49 @@
         }
 
         $scope.clearProvider();
+    }]);
+
+
+    controllers.controller('locationsController', ['$scope', 'Location', function ($scope, Location) {
+
+        $scope.clearLocation = function() {
+            $scope.creatingLocation = false;
+            $scope.updatingLocation = false;
+            $scope.savingLocation = false;
+            $scope.createLocation();
+        }
+
+        $scope.createLocation = function() {
+            $scope.errorState = undefined;
+            $scope.alertMessage = undefined;
+            $scope.errorName = undefined;
+            $scope.creatingLocation = true;
+            $scope.location = new Location();
+        }
+
+        $scope.saveLocation = function() {
+            if (!$scope.validate()) {
+                return;
+            }
+            $scope.savingLocation = true;
+            $scope.location.$save(function(c) {
+                // c => saved location object
+                $scope.alertMessage = $scope.msg('mtraining.createdLocation');
+                $("#locationsListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+            });
+            $scope.clearLocation();
+        }
+
+        $scope.validate = function() {
+            if (!$scope.location.state) {
+                $scope.errorState = $scope.msg('mtraining.field.required', $scope.msg('mtraining.state'));
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        $scope.clearLocation();
     }]);
 
 }());

@@ -41,6 +41,9 @@
                   }).when('/mtraining/providers', {
                     templateUrl: '../mtraining/partials/providers.html',
                     controller: 'providersController'
+                  }).when('/mtraining/locations', {
+                    templateUrl: '../mtraining/partials/locations.html',
+                    controller: 'locationsController'
                   });
     });
 

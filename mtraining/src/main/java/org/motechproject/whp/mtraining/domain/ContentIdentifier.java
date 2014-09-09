@@ -9,7 +9,6 @@ import org.motechproject.mtraining.domain.MdsEntity;
 import java.util.UUID;
 
 @Entity
-@JsonIgnoreProperties({"id", "creationDate", "modificationDate", "creator", "owner", "modifiedBy"})
 public class ContentIdentifier extends MdsEntity {
 
     @JsonIgnore

@@ -33,6 +33,12 @@ public class LocationController {
         return locationService.getStateLocations();
     }
 
+    @RequestMapping("/locations")
+    @ResponseBody
+    public List<Location> getLocations() {
+        return locationService.getAllLocations();
+    }
+
     @RequestMapping(value = "/location/{locationId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Location getLocation(@PathVariable long locationId) {
@@ -53,7 +59,7 @@ public class LocationController {
 
     @RequestMapping(value = "/location/{locationId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeLocation(@RequestBody Location location) {
-        locationService.deleteLocation(location);
+    public void removeLocation(@PathVariable long locationId) {
+        locationService.deleteLocation(getLocation(locationId));
     }
 }

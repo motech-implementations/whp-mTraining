@@ -639,4 +639,95 @@
         };
     });
 
+
+    directives.directive('locationsGrid', function($http) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element), filters;
+
+                elem.jqGrid({
+                    url: '../mtraining/web-api/locations',
+                    datatype: 'json',
+                    jsonReader:{
+                        repeatitems:false,
+                        root: function (obj) {
+                            return obj;
+                        }
+                    },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
+                    shrinkToFit: true,
+                    forceFit: true,
+                    autowidth: true,
+                    rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
+                    colNames: ['rowId', 'id', scope.msg('mtraining.state'), scope.msg('mtraining.district'), scope.msg('mtraining.block'),
+                        scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                    colModel: [{
+                       name: 'rowId',
+                       index: 'rowId',
+                       hidden: true,
+                       key: true
+                    }, {
+                       name: 'id',
+                       index: 'id',
+                       align: 'center',
+                       hidden: true,
+                    }, {
+                        name: 'state',
+                        index: 'state',
+                        align: 'center',
+                        width: 160
+                    }, {
+                        name: 'district',
+                        index: 'district',
+                        align: 'center',
+                        width: 160
+                    }, {
+                        name: 'block',
+                        index: 'block',
+                        align: 'center',
+                        width: 160
+                    },{
+                        name: 'creationDate',
+                        index: 'creationDate',
+                        align: 'center',
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                    }, {
+                        name: 'modificationDate',
+                        index: 'modificationDate',
+                        align: 'center',
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                    }],
+                    pager: '#' + attrs.locationsGrid,
+                    width: '100%',
+                    height: 'auto',
+                    sortname: 'modificationDate',
+                    sortorder: 'desc',
+                    viewrecords: true,
+                    loadonce: true,
+                    gridview: true,
+                    loadComplete : function(array) {
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
+                        $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
+                    },
+                    gridComplete: function () {
+                      elem.jqGrid('setGridWidth', '100%');
+                    }
+                });
+            }
+        };
+    });
+
 }());

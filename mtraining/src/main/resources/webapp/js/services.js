@@ -63,4 +63,11 @@
         });
     }]);
 
+    services.factory('Location', ['$resource', function($resource) {
+        return $resource('/motech-platform-server/module/mtraining/web-api/location/:id', null,
+        {
+           'update': { method:'PUT' }
+        });
+    }]);
+
 }());

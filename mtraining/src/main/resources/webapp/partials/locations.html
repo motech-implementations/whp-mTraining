@@ -1,0 +1,51 @@
+<div class="row col-md-12">
+
+    <div>
+        <ul ng-show="alertMessage" class="alert alert-success">{{alertMessage}}</ul>
+        <button id="createLocation" class="btn btn-success" ng-hide="creatingLocation || updatingLocation" ng-click="createLocation()">{{msg('mtraining.createLocation')}}</button>
+    </div>
+
+    <form class="form-horizontal" ng-show="creatingLocation || updatingLocation">
+        <fieldset>
+            <legend ng-show="creatingLocation">{{msg('mtraining.createLocation')}}</legend>
+            <legend ng-show="updatingLocation">{{msg('mtraining.updateLocation')}}</legend>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="state">{{msg('mtraining.state')}}</label>
+                <div class="form-inline col-md-8">
+                    <input id="state" name="state" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="location.state">
+                    <span ng-show="errorState" class="form-hint">{{errorState}}</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="district">{{msg('mtraining.district')}}</label>
+                <div class="form-inline col-md-8">
+                    <input id="district" name="district" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="location.district" >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="block">{{msg('mtraining.block')}}</label>
+                <div class="form-inline col-md-8">
+                    <input id="block" name="block" class="form-control input-xlarge-fluid input-auto" type="text" ng-model="location.block" >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-8 pull-right">
+                    <button id="saveButton" ng-show="creatingLocation" name="saveButton" class="btn btn-primary" ng-click="saveLocation()">{{msg('mtraining.save')}}</button>
+                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="clearLocation()">{{msg('mtraining.cancel')}}</button>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingLocation"/>
+            </div>
+
+        </fieldset>
+    </form>
+
+    <div id="outsideLocationsListTable" class="overrideJqgridTable">
+        <table id="locationsListTable" locations-grid="pageLocationsResourceTable"></table>
+        <div id="pageLocationsResourceTable"></div>
+    </div>
+
+</div>

@@ -8,7 +8,6 @@ import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
 
 @Entity
-@JsonIgnoreProperties({"id", "creationDate", "modificationDate", "creator", "owner", "modifiedBy"})
 public class CourseProgress extends MdsEntity {
 
     @Field

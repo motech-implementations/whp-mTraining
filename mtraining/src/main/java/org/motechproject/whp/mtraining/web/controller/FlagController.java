@@ -1,11 +1,17 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.ser.FilterProvider;
+import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
+import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 import org.motechproject.whp.mtraining.builder.FlagBuilder;
 import org.motechproject.whp.mtraining.constants.CourseStatus;
 import org.motechproject.whp.mtraining.domain.*;
-import org.motechproject.whp.mtraining.exception.CourseNotFoundException;
+import org.motechproject.whp.mtraining.domain.views.PropertyFilterMixIn;
 import org.motechproject.whp.mtraining.exception.InvalidBookmarkException;
+import org.motechproject.whp.mtraining.exception.MTrainingException;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType;
 import org.motechproject.whp.mtraining.service.*;
 import org.motechproject.whp.mtraining.web.Sessions;
@@ -58,9 +64,25 @@ public class FlagController {
         this.sessions = sessions;
     }
 
+    public String toJsonString(Object obj, String[] ignorableFieldNames) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.getSerializationConfig().addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
+
+        FilterProvider filters = new SimpleFilterProvider()
+                .addFilter("PropertyFilter",
+                        SimpleBeanPropertyFilter.serializeAllExcept(
+                                ignorableFieldNames));
+        ObjectWriter writer = mapper.writer(filters);
+        try {
+            return writer.writeValueAsString(obj);
+        } catch (Exception exception) {
+            throw new MTrainingException("Error while converting response to JSON", exception);
+        }
+    }
+
     @RequestMapping(value = "/bookmark", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<? extends MotechResponse> getBookmark(final CourseProgressGetRequest courseProgressGetRequest) {
+    public Object getBookmark(final CourseProgressGetRequest courseProgressGetRequest) {
         String sessionId = courseProgressGetRequest.getSessionId();
         Long callerId = courseProgressGetRequest.getCallerId();
         String uniqueId = courseProgressGetRequest.getUniqueId();
@@ -69,21 +91,24 @@ public class FlagController {
         List<ValidationError> validationErrors = courseProgressGetRequest.validate();
         if (!validationErrors.isEmpty()) {
             ValidationError validationError = validationErrors.get(0);
-            return responseAfterLogging(callerId, uniqueId, sessionId, POST, statusFor(validationError.getErrorCode()));
+            return responseAfterLogging(callerId, uniqueId, sessionId, POST, statusFor(validationError.getErrorCode())).getBody();
         }
         Provider provider = providerService.getProviderByCallerId(callerId);
         if (provider == null)
-            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, UNKNOWN_PROVIDER);
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, UNKNOWN_PROVIDER).getBody();
         if (isInvalid(provider.getProviderStatus()))
-            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER);
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER).getBody();
         CourseProgress courseProgress = getCourseProgress(provider.getCallerId(), null);
         if(courseProgress == null){
-            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, ResponseStatus.COURSE_NOT_FOUND);
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, ResponseStatus.COURSE_NOT_FOUND).getBody();
         }
         Flag bookmark = flagService.getFlagById(courseProgress.getFlag().getId());
-        bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET, courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseProgress.getCourseStatus(), new BookmarkReport(bookmark)));
-        return new ResponseEntity<>(new CourseProgressResponse(callerId, currentSessionId, uniqueId,
-                provider.getLocation(), courseProgress), HttpStatus.OK);
+        bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET,
+                courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseProgress.getCourseStatus(), new BookmarkReport(bookmark)));
+        String[] ignorableFieldNames = {"id", "creationDate", "modificationDate", "creator", "owner", "modifiedBy", "level"};
+        courseProgress.setFlag(bookmark);
+        return toJsonString(new CourseProgressResponse(callerId, currentSessionId, uniqueId,
+                provider.getLocation(), courseProgress), ignorableFieldNames);
     }
 
     @RequestMapping(value = "/bookmark", method = RequestMethod.POST, consumes = "application/json")
