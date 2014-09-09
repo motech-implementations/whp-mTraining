@@ -48,7 +48,7 @@ public class CoursePublisherTest {
     }
 
     @Test
-    public void shouldPostTheCorrectCourse() {
+    public void shouldPostTheCorrectCourse() throws Exception {
         Course course = new Course("NA001", CourseUnitState.Active, "This is a test course");
         when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
@@ -80,7 +80,7 @@ public class CoursePublisherTest {
 
 
     @Test
-    public void shouldPublishCourseToIVRUrl() {
+    public void shouldPublishCourseToIVRUrl() throws Exception {
         long courseId = 123L;
 
         List<Chapter> chapters = Collections.emptyList();
@@ -100,7 +100,7 @@ public class CoursePublisherTest {
     }
 
     @Test
-    public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() {
+    public void shouldNotifyCourseAdminOfSuccessfulCoursePublicationToIVR() throws Exception {
         Course course = new Course("CS001", CourseUnitState.Inactive, "Course file name");
         when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 
@@ -112,7 +112,7 @@ public class CoursePublisherTest {
     }
 
     @Test
-    public void shouldNotifyCourseAdminOfFailureIfThereAreValidationErrorsInResponse() {
+    public void shouldNotifyCourseAdminOfFailureIfThereAreValidationErrorsInResponse() throws Exception {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.MISSING_FILES, "file1,file2");
 
         Course course = new Course("CS001", CourseUnitState.Inactive, "Course file name", null);
@@ -127,7 +127,7 @@ public class CoursePublisherTest {
     }
 
     @Test
-    public void shouldRetryPublishingInCaseOfNetworkFailure() {
+    public void shouldRetryPublishingInCaseOfNetworkFailure() throws Exception {
         IVRResponse ivrResponse = new IVRResponse(IVRResponseCodes.NETWORK_FAILURE);
 
         Course course = new Course("CS001", CourseUnitState.valueOf(""), "Course file name", null);
@@ -142,7 +142,7 @@ public class CoursePublisherTest {
     }
 
     @Test
-    public void shouldNotPublishInactiveCourse() {
+    public void shouldNotPublishInactiveCourse() throws Exception {
         Course course = new Course("CS001", CourseUnitState.valueOf(""), "Course file name", null);
         when(mTrainingService.getCourseById(cs001)).thenReturn(course);
 

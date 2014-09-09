@@ -83,15 +83,14 @@ public class FlagControllerTest {
     }
 
     @Test
-    public void shouldReturnBookmark() {
+    public void shouldReturnBookmark() throws Exception {
         CourseProgressGetRequest courseProgressGetRequest = new CourseProgressGetRequest(callerId, sessionId, uniqueId);
-        CoursePublicationAttempt coursePublicationAttempt = new CoursePublicationAttempt(0L, true);
         when(dtoFactoryService.getCoursePlanDtoById(anyLong())).thenReturn(new CoursePlanDto());
         when(courseProgressService.getCourseProgressForProvider(anyLong())).thenReturn(courseProgress);
 
-        ResponseEntity<? extends MotechResponse> response = flagController.getBookmark(courseProgressGetRequest);
+         CourseProgressResponse response = new ObjectMapper().readValue((String) flagController.getBookmark(courseProgressGetRequest), CourseProgressResponse.class);
 
-        assertTrue(ResponseStatus.OK.getCode().equals(response.getBody().getResponseCode()));
+        assertTrue(ResponseStatus.OK.getCode().equals(response.getResponseCode()));
     }
 
 

@@ -32,7 +32,7 @@ public class CourseEventListenerTest {
     }
 
     @Test
-    public void shouldPublishCourseToIVRWhenCourseIsAdded() {
+    public void shouldPublishCourseToIVRWhenCourseIsAdded() throws Exception {
         Map<String, Object> eventData = new HashMap<>();
 
         eventData.put(CONTENT_ID, cs001);
