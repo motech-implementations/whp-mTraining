@@ -1,9 +1,13 @@
 package org.motechproject.whp.mtraining.domain;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
+import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
+import org.motechproject.whp.mtraining.util.CustomDateSerializer;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 @Entity
@@ -91,4 +95,17 @@ public class CoursePublicationAttempt extends MdsEntity {
     public void setResponseMessage(String responseMessage) {
         this.responseMessage = responseMessage;
     }
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    public DateTime getCreationDate() {
+        return super.getCreationDate();
+    }
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    public DateTime getModificationDate() {
+        return super.getModificationDate();
+    }
+
 }

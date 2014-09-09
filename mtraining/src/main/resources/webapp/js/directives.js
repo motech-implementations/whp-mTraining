@@ -730,4 +730,129 @@
         };
     });
 
+
+    directives.directive('coursePublicationAttemptsGrid', function($http) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element), filters;
+
+                elem.jqGrid({
+                    url: '../mtraining/web-api/coursePublicationAttempts',
+                    datatype: 'json',
+                    jsonReader:{
+                        repeatitems:false,
+                        root: function (obj) {
+                            return obj;
+                        }
+                    },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
+                    shrinkToFit: true,
+                    forceFit: true,
+                    autowidth: true,
+                    rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
+                    colNames: ['rowId', 'id', scope.msg('mtraining.published'), scope.msg('mtraining.responseCode'), scope.msg('mtraining.responseMessage'),
+                        scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                    colModel: [{
+                       name: 'rowId',
+                       index: 'rowId',
+                       hidden: true,
+                       key: true
+                    }, {
+                       name: 'id',
+                       index: 'id',
+                       align: 'center',
+                       hidden: true,
+                    }, {
+                        name: 'publishedToIvr',
+                        index: 'publishedToIvr',
+                        align: 'center',
+                        width: 50
+                    }, {
+                        name: 'responseCode',
+                        index: 'responseCode',
+                        align: 'center',
+                        width: 80
+                    }, {
+                        name: 'responseMessage',
+                        index: 'responseMessage',
+                        align: 'center',
+                        width: 300
+                    },{
+                        name: 'creationDate',
+                        index: 'creationDate',
+                        align: 'center',
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                    }, {
+                        name: 'modificationDate',
+                        index: 'modificationDate',
+                        align: 'center',
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                    }],
+                    pager: '#' + attrs.coursePublicationAttemptsGrid,
+                    width: '100%',
+                    height: 'auto',
+                    sortname: 'modificationDate',
+                    sortorder: 'desc',
+                    viewrecords: true,
+                    subGrid: true,
+                    subGridOptions: {
+                        "plusicon" : "ui-icon-triangle-1-e",
+                        "minusicon" : "ui-icon-triangle-1-s",
+                        "openicon" : "ui-icon-arrowreturn-1-e",
+                        "reloadOnExpand" : false,
+                        "selectOnExpand" : true
+                    },
+                    subGridRowExpanded: function(subgrid_id, row_id) {
+                        var subgrid_table_id, pager_id;
+                        subgrid_table_id = subgrid_id+"_t";
+                        pager_id = "p_"+subgrid_table_id;
+                        $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class=''></table>");
+                        var message = $('#coursePublicationAttemptListTable').jqGrid('getRowData', row_id).responseMessage;
+                        var messageData = [ {"message": message} ];
+
+                        jQuery("#"+subgrid_table_id).jqGrid({
+                            datatype: "local",
+                            data: messageData,
+                            colNames: [scope.msg('mtraining.responseMessage')],
+                            colModel: [
+                                {name:"message",index:"message", align:"left", sortable: false, width: 880}
+                            ],
+                            rowNum:1,
+                            pager: pager_id,
+                            sortname: 'message',
+                            sortorder: "asc",
+                            height: '100%'
+                        });
+                        jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:false,add:false,del:false});
+                        $('.ui-subgrid .ui-jqgrid-labels').css({'display':'none'});
+                        $('.ui-subgrid td').css({'word-wrap':'break-word', 'white-space':'normal'});
+
+                    },
+                    loadonce: true,
+                    gridview: true,
+                    loadComplete : function(array) {
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
+                        $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
+                    },
+                    gridComplete: function () {
+                      elem.jqGrid('setGridWidth', '100%');
+                    }
+                });
+            }
+        };
+    });
+
 }());

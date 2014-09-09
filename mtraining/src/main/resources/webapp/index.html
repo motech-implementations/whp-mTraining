@@ -12,7 +12,7 @@
             <li ng-show="active('#/mtraining/upload')" ng-class="active('#/mtraining/upload')">{{msg('mtraining.upload')}}</li>
             <li ng-show="active('#/mtraining/providers')" ng-class="active('#/mtraining/providers')">{{msg('mtraining.providers')}}</li>
             <li ng-show="active('#/mtraining/locations')" ng-class="active('#/mtraining/locations')">{{msg('mtraining.locations')}}</li>
-            <li ng-show="active('#/mtraining/errorLog')" ng-class="active('#/mtraining/errorLog')">{{msg('mtraining.admin')}}</li>
+            <li ng-show="active('#/mtraining/coursePublication')" ng-class="active('#/mtraining/coursePublication')">{{msg('mtraining.admin')}}</li>
         </ul>
     </div>
     <div class="header-footer">
@@ -27,14 +27,14 @@
             <li ng-class="active('#/mtraining/providers')"><a  ng-href="#/mtraining/providers">{{msg('mtraining.providers')}}</a></li>
             <li ng-class="active('#/mtraining/locations')"><a  ng-href="#/mtraining/locations">{{msg('mtraining.locations')}}</a></li>
             <li ng-class="active('#/mtraining/errorLog')||active('#/mtraining/callLog')||active('#/mtraining/coursePublication')||active('#/mtraining/bookmarkRequest')">
-                <a  ng-href="#/mtraining/errorLog">{{msg('mtraining.admin')}}</a>
+                <a ng-href="#/mtraining/coursePublication">{{msg('mtraining.admin')}}</a>
             </li>
         </ul>
         <ul class="nav nav-tabs tasks " ng-show="active('#/mtraining/errorLog')||active('#/mtraining/callLog')||active('#/mtraining/coursePublication')||active('#/mtraining/bookmarkRequest')">
-            <li ng-class="active('#/mtraining/errorLog')"><a  ng-href="#/mtraining/errorLog">{{msg('mtraining.errorLog')}}</a></li>
-            <li ng-class="active('#/mtraining/callLog')"><a  ng-href="#/mtraining/callLog">{{msg('mtraining.callLog')}}</a></li>
             <li ng-class="active('#/mtraining/coursePublication')"><a  ng-href="#/mtraining/coursePublication">{{msg('mtraining.coursePublication')}}</a></li>
+            <li ng-class="active('#/mtraining/callLog')"><a  ng-href="#/mtraining/callLog">{{msg('mtraining.callLog')}}</a></li>
             <li ng-class="active('#/mtraining/bookmarkRequest')"><a  ng-href="#/mtraining/bookmarkRequest">{{msg('mtraining.bookmark.requests')}}</a></li>
+            <li ng-class="active('#/mtraining/errorLog')"><a  ng-href="#/mtraining/errorLog">{{msg('mtraining.errorLog')}}</a></li>
         </ul>
     </div>
 

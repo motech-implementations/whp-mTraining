@@ -1,6 +1,10 @@
 <div class="row col-md-12">
 
-    <legend>{{msg('mtraining.coursePublication.status')}}</legend>
     <legend>{{msg('mtraining.coursePublication.attempts')}}</legend>
+    
+    <div id="outsideCoursePublicationAttemptListTable" class="overrideJqgridTable">
+        <table id="coursePublicationAttemptListTable" course-publication-attempts-grid="pageCoursePublicationAttemptResourceTable"></table>
+        <div id="pageCoursePublicationAttemptResourceTable"></div>
+    </div>
 
 </div>
