@@ -89,6 +89,7 @@
             if (type === 'quiz') {
                 onChanged();
             }
+            $scope.jstree.open_node(parent);
             $scope.$apply();
          }
 
