@@ -166,6 +166,9 @@
         $scope.removeMember = function() {
             var idx = $('#jstree').jstree('get_selected');
             var node = $scope.jstree.get_node(idx);
+            if (node.original.type == 'course') {
+                return false;
+            }
             $scope.alertMessage = undefined;
             var id = id_hashmap[node.id];
             for(var i = 0; i < id_hashmap.length; i++) {
@@ -277,10 +280,12 @@
             }
             if (selected.original && selected.original.type) {
                 var type = selected.original.type;
+                $("#removeMember").prop('disabled', false);
                 if (type == "course") {
                     $scope.nodes = $scope.modules;
                     $scope.childIcon = $scope.jstree.settings.types.module.icon;
                     $scope.childType = "module";
+                    $("#removeMember").prop('disabled', true);
                 } else if (type == "module") {
                     $scope.nodes = $scope.chapters;
                     $scope.childIcon = $scope.jstree.settings.types.chapter.icon;
