@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.web.controller;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
 import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.ivr.CoursePublisher;
+import org.motechproject.whp.mtraining.ivr.IVRResponse;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.jdo.annotations.Transactional;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,10 +48,14 @@ public class TreeViewController {
         manyToManyRelationService.updateAll(Arrays.asList(relations));
     }
 
-    @RequestMapping(value = "/publish/{courseId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/publish/{courseId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public void publishCourse(@PathVariable long courseId) {
-        coursePublisher.publish(courseId);
+    public IVRResponse publishCourse(@PathVariable long courseId) {
+        try {
+            return coursePublisher.publish(courseId);
+        } catch (Exception ex) {
+            return new IVRResponse(500, ex.getMessage());
+        }
     }
 
 }

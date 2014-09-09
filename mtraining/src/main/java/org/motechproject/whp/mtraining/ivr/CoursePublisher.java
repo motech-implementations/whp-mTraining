@@ -42,13 +42,7 @@ public class CoursePublisher {
         this.dtoFactoryService = dtoFactoryService;
     }
 
-    public void publish(long courseId) {
-        if (numberOfAttempts > MAX_ATTEMPTS) {
-            LOGGER.info(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s", numberOfAttempts, currentDateTime(), courseId));
-            numberOfAttempts = 1;
-            return;
-        }
-
+    public IVRResponse publish(long courseId) throws Exception {
         CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseId);
 
         LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s", numberOfAttempts, currentDateTime(), courseId));
@@ -56,14 +50,18 @@ public class CoursePublisher {
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s", numberOfAttempts, currentDateTime(), course.getName(), courseId));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
-        coursePublicationAttemptService.createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess()));
+        coursePublicationAttemptService.createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess(),
+                ivrResponse.getResponseCode(), ivrResponse.getResponseMessage()));
 
         if (ivrResponse.isSuccess()) {
             dtoFactoryService.activateCourse(course);
-        }
-
-        if (ivrResponse.isNetworkFailure()) {
-            retryPublishing(courseId);
+        } else if (ivrResponse.isNetworkFailure()) {
+            if (numberOfAttempts >= MAX_ATTEMPTS) {
+                LOGGER.error(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s", numberOfAttempts, currentDateTime(), courseId));
+                numberOfAttempts = 1;
+            } else {
+                ivrResponse = retryPublishing(courseId);
+            }
         }
 
         try {
@@ -71,6 +69,7 @@ public class CoursePublisher {
         } catch (MailException ex) {
             LOGGER.error("Could not send mail because: ", ex);
         }
+        return ivrResponse;
     }
 
     private void notifyCourseAdmin(String courseName, IVRResponse ivrResponse) {
@@ -79,7 +78,7 @@ public class CoursePublisher {
             courseAdmin.notifyCoursePublished(courseName);
             return;
         }
-        LOGGER.error(String.format("Attempt %d [%s] - Course could not be published to IVR for course %s , version %s , responseCode - %s responseMessage - %s",
+        LOGGER.error(String.format("Attempt %d [%s] - Course could not be published to IVR for course %s , responseCode - %s responseMessage - %s",
                 numberOfAttempts, currentDateTime(), courseName, ivrResponse.getResponseCode(), ivrResponse.getResponseMessage()));
         courseAdmin.notifyCoursePublishFailure(courseName, ivrResponse);
     }
@@ -88,13 +87,14 @@ public class CoursePublisher {
         return ISODateTimeUtil.nowInTimeZoneUTC();
     }
 
-    private void retryPublishing(long courseId) {
+    private IVRResponse retryPublishing(long courseId) {
         try {
             Thread.sleep(numberOfAttempts * 1000l);
             numberOfAttempts = numberOfAttempts + 1;
-            publish(courseId);
-        } catch (InterruptedException e) {
+            return publish(courseId);
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+            return null;
         }
     }
 }

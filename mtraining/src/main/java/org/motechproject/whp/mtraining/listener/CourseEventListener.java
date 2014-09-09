@@ -30,7 +30,9 @@ public class CourseEventListener {
         Long courseId = (Long) eventData.get(MTrainingEventConstants.CONTENT_ID);
         Integer version = (Integer) eventData.get(MTrainingEventConstants.VERSION);
         courseReporter.reportCourseAdded(courseId);
-        coursePublisher.publish(courseId);
+        try {
+            coursePublisher.publish(courseId);
+        } catch (Exception ex) { }
     }
 
 }

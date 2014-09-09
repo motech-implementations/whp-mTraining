@@ -19,12 +19,25 @@ public class CoursePublicationAttempt extends MdsEntity {
     private boolean publishedToIvr;
 
     @Field
+    private int responseCode;
+
+    @Field
+    private String responseMessage;
+
+    @Field
     private long version;
 
 
-    public CoursePublicationAttempt(Long courseId,boolean publishedToIvr) {
+    public CoursePublicationAttempt(Long courseId, boolean publishedToIvr) {
         this.courseId = courseId;
         this.publishedToIvr = publishedToIvr;
+    }
+
+    public CoursePublicationAttempt(Long courseId, boolean publishedToIvr, int responseCode, String responseMessage) {
+        this.courseId = courseId;
+        this.publishedToIvr = publishedToIvr;
+        this.responseCode = responseCode;
+        this.responseMessage = responseMessage;
     }
 
     @Override
@@ -61,5 +74,21 @@ public class CoursePublicationAttempt extends MdsEntity {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public int getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
     }
 }

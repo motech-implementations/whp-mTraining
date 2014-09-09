@@ -142,11 +142,21 @@
             if (node && node.original && node.original.type === 'course') {
                 var id = id_hashmap[idx];
                 $scope.publishingCourse = true;
-                $.get("../mtraining/web-api/publish/" + id, function() {
+                $.get("../mtraining/web-api/publish/" + id, function(response) {
                     $scope.publishingCourse = false;
-                    $scope.alertMessage = $scope.msg('mtraining.publishedCourse');
+                    // internal server error - 500; ok - 800; missing files - 1001; network failure - 1002
+                    var code = response.responseCode;
+                    if (code == 800) {
+                        $scope.alertMessage = $scope.msg('mtraining.publishedCourse');
+                    } else if (code == 1001) {
+                        $("#errorMessage").text($scope.msg('mtraining.error.missingFiles') + ": " + response.responseMessage);
+                        $("#errorDialog").modal('show');
+                    } else if (code == 1002 || code == 500) {
+                        $("#errorMessage").text(response.responseMessage);
+                        $("#errorDialog").modal('show');
+                    }
                     $scope.$apply();
-                 });
+                });
             } else {
                 $("#errorMessage").text($scope.msg('mtraining.error.noCourseSelected'));
                 $("#errorDialog").modal('show');
