@@ -99,7 +99,7 @@ main, .providerUpload, .response {
 }
 
 div.buttons > button {
-    width:190px;
+    width:170px;
     margin-top: 20px;
     margin-left: 10px;
 
@@ -124,4 +124,8 @@ div.buttons > button {
 
 .ui-jqgrid-labels {
     height: 50px;
+}
+
+li[state="Inactive"] > a {
+    color: #C0C0C0 !important;
 }

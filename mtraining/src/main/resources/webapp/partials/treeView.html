@@ -42,13 +42,20 @@
 		</table>
 	</div>
 	<div class="buttons">
-        <button class="btn btn-primary ng-binding" ng-click="publishCourse()">
+        <button id="publishCourse" class="btn btn-primary ng-binding" ng-click="publishCourse()">
             <i class="icon-spin icon-refresh" ng-show="publishingCourse"/>
             <i class="icon-cloud-upload icon-white"></i> {{msg('mtraining.publish')}}
         </button>
 		<button class="btn btn-success ng-binding" ng-click="saveRelations()">
             <i class="icon-spin icon-refresh" ng-show="savingRelations"/>
             <i class="icon-save icon-white"></i> {{msg('mtraining.save')}}
+        </button>
+        <button id="unitStateButton" class="btn btn-warning ng-binding" ng-click="switchUnitState()">
+            <i class="icon-flag icon-white"></i>
+            <span ng-switch on="isActive(selected)">
+                <span ng-switch-when="false"> {{msg('mtraining.activate')}}</span>
+                <span ng-switch-default> {{msg('mtraining.deactivate')}}</span>
+            </span>
         </button>
 		<button id="removeMember" class="btn btn-danger ng-binding" ng-click="removeMember()">
             <i class="icon-trash icon-white"></i> {{msg('mtraining.removeMember')}}

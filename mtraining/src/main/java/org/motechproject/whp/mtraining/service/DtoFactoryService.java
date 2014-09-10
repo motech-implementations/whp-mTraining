@@ -46,4 +46,6 @@ public interface DtoFactoryService {
     void activateCourse(CoursePlanDto course);
 
     CoursePlan getCoursePlanByExternalId(String externalId);
+
+    void updateState(Long id, CourseUnitState state);
 }
