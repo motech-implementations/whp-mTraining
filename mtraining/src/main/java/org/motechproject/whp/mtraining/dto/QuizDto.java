@@ -1,6 +1,5 @@
 package org.motechproject.whp.mtraining.dto;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonView;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
@@ -25,6 +24,9 @@ public class QuizDto extends CourseUnitMetadataDto {
     private double passPercentage;
 
     private boolean isInRelation;
+
+    @JsonView({PublishCourseView.class})
+    private int noOfQuestionsToBePlayed;
 
     public QuizDto() {
     }
@@ -82,12 +84,10 @@ public class QuizDto extends CourseUnitMetadataDto {
         this.isInRelation = isInRelation;
     }
 
-    @JsonView({PublishCourseView.class})
     public int getNoOfQuestionsToBePlayed() {
         return questions.size();
     }
 
-    @JsonIgnore
     public void setNoOfQuestionsToBePlayed(int noOfQuestionsToBePlayed) {
 
     }

@@ -305,7 +305,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         QuizDto quizDto = new QuizDto(quiz.getId(), quiz.getName(), quiz.getState(),
                 quiz.getCreationDate(), quiz.getModificationDate(), quiz.getPassPercentage(), convertToQuestionDtos(quiz.getQuestions()));
         quizDto.setContentId(contentOperationService.getUuidFromJsonString(quiz.getContent()));
-
+        quizDto.setNoOfQuestionsToBePlayed(contentOperationService.getNoOfQuestionsToBePlayedFromJson(quiz.getContent()));
         contentOperationService.getFileNameAndDescriptionFromContent(quizDto, quiz.getContent());
 
         quizDto.setParentIds(convertToIdSet(manyToManyRelationService.getChaptersByChildId(quiz.getId())));
@@ -365,34 +365,41 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = new CoursePlan(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
+
             coursePlanService.createCoursePlan(coursePlan);
 
         } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = new Course(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
+
             module = mTrainingService.createCourse(module);
             createRelation(module, courseUnitMetadataDto);
 
         } else if (courseUnitMetadataDto instanceof ChapterDto) {
             Chapter chapter = new Chapter(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
+
             if (((ChapterDto) courseUnitMetadataDto).getQuiz() != null) {
                 Quiz quiz = mTrainingService.getQuizById(((ChapterDto) courseUnitMetadataDto).getQuiz().getId());
                 chapter.setQuiz(quiz);
             }
+
             chapter = mTrainingService.createChapter(chapter);
             createRelation(chapter, courseUnitMetadataDto);
 
         } else if (courseUnitMetadataDto instanceof LessonDto) {
             Lesson lesson = new Lesson(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
+
             lesson = mTrainingService.createLesson(lesson);
             createRelation(lesson, courseUnitMetadataDto);
 
-        } else {
+        } else if (courseUnitMetadataDto instanceof QuizDto) {
             Quiz quiz = new Quiz(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
-                    contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()),
+                    contentOperationService.codeIntoQuizContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), UUID.randomUUID(),
+                            ((QuizDto) courseUnitMetadataDto).getNoOfQuestionsToBePlayed()),
                     convertDtosToQuestionList(((QuizDto) courseUnitMetadataDto).getQuestions()), ((QuizDto) courseUnitMetadataDto).getPassPercentage());
+
             quiz = mTrainingService.createQuiz(quiz);
             createRelation(quiz, courseUnitMetadataDto);
         }
@@ -424,7 +431,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             manyToManyRelationService.deleteRelationsByChildId(ParentType.Chapter, lesson.getId());
             createRelation(lesson, courseUnitMetadataDto);
 
-        } else {
+        } else if (courseUnitMetadataDto instanceof QuizDto)  {
             Quiz quiz = mTrainingService.getQuizById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(quiz, courseUnitMetadataDto);
             quiz.setPassPercentage(((QuizDto) courseUnitMetadataDto).getPassPercentage());
@@ -463,8 +470,13 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         UUID uuid = contentOperationService.getUuidFromJsonString(courseUnitMetadata.getContent());
         courseUnitMetadata.setName(courseUnitMetadataDto.getName());
         courseUnitMetadata.setState(courseUnitMetadataDto.getState());
-        courseUnitMetadata.setContent(contentOperationService.codeIntoContent
-                (courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), uuid));
+        if (courseUnitMetadataDto instanceof QuizDto) {
+            courseUnitMetadata.setContent(contentOperationService.codeIntoQuizContent
+                    (courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), uuid, ((QuizDto)(courseUnitMetadataDto)).getNoOfQuestionsToBePlayed()));
+        } else {
+            courseUnitMetadata.setContent(contentOperationService.codeIntoContent
+                    (courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), uuid));
+        }
     }
 
     private Set<Long> convertToIdSet(List<?> courseUnitMetadata) {

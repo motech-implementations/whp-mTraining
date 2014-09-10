@@ -2,7 +2,6 @@ package org.motechproject.whp.mtraining.service;
 
 import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
 import org.motechproject.whp.mtraining.dto.QuestionDto;
-import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +16,6 @@ public interface ContentOperationService {
 
     String codeIntoContent(String filename, String description, UUID uuid);
 
-
     void getQuestionNameAndDescriptionFromQuestion(QuestionDto questionDto, String question);
 
     String codeIntoQuestion(String questionName, String description, UUID uuid);
@@ -26,6 +24,9 @@ public interface ContentOperationService {
 
     String codeAnswersAndFilesNamesIntoAnswer(String correctOption, List<Integer> options, String filename, String explainingAnswerFilename);
 
+    String codeIntoQuizContent(String filename, String description, UUID uuid, int noOfQuestionsToBePlayed);
 
     UUID getUuidFromJsonString(String content);
+
+    int getNoOfQuestionsToBePlayedFromJson(String json);
 }

@@ -5,8 +5,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
-import org.codehaus.jackson.type.TypeReference;
-import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
 import org.motechproject.whp.mtraining.dto.QuestionDto;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
@@ -16,8 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,6 +31,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     public static final String OPTIONS_MAPPING_NAME = "options";
     public static final String ANSWER_FILENAME_MAPPING_NAME = "answerFilename";
     public static final String CONTENT_ID_MAPPING_NAME = "contentId";
+    public static final String NO_OF_QUESTIONS_MAPPING_NAME = "noOfQuestionsToBePlayed";
 
     @Override
     public void getFileNameAndDescriptionFromContent(CourseUnitMetadataDto courseUnitMetadataDto, String content) {
@@ -46,6 +45,13 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         content = codeIntoJsonString(content, FILENAME_MAPPING_NAME, filename);
         content = codeIntoJsonString(content, DESCRIPTION_MAPPING_NAME, description);
         content = codeIntoJsonString(content, CONTENT_ID_MAPPING_NAME, uuid.toString());
+        return content;
+    }
+
+    @Override
+    public String codeIntoQuizContent(String filename, String description, UUID uuid, int noOfQuestionsToBePlayed) {
+        String content = codeIntoContent(filename, description, uuid);
+        content = codeIntoJsonString(content, NO_OF_QUESTIONS_MAPPING_NAME, String.valueOf(noOfQuestionsToBePlayed));
         return content;
     }
 
@@ -116,7 +122,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readTree(jsonString).get(mappingName).getTextValue();
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("mtraining.error.getFromJsonString" + e.getMessage());
             return null;
         }
@@ -162,5 +168,14 @@ public class ContentOperationServiceImpl implements ContentOperationService {
 
         objectNode.put(mappingName, arrayNode);
         return objectNode.toString();
+    }
+    public int getNoOfQuestionsToBePlayedFromJson(String json) {
+        String noOfQuestionsToBePlayed = getFromJsonString(json, NO_OF_QUESTIONS_MAPPING_NAME);
+        if (noOfQuestionsToBePlayed != null) {
+            return Integer.parseInt(noOfQuestionsToBePlayed);
+        } else {
+            return 0;
+        }
+
     }
 }

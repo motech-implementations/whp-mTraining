@@ -42,6 +42,13 @@
             </div>
 
             <div class="form-group">
+                <label class="col-md-4 control-label" for="noOfQuestonsToBePlayed">{{msg('mtraining.noOfQuestionsToBePlayed')}}</label>
+                <div class="form-inline col-md-8">
+                    <input id="noOfQuestonsToBePlayed" name="noOfQuestonsToBePlayed" class="form-control input-xlarge-fluid input-auto" type="number" ng-model="quiz.noOfQuestionsToBePlayed" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label class="col-md-4 control-label" for="question">{{msg('mtraining.questions')}}</label>
                 <div class="col-md-4" id="question" name="question">
                     <button ng-click="addQuestionModal()" class="btn btn-success">
