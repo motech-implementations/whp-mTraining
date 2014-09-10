@@ -653,7 +653,7 @@
         }
 
         $scope.deleteChapter = function() {
-            if ($scope.selectedModule != undefined && $scope.selectedModules.length != 0) {
+            if ($scope.selectedModules != undefined && $scope.selectedModules.length != 0) {
                 $("#errorMessage").text($scope.msg('mtraining.cannotDeleteChapter'));
                 $("#errorDialog").modal('show');
             } else {
@@ -759,7 +759,7 @@
         }
 
         $scope.deleteMessage = function() {
-            if ($scope.selectedChapter != undefined && $scope.selectedChapters.length != 0) {
+            if ($scope.selectedChapters != undefined && $scope.selectedChapters.length != 0) {
                 $("#errorMessage").text($scope.msg('mtraining.cannotDeleteMessage'));
                 $("#errorDialog").modal('show');
             } else {
