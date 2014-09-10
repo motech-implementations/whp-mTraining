@@ -1,16 +1,17 @@
 package org.motechproject.whp.mtraining.domain;
 
-import org.hamcrest.core.Is;
 import org.junit.Test;
-import org.motechproject.mtraining.domain.*;
+import org.motechproject.mtraining.domain.Chapter;
+import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.mtraining.domain.Lesson;
+import org.motechproject.mtraining.domain.Question;
+import org.motechproject.mtraining.domain.Quiz;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class CourseTest {
@@ -27,14 +28,6 @@ public class CourseTest {
         assertFalse(coursePublicationAttempt.equals(null));
         assertFalse(coursePublicationAttempt.equals(courseWithDifferentCoursePublicationAttemptId));
         assertFalse(coursePublicationAttempt.equals(publishedCourseWithDifferentStatePublicationAttempt));
-    }
-
-    @Test
-    public void shouldTestThatEqualCoursesHaveSameHashCodes() {
-        long courseId = 1234567L;
-        CoursePublicationAttempt coursePublicationAttempt = new CoursePublicationAttempt(courseId, true);
-        CoursePublicationAttempt sameCoursePublicationAttempt = new CoursePublicationAttempt(courseId, true);
-        assertThat(coursePublicationAttempt.hashCode(), Is.is(sameCoursePublicationAttempt.hashCode()));
     }
 
     @Test
