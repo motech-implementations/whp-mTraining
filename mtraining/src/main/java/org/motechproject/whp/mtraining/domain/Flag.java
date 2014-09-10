@@ -12,6 +12,7 @@ import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.motechproject.whp.mtraining.web.domain.ValidationError;
 
+import javax.jdo.annotations.Persistent;
 import java.util.List;
 import java.util.Map;
 
@@ -34,22 +35,27 @@ public class Flag extends MdsEntity {
 
     @Field
     @JsonProperty("course")
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier courseIdentifier;
 
     @Field
     @JsonProperty("module")
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier moduleIdentifier;
 
     @Field
     @JsonProperty("chapter")
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier chapterIdentifier;
 
     @Field
     @JsonProperty("message")
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier lessonIdentifier;
 
     @Field
     @JsonProperty("quiz")
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier quizIdentifier;
 
     @Field

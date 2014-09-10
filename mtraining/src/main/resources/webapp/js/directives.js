@@ -855,4 +855,230 @@
         };
     });
 
+
+    directives.directive('bookmarkRequestsGrid', function($http) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element), filters;
+
+                elem.jqGrid({
+                    url: '../mtraining/web-api/bookmarkRequests',
+                    datatype: 'json',
+                    jsonReader:{
+                        repeatitems:false,
+                        root: function (obj) {
+                            return obj;
+                        }
+                    },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
+                    shrinkToFit: true,
+                    forceFit: true,
+                    autowidth: true,
+                    rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
+                    colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.uniqueId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.requestType'),
+                     scope.msg('mtraining.responseCode'), scope.msg('mtraining.responseMessage'), scope.msg('mtraining.courseStartTime'), scope.msg('mtraining.timeLeftToCompleteCourse'),
+                     scope.msg('mtraining.course'), scope.msg('mtraining.moduleWhp'), scope.msg('mtraining.chapter'), scope.msg('mtraining.message'), scope.msg('mtraining.quiz'),
+                     scope.msg('mtraining.courseStatus'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                    colModel: [{
+                       name: 'rowId',
+                       index: 'rowId',
+                       hidden: true,
+                       key: true
+                    }, {
+                       name: 'id',
+                       index: 'id',
+                       align: 'center',
+                       hidden: true,
+                    }, {
+                        name: 'callerId',
+                        index: 'callerId',
+                        align: 'center',
+                        width: 90
+                    }, {
+                        name: 'uniqueId',
+                        index: 'uniqueId',
+                        align: 'center',
+                        width: 70
+                    }, {
+                        name: 'remediId',
+                        index: 'remediId',
+                        align: 'center',
+                        width: 70
+                    }, {
+                        name: 'requestType',
+                        index: 'requestType',
+                        align: 'center',
+                        width: 40
+                    }, {
+                        name: 'responseCode',
+                        index: 'responseCode',
+                        align: 'center',
+                        width: 40
+                    }, {
+                        name: 'responseMessage',
+                        index: 'responseMessage',
+                        align: 'center',
+                        width: 80
+                    },{
+                        name: 'courseStartTime',
+                        index: 'courseStartTime',
+                        align: 'center',
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                    },{
+                        name: 'timeLeftToCompleteCourseInHrs',
+                        index: 'timeLeftToCompleteCourseInHrs',
+                        align: 'center',
+                        width: 40
+                    },{
+                        name: 'bookmarkReport.courseIdentifier.contentId',
+                        index: 'course',
+                        align: 'center',
+                        width: 70,
+                        hidden: true
+                    },{
+                        name: 'bookmarkReport.moduleIdentifier.contentId',
+                        index: 'module',
+                        align: 'center',
+                        width: 70,
+                        hidden: true
+                    },{
+                        name: 'bookmarkReport.chapterIdentifier.contentId',
+                        index: 'chapter',
+                        align: 'center',
+                        width: 70,
+                        hidden: true
+                    },{
+                        name: 'bookmarkReport.messageIdentifier.contentId',
+                        index: 'message',
+                        align: 'center',
+                        width: 70,
+                        hidden: true
+                    },{
+                        name: 'bookmarkReport.quizIdentifier.contentId',
+                        index: 'quiz',
+                        align: 'center',
+                        width: 70,
+                        hidden: true
+                    },{
+                        name: 'courseStatus',
+                        index: 'courseStatus',
+                        align: 'center',
+                        width: 70
+                    },{
+                        name: 'creationDate',
+                        index: 'creationDate',
+                        align: 'center',
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                    }, {
+                        name: 'modificationDate',
+                        index: 'modificationDate',
+                        align: 'center',
+                        width: 70,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                    }],
+                    pager: '#' + attrs.bookmarkRequestsGrid,
+                    width: '100%',
+                    height: 'auto',
+                    sortname: 'modificationDate',
+                    sortorder: 'desc',
+                    viewrecords: true,
+                    subGrid: true,
+                    subGridOptions: {
+                        "plusicon" : "ui-icon-triangle-1-e",
+                        "minusicon" : "ui-icon-triangle-1-s",
+                        "openicon" : "ui-icon-arrowreturn-1-e",
+                        "reloadOnExpand" : false,
+                        "selectOnExpand" : true
+                    },
+                    subGridRowExpanded: function(subgrid_id, row_id) {
+                        var subgrid_table_id, pager_id;
+                        subgrid_table_id = subgrid_id+"_t";
+                        pager_id = "p_"+subgrid_table_id;
+                        $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class=''></table>");
+                        var rowData = $('#bookmarkRequestListTable').jqGrid('getRowData', row_id);
+                        console.log(rowData);
+                        var data = [ {
+                            "responseMessage": rowData.responseMessage,
+                            "course": rowData['bookmarkReport.courseIdentifier.contentId'],
+                            "module": rowData['bookmarkReport.moduleIdentifier.contentId'],
+                            "chapter": rowData['bookmarkReport.chapterIdentifier.contentId'],
+                            "message": rowData['bookmarkReport.messageIdentifier.contentId'],
+                            "quiz": rowData['bookmarkReport.quizIdentifier.contentId']
+                        } ];
+
+                        jQuery("#"+subgrid_table_id).jqGrid({
+                            datatype: "local",
+                            data: data,
+                            colNames: [scope.msg('mtraining.responseMessage'), scope.msg('mtraining.course'), scope.msg('mtraining.moduleWhp'),
+                            scope.msg('mtraining.chapter'), scope.msg('mtraining.message'), scope.msg('mtraining.quiz')],
+                            colModel: [
+                                {
+                                    name: 'responseMessage',
+                                    index: 'responseMessage',
+                                    align: 'center',
+                                    width: 280
+                                },{
+                                    name: 'course',
+                                    index: 'course',
+                                    align: 'center',
+                                    width: 120
+                                },{
+                                    name: 'module',
+                                    index: 'module',
+                                    align: 'center',
+                                    width: 120
+                                },{
+                                    name: 'chapter',
+                                    index: 'chapter',
+                                    align: 'center',
+                                    width: 120
+                                },{
+                                    name: 'message',
+                                    index: 'message',
+                                    align: 'center',
+                                    width: 120
+                                },{
+                                    name: 'quiz',
+                                    index: 'quiz',
+                                    align: 'center',
+                                    width: 120
+                                }
+                            ],
+                            rowNum:1,
+                            pager: pager_id,
+                            sortname: 'message',
+                            sortorder: "asc",
+                            height: '100%'
+                        });
+                        jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:false,add:false,del:false});
+                        $('.ui-subgrid td').css({'word-wrap':'break-word', 'white-space':'normal'});
+
+                    },
+                    loadonce: true,
+                    gridview: true,
+                    loadComplete : function(array) {
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
+                        $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
+                    },
+                    gridComplete: function () {
+                      elem.jqGrid('setGridWidth', '100%');
+                    }
+                });
+            }
+        };
+    });
+
 }());

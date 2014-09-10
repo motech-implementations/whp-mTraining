@@ -1,74 +1,47 @@
-package org.motechproject.whp.mtraining.domain;
+package org.motechproject.whp.mtraining.dto;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
-import org.motechproject.mds.annotations.Entity;
-import org.motechproject.mds.annotations.Field;
-import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType;
-import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
-import org.motechproject.whp.mtraining.util.CustomDateSerializer;
-import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
-import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 
-import javax.jdo.annotations.Persistent;
+public class BookmarkRequestDto extends MdsEntityDto {
 
-
-@Entity
-public class BookmarkRequest extends MdsEntity {
-
-    @Field
     private Long callerId;
 
-    @Field
     private String uniqueId;
 
-    @Field
     private String sessionId;
 
-    @Field
     private int responseCode;
 
-    @Field
     private String responseMessage;
 
-    @Field
     private String remediId;
 
-    @Field
     private BookmarkRequestType requestType;
 
-    @Field
     private DateTime courseStartTime;
 
-    @Field
     private Integer timeLeftToCompleteCourseInHrs;
 
-    @Field
     private String courseStatus;
 
-    @Field
-    @Persistent(defaultFetchGroup = "true")
-    private BookmarkReport bookmarkReport;
+    private BookmarkReportDto BookmarkReportDto;
 
-
-    public BookmarkRequest(Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType) {
+    public BookmarkRequestDto(long id, DateTime creationDate, DateTime modificationDate, Long callerId, String uniqueId, String sessionId, int responseCode,
+                              String responseMessage, String remediId, BookmarkRequestType requestType, DateTime courseStartTime,
+                              Integer timeLeftToCompleteCourseInHrs, String courseStatus, BookmarkReportDto BookmarkReportDto) {
+        super(id, creationDate, modificationDate);
         this.callerId = callerId;
         this.uniqueId = uniqueId;
         this.sessionId = sessionId;
-        this.responseCode = responseStatus.getCode();
-        this.responseMessage = responseStatus.getMessage();
-        this.requestType = requestType;
-    }
-
-    public BookmarkRequest(String remediId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, String courseStartTime, Integer timeLeftToCompleteCourseInHrs, String courseStatus, BookmarkReport bookmarkReport) {
-        this(callerId, uniqueId, sessionId, responseStatus, requestType);
+        this.responseCode = responseCode;
+        this.responseMessage = responseMessage;
         this.remediId = remediId;
-        this.bookmarkReport = bookmarkReport;
-        this.courseStartTime = ISODateTimeUtil.parseWithTimeZoneUTC(courseStartTime);
+        this.requestType = requestType;
+        this.courseStartTime = courseStartTime;
         this.timeLeftToCompleteCourseInHrs = timeLeftToCompleteCourseInHrs;
         this.courseStatus = courseStatus;
+        this.BookmarkReportDto = BookmarkReportDto;
     }
 
     public Long getCallerId() {
@@ -127,8 +100,6 @@ public class BookmarkRequest extends MdsEntity {
         this.requestType = requestType;
     }
 
-    @JsonSerialize(using = CustomDateSerializer.class)
-    @JsonDeserialize(using = CustomDateDeserializer.class)
     public DateTime getCourseStartTime() {
         return courseStartTime;
     }
@@ -153,24 +124,11 @@ public class BookmarkRequest extends MdsEntity {
         this.courseStatus = courseStatus;
     }
 
-    public BookmarkReport getBookmarkReport() {
-        return bookmarkReport;
+    public BookmarkReportDto getBookmarkReportDto() {
+        return BookmarkReportDto;
     }
 
-    public void setBookmarkReport(BookmarkReport bookmarkReport) {
-        this.bookmarkReport = bookmarkReport;
+    public void setBookmarkReportDto(BookmarkReportDto BookmarkReportDto) {
+        this.BookmarkReportDto = BookmarkReportDto;
     }
-
-    @JsonSerialize(using = CustomDateSerializer.class)
-    @JsonDeserialize(using = CustomDateDeserializer.class)
-    public DateTime getCreationDate() {
-        return super.getCreationDate();
-    }
-
-    @JsonSerialize(using = CustomDateSerializer.class)
-    @JsonDeserialize(using = CustomDateDeserializer.class)
-    public DateTime getModificationDate() {
-        return super.getModificationDate();
-    }
-
 }

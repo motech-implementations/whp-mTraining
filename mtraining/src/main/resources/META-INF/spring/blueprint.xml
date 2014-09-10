@@ -65,6 +65,9 @@
     <osgi:service id="bookmarkRequestServiceOsgi" ref="bookmarkRequestService"
                   interface="org.motechproject.whp.mtraining.service.BookmarkRequestService" />
 
+    <osgi:service id="bookmarkReportServiceOsgi" ref="bookmarkReportService"
+                  interface="org.motechproject.whp.mtraining.service.BookmarkReportService" />
+
     <osgi:service id="courseProgressServiceOsgi" ref="courseProgressService"
                   interface="org.motechproject.whp.mtraining.service.CourseProgressService" />
 
@@ -97,6 +100,9 @@
 
     <osgi:reference id="bookmarkRequestDataService"
                     interface="org.motechproject.whp.mtraining.repository.BookmarkRequestDataService" />
+
+    <osgi:reference id="bookmarkReportDataService"
+                    interface="org.motechproject.whp.mtraining.repository.BookmarkReportDataService" />
 
     <osgi:reference id="courseProgressDataService"
                     interface="org.motechproject.whp.mtraining.repository.CourseProgressDataService" />

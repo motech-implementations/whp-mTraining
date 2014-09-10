@@ -4,26 +4,32 @@ import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
-import org.motechproject.whp.mtraining.service.FlagService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.jdo.annotations.FetchGroup;
+import javax.jdo.annotations.Persistent;
 
 
 @Entity
 public class BookmarkReport extends MdsEntity {
 
     @Field
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier courseIdentifier;
 
     @Field
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier moduleIdentifier;
 
     @Field
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier chapterIdentifier;
 
     @Field
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier messageIdentifier;
 
     @Field
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier quizIdentifier;
 
     @Field
