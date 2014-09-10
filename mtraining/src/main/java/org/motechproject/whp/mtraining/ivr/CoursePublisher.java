@@ -43,7 +43,7 @@ public class CoursePublisher {
     }
 
     public IVRResponse publish(long courseId) throws Exception {
-        CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseId);
+        CoursePlanDto course = dtoFactoryService.removeInactiveCollections(dtoFactoryService.getCourseDtoWithChildCollections(courseId));
 
         LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s", numberOfAttempts, currentDateTime(), courseId));
 
@@ -53,9 +53,7 @@ public class CoursePublisher {
         coursePublicationAttemptService.createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess(),
                 ivrResponse.getResponseCode(), ivrResponse.getResponseMessage()));
 
-        if (ivrResponse.isSuccess()) {
-            dtoFactoryService.activateCourse(course);
-        } else if (ivrResponse.isNetworkFailure()) {
+        if (ivrResponse.isNetworkFailure()) {
             if (numberOfAttempts >= MAX_ATTEMPTS) {
                 LOGGER.error(String.format("Attempt %d [%s] - Maximum number of attempts completed for courseId %s", numberOfAttempts, currentDateTime(), courseId));
                 numberOfAttempts = 1;

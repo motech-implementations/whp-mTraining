@@ -329,6 +329,7 @@
             if (selected.original && selected.original.type) {
                 var type = selected.original.type;
                 $("#removeMember").prop('disabled', false);
+                $("#publishCourse").prop('disabled', true);
                 if (type == "root") {
                     $("#removeMember").prop('disabled', true);
                 } else if (type == "course") {
@@ -336,6 +337,9 @@
                     $scope.childIcon = $scope.jstree.settings.types.module.icon;
                     $scope.childType = "module";
                     $("#removeMember").prop('disabled', true);
+                    if ($scope.isActive(selected)) {
+                        $("#publishCourse").prop('disabled', false);
+                    }
                 } else if (type == "module") {
                     $scope.nodes = $scope.chapters;
                     $scope.childIcon = $scope.jstree.settings.types.chapter.icon;

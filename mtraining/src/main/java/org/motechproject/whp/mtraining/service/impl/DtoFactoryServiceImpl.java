@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mtraining.domain.*;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
@@ -10,15 +11,12 @@ import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
+import org.motechproject.whp.mtraining.util.ActiveContentPredicate;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service("dtoFactoryService")
@@ -48,6 +46,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return allCoursesPlanDto;
     }
 
+    @Override
     public CoursePlanDto getCourseDtoWithChildCollections(long courseId) {
         CoursePlan course = coursePlanService.getCoursePlanById(courseId);
         CoursePlanDto coursePlanDto = convertToCoursePlanDto(course);
@@ -55,6 +54,32 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         setChildCollections(coursePlanDto);
 
         return coursePlanDto;
+    }
+
+    @Override
+    public CoursePlanDto removeInactiveCollections(CoursePlanDto course) {
+        List<ModuleDto> modules = course.getModules();
+        filter(modules);
+        for(ModuleDto module : modules) {
+            List<ChapterDto> chapters = module.getChapters();
+            filter(chapters);
+            for(ChapterDto chapter : chapters) {
+                List<LessonDto> lessons = chapter.getLessons();
+                QuizDto quiz = chapter.getQuiz();
+                if (quiz.getState() == CourseUnitState.Inactive) {
+                    chapter.setQuiz(null);
+                }
+                filter(lessons);
+                chapter.setLessons(lessons);
+            }
+            module.setChapters(chapters);
+        }
+        course.setModules(modules);
+        return course;
+    }
+
+    public static <T> void filter(Collection<T> contents) {
+        CollectionUtils.filter(contents, new ActiveContentPredicate());
     }
 
     private void setChildCollections(CoursePlanDto coursePlanDto) {
