@@ -196,23 +196,27 @@
          }
 
         $scope.removeMember = function() {
-            $("#publishCourse").prop('disabled', true);
-            var idx = $('#jstree').jstree('get_selected');
-            var node = $scope.jstree.get_node(idx);
-            if (node.original.type == 'course' || node.original.type == 'root') {
-                return false;
-            }
-            $scope.alertMessage = undefined;
-            var id = node_properties[node.id].id;
-            for(var i = 1; i < node_properties.length; i++) {
-                if (node_properties[i].id == node_properties[node.id].id) {
-                    var n = $scope.jstree.get_node(i);
-                    if (node_properties[n.parent].id == node_properties[node.parent].id) {
-                        $scope.jstree.delete_node(i);
-                        $scope.jstree.delete_node(n.children);
+            jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.node'), $scope.selected.text), $scope.msg('mtraining.confirm.remove.header'), function (val) {
+                if (val) {
+                    $("#publishCourse").prop('disabled', true);
+                    var idx = $('#jstree').jstree('get_selected');
+                    var node = $scope.jstree.get_node(idx);
+                    if (node.original.type == 'course' || node.original.type == 'root') {
+                        return false;
+                    }
+                    $scope.alertMessage = undefined;
+                    var id = node_properties[node.id].id;
+                    for(var i = 1; i < node_properties.length; i++) {
+                        if (node_properties[i].id == node_properties[node.id].id) {
+                            var n = $scope.jstree.get_node(i);
+                            if (node_properties[n.parent].id == node_properties[node.parent].id) {
+                                $scope.jstree.delete_node(i);
+                                $scope.jstree.delete_node(n.children);
+                            }
+                        }
                     }
                 }
-            }
+            });
         }
 
         $scope.cancel = function() {
