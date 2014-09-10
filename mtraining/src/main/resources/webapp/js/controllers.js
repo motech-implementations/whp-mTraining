@@ -472,7 +472,24 @@
                 $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.courseName'));
                 return false;
             }
-            return true;
+            else {
+                $scope.errorName = undefined;
+                var data = $("#coursesListTable").jqGrid('getGridParam','data');
+                data.every(function(row) {
+                    if (row.name == $scope.course.name) {
+                        if ($scope.creatingCourse || $scope.course.id != row.id) {
+                            $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.courseName'));
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+
+            if (!$scope.errorName) {
+                return true;
+            }
+            return false;
         }
 
         $scope.clearCourse();
@@ -578,7 +595,24 @@
                 $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.moduleName'));
                 return false;
             }
-            return true;
+            else {
+                $scope.errorName = undefined;
+                var data = $("#modulesListTable").jqGrid('getGridParam','data');
+                data.every(function(row) {
+                    if (row.name == $scope.module.name) {
+                        if ($scope.creatingModule || $scope.module.id != row.id) {
+                            $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.moduleName'));
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+
+            if (!$scope.errorName) {
+                return true;
+            }
+            return false;
         }
 
         $scope.clearModule();
@@ -725,7 +759,24 @@
                 $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.chapterName'));
                 return false;
             }
-            return true;
+            else {
+                $scope.errorName = undefined;
+                var data = $("#chaptersListTable").jqGrid('getGridParam','data');
+                data.every(function(row) {
+                    if (row.name == $scope.chapter.name) {
+                        if ($scope.creatingChapter || $scope.chapter.id != row.id) {
+                            $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.chapterName'));
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+
+            if (!$scope.errorName) {
+                return true;
+            }
+            return false;
         }
 
         $scope.clearChapter();
@@ -831,7 +882,24 @@
                 $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.messageName'));
                 return false;
             }
-            return true;
+            else {
+                $scope.errorName = undefined;
+                var data = $("#messagesListTable").jqGrid('getGridParam','data');
+                data.every(function(row) {
+                    if (row.name == $scope.message.name) {
+                        if ($scope.creatingMessage || $scope.message.id != row.id) {
+                            $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.messageName'));
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+
+            if (!$scope.errorName) {
+                return true;
+            }
+            return false;
         }
 
         $scope.clearMessage();
