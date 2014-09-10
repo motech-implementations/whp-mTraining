@@ -8,7 +8,7 @@
                            file-model="multipartFile"/>
                 </div>
                 <div class="form-group">
-                    <input type="button" class="form-control btn btn-default" value="Upload & Publish to IVR"
+                    <input type="button" class="form-control btn btn-default" value="{{msg('mtraining.upload.course')}}"
                            ng-click="uploadCourse()" ng-disabled="uploadingCourse || !multipartFile"/>
                 </div>
                 <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingCourse"/>
