@@ -166,7 +166,7 @@
         $scope.removeMember = function() {
             var idx = $('#jstree').jstree('get_selected');
             var node = $scope.jstree.get_node(idx);
-            if (node.original.type == 'course') {
+            if (node.original.type == 'course' || node.original.type == 'root') {
                 return false;
             }
             $scope.alertMessage = undefined;
@@ -281,7 +281,9 @@
             if (selected.original && selected.original.type) {
                 var type = selected.original.type;
                 $("#removeMember").prop('disabled', false);
-                if (type == "course") {
+                if (type == "root") {
+                    $("#removeMember").prop('disabled', true);
+                } else if (type == "course") {
                     $scope.nodes = $scope.modules;
                     $scope.childIcon = $scope.jstree.settings.types.module.icon;
                     $scope.childType = "module";
@@ -308,7 +310,7 @@
                 id_hashmap = new Array();
                 jArray[iterator] = {
                     "id" : iterator,
-                    "text" : "mtrainingModule",
+                    "text" : "mTraining",
                     "parent" : par,
                     "state" : {
                             opened : true,
