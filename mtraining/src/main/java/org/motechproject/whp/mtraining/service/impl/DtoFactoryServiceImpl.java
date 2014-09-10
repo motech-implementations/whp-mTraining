@@ -495,7 +495,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         Quiz quiz;
         if ((course = coursePlanService.getCoursePlanById(id)) != null) {
             course.setState(state);
-            coursePlanService.updateCoursePlan(course);-
+            coursePlanService.updateCoursePlan(course);
         } else if ((module = mTrainingService.getCourseById(id)) != null) {
             module.setState(state);
             mTrainingService.updateCourse(module);
