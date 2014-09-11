@@ -149,7 +149,7 @@
             $.postJSON('../mtraining/web-api/updateRelations', relations, function() {
                 $.postJSON('../mtraining/web-api/updateStates', stateMap, function() {
                     $scope.savingRelations = false;
-                    $scope.alertMessage = $scope.msg('mtraining.savedRelations');
+                    $scope.alertMessage = $scope.msg('mtraining.savedTreeStructure');
                     unsaved = false;
                     safeApply($scope);
                 });

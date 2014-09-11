@@ -84,18 +84,19 @@ public class QuizDto extends CourseUnitMetadataDto {
         this.isInRelation = isInRelation;
     }
 
-    public int getNoOfQuestionsToBePlayed() {
-        return questions.size();
-    }
-
-    public void setNoOfQuestionsToBePlayed(int noOfQuestionsToBePlayed) {
-
-    }
-	public Set<Long> getParentIds() {
+    public Set<Long> getParentIds() {
         return parentIds;
     }
 
     public void setParentIds(Set<Long> parentIds) {
         this.parentIds = parentIds;
+    }
+
+    public int getNoOfQuestionsToBePlayed() {
+        return noOfQuestionsToBePlayed;
+    }
+
+    public void setNoOfQuestionsToBePlayed(int noOfQuestionsToBePlayed) {
+        this.noOfQuestionsToBePlayed = noOfQuestionsToBePlayed;
     }
 }

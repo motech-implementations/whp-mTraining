@@ -35,6 +35,9 @@ public class CourseUnitMetadataDto {
     @JsonView({PublishCourseView.class})
     private UUID contentId;
 
+    @JsonView({PublishCourseView.class})
+    private int version;
+
     public CourseUnitMetadataDto() {
     }
 
@@ -119,5 +122,13 @@ public class CourseUnitMetadataDto {
 
     public void setContentId(UUID contentId) {
         this.contentId = contentId;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }
