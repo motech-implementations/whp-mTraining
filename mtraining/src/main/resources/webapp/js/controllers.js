@@ -20,8 +20,8 @@
     };
 
     function safeApply($scope) {
-         if(!$scope.$$phase) {
-             $scope.$apply();
+         if (!$scope.$$phase) {
+             $scope.$digest();
          }
      }
 
@@ -50,6 +50,25 @@
             connectWith: '.droppable',
             receive: receiveEventHandler
          });
+
+        function populateChildren(idx, type) {
+            if (type == 'lesson' || type == 'quiz') {
+                return;
+            }
+            for(var i = 1; i < node_properties.length; i++) {
+                if (node_properties[i].id == node_properties[idx].id) {
+                    var parent = $scope.jstree.get_node(i);
+                    var len = parent.children.length;
+                    for(var j = 0; j < len; j++) {
+                        var child = node_properties[parent.children[j]];
+                        createNode(child.id, child.name, idx, parent.level + 1, child.type, child.state);
+                        $scope.jstree.create_node(idx, jArray[iterator], 'last', false, false);
+                        populateChildren(iterator, child.type);
+                    }
+                    return;
+                }
+            }
+        }
 
          function receiveEventHandler(event, ui) {
             $scope.alertMessage = undefined;
@@ -92,6 +111,7 @@
                      if (node_properties[i].id == node_properties[parent.id].id) {
                         createNode(item.id, item.name, i, parent.level + 1, type, item.state);
                         $scope.jstree.create_node(i, jArray[iterator], 'last', false, false);
+                        populateChildren(iterator, type)
                     }
                 }
             }
@@ -222,7 +242,7 @@
                     for(var i = 1; i < node_properties.length; i++) {
                         if (node_properties[i].id == node_properties[node.id].id) {
                             var n = $scope.jstree.get_node(i);
-                            if (node_properties[n.parent].id == node_properties[node.parent].id) {
+                            if (node_properties[n.parent] && node_properties[n.parent].id == node_properties[node.parent].id) {
                                 $scope.jstree.delete_node(i);
                                 $scope.jstree.delete_node(n.children);
                             }
@@ -267,6 +287,8 @@
             }
             node_properties[iterator] = {
                 id: id,
+                name: text,
+                type: type,
                 state: state
             }
          }
