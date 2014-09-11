@@ -129,3 +129,11 @@ div.buttons > button {
 li[state="Inactive"] > a {
     color: #C0C0C0 !important;
 }
+
+.ui-jqgrid .ui-jqgrid-btable {
+    table-layout: auto;
+}
+
+.ui-jqgrid .ui-jqgrid-htable {
+    table-layout: auto;
+}
