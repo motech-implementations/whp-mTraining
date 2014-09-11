@@ -23,6 +23,7 @@
         var jArray = new Array();
         var iterator = 0;
         var node_properties = new Array();
+        var unsaved = false;
         $scope.alertMessage = undefined;
 
         $.getJSON('../mtraining/web-api/modules', function(data) {
@@ -46,7 +47,7 @@
 
          function receiveEventHandler(event, ui) {
             $scope.alertMessage = undefined;
-            $("#publishCourse").prop('disabled', true);
+            unsaved = true;
             var type = $scope.childType;
             var cancelled = false;
             var parent = $scope.jstree.get_node($scope.jstree.get_selected()).original;
@@ -141,14 +142,18 @@
                 $.postJSON('../mtraining/web-api/updateStates', stateMap, function() {
                     $scope.savingRelations = false;
                     $scope.alertMessage = $scope.msg('mtraining.savedRelations');
-                    $("#publishCourse").prop('disabled', false);
+                    unsaved = false;
                     $scope.$apply();
                 });
             });
         }
 
+        $scope.isPublishable = function() {
+            return !unsaved && $scope.selected && $scope.selected.original.type == 'course' && $scope.isActive($scope.selected);
+        }
+
         $scope.switchUnitState = function() {
-            $("#publishCourse").prop('disabled', true);
+            unsaved = true;
             var idx = $('#jstree').jstree('get_selected');
             var node = $scope.jstree.get_node(idx);
             var state = "Active";
@@ -198,7 +203,7 @@
         $scope.removeMember = function() {
             jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.node'), $scope.selected.text), $scope.msg('mtraining.confirm.remove.header'), function (val) {
                 if (val) {
-                    $("#publishCourse").prop('disabled', true);
+                    unsaved = true;
                     var idx = $('#jstree').jstree('get_selected');
                     var node = $scope.jstree.get_node(idx);
                     if (node.original.type == 'course' || node.original.type == 'root') {
@@ -222,7 +227,7 @@
         $scope.cancel = function() {
             initTree();
             $scope.alertMessage = undefined;
-            $("#publishCourse").prop('disabled', false);
+            unsaved = false;
         }
 
         $scope.isChildren = function(name) {
@@ -276,7 +281,7 @@
                     'check_callback' : function (operation, node, node_parent, node_position) {
                         if (operation === "move_node") {
                             if (node_parent.original && node.original.level === node_parent.original.level + 1) {
-                                $("#publishCourse").prop('disabled', true);
+                                unsaved = true;
                                 var children = node_parent.children;
                                 for(var i = 0; i < node_parent.children.length; i++) {
                                     if (node_properties[node_parent.children[i]].id == node_properties[node.id].id) {
@@ -328,12 +333,10 @@
                 $.each(selected.children, function(idx, el) {
                     $scope.children.push($scope.jstree.get_node(el));
                 });
-                $scope.$digest();
             }
             if (selected.original && selected.original.type) {
                 var type = selected.original.type;
                 $("#removeMember").prop('disabled', false);
-                $("#publishCourse").prop('disabled', true);
                 if (type == "root") {
                     $("#removeMember").prop('disabled', true);
                 } else if (type == "course") {
@@ -341,9 +344,6 @@
                     $scope.childIcon = $scope.jstree.settings.types.module.icon;
                     $scope.childType = "module";
                     $("#removeMember").prop('disabled', true);
-                    if ($scope.isActive(selected)) {
-                        $("#publishCourse").prop('disabled', false);
-                    }
                 } else if (type == "module") {
                     $scope.nodes = $scope.chapters;
                     $scope.childIcon = $scope.jstree.settings.types.chapter.icon;
@@ -354,8 +354,8 @@
                     $scope.childType = "lesson";
                     $scope.quizNodes = $scope.quizzes;
                 }
-                $scope.$digest();
             }
+            $scope.$digest();
         }
 
         function fillJson(data, init, level, par) {

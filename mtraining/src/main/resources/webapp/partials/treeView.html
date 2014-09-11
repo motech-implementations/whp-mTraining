@@ -42,7 +42,7 @@
 		</table>
 	</div>
 	<div class="buttons">
-        <button id="publishCourse" class="btn btn-primary ng-binding" ng-click="publishCourse()">
+        <button id="publishCourse" class="btn btn-primary ng-binding" ng-click="publishCourse()" ng-disabled="!isPublishable()">
             <i class="icon-spin icon-refresh" ng-show="publishingCourse"/>
             <i class="icon-cloud-upload icon-white"></i> {{msg('mtraining.publish')}}
         </button>

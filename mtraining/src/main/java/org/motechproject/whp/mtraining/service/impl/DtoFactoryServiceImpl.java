@@ -530,18 +530,18 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         Chapter chapter;
         Lesson lesson;
         Quiz quiz;
-        if ((course = coursePlanService.getCoursePlanById(id)) != null) {
-            course.setState(state);
-            coursePlanService.updateCoursePlan(course);
-        } else if ((module = mTrainingService.getCourseById(id)) != null) {
-            module.setState(state);
-            mTrainingService.updateCourse(module);
+        if ((lesson = mTrainingService.getLessonById(id)) != null) {
+            lesson.setState(state);
+            mTrainingService.updateLesson(lesson);
         } else if ((chapter = mTrainingService.getChapterById(id)) != null) {
             chapter.setState(state);
             mTrainingService.updateChapter(chapter);
-        } else if ((lesson = mTrainingService.getLessonById(id)) != null) {
-            lesson.setState(state);
-            mTrainingService.updateLesson(lesson);
+        } else if ((module = mTrainingService.getCourseById(id)) != null) {
+            module.setState(state);
+            mTrainingService.updateCourse(module);
+        } else if ((course = coursePlanService.getCoursePlanById(id)) != null) {
+            course.setState(state);
+            coursePlanService.updateCoursePlan(course);
         } else if ((quiz = mTrainingService.getQuizById(id)) != null) {
             quiz.setState(state);
             mTrainingService.updateQuiz(quiz);
