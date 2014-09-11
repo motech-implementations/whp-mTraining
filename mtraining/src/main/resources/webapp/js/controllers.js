@@ -189,10 +189,12 @@
                 state = "Inactive";
             }
             for(var i = 1; i < node_properties.length; i++) {
-                if (node_properties[i].id == node_properties[node.id].id) {
+                if (node_properties[node.id] && node_properties[i].id == node_properties[node.id].id) {
                     node_properties[i].state = state;
                     var el = $scope.jstree.get_node(i, true);
-                    el.attr("state", state);
+                    if (el && el.attr) {
+                        el.attr("state", state);
+                    }
                 }
             }
         }
