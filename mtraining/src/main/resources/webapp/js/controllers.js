@@ -52,7 +52,7 @@
          });
 
         function populateChildren(idx, type) {
-            if (type == 'lesson' || type == 'quiz') {
+            if (type == 'message' || type == 'quiz') {
                 return;
             }
             for(var i = 1; i < node_properties.length; i++) {
@@ -339,7 +339,7 @@
                     "chapter": {
                         "icon" : "glyphicon glyphicon-book"
                     },
-                    "lesson": {
+                    "message": {
                         "icon" : "glyphicon glyphicon-music"
                     },
                     "quiz": {
@@ -383,8 +383,8 @@
                     $scope.childType = "chapter";
                 } else if (type == "chapter") {
                     $scope.nodes = $scope.lessons;
-                    $scope.childIcon = $scope.jstree.settings.types.lesson.icon;
-                    $scope.childType = "lesson";
+                    $scope.childIcon = $scope.jstree.settings.types.message.icon;
+                    $scope.childType = "message";
                     $scope.quizNodes = $scope.quizzes;
                 }
                 safeApply($scope);
@@ -425,11 +425,11 @@
                 } else if (item.questions) {
                     type = "quiz";
                 } else {
-                    type = "lesson";
+                    type = "message";
                 }
                 createNode(item.id, item.name, par, level, type, item.state);
 
-                var child_table = item.modules || item.chapters || item.lessons || [];
+                var child_table = item.modules || item.chapters || item.messages || [];
                 var quiz = item.quiz;
                 if (quiz) {
                     child_table.push(quiz);
