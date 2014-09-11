@@ -117,7 +117,6 @@
             }
             $scope.jstree.open_node(parent);
             if (type == 'quiz') {
-                ui.sender.sortable('cancel');
                 onChanged();
             } else {
                 safeApply($scope);
@@ -261,10 +260,10 @@
             onChanged();
         }
 
-        $scope.isChildren = function(name) {
+        $scope.isChildren = function(id) {
             var isChildren = false;
             $.each($scope.children, function(idx, el) {
-                if (name === el.text) {
+                if (node_properties[el.id] && id == node_properties[el.id].id) {
                     isChildren = true;
                 }
             });
@@ -421,7 +420,7 @@
                     type = "course";
                 } else if (item.chapters) {
                     type = "module";
-                } else if (item.lessons) {
+                } else if (item.messages) {
                     type = "chapter";
                 } else if (item.questions) {
                     type = "quiz";
