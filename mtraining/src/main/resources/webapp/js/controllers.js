@@ -951,6 +951,7 @@
         $scope.$on('quizClick', function(event, quizId) {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
+            $scope.errorNoOfQuestions = undefined;
             $scope.errorPercentage = undefined;
             $scope.quiz = Quiz.get({ id: quizId });
             $scope.updatingQuiz = true;
@@ -1025,6 +1026,7 @@
 
         $scope.createQuiz = function() {
             $scope.errorName = undefined;
+            $scope.errorNoOfQuestions = undefined;
             $scope.errorPercentage = undefined;
             $scope.creatingQuiz = true;
             $scope.quiz = new Quiz();
@@ -1085,22 +1087,27 @@
         }
 
         $scope.validate = function() {
-
             if (!$scope.quiz.name) {
                 $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.quizName'));
             }
             else {
                 $scope.errorName = undefined;
             }
-
+            
             if (!$scope.quiz.passPercentage && $scope.quiz.passPercentage != 0) {
                 $scope.errorPercentage = $scope.msg('mtraining.set.percentage');
             }
             else {
                 $scope.errorPercentage = undefined;
             }
-
-            if (!$scope.errorName && !$scope.errorPercentage) {
+            if($("#noOfQuestionsToBePlayed").val()>$scope.quiz.questions.length){
+                $scope.errorNoOfQuestions = $scope.msg('mtraining.set.NoOfQuestions', $scope.quiz.questions.length);
+            }
+            else{
+            $scope.errorNoOfQuestions = undefined;
+            }
+                
+            if (!$scope.errorName && !$scope.errorPercentage && !$scope.errorNoOfQuestions) {
                 return true
             }
             $scope.alertMessage = undefined;
