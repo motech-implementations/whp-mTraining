@@ -4,12 +4,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mtraining.domain.*;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
 import org.motechproject.whp.mtraining.domain.ParentType;
 import org.motechproject.whp.mtraining.dto.*;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
+import org.motechproject.whp.mtraining.service.LocationService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.motechproject.whp.mtraining.util.ActiveContentPredicate;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     ContentOperationService contentOperationService;
 
     @Autowired
+    private LocationService locationService;
+
+    @Autowired
     ManyToManyRelationService manyToManyRelationService;
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
 
@@ -40,7 +45,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         List<CoursePlan> allCourses = coursePlanService.getAllCoursePlans();
         List<CoursePlanDto> allCoursesPlanDto = convertToCoursePlanDtos(allCourses);
 
-        for (CoursePlanDto coursePlanDto: allCoursesPlanDto) {
+        for (CoursePlanDto coursePlanDto : allCoursesPlanDto) {
             setChildCollections(coursePlanDto);
         }
         return allCoursesPlanDto;
@@ -60,10 +65,10 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     public CoursePlanDto removeInactiveCollections(CoursePlanDto course) {
         List<ModuleDto> modules = course.getModules();
         filter(modules);
-        for(ModuleDto module : modules) {
+        for (ModuleDto module : modules) {
             List<ChapterDto> chapters = module.getChapters();
             filter(chapters);
-            for(ChapterDto chapter : chapters) {
+            for (ChapterDto chapter : chapters) {
                 List<LessonDto> lessons = chapter.getLessons();
                 QuizDto quiz = chapter.getQuiz();
                 if (quiz.getState() == CourseUnitState.Inactive) {
@@ -213,13 +218,13 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public void activateCourse(CoursePlanDto course) {
         course.setState(CourseUnitState.Active);
-        for(ModuleDto module : course.getModules()) {
+        for (ModuleDto module : course.getModules()) {
             module.setState(CourseUnitState.Active);
             createOrUpdateFromDto(module);
-            for(ChapterDto chapter : module.getChapters()) {
+            for (ChapterDto chapter : module.getChapters()) {
                 chapter.setState(CourseUnitState.Active);
                 createOrUpdateFromDto(chapter);
-                for(LessonDto lesson : chapter.getLessons()) {
+                for (LessonDto lesson : chapter.getLessons()) {
                     lesson.setState(CourseUnitState.Active);
                     createOrUpdateFromDto(lesson);
                 }
@@ -237,7 +242,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         CoursePlanDto coursePlanDto = new CoursePlanDto(coursePlan.getId(), coursePlan.getName(), coursePlan.getState(),
                 coursePlan.getCreationDate(), coursePlan.getModificationDate());
         coursePlanDto.setContentId(contentOperationService.getUuidFromJsonString(coursePlan.getContent()));
-
+        coursePlanDto.setLocation(coursePlan.getLocation());
         contentOperationService.getFileNameAndDescriptionFromContent(coursePlanDto, coursePlan.getContent());
 
         return coursePlanDto;
@@ -322,7 +327,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return lessonDtos;
     }
 
-    private boolean quizIsInRelation (long quizId) {
+    private boolean quizIsInRelation(long quizId) {
         return manyToManyRelationService.getChaptersByChildId(quizId).size() > 0;
     }
 
@@ -385,11 +390,16 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         Question questionObject = new Question(question, answer);
         return questionObject;
     }
-
     private void createCourseUnitMetadataFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = new CoursePlan(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), UUID.randomUUID()));
+
+            if (((CoursePlanDto) courseUnitMetadataDto).getLocation()!=null) {
+                Location location = locationService.getLocationById(((CoursePlanDto) courseUnitMetadataDto).getLocation().getId());
+                coursePlan.setLocation(location);
+            }
+
 
             coursePlanService.createCoursePlan(coursePlan);
 
@@ -434,8 +444,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(coursePlan, courseUnitMetadataDto);
-            coursePlanService.updateCoursePlan(coursePlan);
-
+            if (((CoursePlanDto) courseUnitMetadataDto).getLocation()!=null) {
+                Location location = locationService.getLocationById(((CoursePlanDto) courseUnitMetadataDto).getLocation().getId());
+                coursePlan.setLocation(location);
+            }
+        coursePlanService.updateCoursePlan(coursePlan);
         } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = mTrainingService.getCourseById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(module, courseUnitMetadataDto);
@@ -456,7 +469,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             manyToManyRelationService.deleteRelationsByChildId(ParentType.Chapter, lesson.getId());
             createRelation(lesson, courseUnitMetadataDto);
 
-        } else if (courseUnitMetadataDto instanceof QuizDto)  {
+        } else if (courseUnitMetadataDto instanceof QuizDto) {
             Quiz quiz = mTrainingService.getQuizById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(quiz, courseUnitMetadataDto);
             quiz.setPassPercentage(((QuizDto) courseUnitMetadataDto).getPassPercentage());
@@ -497,7 +510,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         courseUnitMetadata.setState(courseUnitMetadataDto.getState());
         if (courseUnitMetadataDto instanceof QuizDto) {
             courseUnitMetadata.setContent(contentOperationService.codeIntoQuizContent
-                    (courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), uuid, ((QuizDto)(courseUnitMetadataDto)).getNoOfQuestionsToBePlayed()));
+                    (courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), uuid, ((QuizDto) (courseUnitMetadataDto)).getNoOfQuestionsToBePlayed()));
         } else {
             courseUnitMetadata.setContent(contentOperationService.codeIntoContent
                     (courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), uuid));
@@ -515,7 +528,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public CoursePlan getCoursePlanByExternalId(String externalId) {
         List<CoursePlan> coursePlans = coursePlanService.getAllCoursePlans();
-        for(CoursePlan coursePlan : coursePlans) {
+        for (CoursePlan coursePlan : coursePlans) {
             if (contentOperationService.getUuidFromJsonString(coursePlan.getContent()).toString().equalsIgnoreCase(externalId)) {
                 return coursePlan;
             }
