@@ -46,7 +46,7 @@
                     rownumbers: true,
                     rowNum: 10,
                     rowList: [10, 20, 50],
-                    colNames: ['rowId', 'id', scope.msg('mtraining.courseName'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
+                    colNames: ['rowId', 'id', scope.msg('mtraining.courseName'), scope.msg('mtraining.courseLocation'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
                         scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                     colModel: [{
                        name: 'rowId',
@@ -63,6 +63,12 @@
                         index: 'name',
                         align: 'center',
                         width: 155
+                    }, {
+                        name: 'location',
+                        index: 'location',
+                        align: 'center',
+                        width: 130,
+                        formatter: locationFormatter
                     }, {
                         name: 'description',
                         index: 'description',
@@ -117,7 +123,14 @@
                         var rowData = $('#coursesListTable').jqGrid('getRowData', rowId);
                         scope.$emit('courseClick', rowData.id);
                     }
-                });
+                    });
+                    function locationFormatter(cellValue, options, rowObject) {
+                        if (!cellValue){
+                            return '';
+                        }
+                        return cellValue.state;
+                    }                    
+                
             }
         };
     });
