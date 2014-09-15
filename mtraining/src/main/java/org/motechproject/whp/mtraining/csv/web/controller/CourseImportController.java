@@ -1,16 +1,14 @@
 package org.motechproject.whp.mtraining.csv.web.controller;
 
 
-import org.motechproject.whp.mtraining.domain.CoursePlan;
-import org.motechproject.whp.mtraining.exception.CourseNotFoundException;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
 import org.motechproject.whp.mtraining.csv.request.CourseConfigurationRequest;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
 import org.motechproject.whp.mtraining.csv.validator.CourseCsvStructureValidator;
+import org.motechproject.whp.mtraining.exception.CourseNotFoundException;
 import org.motechproject.whp.mtraining.service.impl.CourseImportService;
-import org.motechproject.mtraining.domain.Course;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +50,8 @@ public class CourseImportController {
             if (!errors.isEmpty()) {
                 return failure(errors);
             }
-            CoursePlan importedCoursePlanIdentifier = courseImportService.importCoursePlan(courseCsvRequests);
-            return CsvImportResponse.success(format("Course: %s has been imported successfully",
-                    importedCoursePlanIdentifier.getId()));
+            courseImportService.importCourseStructure(courseCsvRequests);
+            return CsvImportResponse.success(format("Course Structure has been imported successfully"));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             return failure(asList(new CsvImportError(ex.getMessage())));

@@ -6,11 +6,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mtraining.domain.CourseUnitState;
-import org.motechproject.whp.mtraining.domain.CoursePlan;
+import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.parser.CsvParser;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.csv.response.CsvImportResponse;
-import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.validator.CourseCsvStructureValidator;
 import org.motechproject.whp.mtraining.csv.web.controller.CourseImportController;
 import org.motechproject.whp.mtraining.service.impl.CourseImportService;
@@ -20,7 +19,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
@@ -82,11 +80,10 @@ public class CourseImportControllerTest {
         List<CourseCsvRequest> courseCsvRequests = asList(new CourseCsvRequest());
         when(csvParser.parse(csvFile, CourseCsvRequest.class)).thenReturn(courseCsvRequests);
         when(courseStructureValidator.validate(courseCsvRequests)).thenReturn(Collections.EMPTY_LIST);
-        when(courseImportService.importCoursePlan(courseCsvRequests)).thenReturn(new CoursePlan("New Plan", CourseUnitState.Active, "Content"));
 
         CsvImportResponse csvImportResponse = courseImportController.importCourseStructure(csvFile);
 
-        verify(courseImportService).importCoursePlan(courseCsvRequests);
+        verify(courseImportService).importCourseStructure(courseCsvRequests);
         assertTrue(csvImportResponse.isSuccess());
         assertTrue(csvImportResponse.getErrors().isEmpty());
     }

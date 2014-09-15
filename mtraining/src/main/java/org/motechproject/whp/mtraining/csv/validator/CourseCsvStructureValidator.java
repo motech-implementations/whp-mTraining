@@ -44,22 +44,23 @@ public class CourseCsvStructureValidator {
     public List<CsvImportError> validate(List<CourseCsvRequest> requests) {
         List<CsvImportError> errors = new ArrayList<>();
         Set<String> parents = new HashSet<>();
-        if (!requests.get(0).isCourse()) {
+        boolean isCoursePresent = false;
+
+        for (CourseCsvRequest request : requests) {
+            if (request.hasParent()) {
+                parents.add(request.getParentNode());
+            }
+            if (request.isCourse()) {
+                isCoursePresent = true;
+            }
+        }
+        if (!isCoursePresent) {
             CsvImportError error = new CsvImportError("Could not find the course name in the CSV. Please add the course details to CSV and try importing again.");
             errors.add(error);
             logger.info(String.format("Validation error: %s", error.getMessage()));
             return errors;
         }
         for (CourseCsvRequest request : requests) {
-            if (request.hasParent()) {
-                parents.add(request.getParentNode());
-            }
-        }
-        for (CourseCsvRequest request : requests) {
-            if (request.isCourse() && requests.indexOf(request) != 0) {
-                createErrorResponse(request, errors, "There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.");
-                return errors;
-            }
             validate(request, requests, errors, parents);
         }
         return errors;

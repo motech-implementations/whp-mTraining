@@ -16,5 +16,5 @@ public interface CoursePlanService {
 
     CoursePlan getCoursePlanById(long id);
 
-    List<CoursePlan> getCoursePlanByName(String coursePlanName);
+    CoursePlan getCoursePlanByName(String coursePlanName);
 }

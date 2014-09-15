@@ -71,18 +71,15 @@ public class CourseImportServiceIT extends BasePaxIT {
                 new CourseCsvRequest("CourseImportServiceIT lesson5", "lesson", CourseUnitState.Inactive, "CourseImportServiceIT chapter2", "lesson5 description", "filename4")
         );
 
-        Long id = courseImportService.importCoursePlan(requests).getId();
-        CoursePlan coursePlan = coursePlanService.getCoursePlanById(id);
+        CoursePlan coursePlan = coursePlanService.getCoursePlanByName("CourseImportServiceIT coursePlan");
 
         assertCoursePlanDetails(coursePlan);
     }
 
     @After
     public void deleteFromDatabase(){
-        List<CoursePlan> coursePlans = coursePlanService.getCoursePlanByName("CourseImportServiceIT coursePlan");
-        for (CoursePlan coursePlan : coursePlans) {
-            coursePlanService.deleteCoursePlan(coursePlan);
-        }
+        CoursePlan coursePlan = coursePlanService.getCoursePlanByName("CourseImportServiceIT coursePlan");
+        coursePlanService.deleteCoursePlan(coursePlan);
 
         List<Course> courses = mTrainingService.getCourseByName("CourseImportServiceIT course1");
         courses.addAll(mTrainingService.getCourseByName("CourseImportServiceIT course2"));

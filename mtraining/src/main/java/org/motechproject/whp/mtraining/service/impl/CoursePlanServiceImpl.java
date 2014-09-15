@@ -40,7 +40,7 @@ public class CoursePlanServiceImpl implements CoursePlanService {
     }
 
     @Override
-    public List<CoursePlan> getCoursePlanByName(String coursePlanName) {
+    public CoursePlan getCoursePlanByName(String coursePlanName) {
         return coursePlanDataService.findCourseByName(coursePlanName);
     }
 

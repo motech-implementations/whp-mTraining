@@ -61,14 +61,6 @@ public class CourseStructureValidatorTest {
     }
 
     @Test
-    public void shouldReturnErrorIfCSVHasMoreThanOneCourse() {
-        courseStructureCsvs.add(new CourseCsvRequest("Basic Malaria Symptoms", "Course", CourseUnitState.Active, null, "Message Description", "filename"));
-        errors = courseStructureValidator.validate(courseStructureCsvs);
-        assertThat(errors.size(), is(1));
-        assertEquals("There are multiple course nodes in the CSV. Please ensure there is only 1 course node in the CSV and try importing again.", errors.get(0).getMessage());
-    }
-
-    @Test
     public void shouldReturnErrorWhenNodeWithSameNameExists() {
         courseStructureCsvs.add(new CourseCsvRequest("Lesson TB Symptoms", "Lesson", CourseUnitState.Active, "Chapter TB Symptoms", "Message Description", "FileName"));
         errors = courseStructureValidator.validate(courseStructureCsvs);

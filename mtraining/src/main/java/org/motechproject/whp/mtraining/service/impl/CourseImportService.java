@@ -66,12 +66,6 @@ public class CourseImportService {
         this.contentOperationService = contentOperationService;
     }
 
-    public CoursePlan importCoursePlan(List<CourseCsvRequest> requests) {
-        CoursePlan coursePlan = formCoursePlan(requests);
-
-        return coursePlanService.updateCoursePlan(coursePlan);
-    }
-
     public void importCourseConfig(List<CourseConfigurationRequest> requests) {
         for (CourseConfigurationRequest request : requests) {
             CourseConfiguration courseConfiguration = new CourseConfiguration(request.getCourseName(),
@@ -84,14 +78,9 @@ public class CourseImportService {
         }
     }
 
-    private CoursePlan formCoursePlan(List<CourseCsvRequest> requests) {
+    public void importCourseStructure(List<CourseCsvRequest> requests) {
         Map<String, Long> idToNameMap = new LinkedHashMap<>();
 
-        CourseCsvRequest courseRequest = requests.get(0);
-        CoursePlan coursePlan = new CoursePlan(courseRequest.getNodeName(), courseRequest.getStatus(),
-                contentOperationService.codeIntoContent(courseRequest.getFileName(), courseRequest.getDescription(), UUID.randomUUID()));
-        coursePlan =  coursePlanService.createCoursePlan(coursePlan);
-        idToNameMap.put(coursePlan.getName(), coursePlan.getId());
 
         Map<Chapter, CourseCsvRequest> chapters = new LinkedHashMap<>();
         Map<Question, CourseCsvRequest> questions = new LinkedHashMap<>();
@@ -100,7 +89,13 @@ public class CourseImportService {
         for (CourseCsvRequest request : requests) {
             String type = request.getNodeType();
 
-            if (type.equalsIgnoreCase("Module")) {
+            if (type.equalsIgnoreCase("Course")) {
+                CoursePlan coursePlan = new CoursePlan(request.getNodeName(), request.getStatus(),
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()));
+                coursePlan =  coursePlanService.createCoursePlan(coursePlan);
+                idToNameMap.put(coursePlan.getName(), coursePlan.getId());
+
+            } else if (type.equalsIgnoreCase("Module")) {
                 Course course = new Course(request.getNodeName(), request.getStatus(),
                         contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()),
                         new ArrayList<Chapter>());
@@ -177,8 +172,6 @@ public class CourseImportService {
                 manyToManyRelationService.createRelation(new ManyToManyRelation(chapter.getId(), quiz.getId(), ParentType.Chapter));
             }
         }
-
-        return coursePlan;
     }
 
 }

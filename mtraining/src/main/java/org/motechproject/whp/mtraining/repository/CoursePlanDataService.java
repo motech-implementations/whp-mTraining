@@ -5,8 +5,6 @@ import org.motechproject.mds.annotations.LookupField;
 import org.motechproject.mds.service.MotechDataService;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
 
-import java.util.List;
-
 /**
  * Interface for repository that persists simple records and allows CRUD.
  * MotechDataService base class will provide the implementation of this class as well
@@ -16,7 +14,7 @@ import java.util.List;
 public interface CoursePlanDataService extends MotechDataService<CoursePlan> {
 
     @Lookup
-    List<CoursePlan> findCourseByName(@LookupField(name = "name") String coursePlanName);
+    CoursePlan findCourseByName(@LookupField(name = "name") String coursePlanName);
 
     @Lookup
     CoursePlan findCoursePlanById(@LookupField(name = "id") long id);

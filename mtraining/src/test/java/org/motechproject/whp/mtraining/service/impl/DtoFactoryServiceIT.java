@@ -28,9 +28,7 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerSuite;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
@@ -88,10 +86,8 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
     @After
     public void deleteFromDatabase() {
-        List<CoursePlan> coursePlans = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
-        for (CoursePlan coursePlan : coursePlans) {
+        CoursePlan coursePlan = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
             coursePlanService.deleteCoursePlan(coursePlan);
-        }
 
         List<Course> courses = mTrainingService.getCourseByName(COURSE_NAME);
         for (Course course : courses) {
@@ -121,18 +117,14 @@ public class DtoFactoryServiceIT extends BasePaxIT {
                 ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null);
 
         dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
-        coursePlans = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
-        assertEquals(coursePlans.size(), 1);
-        coursePlan = coursePlans.get(0);
+        coursePlan = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
 
         coursePlanDto.setId(coursePlan.getId());
         coursePlanDto.setDescription(NEW_DESCRIPTION);
         coursePlanDto.setExternalId(NEW_FILENAME);
 
         dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
-        coursePlans = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
-        assertEquals(coursePlans.size(), 1);
-        coursePlan = coursePlans.get(0);
+        coursePlan = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
         assertEquals(coursePlan.getContent(), newContent);
     }
 
