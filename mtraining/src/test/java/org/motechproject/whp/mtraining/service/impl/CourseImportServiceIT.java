@@ -105,7 +105,7 @@ public class CourseImportServiceIT extends BasePaxIT {
 
     private void assertCoursePlanDetails(CoursePlan coursePlan) {
         CoursePlanDto coursePlanDto = new CoursePlanDto();
-        contentOperationService.getFileNameAndDescriptionFromContent(coursePlanDto, coursePlan.getContent());
+        contentOperationService.getMetadataFromContent(coursePlanDto, coursePlan.getContent());
         assertEquals("CourseImportServiceIT coursePlan", coursePlan.getName());
         assertEquals("coursePlan description", coursePlanDto.getDescription());
         assertEquals("coursePlanFileName", coursePlanDto.getExternalId());
@@ -121,7 +121,7 @@ public class CourseImportServiceIT extends BasePaxIT {
 
     private void assertCourseDetails(Course course, String expectedName, String expectedFileName, String expectedDescription) {
         ModuleDto moduleDto = new ModuleDto();
-        contentOperationService.getFileNameAndDescriptionFromContent(moduleDto, course.getContent());
+        contentOperationService.getMetadataFromContent(moduleDto, course.getContent());
 
         assertEquals(expectedName, course.getName());
         assertEquals(expectedFileName, moduleDto.getExternalId());
@@ -137,7 +137,7 @@ public class CourseImportServiceIT extends BasePaxIT {
     private void assertChapterDetails(List<Chapter> chapters, String expectedName, String expectedFileName, String expectedDescription) {
         assertEquals(1, chapters.size());
         ChapterDto chapterDto = new ChapterDto();
-        contentOperationService.getFileNameAndDescriptionFromContent(chapterDto, chapters.get(0).getContent());
+        contentOperationService.getMetadataFromContent(chapterDto, chapters.get(0).getContent());
 
         assertEquals(expectedName, chapters.get(0).getName());
         assertEquals(expectedFileName, chapterDto.getExternalId());
@@ -156,7 +156,7 @@ public class CourseImportServiceIT extends BasePaxIT {
 
     private void assertLessonDetails(Lesson lesson, String expectedName, String expectedFileName, String expectedDescription, CourseUnitState expectedStatus) {
         LessonDto lessonDto = new LessonDto();
-        contentOperationService.getFileNameAndDescriptionFromContent(lessonDto, lesson.getContent());
+        contentOperationService.getMetadataFromContent(lessonDto, lesson.getContent());
 
         assertEquals(expectedName, lesson.getName());
         assertEquals(expectedStatus, lesson.getState());

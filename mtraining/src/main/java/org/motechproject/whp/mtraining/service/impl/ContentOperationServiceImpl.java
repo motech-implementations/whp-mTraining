@@ -32,25 +32,28 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     public static final String ANSWER_FILENAME_MAPPING_NAME = "answerFilename";
     public static final String CONTENT_ID_MAPPING_NAME = "contentId";
     public static final String NO_OF_QUESTIONS_MAPPING_NAME = "noOfQuestionsToBePlayed";
+    public static final String VERSION_MAPPING_NAME = "version";
 
     @Override
-    public void getFileNameAndDescriptionFromContent(CourseUnitMetadataDto courseUnitMetadataDto, String content) {
+    public void getMetadataFromContent(CourseUnitMetadataDto courseUnitMetadataDto, String content) {
         courseUnitMetadataDto.setDescription(getFromJsonString(content, DESCRIPTION_MAPPING_NAME));
         courseUnitMetadataDto.setExternalId(getFromJsonString(content, FILENAME_MAPPING_NAME));
+        courseUnitMetadataDto.setVersion(getVersionFromJsonString(content));
     }
 
     @Override
-    public String codeIntoContent(String filename, String description, UUID uuid) {
-        String content = new String();
+    public String codeIntoContent(String filename, String description, UUID uuid, int version) {
+        String content = "";
         content = codeIntoJsonString(content, FILENAME_MAPPING_NAME, filename);
         content = codeIntoJsonString(content, DESCRIPTION_MAPPING_NAME, description);
         content = codeIntoJsonString(content, CONTENT_ID_MAPPING_NAME, uuid.toString());
+        content = codeIntoJsonString(content, VERSION_MAPPING_NAME, Integer.valueOf(version).toString());
         return content;
     }
 
     @Override
-    public String codeIntoQuizContent(String filename, String description, UUID uuid, int noOfQuestionsToBePlayed) {
-        String content = codeIntoContent(filename, description, uuid);
+    public String codeIntoQuizContent(String filename, String description, UUID uuid, int  version, int noOfQuestionsToBePlayed) {
+        String content = codeIntoContent(filename, description, uuid, version);
         content = codeIntoJsonString(content, NO_OF_QUESTIONS_MAPPING_NAME, String.valueOf(noOfQuestionsToBePlayed));
         return content;
     }
@@ -64,7 +67,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
 
     @Override
     public String codeIntoQuestion(String questionName, String description, UUID uuid) {
-        String question = new String();
+        String question = "";
         question = codeIntoJsonString(question, QUESTION_MAPPING_NAME, questionName);
         question = codeIntoJsonString(question, DESCRIPTION_MAPPING_NAME, description);
         question = codeIntoJsonString(question, CONTENT_ID_MAPPING_NAME, uuid.toString());
@@ -92,6 +95,11 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     @Override
     public UUID getUuidFromJsonString(String content) {
         return UUID.fromString(getFromJsonString(content, CONTENT_ID_MAPPING_NAME));
+    }
+
+    @Override
+    public int getVersionFromJsonString(String content) {
+        return Integer.valueOf(getFromJsonString(content, VERSION_MAPPING_NAME));
     }
 
     private List<Integer> getIntegerListFromJsonString(String jsonString, String mappingName) {

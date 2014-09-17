@@ -70,8 +70,8 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
     @Before
     public void setup() {
-        content = contentOperationService.codeIntoContent(FILENAME, DESCRIPTION, UUID.randomUUID());
-        newContent = contentOperationService.codeIntoContent(NEW_FILENAME, NEW_DESCRIPTION, UUID.randomUUID());
+        content = contentOperationService.codeIntoContent(FILENAME, DESCRIPTION, UUID.randomUUID(), 0);
+        newContent = contentOperationService.codeIntoContent(NEW_FILENAME, NEW_DESCRIPTION, UUID.randomUUID(), 0);
         deleteFromDatabase();
     }
 

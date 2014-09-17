@@ -12,9 +12,9 @@ import java.util.UUID;
  */
 public interface ContentOperationService {
 
-    void getFileNameAndDescriptionFromContent(CourseUnitMetadataDto courseUnitMetadataDto, String content);
+    void getMetadataFromContent(CourseUnitMetadataDto courseUnitMetadataDto, String content);
 
-    String codeIntoContent(String filename, String description, UUID uuid);
+    String codeIntoContent(String filename, String description, UUID uuid, int version);
 
     void getQuestionNameAndDescriptionFromQuestion(QuestionDto questionDto, String question);
 
@@ -24,9 +24,11 @@ public interface ContentOperationService {
 
     String codeAnswersAndFilesNamesIntoAnswer(String correctOption, List<Integer> options, String filename, String explainingAnswerFilename);
 
-    String codeIntoQuizContent(String filename, String description, UUID uuid, int noOfQuestionsToBePlayed);
+    String codeIntoQuizContent(String filename, String description, UUID uuid, int version, int noOfQuestionsToBePlayed);
 
     UUID getUuidFromJsonString(String content);
+
+    int getVersionFromJsonString(String content);
 
     int getNoOfQuestionsToBePlayedFromJson(String json);
 }

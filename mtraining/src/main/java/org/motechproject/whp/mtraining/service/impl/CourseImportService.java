@@ -91,20 +91,20 @@ public class CourseImportService {
 
             if (type.equalsIgnoreCase("Course")) {
                 CoursePlan coursePlan = new CoursePlan(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()));
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 0));
                 coursePlan =  coursePlanService.createCoursePlan(coursePlan);
                 idToNameMap.put(coursePlan.getName(), coursePlan.getId());
 
             } else if (type.equalsIgnoreCase("Module")) {
                 Course course = new Course(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()),
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 0),
                         new ArrayList<Chapter>());
                 course = mTrainingService.createCourse(course);
                 idToNameMap.put(course.getName(), course.getId());
 
             } else if (type.equalsIgnoreCase("Chapter")) {
                 Chapter chapter = new Chapter(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()),
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 0),
                         new ArrayList<Lesson>());
                 chapter = mTrainingService.createChapter(chapter);
                 idToNameMap.put(chapter.getName(), chapter.getId());
@@ -112,7 +112,7 @@ public class CourseImportService {
 
             } else if (type.equalsIgnoreCase("Message") || type.equalsIgnoreCase("Lesson")) {
                 Lesson lesson = new Lesson(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID()));
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 0));
                 lesson = mTrainingService.createLesson(lesson);
                 idToNameMap.put(lesson.getName(), lesson.getId());
 
@@ -158,7 +158,7 @@ public class CourseImportService {
             Integer numberOfQuizQuestions = isBlank(noOfQuizQuestions) ? 0 : Integer.parseInt(noOfQuizQuestions);
             if(numberOfQuizQuestions > 0) {
                 Quiz quiz = new Quiz(chapterRow.getNodeName(), chapterRow.getStatus(),
-                        contentOperationService.codeIntoQuizContent(chapterRow.getFileName(), chapterRow.getDescription(), UUID.randomUUID(), numberOfQuizQuestions),
+                        contentOperationService.codeIntoQuizContent(chapterRow.getFileName(), chapterRow.getDescription(), UUID.randomUUID(), 0, numberOfQuizQuestions),
                         new ArrayList<Question>(), Double.valueOf(chapterRow.getPassPercentage()));
 
                 for(Map.Entry<Question, CourseCsvRequest> question : questions.entrySet()) {

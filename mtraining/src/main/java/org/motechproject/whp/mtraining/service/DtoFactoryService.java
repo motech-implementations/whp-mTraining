@@ -17,6 +17,10 @@ public interface DtoFactoryService {
 
     CoursePlanDto removeInactiveCollections(CoursePlanDto course);
 
+    CoursePlanDto increaseVersions(CoursePlanDto course);
+
+    void updateCourseAndChildCollections(CoursePlanDto course);
+
     void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto);
 
     public CourseUnitMetadataDto getDto(CourseUnitMetadata courseUnitMetadata);
