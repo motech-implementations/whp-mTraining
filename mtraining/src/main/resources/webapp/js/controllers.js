@@ -1318,9 +1318,6 @@
     });
 
     controllers.controller('callLogController', function ($scope) {
-        $.getJSON('../mtraining/web-api/callLogs', function(data) {
-            $scope.callLogs = data;
-        });
     });
 
     controllers.controller('coursePublicationController', function ($scope) {

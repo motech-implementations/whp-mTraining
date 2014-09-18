@@ -1,17 +1,19 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
+import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.csv.domain.CallLogRecordType;
+import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
+import org.motechproject.whp.mtraining.util.CustomDateSerializer;
 
 import java.util.UUID;
 
 @Entity
-public class CallLog {
-
-    @Field
-    private Long id;
+public class CallLog extends MdsEntity {
 
     @Field
     private String remedyId;
@@ -57,10 +59,6 @@ public class CallLog {
         this.restarted = restarted;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getRemedyId() {
         return remedyId;
     }
@@ -81,10 +79,14 @@ public class CallLog {
         return callLogRecordType;
     }
 
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
     public DateTime getStartTime() {
         return startTime;
     }
 
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
     public DateTime getEndTime() {
         return endTime;
     }
@@ -95,5 +97,11 @@ public class CallLog {
 
     public Boolean getRestarted() {
         return restarted;
+    }
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    public DateTime getModificationDate() {
+        return super.getModificationDate();
     }
 }

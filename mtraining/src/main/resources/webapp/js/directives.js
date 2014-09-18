@@ -1097,4 +1097,114 @@
         };
     });
 
+        directives.directive('callLogGrid', function($http) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    var elem = angular.element(element), filters;
+
+                    elem.jqGrid({
+                        url: '../mtraining/web-api/callLogs',
+                        datatype: 'json',
+                        jsonReader:{
+                            repeatitems:false,
+                            root: function (obj) {
+                                return obj;
+                            }
+                        },
+                        prmNames: {
+                            sort: 'sortColumn',
+                            order: 'sortDirection'
+                        },
+                        shrinkToFit: true,
+                        forceFit: true,
+                        autowidth: true,
+                        rownumbers: true,
+                        rowNum: 10,
+                        rowList: [10, 20, 50],
+                        colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.uniqueId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.course'),
+                        scope.msg('mtraining.callLogRecordType'), scope.msg('mtraining.startTime'), scope.msg('mtraining.endTime'), scope.msg('mtraining.status'),
+                        scope.msg('mtraining.lastUpdated')],
+                        colModel: [{
+                           name: 'rowId',
+                           index: 'rowId',
+                           hidden: true,
+                           key: true
+                        }, {
+                           name: 'id',
+                           index: 'id',
+                           align: 'center',
+                           hidden: true,
+                        }, {
+                            name: 'callerId',
+                            index: 'callerId',
+                            align: 'center',
+                            width: 90
+                        }, {
+                            name: 'uniqueId',
+                            index: 'uniqueId',
+                            align: 'center',
+                            width: 50
+                        }, {
+                            name: 'remedyId',
+                            index: 'remedyId',
+                            align: 'center',
+                            width: 50
+                        }, {
+                            name: 'courseId',
+                            index: 'courseId',
+                            align: 'center',
+                            width: 90
+                        }, {
+                            name: 'callLogRecordType',
+                            index: 'callLogRecordType',
+                            align: 'center',
+                            width: 40
+                        },{
+                            name: 'startTime',
+                            index: 'startTime',
+                            align: 'center',
+                            width: 70,
+                        },{
+                            name: 'endTime',
+                            index: 'endTime',
+                            align: 'center',
+                            width: 70,
+                        },{
+                            name: 'status',
+                            index: 'status',
+                            align: 'center',
+                            width: 50,
+                        },{
+                            name: 'modificationDate',
+                            index: 'modificationDate',
+                            align: 'center',
+                            width: 50,
+                            formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                        }],
+                        pager: '#' + attrs.bookmarkRequestsGrid,
+                        width: '100%',
+                        height: 'auto',
+                        sortname: 'modificationDate',
+                        sortorder: 'desc',
+                        viewrecords: true,
+                        loadonce: true,
+                        gridview: true,
+                        loadComplete : function(array) {
+                            $('.ui-jqgrid-htable').addClass('table-lightblue');
+                            $('.ui-jqgrid-btable').addClass("table-lightblue");
+                            if (elem.getGridParam('datatype') === "json") {
+                                setTimeout(function () {
+                                   elem.trigger("reloadGrid");
+                                }, 10);
+                            }
+                        },
+                        gridComplete: function () {
+                          elem.jqGrid('setGridWidth', '100%');
+                        }
+                    });
+                }
+            };
+        });
+
 }());
