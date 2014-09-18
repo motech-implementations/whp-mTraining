@@ -8,6 +8,7 @@ import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
 import org.motechproject.whp.mtraining.util.CustomDateSerializer;
+import org.motechproject.whp.mtraining.util.PropertyUtil;
 
 @Entity
 public class CoursePublicationAttempt extends MdsEntity {
@@ -37,7 +38,7 @@ public class CoursePublicationAttempt extends MdsEntity {
         this.courseId = courseId;
         this.publishedToIvr = publishedToIvr;
         this.responseCode = responseCode;
-        this.responseMessage = responseMessage;
+        this.responseMessage = PropertyUtil.truncate(responseMessage, 255);
     }
 
     @Override
@@ -81,7 +82,7 @@ public class CoursePublicationAttempt extends MdsEntity {
     }
 
     public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
+        this.responseMessage = PropertyUtil.truncate(responseMessage, 255);
     }
 
     @JsonSerialize(using = CustomDateSerializer.class)

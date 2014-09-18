@@ -795,7 +795,10 @@
                         name: 'responseMessage',
                         index: 'responseMessage',
                         align: 'center',
-                        width: 300
+                        width: 300,
+                        cellattr: function (rowId, tv, rawObject, cm, rdata) {
+                            return 'style="max-width: 300px; white-space: nowrap"';
+                        }
                     },{
                         name: 'creationDate',
                         index: 'creationDate',
