@@ -99,7 +99,12 @@ public class ContentOperationServiceImpl implements ContentOperationService {
 
     @Override
     public int getVersionFromJsonString(String content) {
-        return Integer.valueOf(getFromJsonString(content, VERSION_MAPPING_NAME));
+        String version = getFromJsonString(content, VERSION_MAPPING_NAME);
+        if (version != null) {
+            return Integer.valueOf(version);
+        } else {
+            return 0;
+        }
     }
 
     private List<Integer> getIntegerListFromJsonString(String jsonString, String mappingName) {
