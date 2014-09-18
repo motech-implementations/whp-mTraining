@@ -4,12 +4,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mtraining.domain.*;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
 import org.motechproject.whp.mtraining.domain.ParentType;
 import org.motechproject.whp.mtraining.dto.*;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
+import org.motechproject.whp.mtraining.service.LocationService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.motechproject.whp.mtraining.util.ActiveContentPredicate;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Autowired
     ContentOperationService contentOperationService;
+
+    @Autowired
+    private LocationService locationService;
 
     @Autowired
     ManyToManyRelationService manyToManyRelationService;
@@ -280,7 +285,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         CoursePlanDto coursePlanDto = new CoursePlanDto(coursePlan.getId(), coursePlan.getName(), coursePlan.getState(),
                 coursePlan.getCreationDate(), coursePlan.getModificationDate());
         coursePlanDto.setContentId(contentOperationService.getUuidFromJsonString(coursePlan.getContent()));
-
+        coursePlanDto.setLocation(coursePlan.getLocation());
         contentOperationService.getMetadataFromContent(coursePlanDto, coursePlan.getContent());
 
         return coursePlanDto;
@@ -434,6 +439,14 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             CoursePlan coursePlan = new CoursePlan(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
                     contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(),
                             UUID.randomUUID(), courseUnitMetadataDto.getVersion()));
+                    contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(),
+                            UUID.randomUUID(), courseUnitMetadataDto.getVersion());
+
+            if (((CoursePlanDto) courseUnitMetadataDto).getLocation()!=null) {
+                Location location = locationService.getLocationById(((CoursePlanDto) courseUnitMetadataDto).getLocation().getId());
+                coursePlan.setLocation(location);
+            }
+
 
             coursePlanService.createCoursePlan(coursePlan);
 
@@ -481,8 +494,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(coursePlan, courseUnitMetadataDto);
-            coursePlanService.updateCoursePlan(coursePlan);
-
+            if (((CoursePlanDto) courseUnitMetadataDto).getLocation()!=null) {
+                Location location = locationService.getLocationById(((CoursePlanDto) courseUnitMetadataDto).getLocation().getId());
+                coursePlan.setLocation(location);
+            }
+        coursePlanService.updateCoursePlan(coursePlan);
         } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = mTrainingService.getCourseById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(module, courseUnitMetadataDto);

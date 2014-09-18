@@ -443,18 +443,50 @@
     });
 
     controllers.controller('coursesController', ['$scope', 'Course', function ($scope, Course) {
+        
+        $scope.getLocations = function() {
+            $scope.fetchingLocations = true;
+            $.getJSON('../mtraining/web-api/stateLocations', function(data) {
+                $scope.locations = data;
+                $scope.fetchingLocations = false;
+                $scope.$apply();
+                $("#location").select2({
+                    allowClear: true,
+                    placeholder: "Select a location"
+                    });
+            });
+        }    
 
         $scope.clearCourse = function() {
             $scope.creatingCourse = false;
             $scope.updatingCourse = false;
             $scope.savingCourse = false;
+            $scope.selectedLocation = undefined;
             $scope.createCourse();
+            $scope.getLocations();
+        }
+        
+        $scope.getLocationFromLocations = function () {
+            var idx = $scope.selectedLocation;
+            $scope.course.location = $scope.locations[idx];
         }
 
         $scope.$on('courseClick', function(event, courseId) {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
-            $scope.course = Course.get({ id: courseId });
+            $scope.course = Course.get({ id: courseId }, function () {
+                if ($scope.course.location) {
+                    var result = $.grep($scope.locations, function(e) {
+                        return e.id == $scope.course.location.id;
+                    });
+                    var idx = $scope.locations.indexOf(result[0]);
+                    $scope.selectedLocation = idx;
+                }
+                else {
+                    $scope.selectedLocation = undefined;
+                }
+                $("#location").select2('val', $scope.selectedLocation);
+            });
             $scope.updatingCourse = true;
             $scope.creatingCourse = false;
         });
@@ -472,6 +504,7 @@
                 return;
             }
             $scope.savingCourse = true;
+            $scope.getLocationFromLocations();
             $scope.course.state = 'Inactive';
             $scope.course.$save(function(c) {
                 // c => saved course object
@@ -486,9 +519,11 @@
                 return;
             }
             $scope.savingCourse = true;
+            $scope.getLocationFromLocations();
             $scope.course.$update({ id:$scope.course.id }, function (c) {
                 // c => updated course object
                 $scope.alertMessage = $scope.msg('mtraining.updatedCourse');
+                $scope.location=null;
                 $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
             $scope.clearCourse();
