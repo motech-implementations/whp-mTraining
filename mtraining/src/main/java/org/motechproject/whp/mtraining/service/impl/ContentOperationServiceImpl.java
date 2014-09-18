@@ -119,7 +119,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         try {
             arrayNode = (ArrayNode)mapper.readTree(jsonString).get(mappingName);
         } catch (IOException e) {
-            LOG.error("mtraining.error.getFromJsonString" + e.getMessage());
+            LOG.info("Content isn't coded in JSON correctly" + e.getMessage());
             return null;
         }
         for (final JsonNode objNode : arrayNode) {
@@ -136,7 +136,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         try {
             return mapper.readTree(jsonString).get(mappingName).getTextValue();
         } catch (Exception e) {
-            LOG.error("mtraining.error.getFromJsonString" + e.getMessage());
+            LOG.info("Content isn't coded in JSON correctly" + e.getMessage());
             return null;
         }
     }
@@ -151,7 +151,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
             try {
                 objectNode = (ObjectNode) mapper.readTree(jsonString);
             } catch (IOException e) {
-                LOG.error("mtraining.error.codeIntoJsonString" + e.getMessage());
+                LOG.info("Coding into JSON failed" + e.getMessage());
                 return jsonString;
             }
         }
@@ -170,7 +170,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
             try {
                 objectNode = (ObjectNode) mapper.readTree(jsonString);
             } catch (IOException e) {
-                LOG.error("mtraining.error.codeIntoJsonString" + e.getMessage());
+                LOG.info("Coding into JSON failed" + e.getMessage());
                 return jsonString;
             }
         }
