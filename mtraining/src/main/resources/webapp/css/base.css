@@ -137,3 +137,7 @@ li[state="Inactive"] > a {
 .ui-jqgrid .ui-jqgrid-htable {
     table-layout: auto;
 }
+
+#errorMessage {
+    white-space: pre-wrap;
+}
