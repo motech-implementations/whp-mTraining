@@ -12,6 +12,7 @@ import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
+import org.motechproject.whp.mtraining.service.CoursePlanService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +28,12 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CourseStructureValidatorTest {
+
     @Mock
     private MTrainingService mTrainingService;
+
+    @Mock
+    private CoursePlanService coursePlanService;
 
     private CourseCsvStructureValidator courseStructureValidator;
     private List<CourseCsvRequest> courseStructureCsvs;
@@ -36,7 +41,7 @@ public class CourseStructureValidatorTest {
 
     @Before
     public void setUp() throws Exception {
-        courseStructureValidator = new CourseCsvStructureValidator(mTrainingService);
+        courseStructureValidator = new CourseCsvStructureValidator(mTrainingService, coursePlanService);
         courseStructureCsvs = new ArrayList<>();
         courseStructureCsvs.add(new CourseCsvRequest("Course plan", "Course", CourseUnitState.Active, null, "Message Description", "filename"));
         courseStructureCsvs.add(new CourseCsvRequest("Basic TB Symptoms", "Module", CourseUnitState.Active, "Course plan", "Message Description", "filename"));
@@ -142,12 +147,12 @@ public class CourseStructureValidatorTest {
 
     @Test
     public void shouldValidateIfCourseNameIsSameAsExistingCourse() {
-        when(mTrainingService.getCourseByName(anyString())).thenReturn(asList(new Course("Different Course Name", CourseUnitState.Active, "description", Collections.<Chapter>emptyList())));
+        when(mTrainingService.getCourseByName(anyString())).thenReturn(asList(new Course("Different Module Name", CourseUnitState.Active, "description", Collections.<Chapter>emptyList())));
         errors = courseStructureValidator.validate(courseStructureCsvs);
         
         assertEquals(1, errors.size());
         String errorMessage = errors.get(0).getMessage();
-        assertEquals("Course: Different Course Name already exists in database. You cannot import a new course.", errorMessage);
+        assertEquals("Module: Different Module Name already exists in database.", errorMessage);
     }
 
     @Test

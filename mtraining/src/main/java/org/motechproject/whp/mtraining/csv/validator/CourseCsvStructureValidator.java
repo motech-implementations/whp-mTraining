@@ -7,7 +7,6 @@ import org.motechproject.mtraining.domain.CourseUnitMetadata;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
-import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,6 +107,8 @@ public class CourseCsvStructureValidator {
 
         if (request.isQuestion())
             validateOptionsAndAnswers(request, errors);
+
+        isDuplicateNodeName(request, request.getNodeName(), errors);
     }
 
     private boolean questionsPresentForChapter(List<CourseCsvRequest> requests, CourseCsvRequest chapterRequest) {
@@ -232,7 +233,7 @@ public class CourseCsvStructureValidator {
             logger.info(String.format("Validation error: %s", error.getMessage()));
             return true;
         }
-        return isDuplicateNodeName(request, nodeName, errors);
+        return false;
     }
 
     private CourseUnitMetadata getFirstIfExists(List<? extends CourseUnitMetadata> units) {
@@ -256,7 +257,7 @@ public class CourseCsvStructureValidator {
             existing = getFirstIfExists(courseService.getQuizByName(nodeName));
         }
         if (existing != null) {
-            CsvImportError error = new CsvImportError(String.format("%s: %s already exists in database. You cannot import a new %s.",
+            CsvImportError error = new CsvImportError(String.format("%s: %s already exists in database.",
                     request.getNodeType(), existing.getName(), request.getNodeType()));
             errors.add(error);
             logger.info(String.format("Validation error: %s", error.getMessage()));

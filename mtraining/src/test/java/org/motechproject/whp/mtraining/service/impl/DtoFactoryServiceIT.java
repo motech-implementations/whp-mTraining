@@ -200,7 +200,7 @@ public class DtoFactoryServiceIT extends BasePaxIT {
     private void shouldCreateAndUpdateQuizFromQuizDto() {
         List<Quiz> quizzes;
         Quiz quiz;
-        QuizDto quizDto = new QuizDto(0, QUIZ_NAME, DESCRIPTION, CourseUnitState.Inactive, FILENAME,
+        QuizDto quizDto = new QuizDto(0, QUIZ_NAME, DESCRIPTION, CourseUnitState.Inactive,
                 ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null);
 
         dtoFactoryService.createOrUpdateFromDto(quizDto);
