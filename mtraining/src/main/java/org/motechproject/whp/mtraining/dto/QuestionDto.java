@@ -20,6 +20,7 @@ public class QuestionDto {
 
     private String correctOption;
 
+    @JsonView({PublishCourseView.class})
     private List<Integer> options;
 
     @JsonView({PublishCourseView.class})

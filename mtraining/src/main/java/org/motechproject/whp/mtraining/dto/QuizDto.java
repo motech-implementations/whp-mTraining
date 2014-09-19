@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.dto;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonView;
 import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
@@ -98,5 +99,10 @@ public class QuizDto extends CourseUnitMetadataDto {
 
     public void setNoOfQuestionsToBePlayed(int noOfQuestionsToBePlayed) {
         this.noOfQuestionsToBePlayed = noOfQuestionsToBePlayed;
+    }
+
+    @JsonIgnore
+    public String getExternalId(){
+        return null;
     }
 }

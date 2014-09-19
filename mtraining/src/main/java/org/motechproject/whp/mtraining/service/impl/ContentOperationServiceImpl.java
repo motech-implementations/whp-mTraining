@@ -142,6 +142,9 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     }
 
     private String codeIntoJsonString(String jsonString, String mappingName, String value) {
+        if (value == null || value.isEmpty()) {
+            return jsonString;
+        }
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode objectNode;
         if (jsonString.isEmpty()){
@@ -150,12 +153,12 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         else {
             try {
                 objectNode = (ObjectNode) mapper.readTree(jsonString);
+                objectNode.put(mappingName, value);
             } catch (IOException e) {
                 LOG.info("Coding into JSON failed" + e.getMessage());
                 return jsonString;
             }
         }
-        objectNode.put(mappingName, value);
         return objectNode.toString();
     }
 
