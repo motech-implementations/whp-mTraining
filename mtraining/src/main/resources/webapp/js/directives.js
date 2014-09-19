@@ -463,8 +463,8 @@
                         rownumbers: true,
                         rowNum: 10,
                         rowList: [10, 20, 50],
-                        colNames: ['rowId', 'id', scope.msg('mtraining.quizName'), scope.msg('mtraining.passPercentage'), scope.msg('mtraining.description'),
-                            scope.msg('mtraining.status'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                        colNames: ['rowId', 'id', scope.msg('mtraining.quizName'), scope.msg('mtraining.passPercentage'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
+                            scope.msg('mtraining.noOfQuestionsToBePlayed'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                         colModel: [{
                            name: 'rowId',
                            index: 'rowId',
@@ -497,6 +497,12 @@
                             align: 'center',
                             width: 60
                         },{
+                            name: 'noOfQuestionsToBePlayed',
+                            index: 'noOfQuestionsToBePlayed',
+                            align: 'center',
+                            sortable: false,
+                            width: 50
+                        }, {
                             name: 'creationDate',
                             index: 'creationDate',
                             align: 'center',
