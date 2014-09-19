@@ -2,9 +2,10 @@ package org.motechproject.whp.mtraining.domain;
 
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
+import org.motechproject.mtraining.domain.MdsEntity;
 
 @Entity
-public class ManyToManyRelation {
+public class ManyToManyRelation extends MdsEntity {
 
     @Field
     private long parentId;
@@ -47,4 +48,12 @@ public class ManyToManyRelation {
         this.parentType = parentType;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object != null && object instanceof ManyToManyRelation) {
+            ManyToManyRelation relation = (ManyToManyRelation) object;
+            return relation.getParentId() == this.parentId && relation.getChildId() == this.childId;
+        }
+        return false;
+    }
 }

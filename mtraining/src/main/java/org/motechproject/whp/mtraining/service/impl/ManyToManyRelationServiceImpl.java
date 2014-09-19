@@ -8,8 +8,10 @@ import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
 import org.motechproject.whp.mtraining.domain.ParentType;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.repository.ManyToManyRelationDataService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,9 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
 
     @Autowired
     private CoursePlanService coursePlanService;
+
+    @Autowired
+    private DtoFactoryService dtoFactoryService;
 
     @Override
     public ManyToManyRelation createRelation(ManyToManyRelation relation) {
@@ -176,6 +181,38 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
                 }
             }
         });
+    }
+
+    private List<ManyToManyRelation> getRelationsForParent(long id) {
+        List<ManyToManyRelation> relations = relationDataService.findRelations(null, id, null);
+        for(int i = 0; i < relations.size(); i++) {
+            if (relations.get(i).getParentType() != ParentType.Chapter) {
+                relations.addAll(getRelationsForParent(relations.get(i).getChildId()));
+            }
+        }
+        return relations;
+    }
+
+    @Override
+    public void updateRelationsForCourse(final List<ManyToManyRelation> relations, long courseId) {
+        boolean isEqual = true;
+        List<ManyToManyRelation> existingRelations = getRelationsForParent(courseId);
+        for (ManyToManyRelation relation : existingRelations) {
+            if (!relations.contains(relation)) {
+                relationDataService.delete(relation);
+                isEqual = false;
+            }
+        }
+        for(ManyToManyRelation relation : relations) {
+            if (!existingRelations.contains(relation)) {
+                relationDataService.create(relation);
+                isEqual = false;
+            }
+        }
+        if (!isEqual) {
+            CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseId);
+            dtoFactoryService.updateCourseAndChildCollections(dtoFactoryService.increaseVersions(course));
+        }
     }
 
 }

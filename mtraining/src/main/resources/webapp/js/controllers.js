@@ -130,6 +130,10 @@
             if (children) {
                 $.each(children, function(idx, el) {
                     var item = $scope.jstree.get_node(el);
+                    if (!node_properties[o.id] || !node_properties[o.id].id ||
+                        !node_properties[el] || !node_properties[el].id) {
+                        return false;
+                    }
                     var relation = {
                        "parentId": node_properties[o.id].id,
                        "childId": node_properties[el].id,
@@ -144,35 +148,52 @@
                         }
                     }
                     if (item.original.type == 'module') {
-                        createRelations(item, 'Course', relations);
+                        return createRelations(item, 'Course', relations);
                     } else if (item.original.type == 'chapter') {
-                        createRelations(item, 'Chapter', relations);
+                        return createRelations(item, 'Chapter', relations);
                     }
                 });
             }
+            return true;
         }
 
         $scope.saveRelations = function() {
             var courses = $scope.jstree.get_node(0).children;
-            var relations = [];
+            var allRelations = [];
             chaptersWithQuizzes = [];
             $.each(courses, function(idx, el) {
-                createRelations($scope.jstree.get_node(el), 'CoursePlan', relations);
+                var courseId = node_properties[el].id;
+                var relations = [];
+                if (!createRelations($scope.jstree.get_node(el), 'CoursePlan', relations)) {
+                    $scope.savingRelations = false;
+                    $("#errorMessage").text($scope.msg('mtraining.error.couldNotSaveRelations'));
+                    $("#errorDialog").modal('show');
+                    return;
+                };
+                allRelations.push({"courseId": courseId, "relations": relations});
             });
             var stateMap = {};
             for(var i = 1; i < node_properties.length; i++) {
-                if (stateMap[node_properties[i].id] == undefined) {
+                if (node_properties[i] && stateMap[node_properties[i].id] == undefined) {
                     stateMap[node_properties[i].id] = node_properties[i].state;
                 }
             }
             $scope.savingRelations = true;
-            $.postJSON('../mtraining/web-api/updateRelations', relations, function() {
-                $.postJSON('../mtraining/web-api/updateStates', stateMap, function() {
-                    $scope.savingRelations = false;
-                    $scope.alertMessage = $scope.msg('mtraining.savedTreeStructure');
-                    unsaved = false;
-                    safeApply($scope);
-                });
+            $.postJSON('../mtraining/web-api/updateStates', stateMap, function() {
+                for(var i = 0; i < allRelations.length; i++) {
+                    var courseId = allRelations[i].courseId;
+                    var relations = allRelations[i].relations;
+                    var successes = 0;
+                    $.postJSON('../mtraining/web-api/updateRelations/' + courseId, relations, function() {
+                        successes++;
+                        if (successes == allRelations.length) {
+                            $scope.savingRelations = false;
+                            $scope.alertMessage = $scope.msg('mtraining.savedTreeStructure');
+                            unsaved = false;
+                            safeApply($scope);
+                        }
+                    });
+                }
             });
         }
 
@@ -361,6 +382,14 @@
             // selection changed
             $('#jstree').on("changed.jstree", function (e, data) {
                 onChanged(false);
+            });
+            //node moved
+            $('#jstree').on("move_node.jstree", function (e, data) {
+                var node = data.node;
+                createNode(node_properties[node.id].id, node_properties[node.id].name, node.parent,
+                        node.original.level, node_properties[node.id].type, node_properties[node.id].state);
+                node_properties[node.id] = node_properties[iterator];
+                iterator--;
             });
             $('#jstree').jstree("refresh");
             $scope.jstree = $.jstree.reference('#jstree');

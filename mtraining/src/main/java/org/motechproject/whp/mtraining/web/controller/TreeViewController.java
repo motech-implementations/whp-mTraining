@@ -44,10 +44,10 @@ public class TreeViewController {
     }
 
     @Transactional
-    @RequestMapping(value = "/updateRelations", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/updateRelations/{courseId}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void updateAllRelations(@RequestBody ManyToManyRelation[] relations) {
-        manyToManyRelationService.updateAll(Arrays.asList(relations));
+    public void updateRelations(@RequestBody ManyToManyRelation[] relations, @PathVariable long courseId) {
+        manyToManyRelationService.updateRelationsForCourse(Arrays.asList(relations), courseId);
     }
 
     @Transactional
