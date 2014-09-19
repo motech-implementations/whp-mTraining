@@ -41,4 +41,5 @@ public class CoursePlan extends CourseUnitMetadata {
     public void setLocation(Location location) {
         this.location = location;
     }
+
 }

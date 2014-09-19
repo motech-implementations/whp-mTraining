@@ -77,6 +77,9 @@ public class CourseCsvRequest {
     public boolean isCourse() {
         return CallLogRecordType.isCourse(nodeType);
     }
+    public boolean isModule() {
+        return CallLogRecordType.isModule(nodeType);
+    }
 
     public boolean hasParent() {
         return isNotBlank(parentNode);
@@ -88,6 +91,10 @@ public class CourseCsvRequest {
 
     public boolean isQuestion() {
         return CallLogRecordType.isQuestion(nodeType);
+    }
+
+    public boolean isQuiz() {
+        return CallLogRecordType.isQuiz(nodeType);
     }
 
     public boolean isChapter() {

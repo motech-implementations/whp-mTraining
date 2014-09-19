@@ -46,6 +46,10 @@ public enum CallLogRecordType {
         return CallLogRecordType.COURSE.equals(from(nodeType));
     }
 
+    public static boolean isModule(String nodeType) {
+        return CallLogRecordType.MODULE.equals(from(nodeType));
+    }
+
     public static boolean isLesson(String nodeType) {
         return CallLogRecordType.LESSON.equals(from(nodeType)) ||
                 CallLogRecordType.MESSAGE.equals(from(nodeType));
@@ -53,6 +57,10 @@ public enum CallLogRecordType {
 
     public static boolean isQuestion(String nodeType) {
         return CallLogRecordType.QUESTION.equals(from(nodeType));
+    }
+
+    public static boolean isQuiz(String nodeType) {
+        return CallLogRecordType.QUIZ.equals(from(nodeType));
     }
 
     public static boolean isChapter(String nodeType) {

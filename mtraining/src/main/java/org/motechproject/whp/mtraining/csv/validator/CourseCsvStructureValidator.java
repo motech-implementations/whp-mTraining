@@ -3,10 +3,12 @@ package org.motechproject.whp.mtraining.csv.validator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
-import org.motechproject.mtraining.domain.Course;
+import org.motechproject.mtraining.domain.CourseUnitMetadata;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.csv.domain.CsvImportError;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
+import org.motechproject.whp.mtraining.domain.CoursePlan;
+import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.whp.mtraining.csv.domain.CallLogRecordType.QUESTION;
@@ -36,9 +37,12 @@ public class CourseCsvStructureValidator {
 
     private MTrainingService courseService;
 
+    private CoursePlanService coursePlanService;
+
     @Autowired
-    public CourseCsvStructureValidator(MTrainingService courseService) {
+    public CourseCsvStructureValidator(MTrainingService courseService, CoursePlanService coursePlanService) {
         this.courseService = courseService;
+        this.coursePlanService = coursePlanService;
     }
 
     public List<CsvImportError> validate(List<CourseCsvRequest> requests) {
@@ -228,16 +232,36 @@ public class CourseCsvStructureValidator {
             logger.info(String.format("Validation error: %s", error.getMessage()));
             return true;
         }
-        return request.isCourse() && isInValidCourseName(nodeName, errors);
+        return isDuplicateNodeName(request, nodeName, errors);
     }
 
-    private boolean isInValidCourseName(String nodeName, List<CsvImportError> errors) {
-        List<Course> existingCourses = courseService.getCourseByName(nodeName);
-        if (existingCourses.isEmpty() || equalsIgnoreCase(existingCourses.get(0).getName(), nodeName))
+    private CourseUnitMetadata getFirstIfExists(List<? extends CourseUnitMetadata> units) {
+        if (units != null && units.size() > 0) {
+            return units.get(0);
+        }
+        return null;
+    }
+
+    private boolean isDuplicateNodeName(CourseCsvRequest request, String nodeName, List<CsvImportError> errors) {
+        CourseUnitMetadata existing = null;
+        if (request.isCourse()) {
+            existing = coursePlanService.getCoursePlanByName(nodeName);
+        } else if (request.isModule()) {
+            existing = getFirstIfExists(courseService.getCourseByName(nodeName));
+        } else if (request.isChapter()) {
+            existing = getFirstIfExists(courseService.getChapterByName(nodeName));
+        } else if (request.isLesson()) {
+            existing = getFirstIfExists(courseService.getLessonByName(nodeName));
+        } else if (request.isQuiz()) {
+            existing = getFirstIfExists(courseService.getQuizByName(nodeName));
+        }
+        if (existing != null) {
+            CsvImportError error = new CsvImportError(String.format("%s: %s already exists in database. You cannot import a new %s.",
+                    request.getNodeType(), existing.getName(), request.getNodeType()));
+            errors.add(error);
+            logger.info(String.format("Validation error: %s", error.getMessage()));
             return false;
-        CsvImportError error = new CsvImportError(String.format("Course: %s already exists in database. You cannot import a new course.", existingCourses.get(0).getName()));
-        errors.add(error);
-        logger.info(String.format("Validation error: %s", error.getMessage()));
+        }
         return true;
     }
 
