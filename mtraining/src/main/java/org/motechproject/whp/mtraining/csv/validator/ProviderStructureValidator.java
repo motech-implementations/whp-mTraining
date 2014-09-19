@@ -36,10 +36,14 @@ public class ProviderStructureValidator {
         ArrayList<CsvImportError> errors = new ArrayList<>();
         Set<String> remediIds = new HashSet<>();
         Set<String> contactNumbers = new HashSet<>();
+
         for (ProviderCsvRequest providerCsvRequest : providerCsvRequests) {
             String remediId = providerCsvRequest.getRemedi_id();
+
             validateRemediId(errors, providerCsvRequest, remediIds);
             validatePrimaryContactNumber(errors, providerCsvRequest, contactNumbers);
+            remediIds.add(remediId);
+            contactNumbers.add(providerCsvRequest.getPrimary_contact());
 
             if (from(providerCsvRequest.getProviderstatus()) == null)
                 errors.add(new CsvImportError(providerCsvRequest.getRemedi_id(), providerCsvRequest.getPrimary_contact(), "Provider Status for Remedi Id: " + remediId + " is blank or invalid."));
