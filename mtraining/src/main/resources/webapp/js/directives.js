@@ -785,7 +785,10 @@
                         name: 'publishedToIvr',
                         index: 'publishedToIvr',
                         align: 'center',
-                        width: 50
+                        width: 50,
+                        formatter: function (cellvalue, options, rowObject) {
+                            return (cellvalue == true) ? 'Success' : 'Failure';
+                        }
                     }, {
                         name: 'responseCode',
                         index: 'responseCode',
@@ -803,14 +806,14 @@
                         name: 'creationDate',
                         index: 'creationDate',
                         align: 'center',
-                        width: 70,
-                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                        width: 70
                     }, {
                         name: 'modificationDate',
                         index: 'modificationDate',
                         align: 'center',
                         width: 70,
-                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'},
+                        hidden: true,
                     }],
                     pager: '#' + attrs.coursePublicationAttemptsGrid,
                     width: '100%',
@@ -991,14 +994,14 @@
                         name: 'creationDate',
                         index: 'creationDate',
                         align: 'center',
-                        width: 70,
-                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                        width: 70
                     }, {
                         name: 'modificationDate',
                         index: 'modificationDate',
                         align: 'center',
                         width: 70,
-                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'},
+                        hidden: true,
                     }],
                     pager: '#' + attrs.bookmarkRequestsGrid,
                     width: '100%',
@@ -1124,7 +1127,7 @@
                         rowList: [10, 20, 50],
                         colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.uniqueId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.course'),
                         scope.msg('mtraining.callLogRecordType'), scope.msg('mtraining.startTime'), scope.msg('mtraining.endTime'), scope.msg('mtraining.status'),
-                        scope.msg('mtraining.lastUpdated')],
+                        scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                         colModel: [{
                            name: 'rowId',
                            index: 'rowId',
@@ -1176,11 +1179,17 @@
                             align: 'center',
                             width: 50,
                         },{
+                            name: 'creationDate',
+                            index: 'creationDate',
+                            align: 'center',
+                            width: 70,
+                        },{
                             name: 'modificationDate',
                             index: 'modificationDate',
                             align: 'center',
                             width: 50,
-                            formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                            formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'},
+                            hidden: true,
                         }],
                         pager: '#' + attrs.bookmarkRequestsGrid,
                         width: '100%',
