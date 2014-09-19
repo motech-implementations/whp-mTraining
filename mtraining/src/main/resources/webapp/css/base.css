@@ -26,10 +26,6 @@ main, .providerUpload, .response {
     margin: 0 auto;
 }
 
-#questionModal .modal-dialog  {
-    width:60%;
-}
-
 .options-input input {
     background: transparent;
     height: 20px;
@@ -140,4 +136,26 @@ li[state="Inactive"] > a {
 
 #errorMessage {
     word-wrap: break-word;
+}
+
+.questions .list-group-item {
+    padding: 4px 15px !important;
+}
+
+.questions .list-group-item {
+    font-size : 12px !important;
+}
+
+.questions .list-group-item-heading {
+    font-size : 14px !important;
+    margin-bottom: 0px !important;
+}
+
+.questions > .col-md-8 {
+    margin-left: 16.67%;
+    margin-bottom: 16px;
+}
+
+.question-buttons {
+    margin-bottom: 8px;
 }

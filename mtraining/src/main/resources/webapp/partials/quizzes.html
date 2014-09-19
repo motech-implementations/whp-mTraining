@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group question-buttons">
                 <label class="col-md-4 control-label" for="question">{{msg('mtraining.questions')}}</label>
                 <div class="col-md-4" id="question" name="question">
                     <button ng-click="addQuestionModal()" class="btn btn-success">
@@ -57,25 +57,24 @@
                 </div>
             </div>
 
-            <div class="list-group">
-                <div class="col-md-4 col-centered">
-                    <a ng-repeat="question in quiz.questions" class="list-group-item" ng-click="questionClick($index)" ng-class="{active: $index==questionIndex}">
-                        <h4 class="list-group-item-heading">{{question.name}}</h4>
+            <div class="list-group questions">
+                <div class="col-md-8">
+                    <a ng-repeat="question in quiz.questions" class="list-group-item col-md-6" ng-click="questionClick($index)" ng-class="{active: $index==questionIndex}">
+                        <p class="list-group-item-heading">{{question.name}}</p>
                         <p class="list-group-item-text">{{question.correctOption}}</p>
                     </a>
                 </div>
             </div>
 
-
-        <div class="form-group">
-            <div class="col-md-8 pull-right">
-                <button id="saveButton" ng-show="creatingQuiz" name="saveButton" class="btn btn-primary" ng-click="saveQuiz()">{{msg('mtraining.save')}}</button>
-                <button id="updateButton" ng-show="updatingQuiz" name="updateButton" class="btn btn-warning" ng-click="updateQuiz()">{{msg('mtraining.update')}}</button>
-                <button id="deleteButton" ng-show="updatingQuiz"name="deleteButton" class="btn btn-danger" ng-click="deleteQuiz()">{{msg('mtraining.delete')}}</button>
-                <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="clearQuiz()">{{msg('mtraining.cancel')}}</button>
+            <div class="form-group">
+                <div class="col-md-8 pull-right quiz-buttons">
+                    <button id="saveButton" ng-show="creatingQuiz" name="saveButton" class="btn btn-primary" ng-click="saveQuiz()">{{msg('mtraining.save')}}</button>
+                    <button id="updateButton" ng-show="updatingQuiz" name="updateButton" class="btn btn-warning" ng-click="updateQuiz()">{{msg('mtraining.update')}}</button>
+                    <button id="deleteButton" ng-show="updatingQuiz"name="deleteButton" class="btn btn-danger" ng-click="deleteQuiz()">{{msg('mtraining.delete')}}</button>
+                    <button id="cancelButton" name="cancelButton" class="btn btn-inverse" ng-click="clearQuiz()">{{msg('mtraining.cancel')}}</button>
+                </div>
+                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingQuiz"/>
             </div>
-            <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="savingQuiz"/>
-        </div>
 
         </fieldset>
 
