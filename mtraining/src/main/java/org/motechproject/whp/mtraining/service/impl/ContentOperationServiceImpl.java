@@ -52,8 +52,8 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     }
 
     @Override
-    public String codeIntoQuizContent(String filename, String description, UUID uuid, int  version, int noOfQuestionsToBePlayed) {
-        String content = codeIntoContent(filename, description, uuid, version);
+    public String codeIntoQuizContent(String description, UUID uuid, int  version, int noOfQuestionsToBePlayed) {
+        String content = codeIntoContent(null, description, uuid, version);
         content = codeIntoJsonString(content, NO_OF_QUESTIONS_MAPPING_NAME, String.valueOf(noOfQuestionsToBePlayed));
         return content;
     }
@@ -136,28 +136,26 @@ public class ContentOperationServiceImpl implements ContentOperationService {
         try {
             return mapper.readTree(jsonString).get(mappingName).getTextValue();
         } catch (Exception e) {
-            LOG.info("Content isn't coded in JSON correctly" + e.getMessage());
+            LOG.info("Exception while getting " + mappingName + " from string: " + jsonString + "" +
+                    "\nContent isn't coded in JSON correctly, " + e.getMessage());
             return null;
         }
     }
 
     private String codeIntoJsonString(String jsonString, String mappingName, String value) {
-        if (value == null || value.isEmpty()) {
-            return jsonString;
-        }
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode objectNode;
-        if (jsonString.isEmpty()){
-            objectNode = new ObjectNode(JsonNodeFactory.instance);
-        }
-        else {
-            try {
-                objectNode = (ObjectNode) mapper.readTree(jsonString);
-                objectNode.put(mappingName, value);
-            } catch (IOException e) {
-                LOG.info("Coding into JSON failed" + e.getMessage());
-                return jsonString;
+        try {
+            if (jsonString.isEmpty()) {
+                objectNode = new ObjectNode(JsonNodeFactory.instance);
             }
+            else {
+                objectNode = (ObjectNode) mapper.readTree(jsonString);
+            }
+            objectNode.put(mappingName, value);
+        } catch (IOException e) {
+            LOG.info("Coding into JSON failed" + e.getMessage());
+            return jsonString;
         }
         return objectNode.toString();
     }

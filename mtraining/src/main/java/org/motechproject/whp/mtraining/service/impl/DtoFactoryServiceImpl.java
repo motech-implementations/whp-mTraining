@@ -481,7 +481,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
         } else if (courseUnitMetadataDto instanceof QuizDto) {
             Quiz quiz = new Quiz(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
-                    contentOperationService.codeIntoQuizContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(),
+                    contentOperationService.codeIntoQuizContent(courseUnitMetadataDto.getDescription(),
                             UUID.randomUUID(), courseUnitMetadataDto.getVersion(), ((QuizDto) courseUnitMetadataDto).getNoOfQuestionsToBePlayed()),
                     convertDtosToQuestionList(((QuizDto) courseUnitMetadataDto).getQuestions()), ((QuizDto) courseUnitMetadataDto).getPassPercentage());
 
@@ -560,7 +560,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         courseUnitMetadata.setState(courseUnitMetadataDto.getState());
         if (courseUnitMetadataDto instanceof QuizDto) {
             courseUnitMetadata.setContent(contentOperationService.codeIntoQuizContent
-                    (courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(), uuid, courseUnitMetadataDto.getVersion(),
+                    (courseUnitMetadataDto.getDescription(), uuid, courseUnitMetadataDto.getVersion(),
                             ((QuizDto)(courseUnitMetadataDto)).getNoOfQuestionsToBePlayed()));
         } else {
             courseUnitMetadata.setContent(contentOperationService.codeIntoContent

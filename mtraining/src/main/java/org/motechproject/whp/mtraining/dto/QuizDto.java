@@ -32,9 +32,9 @@ public class QuizDto extends CourseUnitMetadataDto {
     public QuizDto() {
     }
 
-    public QuizDto(Integer id, String name, String description, CourseUnitState state, String filename,
+    public QuizDto(Integer id, String name, String description, CourseUnitState state,
                    DateTime creationDate, DateTime modificationDate, List<QuestionDto> questions, Set<Long> parentIds) {
-        super(id, name, description, state, filename, creationDate, modificationDate);
+        super(id, name, description, state, null, creationDate, modificationDate);
         if (questions == null) {
             this.questions = new ArrayList<>();
         } else {

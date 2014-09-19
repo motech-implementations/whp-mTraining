@@ -158,7 +158,7 @@ public class CourseImportService {
             Integer numberOfQuizQuestions = isBlank(noOfQuizQuestions) ? 0 : Integer.parseInt(noOfQuizQuestions);
             if(numberOfQuizQuestions > 0) {
                 Quiz quiz = new Quiz(chapterRow.getNodeName(), chapterRow.getStatus(),
-                        contentOperationService.codeIntoQuizContent(chapterRow.getFileName(), chapterRow.getDescription(), UUID.randomUUID(), 0, numberOfQuizQuestions),
+                        contentOperationService.codeIntoQuizContent(chapterRow.getDescription(), UUID.randomUUID(), 0, numberOfQuizQuestions),
                         new ArrayList<Question>(), Double.valueOf(chapterRow.getPassPercentage()));
 
                 for(Map.Entry<Question, CourseCsvRequest> question : questions.entrySet()) {

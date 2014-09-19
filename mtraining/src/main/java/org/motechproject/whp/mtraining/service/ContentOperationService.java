@@ -24,7 +24,7 @@ public interface ContentOperationService {
 
     String codeAnswersAndFilesNamesIntoAnswer(String correctOption, List<Integer> options, String filename, String explainingAnswerFilename);
 
-    String codeIntoQuizContent(String filename, String description, UUID uuid, int version, int noOfQuestionsToBePlayed);
+    String codeIntoQuizContent(String description, UUID uuid, int version, int noOfQuestionsToBePlayed);
 
     UUID getUuidFromJsonString(String content);
 
