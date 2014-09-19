@@ -94,6 +94,7 @@
                                     var node = $scope.jstree.get_node(i);
                                     if (node.parent && node_properties[node.parent].id == node_properties[parent.id].id) {
                                         $scope.jstree.delete_node(i);
+                                        node_properties[i] = [];
                                         createNode(item.id, item.name, node.parent, parent.level + 1, type, item.state);
                                         $scope.jstree.create_node(node.parent, jArray[iterator], 'last', false, false);
                                     }
@@ -246,6 +247,7 @@
                             if (node_properties[n.parent] && node_properties[n.parent].id == node_properties[node.parent].id) {
                                 $scope.jstree.delete_node(i);
                                 $scope.jstree.delete_node(n.children);
+                                node_properties[i] = [];
                             }
                         }
                     }
@@ -268,6 +270,15 @@
                 }
             });
             return isChildren;
+        }
+
+        $scope.isUnique = function(id) {
+            for(var j = 1; j < node_properties.length; j++) {
+                if (node_properties[j].id == id) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         function createNode(id, text, parent, level, type, state) {

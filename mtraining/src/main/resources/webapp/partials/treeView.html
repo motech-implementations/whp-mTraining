@@ -35,7 +35,7 @@
                     </td>
 					<td role="gridcell" id="units" class="ui-state-default jqgrid-rownum draggable" aria-describedby="treeTable_Units">
                         <div ng-repeat="item in nodes" ng-show="!isChildren(item.id)" idx="{{$index}}"><i class="{{childIcon}}" />{{item.name}}</div>
-                        <div ng-repeat="item in quizNodes" ng-show="!isChildren(item.id)" class="quiz" idx="{{$index}}" qid="{{item.id}}"><i class="{{jstree.settings.types.quiz.icon}}" />{{item.name}}</div>
+                        <div ng-repeat="item in quizNodes" ng-show="!isChildren(item.id) && isUnique(item.id)" class="quiz" idx="{{$index}}" qid="{{item.id}}"><i class="{{jstree.settings.types.quiz.icon}}" />{{item.name}}</div>
                     </td>
 					
 			</tr>
