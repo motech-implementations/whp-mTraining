@@ -61,7 +61,7 @@
                     var len = parent.children.length;
                     for(var j = 0; j < len; j++) {
                         var child = node_properties[parent.children[j]];
-                        createNode(child.id, child.name, idx, parent.level + 1, child.type, child.state);
+                        createNode(child.id, child.name, idx, parent.level + 1, child.type, child.state, child.version);
                         $scope.jstree.create_node(idx, jArray[iterator], 'last', false, false);
                         populateChildren(iterator, child.type);
                     }
@@ -94,8 +94,8 @@
                                     var node = $scope.jstree.get_node(i);
                                     if (node.parent && node_properties[node.parent].id == node_properties[parent.id].id) {
                                         $scope.jstree.delete_node(i);
+                                        createNode(item.id, item.name, node.parent, parent.level + 1, type, item.state, item.version);
                                         node_properties[i] = [];
-                                        createNode(item.id, item.name, node.parent, parent.level + 1, type, item.state);
                                         $scope.jstree.create_node(node.parent, jArray[iterator], 'last', false, false);
                                     }
                                 }
@@ -110,7 +110,7 @@
                 // create nodes
                 for(var i = 1; i < node_properties.length; i++) {
                      if (node_properties[i].id == node_properties[parent.id].id) {
-                        createNode(item.id, item.name, i, parent.level + 1, type, item.state);
+                        createNode(item.id, item.name, i, parent.level + 1, type, item.state, item.version);
                         $scope.jstree.create_node(i, jArray[iterator], 'last', false, false);
                         populateChildren(iterator, type)
                     }
@@ -302,11 +302,11 @@
             return true;
         }
 
-        function createNode(id, text, parent, level, type, state) {
+        function createNode(id, text, parent, level, type, state, version) {
             iterator++;
             jArray[iterator] = {
                 "id" : iterator,
-                "text" : text,
+                "text" : text + " (v. " + version + ")",
                 "parent" : parent,
                 "state" : {
                         opened : false,
@@ -322,7 +322,8 @@
                 id: id,
                 name: text,
                 type: type,
-                state: state
+                state: state,
+                version: version
             }
          }
 
@@ -387,7 +388,7 @@
             $('#jstree').on("move_node.jstree", function (e, data) {
                 var node = data.node;
                 createNode(node_properties[node.id].id, node_properties[node.id].name, node.parent,
-                        node.original.level, node_properties[node.id].type, node_properties[node.id].state);
+                        node.original.level, node_properties[node.id].type, node_properties[node.id].state, node_properties[node.id].version);
                 node_properties[node.id] = node_properties[iterator];
                 iterator--;
             });
@@ -467,7 +468,7 @@
                 } else {
                     type = "message";
                 }
-                createNode(item.id, item.name, par, level, type, item.state);
+                createNode(item.id, item.name, par, level, type, item.state, item.version);
 
                 var child_table = item.modules || item.chapters || item.messages || [];
                 var quiz = item.quiz;
