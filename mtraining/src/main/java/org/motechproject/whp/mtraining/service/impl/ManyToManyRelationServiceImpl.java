@@ -20,6 +20,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import javax.management.relation.RelationType;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Service("manyToManyRelationService")
@@ -167,22 +168,6 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
         return null;
     }
 
-    @Override
-    public void updateAll(final List<ManyToManyRelation> relations) {
-
-        relationDataService.doInTransaction(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                relationDataService.deleteAll();
-                for (ManyToManyRelation relation : relations) {
-                    if(relationDataService.findRelations(relation.getParentType(), relation.getParentId(), relation.getChildId()).size() == 0) {
-                        relationDataService.create(relation);
-                    }
-                }
-            }
-        });
-    }
-
     private List<ManyToManyRelation> getRelationsForParent(long id) {
         List<ManyToManyRelation> relations = relationDataService.findRelations(null, id, null);
         for(int i = 0; i < relations.size(); i++) {
@@ -194,7 +179,8 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
     }
 
     @Override
-    public void updateRelationsForCourse(final List<ManyToManyRelation> relations, long courseId) {
+    public void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId) {
+        relations = new ArrayList<ManyToManyRelation>(new LinkedHashSet<>(relations));
         boolean isEqual = true;
         List<ManyToManyRelation> existingRelations = getRelationsForParent(courseId);
         for (ManyToManyRelation relation : existingRelations) {

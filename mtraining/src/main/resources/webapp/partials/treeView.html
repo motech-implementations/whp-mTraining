@@ -46,7 +46,7 @@
             <i class="icon-spin icon-refresh" ng-show="publishingCourse"/>
             <i class="icon-cloud-upload icon-white"></i> {{msg('mtraining.publish')}}
         </button>
-		<button class="btn btn-success ng-binding" ng-click="saveRelations()">
+		<button class="btn btn-success ng-binding" ng-click="saveRelations()" ng-disabled="!unsaved">
             <i class="icon-spin icon-refresh" ng-show="savingRelations"/>
             <i class="icon-save icon-white"></i> {{msg('mtraining.save')}}
         </button>

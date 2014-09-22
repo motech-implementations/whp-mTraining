@@ -28,8 +28,6 @@ public interface ManyToManyRelationService {
 
     void deleteRelationsById(Long id);
 
-    void updateAll(List<ManyToManyRelation> relations);
-
     void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId);
 
     // CoursePlan - Course

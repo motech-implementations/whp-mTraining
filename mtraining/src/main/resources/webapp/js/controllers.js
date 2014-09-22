@@ -69,11 +69,14 @@
         function onNodeChanged(node) {
             $scope.alertMessage = undefined;
             $scope.unsaved = true;
-            var path = $scope.jstree.get_path(node, false, true);
-            if (path && path.length > 1) {
-                var parentCourse = path[1];
-                if ($scope.unsavedCourses.indexOf(parentCourse) === -1) {
-                    $scope.unsavedCourses.push(parentCourse);
+            safeApply($scope);
+            if (node) {
+                var path = $scope.jstree.get_path(node, false, true);
+                if (path && path.length > 1) {
+                    var parentCourse = path[1];
+                    if ($scope.unsavedCourses.indexOf(parentCourse) === -1) {
+                        $scope.unsavedCourses.push(parentCourse);
+                    }
                 }
             }
         }
@@ -181,14 +184,8 @@
                     allRelations.push({"courseId": courseId, "relations": relations});
                 }
             });
-            var stateMap = {};
-            for(var i = 1; i < $scope.nodeProperties.length; i++) {
-                if ($scope.nodeProperties[i] && stateMap[$scope.nodeProperties[i].id] == undefined) {
-                    stateMap[$scope.nodeProperties[i].id] = $scope.nodeProperties[i].state;
-                }
-            }
             $scope.savingRelations = true;
-            $.postJSON('../mtraining/web-api/updateStates', stateMap, function() {
+            $.postJSON('../mtraining/web-api/updateStates', $scope.stateMap, function() {
                 if (allRelations.length > 0) {
                     for(var i = 0; i < allRelations.length; i++) {
                         var courseId = allRelations[i].courseId;
@@ -216,9 +213,9 @@
         }
 
         $scope.switchUnitState = function() {
+            onNodeChanged();
             var idx = $('#jstree').jstree('get_selected');
             var node = $scope.jstree.get_node(idx);
-            onNodeChanged(node);
             var state = "Active";
             if ($scope.isActive(node)) {
                 state = "Inactive";
@@ -228,6 +225,7 @@
                     $scope.nodeProperties[i].state = state;
                     var el = $scope.jstree.get_node(i, true);
                     if (el && el.attr) {
+                        $scope.stateMap[$scope.nodeProperties[i].id] = state;
                         el.attr("state", state);
                     }
                 }
@@ -348,6 +346,7 @@
             $scope.treeData = new Array();
             $scope.iterator = 0;
             $scope.nodeProperties = new Array();
+            $scope.stateMap = {};
             safeApply($scope);
         }
 
@@ -507,7 +506,7 @@
     });
 
     controllers.controller('coursesController', ['$scope', 'Course', function ($scope, Course) {
-        
+
         $scope.getLocations = function() {
             $scope.fetchingLocations = true;
             $.getJSON('../mtraining/web-api/stateLocations', function(data) {
@@ -519,7 +518,7 @@
                     placeholder: "Select a location"
                     });
             });
-        }    
+        }
 
         $scope.clearCourse = function() {
             $scope.creatingCourse = false;
@@ -529,7 +528,7 @@
             $scope.createCourse();
             $scope.getLocations();
         }
-        
+
         $scope.getLocationFromLocations = function () {
             var idx = $scope.selectedLocation;
             $scope.course.location = $scope.locations[idx];
@@ -1192,7 +1191,7 @@
             else {
                 $scope.errorName = undefined;
             }
-            
+
             if (!$scope.quiz.passPercentage && $scope.quiz.passPercentage != 0) {
                 $scope.errorPercentage = $scope.msg('mtraining.set.percentage');
             }
@@ -1205,7 +1204,7 @@
             else{
             $scope.errorNoOfQuestions = undefined;
             }
-                
+
             if (!$scope.errorName && !$scope.errorPercentage && !$scope.errorNoOfQuestions) {
                 return true
             }
