@@ -85,6 +85,28 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
+    public CoursePlanDto increaseVersions(CoursePlanDto course) {
+        course.setVersion(course.getVersion() + 1);
+        List<ModuleDto> modules = course.getModules();
+        for(ModuleDto module : modules) {
+            module.setVersion(module.getVersion() + 1);
+            List<ChapterDto> chapters = module.getChapters();
+            for(ChapterDto chapter : chapters) {
+                chapter.setVersion(chapter.getVersion() + 1);
+                List<LessonDto> lessons = chapter.getLessons();
+                for(LessonDto lesson : lessons) {
+                    lesson.setVersion(lesson.getVersion() + 1);
+                }
+                QuizDto quiz = chapter.getQuiz();
+                if (quiz != null) {
+                    quiz.setVersion(quiz.getVersion() + 1);
+                }
+            }
+        }
+        return course;
+    }
+
+    @Override
     public void updateCourseAndChildCollections(CoursePlanDto course) {
         List<ModuleDto> modules = course.getModules();
         for(ModuleDto module : modules) {
@@ -555,17 +577,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             ids.add(((CourseUnitMetadata) metadata).getId());
         }
         return ids;
-    }
-
-    @Override
-    public CoursePlan getCoursePlanByExternalId(String externalId) {
-        List<CoursePlan> coursePlans = coursePlanService.getAllCoursePlans();
-        for(CoursePlan coursePlan : coursePlans) {
-            if (contentOperationService.getUuidFromJsonString(coursePlan.getContent()).toString().equalsIgnoreCase(externalId)) {
-                return coursePlan;
-            }
-        }
-        return null;
     }
 
     private CourseUnitMetadataDto getDtoById(Long id) {

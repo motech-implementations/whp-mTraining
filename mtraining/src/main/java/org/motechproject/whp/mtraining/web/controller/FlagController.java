@@ -90,22 +90,25 @@ public class FlagController {
         List<ValidationError> validationErrors = courseProgressGetRequest.validate();
         if (!validationErrors.isEmpty()) {
             ValidationError validationError = validationErrors.get(0);
-            return responseAfterLogging(callerId, uniqueId, sessionId, POST, statusFor(validationError.getErrorCode())).getBody();
+            return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, statusFor(validationError.getErrorCode())).getBody();
         }
         Provider provider = providerService.getProviderByCallerId(callerId);
         if (provider == null)
-            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, UNKNOWN_PROVIDER).getBody();
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, null, GET, UNKNOWN_PROVIDER).getBody();
+        String remediId = provider.getRemediId();
         if (isInvalid(provider.getProviderStatus()))
-            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, NOT_WORKING_PROVIDER).getBody();
-        CourseProgress courseProgress = getCourseProgress(provider.getCallerId(), null);
-        if(courseProgress == null){
-            return responseAfterLogging(callerId, uniqueId, currentSessionId, GET, ResponseStatus.COURSE_NOT_FOUND).getBody();
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, NOT_WORKING_PROVIDER).getBody();
+        if (provider.getLocation() == null) {
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, LOCATION_NOT_ASSOCIATED_WITH_PROVIDER).getBody();
         }
-        Flag bookmark = flagService.getFlagById(courseProgress.getFlag().getId());
+        CourseProgress courseProgress = courseProgressService.getCourseProgress(provider);
+        if (courseProgress == null) {
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, ResponseStatus.COURSE_NOT_FOUND).getBody();
+        }
+        Flag bookmark = courseProgress.getFlag();
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET,
                 courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseProgress.getCourseStatus(), new BookmarkReport(bookmark)));
         String[] ignorableFieldNames = {"id", "creationDate", "modificationDate", "creator", "owner", "modifiedBy", "level"};
-        courseProgress.setFlag(bookmark);
         return toJsonString(new CourseProgressResponse(callerId, currentSessionId, uniqueId,
                 provider.getLocation(), courseProgress), ignorableFieldNames);
     }
@@ -120,18 +123,19 @@ public class FlagController {
         List<ValidationError> validationErrors = courseProgressPostRequest.validate();
         if (!validationErrors.isEmpty()) {
             ValidationError validationError = validationErrors.get(0);
-            return responseAfterLogging(callerId, uniqueId, sessionId, POST, statusFor(validationError.getErrorCode()));
+            return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, statusFor(validationError.getErrorCode()));
         }
         CourseProgress courseProgress = courseProgressPostRequest.getCourseProgress();
         Flag bookmark = courseProgress.getFlag();
         Provider provider = providerService.getProviderByCallerId(callerId);
         if (provider == null) {
-            return responseAfterLogging(callerId, uniqueId, sessionId, POST, UNKNOWN_PROVIDER);
+            return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, UNKNOWN_PROVIDER);
         }
+        String remediId = provider.getRemediId();
         CourseStatus courseStatus = CourseStatus.enumFor(courseProgress.getCourseStatus());
         CourseProgress savedCourseProgress = null;
         try {
-            CourseProgress actualCourseProgress = getCourseProgress(provider.getCallerId(), bookmark.getCourseIdentifier());
+            CourseProgress actualCourseProgress = courseProgressService.getCourseProgress(provider);
             if (actualCourseProgress == null) {
                 courseProgress.setCallerId(provider.getCallerId());
                 savedCourseProgress = courseProgressService.createCourseProgress(courseProgress);
@@ -144,44 +148,30 @@ public class FlagController {
                 savedCourseProgress = courseProgressService.updateCourseProgress(actualCourseProgress);
             }
         } catch (InvalidBookmarkException ex) {
-            return responseAfterLogging(callerId, uniqueId, sessionId, POST, INVALID_FLAG);
+            return responseAfterLogging(callerId, uniqueId, sessionId, remediId, POST, INVALID_FLAG);
         }
 
-        Flag flag = flagService.getFlagById(savedCourseProgress.getFlag().getId());
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId,
-                OK, POST, savedCourseProgress.getCourseStartTime(), savedCourseProgress.getTimeLeftToCompleteCourse(), courseStatus.getValue(), new BookmarkReport(flag)));
+                OK, POST, savedCourseProgress.getCourseStartTime(), savedCourseProgress.getTimeLeftToCompleteCourse(), courseStatus.getValue(), new BookmarkReport(bookmark)));
         return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 
-    private CourseProgress getCourseProgress(long callerId, ContentIdentifier courseIdentifier) {
-        CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(callerId);
-        if (courseProgress == null) {
-            try {
-                long courseId = dtoFactoryService.getCoursePlanByExternalId(courseIdentifier.getContentId()).getId();
-                courseIdentifier.setUnitId(courseId);
-                courseProgress = courseProgressService.getInitialCourseProgressForProvider(callerId, courseIdentifier);
-            } catch (Exception ex) {
-                return null;
-            }
-        }
-        return courseProgress;
-    }
     private String currentSession(String sessionId) {
         return isBlank(sessionId) ? sessions.create() : sessionId;
     }
 
-    private ResponseEntity<MotechResponse> responseAfterLogging(Long callerId, String uniqueId, String currentSessionId, BookmarkRequestType requestType, ResponseStatus status) {
-        return responseAfterLogging(callerId, uniqueId, currentSessionId, status, requestType, HttpStatus.OK);
+    private ResponseEntity<MotechResponse> responseAfterLogging(Long callerId, String uniqueId, String currentSessionId, String remediId, BookmarkRequestType requestType, ResponseStatus status) {
+        return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, status, requestType, HttpStatus.OK);
     }
-    private ResponseEntity<MotechResponse> responseAfterLogging(Long callerId, String uniqueId, String currentSessionId, ResponseStatus status, BookmarkRequestType requestType, HttpStatus httpStatus) {
-        report(callerId, uniqueId, currentSessionId, requestType, status);
+    private ResponseEntity<MotechResponse> responseAfterLogging(Long callerId, String uniqueId, String currentSessionId, String remediId, ResponseStatus status, BookmarkRequestType requestType, HttpStatus httpStatus) {
+        report(callerId, uniqueId, currentSessionId, remediId, requestType, status);
         return new ResponseEntity<MotechResponse>(new BasicResponse(callerId, currentSessionId, uniqueId, status), httpStatus);
     }
     private ResponseEntity<MotechResponse> response(Long callerId, String uniqueId, String currentSessionId, ResponseStatus status, BookmarkRequestType requestType, HttpStatus httpStatus) {
         return new ResponseEntity<MotechResponse>(new BasicResponse(callerId, currentSessionId, uniqueId, status), httpStatus);
     }
-    private BookmarkRequest report(Long callerId, String uniqueId, String currentSessionId, BookmarkRequestType requestType, ResponseStatus status) {
-        return bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(callerId, uniqueId, currentSessionId, status, requestType));
+    private BookmarkRequest report(Long callerId, String uniqueId, String currentSessionId, String remediId, BookmarkRequestType requestType, ResponseStatus status) {
+        return bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(callerId, uniqueId, currentSessionId, remediId, status, requestType));
     }
 
 }

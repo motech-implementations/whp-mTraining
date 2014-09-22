@@ -26,20 +26,20 @@ public class ContentIdentifier extends MdsEntity {
         this.version = version;
     }
 
+    public ContentIdentifier(long id, UUID contentId, long version) {
+        this.unitId = id;
+        this.contentId = contentId.toString();
+        this.version = version;
+    }
+
     public ContentIdentifier(long id, String contentId) {
         this.unitId = id;
         this.contentId = contentId;
         this.version = 1;
     }
 
-    public ContentIdentifier(long id, UUID contentId) {
-        this.unitId = id;
-        this.contentId = contentId.toString();
-        this.version = 1;
-    }
-
     public ContentIdentifier(String contentId, long version) {
-        this.contentId = contentId.toString();
+        this.contentId = contentId;
         this.version = version;
     }
 

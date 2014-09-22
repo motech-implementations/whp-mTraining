@@ -19,6 +19,8 @@ public interface DtoFactoryService {
 
     CoursePlanDto removeInactiveCollections(CoursePlanDto course);
 
+    CoursePlanDto increaseVersions(CoursePlanDto course);
+
     void updateCourseAndChildCollections(CoursePlanDto course);
 
     void createOrUpdateFromDto(CourseUnitMetadataDto courseUnitMetadataDto);
@@ -50,8 +52,6 @@ public interface DtoFactoryService {
     QuizDto getQuizDtoById(long quizId);
 
     void activateCourse(CoursePlanDto course);
-
-    CoursePlan getCoursePlanByExternalId(String externalId);
 
     void updateState(Long id, CourseUnitState state);
 

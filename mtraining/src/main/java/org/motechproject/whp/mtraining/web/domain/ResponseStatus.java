@@ -27,7 +27,8 @@ public enum ResponseStatus {
     INVALID_MODULE(923, "Invalid Module Id or version"),
     INVALID_CHAPTER(924, "Invalid Chapter Id or version"),
     MISSING_COURSE_START_TIME(925, "Course Start Time must be present"),
-    COURSE_NOT_FOUND(926, "No course available");
+    COURSE_NOT_FOUND(926, "No course available"),
+    LOCATION_NOT_ASSOCIATED_WITH_PROVIDER(927, "Location is not associated with Provider");
 
 
     private int code;

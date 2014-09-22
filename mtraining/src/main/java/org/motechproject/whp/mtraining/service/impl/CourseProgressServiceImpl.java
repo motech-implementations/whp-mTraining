@@ -1,14 +1,22 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.whp.mtraining.constants.CourseStatus;
 import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.CourseConfiguration;
+import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.CourseProgressDataService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
+import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.CourseProgressService;
 import org.motechproject.whp.mtraining.service.FlagService;
+import org.motechproject.whp.mtraining.service.LocationService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +33,14 @@ public class CourseProgressServiceImpl implements CourseProgressService {
     
     @Autowired
     CourseProgressDataService courseProgressDataService;
+
+    @Autowired
+    CoursePlanService coursePlanService;
+
+    @Autowired
+    LocationService locationService;
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(CourseProgressServiceImpl.class);
 
     @Override
     public CourseProgress createCourseProgress(CourseProgress courseProgress) {
@@ -67,11 +83,36 @@ public class CourseProgressServiceImpl implements CourseProgressService {
      * @param courseIdentifier
      * @return CourseProgressDto
      */
-    @Override
-    public CourseProgress getInitialCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier) {
+    private CourseProgress getInitialCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm:ss.SSS");
         Flag flag = flagService.getInitialFlag(callerId, courseIdentifier);
+        flag = flagService.createFlag(flag);
+        flag.setDateModified(dateTimeFormatter.withZone(DateTimeZone.UTC).print(flag.getCreationDate()));
+        flag = flagService.updateFlag(flag);
         CourseProgress courseProgress = new CourseProgress(callerId, null, flag, 0, CourseStatus.STARTED.getValue());
         setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
+        return courseProgress;
+    }
+
+    @Override
+    public CourseProgress getCourseProgress(Provider provider) {
+        long callerId = provider.getCallerId();
+        CourseProgress courseProgress = getCourseProgressForProvider(provider.getCallerId());
+
+        if (courseProgress == null) {
+            try {
+                ContentIdentifier courseIdentifier = new ContentIdentifier();
+                String stateLocationName = provider.getLocation().getState();
+
+                CoursePlan coursePlan = coursePlanService.getCoursePlanByLocation(locationService.getStateByName(stateLocationName).getId());
+                courseIdentifier.setUnitId(coursePlan.getId());
+                courseProgress = getInitialCourseProgressForProvider(callerId, courseIdentifier);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                LOG.info("No Course available for state location: " + provider.getLocation().getState());
+                return null;
+            }
+        }
         return courseProgress;
     }
 

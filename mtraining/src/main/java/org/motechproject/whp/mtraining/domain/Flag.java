@@ -1,12 +1,9 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
-import org.motechproject.mtraining.domain.Bookmark;
 import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;

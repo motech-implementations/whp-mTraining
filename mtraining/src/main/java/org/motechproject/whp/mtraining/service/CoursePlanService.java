@@ -17,4 +17,9 @@ public interface CoursePlanService {
     CoursePlan getCoursePlanById(long id);
 
     CoursePlan getCoursePlanByName(String coursePlanName);
+
+    CoursePlan getCoursePlanByExternalId(String externalId);
+
+    CoursePlan getCoursePlanByLocation(long locationId);
+
 }

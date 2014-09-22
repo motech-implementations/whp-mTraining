@@ -1,15 +1,14 @@
 package org.motechproject.whp.mtraining.builder;
 
 import org.motechproject.mtraining.domain.CourseUnitState;
-import org.motechproject.whp.mtraining.domain.Flag;
-import org.motechproject.whp.mtraining.dto.*;
-import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.domain.ContentIdentifier;
-import org.motechproject.whp.mtraining.service.DtoFactoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 /**
  * Factory class to create/modify a {@link org.motechproject.whp.mtraining.domain.Flag} for an enrollee from a {@link org.motechproject.mtraining.domain.Course}.
@@ -81,16 +80,11 @@ public class FlagBuilder {
         if (lesson == null) {
             return null;
         }
-        ContentIdentifier courseCI = (course.getContentId() == null) ? null : new ContentIdentifier(course.getId(), course.getContentId());
-        ContentIdentifier moduleCI = (module.getContentId() == null) ? null : new ContentIdentifier(module.getId(), module.getContentId());
-        ContentIdentifier chapterCI = (chapter.getContentId() == null) ? null : new ContentIdentifier(chapter.getId(), chapter.getContentId());
-        ContentIdentifier lessonCI = (lesson.getContentId() == null) ? null : new ContentIdentifier(lesson.getId(), lesson.getContentId());
-        return new Flag(externalId,
-                courseCI,
-                moduleCI,
-                chapterCI,
-                lessonCI,
-                null);
+        ContentIdentifier courseCI = (course.getContentId() == null) ? null : new ContentIdentifier(course.getId(), course.getContentId(), course.getVersion());
+        ContentIdentifier moduleCI = (module.getContentId() == null) ? null : new ContentIdentifier(module.getId(), module.getContentId(), module.getVersion());
+        ContentIdentifier chapterCI = (chapter.getContentId() == null) ? null : new ContentIdentifier(chapter.getId(), chapter.getContentId(), chapter.getVersion());
+        ContentIdentifier lessonCI = (lesson.getContentId() == null) ? null : new ContentIdentifier(lesson.getId(), lesson.getContentId(), lesson.getVersion());
+        return new Flag(externalId, courseCI, moduleCI, chapterCI, lessonCI, null);
     }
 
     /**
@@ -106,10 +100,10 @@ public class FlagBuilder {
         if (quiz == null) {
             return null;
         }
-        return new Flag(externalId, new ContentIdentifier(course.getId(), course.getContentId()),
-                new ContentIdentifier(module.getId(), module.getContentId()),
-                new ContentIdentifier(chapter.getId(), chapter.getContentId()),
-                null, new ContentIdentifier(quiz.getId(), quiz.getContentId()));
+        return new Flag(externalId, new ContentIdentifier(course.getId(), course.getContentId(), course.getVersion()),
+                new ContentIdentifier(module.getId(), module.getContentId(), module.getVersion()),
+                new ContentIdentifier(chapter.getId(), chapter.getContentId(), chapter.getVersion()),
+                null, new ContentIdentifier(quiz.getId(), quiz.getContentId(), quiz.getVersion()));
     }
 
     /**
@@ -121,7 +115,7 @@ public class FlagBuilder {
      * @return
      */
     public Flag buildCourseCompletionFlag(String externalId, CoursePlanDto course) {
-        return new Flag(externalId, new ContentIdentifier(course.getId(), course.getContentId()), null, null, null, null);
+        return new Flag(externalId, new ContentIdentifier(course.getId(), course.getContentId(), course.getVersion()), null, null, null, null);
     }
 
     /**

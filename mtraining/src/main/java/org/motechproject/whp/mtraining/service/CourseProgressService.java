@@ -1,7 +1,7 @@
 package org.motechproject.whp.mtraining.service;
 
-import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.CourseProgress;
+import org.motechproject.whp.mtraining.domain.Provider;
 
 public interface CourseProgressService {
 
@@ -11,5 +11,5 @@ public interface CourseProgressService {
 
     CourseProgress getCourseProgressForProvider(long callerId);
 
-    CourseProgress getInitialCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier);
+    CourseProgress getCourseProgress(Provider provider);
 }

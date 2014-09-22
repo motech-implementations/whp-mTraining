@@ -62,6 +62,11 @@ public class BookmarkRequest extends MdsEntity {
         this.requestType = requestType;
     }
 
+    public BookmarkRequest(Long callerId, String uniqueId, String sessionId, String remediId, ResponseStatus responseStatus, BookmarkRequestType requestType) {
+        this(callerId, uniqueId, sessionId, responseStatus, requestType);
+        this.remediId = remediId;
+    }
+
     public BookmarkRequest(String remediId, Long callerId, String uniqueId, String sessionId, ResponseStatus responseStatus, BookmarkRequestType requestType, String courseStartTime, Integer timeLeftToCompleteCourseInHrs, String courseStatus, BookmarkReport bookmarkReport) {
         this(callerId, uniqueId, sessionId, responseStatus, requestType);
         this.remediId = remediId;

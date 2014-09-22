@@ -19,5 +19,8 @@ public interface CoursePlanDataService extends MotechDataService<CoursePlan> {
     @Lookup
     CoursePlan findCoursePlanById(@LookupField(name = "id") long id);
 
+    @Lookup
+    CoursePlan findCoursePlanByLocationId(@LookupField(name = "location") long id);
+
 
 }

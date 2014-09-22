@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.repository.CoursePlanDataService;
+import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,9 @@ public class CoursePlanServiceImpl implements CoursePlanService {
 
     @Autowired
     private CoursePlanDataService coursePlanDataService;
+
+    @Autowired
+    private ContentOperationService contentOperationService;
 
     @Override
     public CoursePlan createCoursePlan(CoursePlan coursePlan) {
@@ -42,6 +46,22 @@ public class CoursePlanServiceImpl implements CoursePlanService {
     @Override
     public CoursePlan getCoursePlanByName(String coursePlanName) {
         return coursePlanDataService.findCourseByName(coursePlanName);
+    }
+
+    @Override
+    public CoursePlan getCoursePlanByExternalId(String externalId) {
+        List<CoursePlan> coursePlans = getAllCoursePlans();
+        for(CoursePlan coursePlan : coursePlans) {
+            if (contentOperationService.getUuidFromJsonString(coursePlan.getContent()).toString().equalsIgnoreCase(externalId)) {
+                return coursePlan;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public CoursePlan getCoursePlanByLocation(long locationId) {
+        return coursePlanDataService.findCoursePlanByLocationId(locationId);
     }
 
 }
