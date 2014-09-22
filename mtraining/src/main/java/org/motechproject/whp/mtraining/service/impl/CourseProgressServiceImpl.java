@@ -100,20 +100,18 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         CourseProgress courseProgress = getCourseProgressForProvider(provider.getCallerId());
 
         if (courseProgress == null) {
-            try {
-                ContentIdentifier courseIdentifier = new ContentIdentifier();
-                String stateLocationName = provider.getLocation().getState();
+            ContentIdentifier courseIdentifier = new ContentIdentifier();
+            String stateLocationName = provider.getLocation().getState();
 
-                CoursePlan coursePlan = coursePlanService.getCoursePlanByLocation(locationService.getStateByName(stateLocationName).getId());
-                courseIdentifier.setUnitId(coursePlan.getId());
-                courseProgress = getInitialCourseProgressForProvider(callerId, courseIdentifier);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                LOG.info("No Course available for state location: " + provider.getLocation().getState());
+            CoursePlan coursePlan = coursePlanService.getCoursePlanByLocation(locationService.getStateByName(stateLocationName).getId());
+            if (coursePlan == null) {
                 return null;
             }
-        }
-        return courseProgress;
+            courseIdentifier.setUnitId(coursePlan.getId());
+            courseProgress = getInitialCourseProgressForProvider(callerId, courseIdentifier);
+            createCourseProgress(courseProgress);
+    }
+    return courseProgress;
     }
 
     private void setTimeLeftToCompleteCourse(long courseId, CourseProgress courseProgress) {

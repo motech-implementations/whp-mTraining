@@ -105,9 +105,9 @@ public class FlagController {
         if (courseProgress == null) {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, ResponseStatus.COURSE_NOT_FOUND).getBody();
         }
-        Flag bookmark = courseProgress.getFlag();
+        Flag flagForReport = courseProgress.getFlag();
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET,
-                courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseProgress.getCourseStatus(), new BookmarkReport(bookmark)));
+                courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseProgress.getCourseStatus(), new BookmarkReport(flagForReport)));
         String[] ignorableFieldNames = {"id", "creationDate", "modificationDate", "creator", "owner", "modifiedBy", "level"};
         return toJsonString(new CourseProgressResponse(callerId, currentSessionId, uniqueId,
                 provider.getLocation(), courseProgress), ignorableFieldNames);
@@ -126,7 +126,7 @@ public class FlagController {
             return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, statusFor(validationError.getErrorCode()));
         }
         CourseProgress courseProgress = courseProgressPostRequest.getCourseProgress();
-        Flag bookmark = courseProgress.getFlag();
+        Flag flagForReport = courseProgress.getFlag();
         Provider provider = providerService.getProviderByCallerId(callerId);
         if (provider == null) {
             return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, UNKNOWN_PROVIDER);
@@ -152,7 +152,7 @@ public class FlagController {
         }
 
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId,
-                OK, POST, savedCourseProgress.getCourseStartTime(), savedCourseProgress.getTimeLeftToCompleteCourse(), courseStatus.getValue(), new BookmarkReport(bookmark)));
+                OK, POST, savedCourseProgress.getCourseStartTime(), savedCourseProgress.getTimeLeftToCompleteCourse(), courseStatus.getValue(), new BookmarkReport(flagForReport)));
         return response(callerId, uniqueId, sessionId, OK, POST, CREATED);
     }
 
