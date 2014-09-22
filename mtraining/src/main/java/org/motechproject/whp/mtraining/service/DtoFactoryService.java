@@ -4,16 +4,11 @@ import org.motechproject.mtraining.domain.CourseUnitMetadata;
 import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.mtraining.domain.Question;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
-import org.motechproject.whp.mtraining.dto.ChapterDto;
-import org.motechproject.whp.mtraining.dto.CoursePlanDto;
-import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
-import org.motechproject.whp.mtraining.dto.LessonDto;
-import org.motechproject.whp.mtraining.dto.ModuleDto;
-import org.motechproject.whp.mtraining.dto.QuestionDto;
-import org.motechproject.whp.mtraining.dto.QuizDto;
+import org.motechproject.whp.mtraining.dto.*;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Includes building
@@ -56,10 +51,18 @@ public interface DtoFactoryService {
 
     QuizDto getQuizDtoById(long quizId);
 
+    QuizDto getQuizDtoByUuid(UUID uuid);
+
     void activateCourse(CoursePlanDto course);
 
     void updateState(Long id, CourseUnitState state);
 
     void increaseVersionsByRelations(Set<ManyToManyRelation> relation);
+
+    QuizResultSheetDto gradeQuiz(QuizAnswerSheetDto quizAnswerSheetDto);
+
+    CourseUnitMetadataDto getDtoByContentId(String contentId, Class<?> type);
+
+    ChapterDto getChapterDtoWithQuiz(long chapterId);
 
 }

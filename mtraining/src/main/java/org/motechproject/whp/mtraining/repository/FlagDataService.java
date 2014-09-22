@@ -13,7 +13,7 @@ import java.util.List;
  * as methods for adding, deleting, saving and finding all instances.  In this class we
  * define and custom lookups we may need.
  */
-public interface FlagDataService extends MotechDataService<Flag>{
+public interface FlagDataService extends MotechDataService<Flag> {
 
     @Lookup
     Flag findFlagById(@LookupField(name = "id") long id);

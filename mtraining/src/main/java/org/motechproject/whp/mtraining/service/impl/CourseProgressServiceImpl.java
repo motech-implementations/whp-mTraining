@@ -95,6 +95,18 @@ public class CourseProgressServiceImpl implements CourseProgressService {
     }
 
     @Override
+    public void markCourseAsComplete(long callerId, String startTime, String externalId) {
+        List<CourseProgress> courseProgresses = courseProgressDataService.findCourseProgressesByCallerId(callerId);
+        for (CourseProgress courseProgress : courseProgresses) {
+            if (courseProgress.getFlag().getCourseIdentifier().getContentId().equals(externalId)) {
+                courseProgress.setCourseStatus(CourseStatus.COMPLETED.getValue());
+                courseProgressDataService.update(courseProgress);
+            }
+        }
+
+    }
+
+    @Override
     public CourseProgress getCourseProgress(Provider provider) {
         long callerId = provider.getCallerId();
         CourseProgress courseProgress = getCourseProgressForProvider(provider.getCallerId());

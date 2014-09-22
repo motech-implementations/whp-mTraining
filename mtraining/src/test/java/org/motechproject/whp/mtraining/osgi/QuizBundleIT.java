@@ -22,6 +22,7 @@ import org.motechproject.mtraining.service.BookmarkService;
 import org.motechproject.testing.utils.PollingHttpClient;
 import org.motechproject.testing.utils.TestContext;
 import org.motechproject.whp.mtraining.IVRServer;
+import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.test.CustomHttpResponse;
@@ -149,7 +150,8 @@ public class QuizBundleIT {
         QuestionRequest questionRequest = new QuestionRequest(questionId1, 1, newArrayList("5", "6"), "1", false, false);
         QuestionRequest questionRequest2 = new QuestionRequest(questionId2, 1, newArrayList("8", "6"), "2", false, false);
         List<QuestionRequest> questions = newArrayList(questionRequest, questionRequest2);
-        return new QuizReportRequest(provider.getCallerId(), "unk001", "ssn001", course.getId(), chapter.getId(), quiz, questions, startTime, endTime, false);
+        return new QuizReportRequest(provider.getCallerId(), "unk001", "ssn001", null, new ContentIdentifier(course.getId(), null),
+                new ContentIdentifier(chapter.getId(), null), new ContentIdentifier(quiz, null), questions, startTime, endTime, false);
     }
 
     private Provider addProvider(String remediId, Long callerId, ProviderStatus providerStatus) {

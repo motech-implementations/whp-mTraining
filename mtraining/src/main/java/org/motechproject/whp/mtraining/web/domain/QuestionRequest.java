@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class QuestionRequest {
     @JsonProperty
-    private String question;
+    private String questionId;
     @JsonProperty
     private Integer version;
     @JsonProperty
@@ -23,8 +23,8 @@ public class QuestionRequest {
     public QuestionRequest() {
     }
 
-    public QuestionRequest(String question, Integer version, List<String> invalidInputs, String selectedOption, Boolean timeOut, Boolean invalidAttempt) {
-        this.question = question;
+    public QuestionRequest(String questionId, Integer version, List<String> invalidInputs, String selectedOption, Boolean timeOut, Boolean invalidAttempt) {
+        this.questionId = questionId;
         this.version = version;
         this.invalidInputs = invalidInputs;
         this.selectedOption = selectedOption;
@@ -34,7 +34,7 @@ public class QuestionRequest {
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
-        if (question == null || version == null)
+        if (questionId == null || version == null)
             errors.add(new ValidationError(ResponseStatus.MISSING_QUESTION_ID));
         return errors;
     }
@@ -44,7 +44,7 @@ public class QuestionRequest {
     }
 
     public String getQuestionId() {
-        return question;
+        return questionId;
     }
 
     public List<String> getInvalidInputs() {

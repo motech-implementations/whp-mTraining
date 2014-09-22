@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.web.domain;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 
 import java.util.List;
@@ -14,11 +15,13 @@ import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.MISSING_
 public class QuizReportRequest extends IVRRequest {
 
     @JsonProperty("course")
-    private Long course;
+    private ContentIdentifier course;
+    @JsonProperty("module")
+    private ContentIdentifier module;
     @JsonProperty("chapter")
-    private Long chapter;
+    private ContentIdentifier chapter;
     @JsonProperty("quiz")
-    private Long quiz;
+    private ContentIdentifier quiz;
     @JsonProperty("questions")
     private List<QuestionRequest> questionRequests;
     @JsonProperty
@@ -31,10 +34,11 @@ public class QuizReportRequest extends IVRRequest {
     public QuizReportRequest() {
     }
 
-    public QuizReportRequest(Long callerId, String uniqueId, String sessionId, Long course, Long chapter, Long quiz,
+    public QuizReportRequest(long callerId, String uniqueId, String sessionId, ContentIdentifier course, ContentIdentifier module, ContentIdentifier chapter, ContentIdentifier quiz,
                              List<QuestionRequest> questionRequests, String startTime, String endTime, Boolean incompleteAttempt) {
         super(callerId, uniqueId, sessionId);
         this.course = course;
+        this.module = module;
         this.chapter = chapter;
         this.quiz = quiz;
         this.questionRequests = questionRequests;
@@ -47,11 +51,11 @@ public class QuizReportRequest extends IVRRequest {
         List<ValidationError> validationErrors = super.validate();
         if (isNotEmpty(validationErrors))
             return validationErrors;
-        if (course == null)// || courseDto.getVersion() == null)
+        if (course == null)// || course.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Course"));
-        if (chapter == null)// || chapterDto.getVersion() == null)
+        if (chapter == null)// || chapter.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Chapter"));
-        if (quiz == null)// || quizDto.getVersion() == null)
+        if (quiz == null)// || quiz.getVersion() == null)
             validationErrors.add(errorMessage(MISSING_NODE, "Quiz"));
         if (isBlank(startTime) || !ISODateTimeUtil.validate(startTime))
             validationErrors.add(errorMessage(INVALID_DATE_TIME, "Start Time"));
@@ -69,15 +73,19 @@ public class QuizReportRequest extends IVRRequest {
         return validationErrors;
     }
 
-    public Long getCourse() {
+    public ContentIdentifier getCourse() {
         return course;
     }
 
-    public Long getChapter() {
+    public ContentIdentifier getModule() {
+        return module;
+    }
+
+    public ContentIdentifier getChapter() {
         return chapter;
     }
 
-    public Long getQuiz() {
+    public ContentIdentifier getQuiz() {
         return quiz;
     }
 

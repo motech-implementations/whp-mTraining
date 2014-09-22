@@ -71,6 +71,9 @@
     <osgi:service id="courseProgressServiceOsgi" ref="courseProgressService"
                   interface="org.motechproject.whp.mtraining.service.CourseProgressService" />
 
+    <osgi:service id="questionAttemptServiceOsgi" ref="questionAttemptService"
+                  interface="org.motechproject.whp.mtraining.service.QuestionAttemptService" />
+
     <osgi:reference id="providerDataService"
                     interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
 
@@ -106,6 +109,9 @@
 
     <osgi:reference id="courseProgressDataService"
                     interface="org.motechproject.whp.mtraining.repository.CourseProgressDataService" />
+
+    <osgi:reference id="questionAttemptDataService"
+                    interface="org.motechproject.whp.mtraining.repository.QuestionAttemptDataService" />
 
 
     <!--Mail Configuration-->

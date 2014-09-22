@@ -50,7 +50,7 @@
     }]);
 
     services.factory('Quiz', ['$resource', function($resource) {
-        return $resource('/motech-platform-server/module/mtraining/web-api/quiz/:id', null,
+        return $resource('/motech-platform-server/module/mtraining/web-api/quiz-api/:id', null,
         {
            'update': { method:'PUT' }
         });

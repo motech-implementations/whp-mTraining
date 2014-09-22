@@ -53,6 +53,7 @@ public class FlagBuilder {
      *
      * @param externalId
      * @param course
+     * @param module
      * @param chapter
      * @return
      */

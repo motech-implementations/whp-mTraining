@@ -3,11 +3,10 @@ package org.motechproject.whp.mtraining.service.impl;
 import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.mtraining.domain.*;
 import org.motechproject.mtraining.service.MTrainingService;
-import org.motechproject.whp.mtraining.domain.CoursePlan;
-import org.motechproject.whp.mtraining.domain.Location;
-import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
-import org.motechproject.whp.mtraining.domain.ParentType;
+import org.motechproject.whp.mtraining.domain.*;
 import org.motechproject.whp.mtraining.dto.*;
+import org.motechproject.whp.mtraining.exception.InvalidQuestionException;
+import org.motechproject.whp.mtraining.exception.InvalidQuizException;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
@@ -230,6 +229,26 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
+    public ChapterDto getChapterDtoWithQuiz(long chapterId) {
+        Chapter chapter = mTrainingService.getChapterById(chapterId);
+        if (chapter != null) {
+            ChapterDto chapterDto = new ChapterDto(chapter.getId(), chapter.getName(), chapter.getState(),
+                    chapter.getCreationDate(), chapter.getModificationDate());
+            chapterDto.setContentId(contentOperationService.getUuidFromJsonString(chapter.getContent()));
+            Quiz quiz = manyToManyRelationService.getQuizByParentId(chapter.getId());
+            if (quiz != null) {
+                chapterDto.setQuiz(convertToQuizDto(quiz));
+            }
+
+            contentOperationService.getMetadataFromContent(chapterDto, chapter.getContent());
+
+            chapterDto.setParentIds(convertToIdSet(manyToManyRelationService.getCoursesByChildId(chapter.getId())));
+            return chapterDto;
+        }
+        return null;
+    }
+
+    @Override
     public LessonDto getLessonDtoById(long lessonId) {
         return (LessonDto) getDto(mTrainingService.getLessonById(lessonId));
     }
@@ -237,6 +256,17 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public QuizDto getQuizDtoById(long quizId) {
         return (QuizDto) getDto(mTrainingService.getQuizById(quizId));
+    }
+
+    @Override
+    public QuizDto getQuizDtoByUuid(UUID uuid) {
+        List<QuizDto> quizzes = getAllQuizDtos();
+        for (QuizDto quiz : quizzes) {
+            if (quiz.getContentId().equals(uuid)) {
+                return quiz;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -616,6 +646,71 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         } else {
             increaseVersionsByRelations(new LinkedHashSet<ManyToManyRelation>(relations));
         }
+    }
+
+    @Override
+    public QuizResultSheetDto gradeQuiz(QuizAnswerSheetDto quizAnswerSheetDto) {
+        ContentIdentifier quizIdentifier = quizAnswerSheetDto.getQuizIdentifier();
+        QuizDto quiz = (QuizDto) getDtoByContentId(quizIdentifier.getContentId(), QuizDto.class);
+        if (quiz == null) {
+            throw new InvalidQuizException(UUID.fromString(quizIdentifier.getContentId()));
+        }
+        List<QuestionResultDto> questionResultDtos = new ArrayList<>();
+        Integer score = 0;
+        for (AnswerSheetDto answerSheetDto : quizAnswerSheetDto.getAnswerSheetDtos()) {
+            QuestionDto question = null;
+            for (QuestionDto q : quiz.getQuestions()) {
+                if (answerSheetDto.getQuestion().getUnitId() == q.getId()) {
+                    question = q;
+                }
+            }
+            if (question == null) {
+                throw new InvalidQuestionException(UUID.fromString(quizIdentifier.getContentId()), UUID.fromString(answerSheetDto.getQuestion().getContentId()));
+            }
+            Boolean wasQuestionAnsweredCorrectly = question.getAnswer().getCorrectOption().equals(answerSheetDto.getSelectedOption());
+            QuestionResultDto questionResultDto = new QuestionResultDto(answerSheetDto.getQuestion(), answerSheetDto.getSelectedOption(), wasQuestionAnsweredCorrectly);
+            questionResultDtos.add(questionResultDto);
+            if (questionResultDto.isCorrect()) {
+                score++;
+            }
+        }
+        Double percentageScored = score * 1.0 / quiz.getNoOfQuestionsToBePlayed();
+        Boolean quizPassed = quiz.getPassPercentage() <= percentageScored;
+        return new QuizResultSheetDto(quizAnswerSheetDto.getQuizIdentifier(), questionResultDtos, percentageScored, quizPassed);
+    }
+
+    @Override
+    public CourseUnitMetadataDto getDtoByContentId(String contentId, Class<?> type) {
+        if (type == CoursePlanDto.class) {
+            List<CoursePlanDto> coursePlanDtos = getAllCoursePlanDtos();
+            for (CoursePlanDto coursePlanDto : coursePlanDtos) {
+                if (coursePlanDto.getContentId().toString().equals(contentId)) {
+                    return coursePlanDto;
+                }
+            }
+        } else if (type == ModuleDto.class) {
+            List<ModuleDto> moduleDtos = getAllModuleDtos();
+            for (ModuleDto moduleDto : moduleDtos) {
+                if (moduleDto.getContentId().toString().equals(contentId)) {
+                    return moduleDto;
+                }
+            }
+        } else if (type == ChapterDto.class) {
+            List<ChapterDto> chapterDtos = getAllChapterDtos();
+            for (ChapterDto chapterDto : chapterDtos) {
+                if (chapterDto.getContentId().toString().equals(contentId)) {
+                    return chapterDto;
+                }
+            }
+        } else if (type == QuizDto.class) {
+            List<QuizDto> quizDtos = getAllQuizDtos();
+            for (QuizDto quizDto : quizDtos) {
+                if (quizDto.getContentId().toString().equals(contentId)) {
+                    return quizDto;
+                }
+            }
+        }
+        return null;
     }
 
 }

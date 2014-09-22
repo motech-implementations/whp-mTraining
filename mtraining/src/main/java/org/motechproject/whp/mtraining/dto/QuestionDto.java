@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.dto;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonView;
+import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.UUID;
 /**
  * DTO Representation for Question class
  */
-public class QuestionDto {
+public class QuestionDto extends MdsEntity {
 
     @JsonView({PublishCourseView.class})
     private String name;
