@@ -168,6 +168,7 @@
         }
 
         $scope.saveRelations = function() {
+            $scope.savingRelations = true;
             var courses = $scope.jstree.get_node(0).children;
             var allRelations = [];
             chaptersWithQuizzes = [];
@@ -184,7 +185,6 @@
                     allRelations.push({"courseId": courseId, "relations": relations});
                 }
             });
-            $scope.savingRelations = true;
             $.postJSON('../mtraining/web-api/updateStates', $scope.stateMap, function() {
                 if (allRelations.length > 0) {
                     for(var i = 0; i < allRelations.length; i++) {
