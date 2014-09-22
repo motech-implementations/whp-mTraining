@@ -26,10 +26,6 @@
      }
 
     controllers.controller('treeViewController', function ($scope, Chapter, Quiz) {
-        var jArray = new Array();
-        var iterator = 0;
-        var node_properties = new Array();
-        var unsaved = false;
         $scope.alertMessage = undefined;
 
         $.getJSON('../mtraining/web-api/modules', function(data) {
@@ -55,24 +51,35 @@
             if (type == 'message' || type == 'quiz') {
                 return;
             }
-            for(var i = 1; i < node_properties.length; i++) {
-                if (node_properties[i].id == node_properties[idx].id) {
+            for(var i = 1; i < $scope.nodeProperties.length; i++) {
+                if ($scope.nodeProperties[i].id == $scope.nodeProperties[idx].id) {
                     var parent = $scope.jstree.get_node(i);
                     var len = parent.children.length;
                     for(var j = 0; j < len; j++) {
-                        var child = node_properties[parent.children[j]];
+                        var child = $scope.nodeProperties[parent.children[j]];
                         createNode(child.id, child.name, idx, parent.level + 1, child.type, child.state, child.version);
-                        $scope.jstree.create_node(idx, jArray[iterator], 'last', false, false);
-                        populateChildren(iterator, child.type);
+                        $scope.jstree.create_node(idx, $scope.treeData[$scope.iterator], 'last', false, false);
+                        populateChildren($scope.iterator, child.type);
                     }
                     return;
                 }
             }
         }
 
-         function receiveEventHandler(event, ui) {
+        function onNodeChanged(node) {
             $scope.alertMessage = undefined;
-            unsaved = true;
+            $scope.unsaved = true;
+            var path = $scope.jstree.get_path(node, false, true);
+            if (path && path.length > 1) {
+                var parentCourse = path[1];
+                if ($scope.unsavedCourses.indexOf(parentCourse) === -1) {
+                    $scope.unsavedCourses.push(parentCourse);
+                }
+            }
+        }
+
+        function receiveEventHandler(event, ui) {
+            onNodeChanged($scope.jstree.get_selected());
             var type = $scope.childType;
             var cancelled = false;
             var parent = $scope.jstree.get_node($scope.jstree.get_selected()).original;
@@ -82,21 +89,21 @@
                 var qid = ui.item.attr('qid');
                 $.each($scope.children, function(idx, el) {
                     if (el.type === 'quiz') {
-                        var childId = node_properties[el.id].id;
+                        var childId = $scope.nodeProperties[el.id].id;
                         cancelled = true;
                         if (childId == qid) {
                             ui.sender.sortable('cancel');
                             return false;
                         } else {
                             // swap nodes
-                            for(var i = 1; i < node_properties.length; i++) {
-                                if (node_properties[i].id == node_properties[el.id].id) {
+                            for(var i = 1; i < $scope.nodeProperties.length; i++) {
+                                if ($scope.nodeProperties[i].id == $scope.nodeProperties[el.id].id) {
                                     var node = $scope.jstree.get_node(i);
-                                    if (node.parent && node_properties[node.parent].id == node_properties[parent.id].id) {
+                                    if (node.parent && $scope.nodeProperties[node.parent].id == $scope.nodeProperties[parent.id].id) {
                                         $scope.jstree.delete_node(i);
                                         createNode(item.id, item.name, node.parent, parent.level + 1, type, item.state, item.version);
-                                        node_properties[i] = [];
-                                        $scope.jstree.create_node(node.parent, jArray[iterator], 'last', false, false);
+                                        $scope.nodeProperties[i] = [];
+                                        $scope.jstree.create_node(node.parent, $scope.treeData[$scope.iterator], 'last', false, false);
                                     }
                                 }
                             }
@@ -108,11 +115,11 @@
             }
             if (!cancelled) {
                 // create nodes
-                for(var i = 1; i < node_properties.length; i++) {
-                     if (node_properties[i].id == node_properties[parent.id].id) {
+                for(var i = 1; i < $scope.nodeProperties.length; i++) {
+                     if ($scope.nodeProperties[i].id == $scope.nodeProperties[parent.id].id) {
                         createNode(item.id, item.name, i, parent.level + 1, type, item.state, item.version);
-                        $scope.jstree.create_node(i, jArray[iterator], 'last', false, false);
-                        populateChildren(iterator, type)
+                        $scope.jstree.create_node(i, $scope.treeData[$scope.iterator], 'last', false, false);
+                        populateChildren($scope.iterator, type)
                     }
                 }
             }
@@ -130,13 +137,13 @@
             if (children) {
                 $.each(children, function(idx, el) {
                     var item = $scope.jstree.get_node(el);
-                    if (!node_properties[o.id] || !node_properties[o.id].id ||
-                        !node_properties[el] || !node_properties[el].id) {
+                    if (!$scope.nodeProperties[o.id] || !$scope.nodeProperties[o.id].id ||
+                        !$scope.nodeProperties[el] || !$scope.nodeProperties[el].id) {
                         return false;
                     }
                     var relation = {
-                       "parentId": node_properties[o.id].id,
-                       "childId": node_properties[el].id,
+                       "parentId": $scope.nodeProperties[o.id].id,
+                       "childId": $scope.nodeProperties[el].id,
                        "parentType": type
                     };
                     if ($.grep(relations, function (el, index) {
@@ -162,56 +169,63 @@
             var allRelations = [];
             chaptersWithQuizzes = [];
             $.each(courses, function(idx, el) {
-                var courseId = node_properties[el].id;
-                var relations = [];
-                if (!createRelations($scope.jstree.get_node(el), 'CoursePlan', relations)) {
-                    $scope.savingRelations = false;
-                    $("#errorMessage").text($scope.msg('mtraining.error.couldNotSaveRelations'));
-                    $("#errorDialog").modal('show');
-                    return;
-                };
-                allRelations.push({"courseId": courseId, "relations": relations});
+                var courseId = $scope.nodeProperties[el].id;
+                if ($scope.unsavedCourses.indexOf(el) >= 0) {
+                    var relations = [];
+                    if (!createRelations($scope.jstree.get_node(el), 'CoursePlan', relations)) {
+                        $scope.savingRelations = false;
+                        $("#errorMessage").text($scope.msg('mtraining.error.couldNotSaveRelations'));
+                        $("#errorDialog").modal('show');
+                        return;
+                    };
+                    allRelations.push({"courseId": courseId, "relations": relations});
+                }
             });
             var stateMap = {};
-            for(var i = 1; i < node_properties.length; i++) {
-                if (node_properties[i] && stateMap[node_properties[i].id] == undefined) {
-                    stateMap[node_properties[i].id] = node_properties[i].state;
+            for(var i = 1; i < $scope.nodeProperties.length; i++) {
+                if ($scope.nodeProperties[i] && stateMap[$scope.nodeProperties[i].id] == undefined) {
+                    stateMap[$scope.nodeProperties[i].id] = $scope.nodeProperties[i].state;
                 }
             }
             $scope.savingRelations = true;
             $.postJSON('../mtraining/web-api/updateStates', stateMap, function() {
-                for(var i = 0; i < allRelations.length; i++) {
-                    var courseId = allRelations[i].courseId;
-                    var relations = allRelations[i].relations;
-                    var successes = 0;
-                    $.postJSON('../mtraining/web-api/updateRelations/' + courseId, relations, function() {
-                        successes++;
-                        if (successes == allRelations.length) {
-                            $scope.savingRelations = false;
-                            unsaved = false;
-                            initTree();
-                            $scope.alertMessage = $scope.msg('mtraining.savedTreeStructure');
-                        }
-                    });
+                if (allRelations.length > 0) {
+                    for(var i = 0; i < allRelations.length; i++) {
+                        var courseId = allRelations[i].courseId;
+                        var relations = allRelations[i].relations;
+                        var successes = 0;
+                        $.postJSON('../mtraining/web-api/updateRelations/' + courseId, relations, function() {
+                            successes++;
+                            if (successes == allRelations.length) {
+                                $scope.savingRelations = false;
+                                initTree();
+                                $scope.alertMessage = $scope.msg('mtraining.savedTreeStructure');
+                            }
+                        });
+                    }
+                } else {
+                    $scope.savingRelations = false;
+                    initTree();
+                    $scope.alertMessage = $scope.msg('mtraining.savedTreeStates');
                 }
             });
         }
 
         $scope.isPublishable = function() {
-            return !unsaved && $scope.selected && $scope.selected.original.type == 'course' && $scope.isActive($scope.selected);
+            return !$scope.unsaved && $scope.selected && $scope.selected.original.type == 'course' && $scope.isActive($scope.selected);
         }
 
         $scope.switchUnitState = function() {
-            unsaved = true;
             var idx = $('#jstree').jstree('get_selected');
             var node = $scope.jstree.get_node(idx);
+            onNodeChanged(node);
             var state = "Active";
             if ($scope.isActive(node)) {
                 state = "Inactive";
             }
-            for(var i = 1; i < node_properties.length; i++) {
-                if (node_properties[node.id] && node_properties[i].id == node_properties[node.id].id) {
-                    node_properties[i].state = state;
+            for(var i = 1; i < $scope.nodeProperties.length; i++) {
+                if ($scope.nodeProperties[node.id] && $scope.nodeProperties[i].id == $scope.nodeProperties[node.id].id) {
+                    $scope.nodeProperties[i].state = state;
                     var el = $scope.jstree.get_node(i, true);
                     if (el && el.attr) {
                         el.attr("state", state);
@@ -221,14 +235,14 @@
         }
 
         $scope.isActive = function(node) {
-            return node && node_properties[node.id] && node_properties[node.id].state == "Active"
+            return node && $scope.nodeProperties[node.id] && $scope.nodeProperties[node.id].state == "Active"
         }
 
         $scope.publishCourse = function() {
             var idx = $('#jstree').jstree('get_selected');
             var node = $scope.jstree.get_node(idx);
             if (node && node.original && node.original.type === 'course') {
-                var id = node_properties[idx].id;
+                var id = $scope.nodeProperties[idx].id;
                 $scope.publishingCourse = true;
                 $.get("../mtraining/web-api/publish/" + id, function(response) {
                     $scope.publishingCourse = false;
@@ -254,21 +268,20 @@
         $scope.removeMember = function() {
             jConfirm($scope.msg('mtraining.confirm.remove', $scope.msg('mtraining.node'), $scope.selected.text), $scope.msg('mtraining.confirm.remove.header'), function (val) {
                 if (val) {
-                    unsaved = true;
                     var idx = $('#jstree').jstree('get_selected');
                     var node = $scope.jstree.get_node(idx);
                     if (node.original.type == 'course' || node.original.type == 'root') {
                         return false;
                     }
-                    $scope.alertMessage = undefined;
-                    var id = node_properties[node.id].id;
-                    for(var i = 1; i < node_properties.length; i++) {
-                        if (node_properties[i].id == node_properties[node.id].id) {
+                    onNodeChanged(node);
+                    var id = $scope.nodeProperties[node.id].id;
+                    for(var i = 1; i < $scope.nodeProperties.length; i++) {
+                        if ($scope.nodeProperties[i].id == $scope.nodeProperties[node.id].id) {
                             var n = $scope.jstree.get_node(i);
-                            if (node_properties[n.parent] && node_properties[n.parent].id == node_properties[node.parent].id) {
+                            if ($scope.nodeProperties[n.parent] && $scope.nodeProperties[n.parent].id == $scope.nodeProperties[node.parent].id) {
                                 $scope.jstree.delete_node(i);
                                 $scope.jstree.delete_node(n.children);
-                                node_properties[i] = [];
+                                $scope.nodeProperties[i] = [];
                             }
                         }
                     }
@@ -279,13 +292,13 @@
         $scope.cancel = function() {
             initTree();
             $scope.alertMessage = undefined;
-            unsaved = false;
+            $scope.unsaved = false;
         }
 
         $scope.isChildren = function(id) {
             var isChildren = false;
             $.each($scope.children, function(idx, el) {
-                if (node_properties[el.id] && id == node_properties[el.id].id) {
+                if ($scope.nodeProperties[el.id] && id == $scope.nodeProperties[el.id].id) {
                     isChildren = true;
                 }
             });
@@ -293,8 +306,8 @@
         }
 
         $scope.isUnique = function(id) {
-            for(var j = 1; j < node_properties.length; j++) {
-                if (node_properties[j].id == id) {
+            for(var j = 1; j < $scope.nodeProperties.length; j++) {
+                if ($scope.nodeProperties[j].id == id) {
                     return false;
                 }
             }
@@ -302,9 +315,9 @@
         }
 
         function createNode(id, text, parent, level, type, state, version) {
-            iterator++;
-            jArray[iterator] = {
-                "id" : iterator,
+            $scope.iterator++;
+            $scope.treeData[$scope.iterator] = {
+                "id" : $scope.iterator,
                 "text" : text + " (v. " + version + ")",
                 "parent" : parent,
                 "state" : {
@@ -317,7 +330,7 @@
                 "level" : level,
                 "type" : type,
             }
-            node_properties[iterator] = {
+            $scope.nodeProperties[$scope.iterator] = {
                 id: id,
                 name: text,
                 type: type,
@@ -326,11 +339,21 @@
             }
          }
 
-        //Get JSON from server and rewrite it to tree's JSON format
-        function initTree() {
+        function clearState() {
             $scope.children = [];
             $scope.nodes = [];
             $scope.quizNodes = [];
+            $scope.unsaved = false;
+            $scope.unsavedCourses = [];
+            $scope.treeData = new Array();
+            $scope.iterator = 0;
+            $scope.nodeProperties = new Array();
+            safeApply($scope);
+        }
+
+        //Get JSON from server and rewrite it to tree's JSON format
+        function initTree() {
+            clearState();
             $('#jstree').jstree("destroy");
             var jsonURI = "../mtraining/web-api/all";
             $.getJSON(jsonURI,function (data) {
@@ -344,14 +367,13 @@
             $('#jstree').jstree({
                 "plugins" : ["state", "dnd", "search", "types"],
                 "core" : {
-                    'data' : jArray,
+                    'data' : $scope.treeData,
                     'check_callback' : function (operation, node, node_parent, node_position) {
                         if (operation === "move_node") {
                             if (node_parent.original && node.original.level === node_parent.original.level + 1) {
-                                unsaved = true;
                                 var children = node_parent.children;
                                 for(var i = 0; i < node_parent.children.length; i++) {
-                                    if (node_properties[node_parent.children[i]].id == node_properties[node.id].id) {
+                                    if ($scope.nodeProperties[node_parent.children[i]].id == $scope.nodeProperties[node.id].id) {
                                         return false;
                                     }
                                 }
@@ -389,10 +411,12 @@
             //node moved
             $('#jstree').on("move_node.jstree", function (e, data) {
                 var node = data.node;
-                createNode(node_properties[node.id].id, node_properties[node.id].name, node.parent,
-                        node.original.level, node_properties[node.id].type, node_properties[node.id].state, node_properties[node.id].version);
-                node_properties[node.id] = node_properties[iterator];
-                iterator--;
+                onNodeChanged(data.parent);
+                onNodeChanged(data.old_parent);
+                createNode($scope.nodeProperties[node.id].id, $scope.nodeProperties[node.id].name, node.parent,
+                        node.original.level, $scope.nodeProperties[node.id].type, $scope.nodeProperties[node.id].state, $scope.nodeProperties[node.id].version);
+                $scope.nodeProperties[node.id] = $scope.nodeProperties[$scope.iterator];
+                $scope.iterator--;
             });
             $scope.jstree = $.jstree.reference('#jstree');
             safeApply($scope);
@@ -437,11 +461,8 @@
         function fillJson(data, init, level, par) {
             //if initialization
             if (init) {
-                jArray = new Array();
-                iterator = 0;
-                node_properties = new Array();
-                jArray[iterator] = {
-                    "id" : iterator,
+                $scope.treeData[$scope.iterator] = {
+                    "id" : $scope.iterator,
                     "text" : "mTraining",
                     "parent" : par,
                     "state" : {
@@ -478,7 +499,7 @@
                     child_table.push(quiz);
                 }
                 if (!(child_table === 0)) {
-                    fillJson(child_table, false, level+1, iterator);
+                    fillJson(child_table, false, level + 1, $scope.iterator);
                 };
 
             });
