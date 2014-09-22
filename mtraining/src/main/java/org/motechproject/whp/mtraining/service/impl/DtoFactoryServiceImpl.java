@@ -597,11 +597,22 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
-    public void updateState(Long id, CourseUnitState state) {
-        CourseUnitMetadataDto dto = getDtoById(id);
-        dto.setState(state);
-        createOrUpdateFromDto(dto);
-        increaseVersionsByChildId(id, dto);
+    public void updateStates(Map<String, String> stateMap) {
+        Set<ManyToManyRelation> allRelations = new LinkedHashSet<>();
+        for (Map.Entry<String, String> entry : stateMap.entrySet()) {
+            long id = Long.valueOf(entry.getKey());
+            CourseUnitState state = CourseUnitState.valueOf(entry.getValue());
+            CourseUnitMetadataDto dto = getDtoById(id);
+            dto.setState(state);
+            createOrUpdateFromDto(dto);
+            List<ManyToManyRelation> relations = manyToManyRelationService.getRelationsByChildId(id);
+            if (relations == null || relations.size() == 0) {
+                increaseVersionsByChildId(id, dto);
+            } else {
+                allRelations.addAll(manyToManyRelationService.getRelationsByChildId(id));
+            }
+        }
+        increaseVersionsByRelations(allRelations);
     }
 
     @Override

@@ -54,9 +54,7 @@ public class TreeViewController {
     @RequestMapping(value = "/updateStates", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void updateAllStates(@RequestBody Map<String, String> stateMap) {
-        for (Map.Entry<String, String> entry : stateMap.entrySet()) {
-            dtoFactoryService.updateState(Long.valueOf(entry.getKey()), CourseUnitState.valueOf(entry.getValue()));
-        }
+        dtoFactoryService.updateStates(stateMap);
     }
 
     @RequestMapping(value = "/publish/{courseId}", method = RequestMethod.GET, produces = "application/json")

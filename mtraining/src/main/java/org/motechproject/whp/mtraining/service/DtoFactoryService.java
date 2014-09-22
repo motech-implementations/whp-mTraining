@@ -7,6 +7,7 @@ import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
 import org.motechproject.whp.mtraining.dto.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -55,7 +56,7 @@ public interface DtoFactoryService {
 
     void activateCourse(CoursePlanDto course);
 
-    void updateState(Long id, CourseUnitState state);
+    void updateStates(Map<String, String> stateMap);
 
     void increaseVersionsByRelations(Set<ManyToManyRelation> relation);
 
