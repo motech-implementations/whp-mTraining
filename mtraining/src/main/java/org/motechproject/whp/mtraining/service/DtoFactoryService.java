@@ -2,9 +2,11 @@ package org.motechproject.whp.mtraining.service;
 
 import org.motechproject.mtraining.domain.*;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
+import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
 import org.motechproject.whp.mtraining.dto.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Includes building
@@ -16,8 +18,6 @@ public interface DtoFactoryService {
     CoursePlanDto getCourseDtoWithChildCollections(long courseId);
 
     CoursePlanDto removeInactiveCollections(CoursePlanDto course);
-
-    CoursePlanDto increaseVersions(CoursePlanDto course);
 
     void updateCourseAndChildCollections(CoursePlanDto course);
 
@@ -54,4 +54,7 @@ public interface DtoFactoryService {
     CoursePlan getCoursePlanByExternalId(String externalId);
 
     void updateState(Long id, CourseUnitState state);
+
+    void increaseVersionsByRelations(Set<ManyToManyRelation> relation);
+
 }

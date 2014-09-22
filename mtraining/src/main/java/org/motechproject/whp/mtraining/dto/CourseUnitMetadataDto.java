@@ -131,4 +131,8 @@ public class CourseUnitMetadataDto {
     public void setVersion(int version) {
         this.version = version;
     }
+
+    public void increaseVersion() {
+        version++;
+    }
 }

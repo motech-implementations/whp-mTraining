@@ -44,7 +44,6 @@ public class CoursePublisher {
 
     public IVRResponse publish(long courseId) throws Exception {
         CoursePlanDto course = dtoFactoryService.removeInactiveCollections(dtoFactoryService.getCourseDtoWithChildCollections(courseId));
-        course = dtoFactoryService.increaseVersions(course);
 
         LOGGER.info(String.format("Attempt %d [%s] - Starting course publish to IVR for courseId %s", numberOfAttempts, currentDateTime(), courseId));
 
@@ -61,8 +60,6 @@ public class CoursePublisher {
             } else {
                 ivrResponse = retryPublishing(courseId);
             }
-        } else if (ivrResponse.isSuccess()) {
-            dtoFactoryService.updateCourseAndChildCollections(course);
         }
 
         try {

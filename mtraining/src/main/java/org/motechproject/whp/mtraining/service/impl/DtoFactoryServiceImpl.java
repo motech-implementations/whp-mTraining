@@ -38,7 +38,8 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Autowired
     ManyToManyRelationService manyToManyRelationService;
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DtoFactoryServiceImpl.class);
 
     @Override
     public List<CoursePlanDto> getAllCourseDtosWithChildCollections() {
@@ -80,28 +81,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             module.setChapters(chapters);
         }
         course.setModules(modules);
-        return course;
-    }
-
-    @Override
-    public CoursePlanDto increaseVersions(CoursePlanDto course) {
-        course.setVersion(course.getVersion() + 1);
-        List<ModuleDto> modules = course.getModules();
-        for(ModuleDto module : modules) {
-            module.setVersion(module.getVersion() + 1);
-            List<ChapterDto> chapters = module.getChapters();
-            for(ChapterDto chapter : chapters) {
-                chapter.setVersion(chapter.getVersion() + 1);
-                List<LessonDto> lessons = chapter.getLessons();
-                for(LessonDto lesson : lessons) {
-                    lesson.setVersion(lesson.getVersion() + 1);
-                }
-                QuizDto quiz = chapter.getQuiz();
-                if (quiz != null) {
-                    quiz.setVersion(quiz.getVersion() + 1);
-                }
-            }
-        }
         return course;
     }
 
@@ -160,17 +139,19 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Override
     public CourseUnitMetadataDto getDto(CourseUnitMetadata courseUnitMetadata) {
-        if (courseUnitMetadata instanceof CoursePlan)
-            return convertToCoursePlanDto((CoursePlan) courseUnitMetadata);
-        if (courseUnitMetadata instanceof Course)
-            return convertToModuleDto((Course) courseUnitMetadata);
-        if (courseUnitMetadata instanceof Lesson)
-            return convertToLessonDto((Lesson) courseUnitMetadata);
-        if (courseUnitMetadata instanceof Quiz)
-            return convertToQuizDto((Quiz) courseUnitMetadata);
-        if (courseUnitMetadata instanceof Chapter)
-            return convertToChapterDto((Chapter) courseUnitMetadata);
-        LOG.warn("not supported CourseUnitMetadata child");
+        if (courseUnitMetadata != null) {
+            if (courseUnitMetadata instanceof CoursePlan)
+                return convertToCoursePlanDto((CoursePlan) courseUnitMetadata);
+            if (courseUnitMetadata instanceof Course)
+                return convertToModuleDto((Course) courseUnitMetadata);
+            if (courseUnitMetadata instanceof Lesson)
+                return convertToLessonDto((Lesson) courseUnitMetadata);
+            if (courseUnitMetadata instanceof Quiz)
+                return convertToQuizDto((Quiz) courseUnitMetadata);
+            if (courseUnitMetadata instanceof Chapter)
+                return convertToChapterDto((Chapter) courseUnitMetadata);
+            LOG.warn("not supported CourseUnitMetadata child");
+        }
         return null;
     }
 
@@ -587,28 +568,64 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return null;
     }
 
+    private CourseUnitMetadataDto getDtoById(Long id) {
+        CourseUnitMetadataDto dto;
+        if ((dto = getLessonDtoById(id)) != null || (dto = getChapterDtoById(id)) != null || (dto = getModuleDtoById(id)) != null ||
+                (dto = getCoursePlanDtoById(id)) != null || (dto = getQuizDtoById(id)) != null) {
+            return dto;
+        }
+        return null;
+    }
+
     @Override
     public void updateState(Long id, CourseUnitState state) {
-        CoursePlan course;
-        Course module;
-        Chapter chapter;
-        Lesson lesson;
-        Quiz quiz;
-        if ((lesson = mTrainingService.getLessonById(id)) != null) {
-            lesson.setState(state);
-            mTrainingService.updateLesson(lesson);
-        } else if ((chapter = mTrainingService.getChapterById(id)) != null) {
-            chapter.setState(state);
-            mTrainingService.updateChapter(chapter);
-        } else if ((module = mTrainingService.getCourseById(id)) != null) {
-            module.setState(state);
-            mTrainingService.updateCourse(module);
-        } else if ((course = coursePlanService.getCoursePlanById(id)) != null) {
-            course.setState(state);
-            coursePlanService.updateCoursePlan(course);
-        } else if ((quiz = mTrainingService.getQuizById(id)) != null) {
-            quiz.setState(state);
-            mTrainingService.updateQuiz(quiz);
+        CourseUnitMetadataDto dto = getDtoById(id);
+        dto.setState(state);
+        createOrUpdateFromDto(dto);
+        increaseVersionsByChildId(id, dto);
+    }
+
+    @Override
+    public void increaseVersionsByRelations(Set<ManyToManyRelation> relations) {
+        List<Long> updatedIds = new ArrayList<>();
+        for (ManyToManyRelation relation : relations) {
+            long parentId = relation.getParentId();
+            long childId = relation.getChildId();
+            CourseUnitMetadataDto parent = null;
+            CourseUnitMetadataDto child = null;
+            if (relation.getParentType() == ParentType.CoursePlan) {
+                parent = getCoursePlanDtoById(parentId);
+                child = getModuleDtoById(childId);
+            } else if (relation.getParentType() == ParentType.Course) {
+                parent = getModuleDtoById(parentId);
+                child = getChapterDtoById(childId);
+            } else {
+                parent = getChapterDtoById(parentId);
+                child = getLessonDtoById(childId);
+                if (child == null) {
+                    child = getQuizDtoById(childId);
+                }
+            }
+            if (parent != null && !updatedIds.contains(parentId)) {
+                parent.increaseVersion();
+                createOrUpdateFromDto(parent);
+                updatedIds.add(parentId);
+            }
+            if (child != null && !updatedIds.contains(childId)) {
+                child.increaseVersion();
+                createOrUpdateFromDto(child);
+                updatedIds.add(childId);
+            }
+        }
+    }
+
+    private void increaseVersionsByChildId(Long id, CourseUnitMetadataDto dto) {
+        List<ManyToManyRelation> relations = manyToManyRelationService.getRelationsByChildId(id);
+        if (relations.size() == 0 && dto != null) {
+            dto.increaseVersion();
+            createOrUpdateFromDto(dto);
+        } else {
+            increaseVersionsByRelations(new LinkedHashSet<ManyToManyRelation>(relations));
         }
     }
 

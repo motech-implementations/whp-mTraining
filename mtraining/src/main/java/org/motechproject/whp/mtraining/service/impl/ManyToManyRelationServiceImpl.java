@@ -15,13 +15,10 @@ import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-
-import javax.management.relation.RelationType;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service("manyToManyRelationService")
 public class ManyToManyRelationServiceImpl implements ManyToManyRelationService {
@@ -66,6 +63,11 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
     @Override
     public List<ManyToManyRelation> getRelationsByParentType(ParentType parentType) {
         return relationDataService.findRelations(parentType, null, null);
+    }
+
+    @Override
+    public List<ManyToManyRelation> getRelationsByChildId(long childId) {
+        return relationDataService.findRelations(null, null, childId);
     }
 
     // CoursePlan - Course
@@ -180,25 +182,23 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
 
     @Override
     public void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId) {
-        relations = new ArrayList<ManyToManyRelation>(new LinkedHashSet<>(relations));
-        boolean isEqual = true;
+        relations = new ArrayList<>(new LinkedHashSet<>(relations));
+        Set<ManyToManyRelation> updatedRelations = new LinkedHashSet<>();
         List<ManyToManyRelation> existingRelations = getRelationsForParent(courseId);
+
         for (ManyToManyRelation relation : existingRelations) {
             if (!relations.contains(relation)) {
                 relationDataService.delete(relation);
-                isEqual = false;
+                updatedRelations.add(relation);
             }
         }
         for(ManyToManyRelation relation : relations) {
             if (!existingRelations.contains(relation)) {
                 relationDataService.create(relation);
-                isEqual = false;
+                updatedRelations.add(relation);
             }
         }
-        if (!isEqual) {
-            CoursePlanDto course = dtoFactoryService.getCourseDtoWithChildCollections(courseId);
-            dtoFactoryService.updateCourseAndChildCollections(dtoFactoryService.increaseVersions(course));
-        }
+        dtoFactoryService.increaseVersionsByRelations(updatedRelations);
     }
 
 }

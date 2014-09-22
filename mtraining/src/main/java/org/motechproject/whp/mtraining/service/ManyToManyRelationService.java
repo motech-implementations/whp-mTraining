@@ -20,6 +20,8 @@ public interface ManyToManyRelationService {
 
     List<ManyToManyRelation> getAllRelations();
 
+    List<ManyToManyRelation> getRelationsByChildId(long childId);
+
     ManyToManyRelation getRelationById(long id);
 
     List<ManyToManyRelation> getRelationsByParentType(ParentType parentType);
