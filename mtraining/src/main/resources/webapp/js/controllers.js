@@ -188,9 +188,9 @@
                         successes++;
                         if (successes == allRelations.length) {
                             $scope.savingRelations = false;
-                            $scope.alertMessage = $scope.msg('mtraining.savedTreeStructure');
                             unsaved = false;
-                            safeApply($scope);
+                            initTree();
+                            $scope.alertMessage = $scope.msg('mtraining.savedTreeStructure');
                         }
                     });
                 }
@@ -280,7 +280,6 @@
             initTree();
             $scope.alertMessage = undefined;
             unsaved = false;
-            onChanged();
         }
 
         $scope.isChildren = function(id) {
@@ -329,6 +328,9 @@
 
         //Get JSON from server and rewrite it to tree's JSON format
         function initTree() {
+            $scope.children = [];
+            $scope.nodes = [];
+            $scope.quizNodes = [];
             $('#jstree').jstree("destroy");
             var jsonURI = "../mtraining/web-api/all";
             $.getJSON(jsonURI,function (data) {
@@ -382,7 +384,7 @@
             });
             // selection changed
             $('#jstree').on("changed.jstree", function (e, data) {
-                onChanged(false);
+                onChanged();
             });
             //node moved
             $('#jstree').on("move_node.jstree", function (e, data) {
@@ -392,8 +394,8 @@
                 node_properties[node.id] = node_properties[iterator];
                 iterator--;
             });
-            $('#jstree').jstree("refresh");
             $scope.jstree = $.jstree.reference('#jstree');
+            safeApply($scope);
         }
 
         function onChanged() {
