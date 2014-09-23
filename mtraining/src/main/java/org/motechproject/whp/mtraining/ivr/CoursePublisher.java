@@ -50,7 +50,7 @@ public class CoursePublisher {
         LOGGER.info(String.format("Attempt %d [%s] - Retrieved course %s courseId %s", numberOfAttempts, currentDateTime(), course.getName(), courseId));
 
         IVRResponse ivrResponse = ivrGateway.postCourse(course);
-        coursePublicationAttemptService.createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, ivrResponse.isSuccess(),
+        coursePublicationAttemptService.createCoursePublicationAttempt(new CoursePublicationAttempt(courseId, course.getName(), ivrResponse.isSuccess(),
                 ivrResponse.getResponseCode(), ivrResponse.getResponseMessage()));
 
         if (ivrResponse.isNetworkFailure()) {

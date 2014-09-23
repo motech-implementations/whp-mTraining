@@ -769,8 +769,8 @@
                     rownumbers: true,
                     rowNum: 10,
                     rowList: [10, 20, 50],
-                    colNames: ['rowId', 'id', scope.msg('mtraining.published'), scope.msg('mtraining.responseCode'), scope.msg('mtraining.responseMessage'),
-                        scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                    colNames: ['rowId', 'id', scope.msg('mtraining.published'), scope.msg('mtraining.responseCode'), scope.msg('mtraining.courseName'),
+                        scope.msg('mtraining.responseMessage'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                     colModel: [{
                        name: 'rowId',
                        index: 'rowId',
@@ -792,6 +792,11 @@
                     }, {
                         name: 'responseCode',
                         index: 'responseCode',
+                        align: 'center',
+                        width: 80
+                    }, {
+                        name: 'courseName',
+                        index: 'courseName',
                         align: 'center',
                         width: 80
                     }, {

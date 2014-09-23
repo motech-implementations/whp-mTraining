@@ -6,6 +6,8 @@ import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
+import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
+import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +33,9 @@ public class CourseController {
     @Autowired
     ManyToManyRelationService manyToManyRelationService;
 
+    @Autowired
+    CourseStructureValidator courseStructureValidator;
+
     @RequestMapping("/courses")
     @ResponseBody
     public List<CoursePlanDto> getAllCourses() {
@@ -45,14 +50,22 @@ public class CourseController {
 
     @RequestMapping(value = "/course", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
+    public ResponseStatus createCourse(@RequestBody CoursePlanDto coursePlanDto) {
+        if (courseStructureValidator.isPresentInDb(coursePlanDto)) {
+            dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
+            return ResponseStatus.OK;
+        }
+        return ResponseStatus.INVALID_COURSE;
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public void updateCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
+    public ResponseStatus updateCourse(@RequestBody CoursePlanDto coursePlanDto) {
+        if (courseStructureValidator.isPresentInDb(coursePlanDto)) {
+            dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
+            return ResponseStatus.OK;
+        }
+        return ResponseStatus.INVALID_COURSE;
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.DELETE)
