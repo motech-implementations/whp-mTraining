@@ -17,6 +17,9 @@ public class CoursePublicationAttempt extends MdsEntity {
     private Long courseId;
 
     @Field
+    private String courseName;
+
+    @Field
     private boolean publishedToIvr;
 
     @Field
@@ -34,8 +37,9 @@ public class CoursePublicationAttempt extends MdsEntity {
         this.publishedToIvr = publishedToIvr;
     }
 
-    public CoursePublicationAttempt(Long courseId, boolean publishedToIvr, int responseCode, String responseMessage) {
+    public CoursePublicationAttempt(Long courseId, String courseName, boolean publishedToIvr, int responseCode, String responseMessage) {
         this.courseId = courseId;
+        this.courseName = courseName;
         this.publishedToIvr = publishedToIvr;
         this.responseCode = responseCode;
         this.responseMessage = PropertyUtil.truncate(responseMessage, 255);
@@ -55,6 +59,10 @@ public class CoursePublicationAttempt extends MdsEntity {
 
     public Long getCourseId() {
         return courseId;
+    }
+
+    public String getCourseName() {
+        return courseName;
     }
 
     public boolean isPublishedToIvr() {
