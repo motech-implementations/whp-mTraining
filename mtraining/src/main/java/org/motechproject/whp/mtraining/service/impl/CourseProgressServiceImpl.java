@@ -9,6 +9,7 @@ import org.motechproject.whp.mtraining.domain.CourseConfiguration;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.CourseProgressDataService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
@@ -114,8 +115,13 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         if (courseProgress == null) {
             ContentIdentifier courseIdentifier = new ContentIdentifier();
             String stateLocationName = provider.getLocation().getState();
+            Location stateLocation = locationService.getStateByName(stateLocationName);
 
-            CoursePlan coursePlan = coursePlanService.getCoursePlanByLocation(locationService.getStateByName(stateLocationName).getId());
+            if (stateLocation == null) {
+                return null;
+            }
+
+            CoursePlan coursePlan = coursePlanService.getCoursePlanByLocation(stateLocation.getId());
             if (coursePlan == null) {
                 return null;
             }
