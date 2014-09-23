@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.builder.BuilderHelper;
 import org.motechproject.whp.mtraining.builder.FlagBuilder;
+import org.motechproject.whp.mtraining.constants.CourseStatus;
 import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
@@ -141,7 +142,7 @@ public class QuizReporter {
             Boolean nextActive = false;
             for (ModuleDto module : courseWithChildren.getModules()) {
                 if (module.getId() == moduleDto.getId()) {
-                    BuilderHelper.getNextActive(chapterDto, module.getChapters());
+                    nextChapter = BuilderHelper.getNextActive(chapterDto, module.getChapters());
                 }
             }
             Flag nextBookmark = flagBuilder.buildFlagFromFirstActiveMetadata(callerId, courseDto, moduleDto, nextChapter);
@@ -151,12 +152,13 @@ public class QuizReporter {
                 return;
             }
             courseProgressForEnrollee = getCourseProgress(callerId, UUID.fromString(quizReportRequest.getCourse().getContentId()));
-            courseProgressForEnrollee.setFlag(nextBookmark);
-            if (courseProgressForEnrollee.getId() != 0) {
-                courseProgressService.updateCourseProgress(courseProgressForEnrollee);
-            } else {
-                courseProgressService.createCourseProgress(courseProgressForEnrollee);
+            if (courseProgressForEnrollee == null) {
+                LOGGER.error("Could not find course progress for enrollee, callerId: " + callerId);
+                return;
             }
+            courseProgressForEnrollee.setFlag(nextBookmark);
+            courseProgressService.updateCourseProgress(courseProgressForEnrollee);
+
             LOGGER.info("Quiz Result Request posted with a passed attempt. Hence setting to next Bookmark in Course Progress.");
             return;
         }
