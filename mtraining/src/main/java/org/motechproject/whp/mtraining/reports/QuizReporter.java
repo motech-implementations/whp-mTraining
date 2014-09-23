@@ -3,6 +3,8 @@ package org.motechproject.whp.mtraining.reports;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.whp.mtraining.builder.BuilderHelper;
 import org.motechproject.whp.mtraining.builder.FlagBuilder;
 import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.CourseProgress;
@@ -117,9 +119,9 @@ public class QuizReporter {
 
     private void updateBookmark(String callerId, QuizResultSheetDto quizResult, QuizReportRequest quizReportRequest) {
         CourseProgress courseProgressForEnrollee;
-        CoursePlanDto courseDto = dtoFactoryService.getCoursePlanDtoById(quizReportRequest.getCourse().getUnitId());
-        ModuleDto moduleDto = dtoFactoryService.getModuleDtoById(quizReportRequest.getModule().getUnitId());
-        ChapterDto chapterDto = dtoFactoryService.getChapterDtoById(quizReportRequest.getChapter().getUnitId());
+        CoursePlanDto courseDto = (CoursePlanDto) dtoFactoryService.getDtoByContentId(quizReportRequest.getCourse().getContentId(), CoursePlanDto.class);
+        ModuleDto moduleDto = (ModuleDto) dtoFactoryService.getDtoByContentId(quizReportRequest.getModule().getContentId(), ModuleDto.class);
+        ChapterDto chapterDto = (ChapterDto) dtoFactoryService.getDtoByContentId(quizReportRequest.getChapter().getContentId(), ChapterDto.class);
         if (quizReportRequest.IsIncompleteAttempt()) {
             Flag bookmarkForQuizOfAChapter = flagBuilder.buildFlagFromFirstActiveMetadata(callerId, courseDto, moduleDto, chapterDto);
             courseProgressForEnrollee = getCourseProgress(callerId, UUID.fromString(quizReportRequest.getCourse().getContentId()));
@@ -136,22 +138,14 @@ public class QuizReporter {
             // get next active chapter
             ChapterDto nextChapter = null;
             CoursePlanDto courseWithChildren = dtoFactoryService.getCourseDtoWithChildCollections(courseDto.getId());
+            Boolean nextActive = false;
             for (ModuleDto module : courseWithChildren.getModules()) {
                 if (module.getId() == moduleDto.getId()) {
-                    Boolean nextActive = false;
-                    for (ChapterDto chapter : module.getChapters()) {
-                        if (chapter.getId() == chapterDto.getId()) {
-                            nextActive = true;
-                        } else if (nextActive) {
-                            nextChapter = chapter;
-                            break;
-                        }
-                    }
-                    break;
+                    BuilderHelper.getNextActive(chapterDto, module.getChapters());
                 }
             }
             Flag nextBookmark = flagBuilder.buildFlagFromFirstActiveMetadata(callerId, courseDto, moduleDto, nextChapter);
-            if (nextBookmark.getModuleIdentifier() == null && nextBookmark.getChapterIdentifier() == null) {
+            if (nextBookmark == null || nextBookmark.getModuleIdentifier() == null && nextBookmark.getChapterIdentifier() == null) {
                 courseProgressService.markCourseAsComplete(Long.valueOf(callerId), quizReportRequest.getStartTime(), courseDto.getContentId().toString());
                 LOGGER.info("Quiz Result Request posted with a passed attempt on last quiz of course. Hence marking Course Progress as complete.");
                 return;
@@ -166,8 +160,13 @@ public class QuizReporter {
             LOGGER.info("Quiz Result Request posted with a passed attempt. Hence setting to next Bookmark in Course Progress.");
             return;
         }
-        flagService.createFlag(flagBuilder.buildFlagFromFirstActiveMetadata(callerId, courseDto, moduleDto, chapterDto));
-        LOGGER.info("Quiz Result Request posted with a failed attempt. Hence setting to first content of chapter in Bookmark.");
+        Flag flag = flagBuilder.buildFlagFromFirstActiveMetadata(callerId, courseDto, moduleDto, chapterDto);
+        if (flag != null) {
+            flagService.createFlag(flagBuilder.buildFlagFromFirstActiveMetadata(callerId, courseDto, moduleDto, chapterDto));
+            LOGGER.info("Quiz Result Request posted with a failed attempt. Hence setting to first content of chapter in Bookmark.");
+        } else {
+            LOGGER.info("Could not create flag for failed attempt");
+        }
 
     }
 

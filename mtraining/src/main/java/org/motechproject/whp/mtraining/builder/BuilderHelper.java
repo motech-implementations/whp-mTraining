@@ -24,7 +24,7 @@ public abstract class BuilderHelper {
         return (T) match;
     }
 
-    protected static <T extends CourseUnitMetadataDto> T findLastActive(List<T> collection) {
+    public static <T extends CourseUnitMetadataDto> T findLastActive(List<T> collection) {
         List<T> copiedList = new ArrayList<>(collection);
         Collections.reverse(copiedList);
         Object match = CollectionUtils.find(copiedList, new Predicate() {
@@ -37,7 +37,7 @@ public abstract class BuilderHelper {
         return (T) match;
     }
 
-    protected static <T extends CourseUnitMetadataDto> T getNextActive(T previous, List<T> collection) {
+    public static <T extends CourseUnitMetadataDto> T getNextActive(T previous, List<T> collection) {
         int position = -1;
         Long id = previous.getId();
         for (int counter = 0; counter < collection.size(); counter++) {

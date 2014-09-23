@@ -338,6 +338,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         ChapterDto chapterDto = new ChapterDto(chapter.getId(), chapter.getName(), chapter.getState(),
                 chapter.getCreationDate(), chapter.getModificationDate());
         chapterDto.setContentId(contentOperationService.getUuidFromJsonString(chapter.getContent()));
+        chapterDto.setLessons(convertToLessonDtos(manyToManyRelationService.getLessonsByParentId(chapter.getId())));
 
         contentOperationService.getMetadataFromContent(chapterDto, chapter.getContent());
 
@@ -671,7 +672,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         for (AnswerSheetDto answerSheetDto : quizAnswerSheetDto.getAnswerSheetDtos()) {
             QuestionDto question = null;
             for (QuestionDto q : quiz.getQuestions()) {
-                if (answerSheetDto.getQuestion().getUnitId() == q.getId()) {
+                if (answerSheetDto.getQuestion().getContentId().equals(q.getContentId().toString())) {
                     question = q;
                 }
             }
@@ -685,7 +686,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                 score++;
             }
         }
-        Double percentageScored = score * 1.0 / quiz.getNoOfQuestionsToBePlayed();
+        Double percentageScored = score * 100.0 / quiz.getNoOfQuestionsToBePlayed();
         Boolean quizPassed = quiz.getPassPercentage() <= percentageScored;
         return new QuizResultSheetDto(quizAnswerSheetDto.getQuizIdentifier(), questionResultDtos, percentageScored, quizPassed);
     }
