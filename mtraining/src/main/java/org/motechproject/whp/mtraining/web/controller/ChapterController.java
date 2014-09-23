@@ -1,11 +1,13 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.service.MTrainingService;
-import org.motechproject.whp.mtraining.domain.ParentType;
 import org.motechproject.whp.mtraining.dto.ChapterDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
+import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,9 @@ public class ChapterController {
     @Autowired
     ManyToManyRelationService manyToManyRelationService;
 
+    @Autowired
+    CourseStructureValidator courseStructureValidator;
+
     @RequestMapping("/chapters")
     @ResponseBody
     public List<ChapterDto> getAllChapterDtos() {
@@ -40,14 +45,22 @@ public class ChapterController {
 
     @RequestMapping(value = "/chapter", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createChapterDto(@RequestBody ChapterDto chapter) {
-        dtoFactoryService.createOrUpdateFromDto(chapter);
+    public ResponseEntity<HttpStatus> createChapterDto(@RequestBody ChapterDto chapter) {
+        if (courseStructureValidator.isPresentInDb(chapter)) {
+            dtoFactoryService.createOrUpdateFromDto(chapter);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public  void updateChapterDto(@RequestBody ChapterDto chapter) {
-        dtoFactoryService.createOrUpdateFromDto(chapter);
+    public  ResponseEntity<HttpStatus> updateChapterDto(@RequestBody ChapterDto chapter) {
+        if (courseStructureValidator.isPresentInDb(chapter)) {
+            dtoFactoryService.createOrUpdateFromDto(chapter);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.DELETE)

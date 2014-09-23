@@ -14,6 +14,7 @@ import org.motechproject.whp.mtraining.dto.QuizDto;
 import org.motechproject.whp.mtraining.exception.MTrainingException;
 import org.motechproject.whp.mtraining.reports.QuizReporter;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
+import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
@@ -59,6 +60,9 @@ public class QuizController {
     ProviderService providerService;
 
     @Autowired
+    CourseStructureValidator courseStructureValidator;
+
+    @Autowired
     QuizReporter quizReporter;
 
     @RequestMapping("/quizzes")
@@ -75,14 +79,22 @@ public class QuizController {
 
     @RequestMapping(value = "/quiz-api", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createQuiz(@RequestBody QuizDto quiz) {
-        dtoFactoryService.createOrUpdateFromDto(quiz);
+    public ResponseEntity<HttpStatus> createQuiz(@RequestBody QuizDto quiz) {
+        if (courseStructureValidator.isPresentInDb(quiz)) {
+            dtoFactoryService.createOrUpdateFromDto(quiz);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
     @RequestMapping(value = "/quiz-api/{quizId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public void updateQuiz(@RequestBody QuizDto quiz) {
-        dtoFactoryService.createOrUpdateFromDto(quiz);
+    public ResponseEntity<HttpStatus> updateQuiz(@RequestBody QuizDto quiz) {
+        if (courseStructureValidator.isPresentInDb(quiz)) {
+            dtoFactoryService.createOrUpdateFromDto(quiz);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
     @RequestMapping(value = "/quiz-api/{quizId}", method = RequestMethod.DELETE)

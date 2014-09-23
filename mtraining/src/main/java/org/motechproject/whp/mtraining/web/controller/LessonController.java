@@ -1,11 +1,13 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.service.MTrainingService;
-import org.motechproject.whp.mtraining.domain.ParentType;
 import org.motechproject.whp.mtraining.dto.LessonDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
+import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,9 @@ public class LessonController {
     @Autowired
     ManyToManyRelationService manyToManyRelationService;
 
+    @Autowired
+    CourseStructureValidator courseStructureValidator;
+
     @RequestMapping("/lessons")
     @ResponseBody
     public List<LessonDto> getAllLessons() {
@@ -40,12 +45,22 @@ public class LessonController {
 
     @RequestMapping(value = "/lesson", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createLesson(@RequestBody LessonDto lesson) { dtoFactoryService.createOrUpdateFromDto(lesson); }
+    public ResponseEntity<HttpStatus> createLesson(@RequestBody LessonDto lesson) {
+        if (courseStructureValidator.isPresentInDb(lesson)) {
+            dtoFactoryService.createOrUpdateFromDto(lesson);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+    }
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public void updateLesson(@RequestBody LessonDto lesson) {
-        dtoFactoryService.createOrUpdateFromDto(lesson);
+    public ResponseEntity<HttpStatus> updateLesson(@RequestBody LessonDto lesson) {
+        if (courseStructureValidator.isPresentInDb(lesson)) {
+            dtoFactoryService.createOrUpdateFromDto(lesson);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.DELETE)
