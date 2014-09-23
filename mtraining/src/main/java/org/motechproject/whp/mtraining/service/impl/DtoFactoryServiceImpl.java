@@ -12,6 +12,7 @@ import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.LocationService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
+import org.motechproject.whp.mtraining.service.QuestionService;
 import org.motechproject.whp.mtraining.util.ActiveContentPredicate;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Autowired
     ManyToManyRelationService manyToManyRelationService;
+
+    @Autowired
+    QuestionService questionService;
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DtoFactoryServiceImpl.class);
 
@@ -414,7 +418,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         contentOperationService.getAnswersAndFilesNamesFromAnswer(questionDto, question.getAnswer());
         questionDto.setContentId(contentOperationService.getUuidFromJsonString(question.getQuestion()));
         questionDto.setVersion(contentOperationService.getVersionFromJsonString(question.getQuestion()));
-        questionDto.setQuestion(question);
         return questionDto;
     }
 
@@ -444,9 +447,16 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         String question = contentOperationService.codeIntoQuestion(questionDto.getName(), questionDto.getDescription(), uuid, questionDto.getVersion());
         String answer = contentOperationService.codeAnswersAndFilesNamesIntoAnswer(questionDto.getCorrectOption(), questionDto.getOptions(),
                 questionDto.getExternalId(), questionDto.getExplainingAnswerFilename());
-        Question questionObject = questionDto.getQuestion();
-        questionObject.setQuestion(question);
-        questionObject.setAnswer(answer);
+        Question questionObject = null;
+        if (questionDto.getContentId() != null) {
+            questionObject = questionService.getQuestionByContentId(questionDto.getContentId().toString());
+        }
+        if (questionObject != null) {
+            questionObject.setQuestion(question);
+            questionObject.setAnswer(answer);
+        } else {
+            questionObject = new Question(question, answer);
+        }
         return questionObject;
     }
 

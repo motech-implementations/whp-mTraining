@@ -36,9 +36,6 @@ public class QuestionDto extends MdsEntity {
     @JsonView({PublishCourseView.class})
     private int version;
 
-    @JsonIgnore
-    private Question question;
-
     public QuestionDto() {
     }
 
@@ -121,17 +118,7 @@ public class QuestionDto extends MdsEntity {
         return version;
     }
 
-    @JsonIgnore
     public void setVersion(int version) {
         this.version = version;
-    }
-
-    @JsonIgnore
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
     }
 }

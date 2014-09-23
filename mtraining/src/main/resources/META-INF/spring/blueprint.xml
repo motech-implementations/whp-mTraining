@@ -74,6 +74,9 @@
     <osgi:service id="questionAttemptServiceOsgi" ref="questionAttemptService"
                   interface="org.motechproject.whp.mtraining.service.QuestionAttemptService" />
 
+    <osgi:service id="questionOsgi" ref="questionService"
+                  interface="org.motechproject.whp.mtraining.service.QuestionService" />
+
     <osgi:reference id="providerDataService"
                     interface="org.motechproject.whp.mtraining.repository.ProviderDataService" />
 
@@ -112,6 +115,9 @@
 
     <osgi:reference id="questionAttemptDataService"
                     interface="org.motechproject.whp.mtraining.repository.QuestionAttemptDataService" />
+
+    <osgi:reference id="questionDataService"
+                    interface="org.motechproject.whp.mtraining.repository.QuestionDataService" />
 
 
     <!--Mail Configuration-->

@@ -1089,9 +1089,7 @@
             if (!$scope.validateQuestion()) {
                 return;
             }
-            var question = {};
-            $scope.rewriteQuestion(question);
-            $scope.quiz.questions.push(question);
+            $scope.quiz.questions.push($scope.question);
             $scope.clearQuestion();
             $('#questionModal').modal('hide');
         }
@@ -1100,20 +1098,9 @@
             if (!$scope.validateQuestion()) {
                 return;
             }
-            var question = {};
-            $scope.rewriteQuestion(question);
-            $scope.quiz.questions[$scope.questionIndex] = question;
+            $scope.quiz.questions[$scope.questionIndex] = $scope.question;
             $scope.clearQuestion();
             $('#questionModal').modal('hide');
-        }
-
-        $scope.rewriteQuestion = function(question) {
-            question.name = $scope.question.name;
-            question.description = $scope.question.description;
-            question.correctOption = $scope.question.correctOption;
-            question.options = $scope.question.options;
-            question.externalId = $scope.question.externalId;
-            question.explainingAnswerFilename = $scope.question.explainingAnswerFilename;
         }
 
         $scope.deleteQuestion = function() {
@@ -1300,16 +1287,10 @@
             var index = $scope.questionIndex;
             $scope.question = {};
             $(".valid-option").remove();
-            $scope.question.name = $scope.quiz.questions[index].name;
-            $scope.question.description = $scope.quiz.questions[index].description;
-            $scope.question.correctOption = parseInt($scope.quiz.questions[index].correctOption);
-            $scope.question.options = $scope.quiz.questions[index].options;
+            $.extend($scope.question, $scope.quiz.questions[index]);
             for (var i=0; i < $scope.question.options.length; i++) {
                 $scope.createOption($scope.question.options[i]);
             }
-
-            $scope.question.externalId = $scope.quiz.questions[index].externalId;
-            $scope.question.explainingAnswerFilename = $scope.quiz.questions[index].explainingAnswerFilename;
             $scope.errorQuestion = undefined;
             $scope.clearErrorSpans();
             $('#questionModal').modal('show');
