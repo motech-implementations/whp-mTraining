@@ -7,31 +7,53 @@ import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
 import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 import org.motechproject.whp.mtraining.builder.FlagBuilder;
 import org.motechproject.whp.mtraining.constants.CourseStatus;
-import org.motechproject.whp.mtraining.domain.*;
+import org.motechproject.whp.mtraining.domain.BookmarkReport;
+import org.motechproject.whp.mtraining.domain.BookmarkRequest;
+import org.motechproject.whp.mtraining.domain.CourseProgress;
+import org.motechproject.whp.mtraining.domain.Flag;
+import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.views.PropertyFilterMixIn;
 import org.motechproject.whp.mtraining.exception.InvalidBookmarkException;
 import org.motechproject.whp.mtraining.exception.MTrainingException;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType;
-import org.motechproject.whp.mtraining.service.*;
+import org.motechproject.whp.mtraining.service.BookmarkRequestService;
+import org.motechproject.whp.mtraining.service.CourseProgressService;
+import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
+import org.motechproject.whp.mtraining.service.DtoFactoryService;
+import org.motechproject.whp.mtraining.service.FlagService;
+import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.Sessions;
-import org.motechproject.whp.mtraining.web.domain.*;
+import org.motechproject.whp.mtraining.web.domain.BasicResponse;
+import org.motechproject.whp.mtraining.web.domain.CourseProgressGetRequest;
+import org.motechproject.whp.mtraining.web.domain.CourseProgressPostRequest;
+import org.motechproject.whp.mtraining.web.domain.CourseProgressResponse;
+import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.ResponseStatus;
+import org.motechproject.whp.mtraining.web.domain.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.statusFor;
-import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.*;
-import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.isInvalid;
-import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.*;
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.GET;
+import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.POST;
+import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.isInvalid;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_FLAG;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.LOCATION_NOT_ASSOCIATED_WITH_PROVIDER;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.NOT_WORKING_PROVIDER;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.statusFor;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @Controller
 public class FlagController {
@@ -102,13 +124,15 @@ public class FlagController {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, LOCATION_NOT_ASSOCIATED_WITH_PROVIDER).getBody();
         }
         CourseProgress courseProgress = courseProgressService.getCourseProgress(provider);
+
         if (courseProgress == null) {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, ResponseStatus.COURSE_NOT_FOUND).getBody();
         }
-        Flag flagForReport = courseProgress.getFlag();
+        Flag flagForReport = flagService.getFlagById(courseProgress.getFlag().getId());
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET,
                 courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseProgress.getCourseStatus(), new BookmarkReport(flagForReport)));
         String[] ignorableFieldNames = {"id", "creationDate", "modificationDate", "creator", "owner", "modifiedBy", "level"};
+        courseProgress.setFlag(flagForReport);
         return toJsonString(new CourseProgressResponse(callerId, currentSessionId, uniqueId,
                 provider.getLocation(), courseProgress), ignorableFieldNames);
     }
@@ -126,7 +150,7 @@ public class FlagController {
             return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, statusFor(validationError.getErrorCode()));
         }
         CourseProgress courseProgress = courseProgressPostRequest.getCourseProgress();
-        Flag flagForReport = courseProgress.getFlag();
+
         Provider provider = providerService.getProviderByCallerId(callerId);
         if (provider == null) {
             return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, UNKNOWN_PROVIDER);
@@ -150,7 +174,7 @@ public class FlagController {
         } catch (InvalidBookmarkException ex) {
             return responseAfterLogging(callerId, uniqueId, sessionId, remediId, POST, INVALID_FLAG);
         }
-
+        Flag flagForReport = flagService.getFlagById(savedCourseProgress.getFlag().getId());
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId,
                 OK, POST, savedCourseProgress.getCourseStartTime(), savedCourseProgress.getTimeLeftToCompleteCourse(), courseStatus.getValue(), new BookmarkReport(flagForReport)));
         return response(callerId, uniqueId, sessionId, OK, POST, CREATED);

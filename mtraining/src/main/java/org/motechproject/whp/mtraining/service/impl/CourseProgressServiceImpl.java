@@ -93,7 +93,6 @@ public class CourseProgressServiceImpl implements CourseProgressService {
         setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
         return courseProgress;
     }
-
     @Override
     public void markCourseAsComplete(long callerId, String startTime, String externalId) {
         List<CourseProgress> courseProgresses = courseProgressDataService.findCourseProgressesByCallerId(callerId);
@@ -121,7 +120,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
             }
             courseIdentifier.setUnitId(coursePlan.getId());
             courseProgress = getInitialCourseProgressForProvider(callerId, courseIdentifier);
-            createCourseProgress(courseProgress);
+            courseProgress = createCourseProgress(courseProgress);
     }
     return courseProgress;
     }
@@ -129,6 +128,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
     private void setTimeLeftToCompleteCourse(long courseId, CourseProgress courseProgress) {
         CourseConfiguration courseConfig = courseConfigurationService.getCourseConfigurationByCourseId(courseId);
         if (courseConfig == null) {
+            courseProgress.setTimeLeftToCompleteCourse(60);
             return;
         }
         courseProgress.setTimeLeftToCompleteCourse(courseConfig.getCourseDuration());
