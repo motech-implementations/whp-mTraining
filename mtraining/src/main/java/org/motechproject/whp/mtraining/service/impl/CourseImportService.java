@@ -91,20 +91,20 @@ public class CourseImportService {
 
             if (type.equalsIgnoreCase("Course")) {
                 CoursePlan coursePlan = new CoursePlan(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 0));
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 1));
                 coursePlan =  coursePlanService.createCoursePlan(coursePlan);
                 idToNameMap.put(coursePlan.getName(), coursePlan.getId());
 
             } else if (type.equalsIgnoreCase("Module")) {
                 Course course = new Course(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 0),
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 1),
                         new ArrayList<Chapter>());
                 course = mTrainingService.createCourse(course);
                 idToNameMap.put(course.getName(), course.getId());
 
             } else if (type.equalsIgnoreCase("Chapter")) {
                 Chapter chapter = new Chapter(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 0),
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 1),
                         new ArrayList<Lesson>());
                 chapter = mTrainingService.createChapter(chapter);
                 idToNameMap.put(chapter.getName(), chapter.getId());
@@ -112,7 +112,7 @@ public class CourseImportService {
 
             } else if (type.equalsIgnoreCase("Message") || type.equalsIgnoreCase("Lesson")) {
                 Lesson lesson = new Lesson(request.getNodeName(), request.getStatus(),
-                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 0));
+                        contentOperationService.codeIntoContent(request.getFileName(), request.getDescription(), UUID.randomUUID(), 1));
                 lesson = mTrainingService.createLesson(lesson);
                 idToNameMap.put(lesson.getName(), lesson.getId());
 

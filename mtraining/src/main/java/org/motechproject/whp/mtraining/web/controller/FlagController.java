@@ -149,12 +149,16 @@ public class FlagController {
             ValidationError validationError = validationErrors.get(0);
             return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, statusFor(validationError.getErrorCode()));
         }
-        CourseProgress courseProgress = courseProgressPostRequest.getCourseProgress();
-
         Provider provider = providerService.getProviderByCallerId(callerId);
         if (provider == null) {
             return responseAfterLogging(callerId, uniqueId, sessionId, null, POST, UNKNOWN_PROVIDER);
         }
+        if (provider.getLocation() == null) {
+            return responseAfterLogging(callerId, uniqueId, courseProgressPostRequest.getSessionId(), provider.getRemediId(), POST, LOCATION_NOT_ASSOCIATED_WITH_PROVIDER);
+        }
+        CourseProgress courseProgress = courseProgressPostRequest.getCourseProgress();
+
+
         String remediId = provider.getRemediId();
         CourseStatus courseStatus = CourseStatus.enumFor(courseProgress.getCourseStatus());
         CourseProgress savedCourseProgress = null;
