@@ -85,7 +85,7 @@ public class FlagControllerTest {
         CourseProgressPostRequest courseProgressPostRequest = new ObjectMapper().readValue(resourceAsStream, CourseProgressPostRequest.class);
         assertNotNull(courseProgressPostRequest);
     }
-
+    @Ignore
     @Test
     public void shouldReturnSuccessWhenBookmarkIsAdded() {
         CourseProgressPostRequest courseProgressPostRequest = new CourseProgressPostRequest(callerId, uniqueId, sessionId, courseProgress);
