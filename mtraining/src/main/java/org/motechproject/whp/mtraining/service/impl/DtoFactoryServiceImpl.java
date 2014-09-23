@@ -413,6 +413,8 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         contentOperationService.getQuestionNameAndDescriptionFromQuestion(questionDto, question.getQuestion());
         contentOperationService.getAnswersAndFilesNamesFromAnswer(questionDto, question.getAnswer());
         questionDto.setContentId(contentOperationService.getUuidFromJsonString(question.getQuestion()));
+        questionDto.setVersion(contentOperationService.getVersionFromJsonString(question.getQuestion()));
+        questionDto.setQuestion(question);
         return questionDto;
     }
 
@@ -439,10 +441,12 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     private Question convertDtoToQuestion(QuestionDto questionDto, UUID uuid) {
-        String question = contentOperationService.codeIntoQuestion(questionDto.getName(), questionDto.getDescription(), uuid);
+        String question = contentOperationService.codeIntoQuestion(questionDto.getName(), questionDto.getDescription(), uuid, questionDto.getVersion());
         String answer = contentOperationService.codeAnswersAndFilesNamesIntoAnswer(questionDto.getCorrectOption(), questionDto.getOptions(),
                 questionDto.getExternalId(), questionDto.getExplainingAnswerFilename());
-        Question questionObject = new Question(question, answer);
+        Question questionObject = questionDto.getQuestion();
+        questionObject.setQuestion(question);
+        questionObject.setAnswer(answer);
         return questionObject;
     }
 
@@ -616,6 +620,17 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         increaseVersionsByRelations(allRelations);
     }
 
+    private void increaseVersion(CourseUnitMetadataDto dto) {
+        dto.increaseVersion();
+        if (dto instanceof QuizDto) {
+            List<QuestionDto> questions = ((QuizDto) dto).getQuestions();
+            for (QuestionDto question : questions) {
+                question.setVersion(question.getVersion() + 1);
+            }
+        }
+        createOrUpdateFromDto(dto);
+    }
+
     @Override
     public void increaseVersionsByRelations(Set<ManyToManyRelation> relations) {
         List<Long> updatedIds = new ArrayList<>();
@@ -638,13 +653,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                 }
             }
             if (parent != null && !updatedIds.contains(parentId)) {
-                parent.increaseVersion();
-                createOrUpdateFromDto(parent);
+                increaseVersion(parent);
                 updatedIds.add(parentId);
             }
             if (child != null && !updatedIds.contains(childId)) {
-                child.increaseVersion();
-                createOrUpdateFromDto(child);
+                increaseVersion(child);
                 updatedIds.add(childId);
             }
         }
@@ -653,8 +666,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     private void increaseVersionsByChildId(Long id, CourseUnitMetadataDto dto) {
         List<ManyToManyRelation> relations = manyToManyRelationService.getRelationsByChildId(id);
         if (relations.size() == 0 && dto != null) {
-            dto.increaseVersion();
-            createOrUpdateFromDto(dto);
+            increaseVersion(dto);
         } else {
             increaseVersionsByRelations(new LinkedHashSet<ManyToManyRelation>(relations));
         }

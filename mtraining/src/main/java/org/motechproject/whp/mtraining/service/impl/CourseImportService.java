@@ -125,7 +125,7 @@ public class CourseImportService {
                     intArray[i] = Integer.valueOf(strArray[i]);
                 }
 
-                Question question = new Question(contentOperationService.codeIntoQuestion(request.getNodeName(), request.getDescription(), UUID.randomUUID()),
+                Question question = new Question(contentOperationService.codeIntoQuestion(request.getNodeName(), request.getDescription(), UUID.randomUUID(), 1),
                         contentOperationService.codeAnswersAndFilesNamesIntoAnswer(request.getCorrectAnswer(), Arrays.asList(intArray), request.getFileName(), request.getCorrectAnswerFileName()));
                 questions.put(question, request);
             }

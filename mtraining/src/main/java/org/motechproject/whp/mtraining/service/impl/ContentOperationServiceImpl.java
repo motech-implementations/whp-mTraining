@@ -52,7 +52,7 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     }
 
     @Override
-    public String codeIntoQuizContent(String description, UUID uuid, int  version, int noOfQuestionsToBePlayed) {
+    public String codeIntoQuizContent(String description, UUID uuid, int version, int noOfQuestionsToBePlayed) {
         String content = codeIntoContent(null, description, uuid, version);
         content = codeIntoJsonString(content, NO_OF_QUESTIONS_MAPPING_NAME, String.valueOf(noOfQuestionsToBePlayed));
         return content;
@@ -66,11 +66,12 @@ public class ContentOperationServiceImpl implements ContentOperationService {
     }
 
     @Override
-    public String codeIntoQuestion(String questionName, String description, UUID uuid) {
+    public String codeIntoQuestion(String questionName, String description, UUID uuid, int version) {
         String question = "";
         question = codeIntoJsonString(question, QUESTION_MAPPING_NAME, questionName);
         question = codeIntoJsonString(question, DESCRIPTION_MAPPING_NAME, description);
         question = codeIntoJsonString(question, CONTENT_ID_MAPPING_NAME, uuid.toString());
+        question = codeIntoJsonString(question, VERSION_MAPPING_NAME, Integer.valueOf(version).toString());
         return  question;
     }
 

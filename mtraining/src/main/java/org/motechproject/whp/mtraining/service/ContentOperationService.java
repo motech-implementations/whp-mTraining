@@ -18,7 +18,7 @@ public interface ContentOperationService {
 
     void getQuestionNameAndDescriptionFromQuestion(QuestionDto questionDto, String question);
 
-    String codeIntoQuestion(String questionName, String description, UUID uuid);
+    String codeIntoQuestion(String questionName, String description, UUID uuid, int version);
 
     void getAnswersAndFilesNamesFromAnswer(QuestionDto questionDto, String answer);
 

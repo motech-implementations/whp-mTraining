@@ -3,6 +3,7 @@ package org.motechproject.whp.mtraining.dto;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonView;
 import org.motechproject.mtraining.domain.MdsEntity;
+import org.motechproject.mtraining.domain.Question;
 import org.motechproject.whp.mtraining.domain.views.PublishCourseView;
 
 import java.util.List;
@@ -32,16 +33,23 @@ public class QuestionDto extends MdsEntity {
     @JsonView({PublishCourseView.class})
     private UUID contentId;
 
+    @JsonView({PublishCourseView.class})
+    private int version;
+
+    @JsonIgnore
+    private Question question;
+
     public QuestionDto() {
     }
 
-    public QuestionDto(String name, String description, String correctOption, List<Integer> options, String externalId, String explainingAnswerFilename) {
+    public QuestionDto(String name, String description, String correctOption, List<Integer> options, String externalId, String explainingAnswerFilename, int version) {
         this.name = name;
         this.description = description;
         this.correctOption = correctOption;
         this.options = options;
         this.externalId = externalId;
         this.explainingAnswerFilename = explainingAnswerFilename;
+        this.version = version;
     }
 
     public String getName() {
@@ -107,5 +115,23 @@ public class QuestionDto extends MdsEntity {
 
     @JsonIgnore
     public void setAnswer(AnswerDto answerDto) {
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    @JsonIgnore
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @JsonIgnore
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 }
