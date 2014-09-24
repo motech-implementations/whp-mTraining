@@ -663,8 +663,14 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                 }
             }
             if (parent != null && !updatedIds.contains(parentId)) {
-                increaseVersion(parent);
                 updatedIds.add(parentId);
+                Set<ManyToManyRelation> parentRelations = (relation.getParentType() == ParentType.CoursePlan) ? null :
+                        new LinkedHashSet<>(manyToManyRelationService.getRelationsByChildId(parent.getId()));
+                if (parentRelations != null && parentRelations.size() > 0) {
+                    increaseVersionsByRelations(parentRelations);
+                } else {
+                    increaseVersion(parent);
+                }
             }
             if (child != null && !updatedIds.contains(childId)) {
                 increaseVersion(child);
