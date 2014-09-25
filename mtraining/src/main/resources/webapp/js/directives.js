@@ -905,7 +905,7 @@
                     rownumbers: true,
                     rowNum: 10,
                     rowList: [10, 20, 50],
-                    colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.uniqueId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.requestType'),
+                    colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.requestType'),
                      scope.msg('mtraining.responseCode'), scope.msg('mtraining.responseMessage'), scope.msg('mtraining.courseStartTime'), scope.msg('mtraining.timeLeftToCompleteCourse'),
                      scope.msg('mtraining.course'), scope.msg('mtraining.moduleWhp'), scope.msg('mtraining.chapter'), scope.msg('mtraining.message'), scope.msg('mtraining.quiz'),
                      scope.msg('mtraining.courseStatus'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
@@ -924,11 +924,6 @@
                         index: 'callerId',
                         align: 'center',
                         width: 90
-                    }, {
-                        name: 'uniqueId',
-                        index: 'uniqueId',
-                        align: 'center',
-                        width: 70
                     }, {
                         name: 'remediId',
                         index: 'remediId',
@@ -1130,7 +1125,7 @@
                         rownumbers: true,
                         rowNum: 10,
                         rowList: [10, 20, 50],
-                        colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.uniqueId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.course'),
+                        colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.course'),
                         scope.msg('mtraining.callLogRecordType'), scope.msg('mtraining.startTime'), scope.msg('mtraining.endTime'), scope.msg('mtraining.status'),
                         scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                         colModel: [{
@@ -1148,11 +1143,6 @@
                             index: 'callerId',
                             align: 'center',
                             width: 90
-                        }, {
-                            name: 'uniqueId',
-                            index: 'uniqueId',
-                            align: 'center',
-                            width: 50
                         }, {
                             name: 'remedyId',
                             index: 'remedyId',
