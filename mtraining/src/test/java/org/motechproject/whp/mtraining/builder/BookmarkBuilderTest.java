@@ -2,9 +2,13 @@ package org.motechproject.whp.mtraining.builder;
 
 import org.hamcrest.core.Is;
 import org.junit.Test;
-import org.motechproject.mtraining.domain.*;
-import org.motechproject.whp.mtraining.domain.CoursePlan;
-import org.motechproject.whp.mtraining.dto.*;
+import org.motechproject.mtraining.domain.Bookmark;
+import org.motechproject.mtraining.domain.CourseUnitState;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.QuestionDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -18,7 +22,7 @@ public class BookmarkBuilderTest {
     public void shouldBuildBookmarkFromLessonWhenBothLessonAndQuizArePresent() {
         LessonDto activeLesson = new LessonDto(1, "ms001", CourseUnitState.Active, null, null);
         LessonDto inactiveLesson = new LessonDto(2, "ms002", CourseUnitState.Inactive, null, null);
-        QuestionDto question = new QuestionDto("ques001", null, null, null, null, null);
+        QuestionDto question = new QuestionDto("ques001", null, null, null, null, null, 1);
         QuizDto activeQuiz = new QuizDto(4, "quiz001", CourseUnitState.Active, null, null, 50, Arrays.asList(question));
         ChapterDto chapter01 = new ChapterDto(5, "ch001", "desc", CourseUnitState.Active, "desc", null, null, asList(activeLesson, inactiveLesson), null, activeQuiz);
         ModuleDto course01 = new CourseContentBuilder()
