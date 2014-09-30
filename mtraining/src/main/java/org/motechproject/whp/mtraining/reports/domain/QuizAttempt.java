@@ -1,10 +1,17 @@
 package org.motechproject.whp.mtraining.reports.domain;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.mds.annotations.Entity;
+import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
+import org.motechproject.whp.mtraining.util.CustomDateSerializer;
+
+import javax.jdo.annotations.Persistent;
+import java.util.List;
 
 @Entity
 public class QuizAttempt extends MdsEntity {
@@ -47,6 +54,10 @@ public class QuizAttempt extends MdsEntity {
 
     @Field
     private Boolean incompleteAttempt;
+
+    @Field
+    @Persistent(defaultFetchGroup = "true")
+    private List<QuestionAttempt> questionAttempts;
 
     public QuizAttempt(String remedyId, Long callerId, String uniqueId, String sessionId, ContentIdentifier courseIdentifier, ContentIdentifier moduleIdentifier, ContentIdentifier chapterIdentifier, ContentIdentifier quizIdentifier, DateTime startTime, DateTime endTime, Boolean isPassed, Double score, Boolean incompleteAttempt) {
         this.remedyId = remedyId;
@@ -166,5 +177,25 @@ public class QuizAttempt extends MdsEntity {
 
     public void setIncompleteAttempt(Boolean incompleteAttempt) {
         this.incompleteAttempt = incompleteAttempt;
+    }
+
+    public List<QuestionAttempt> getQuestionAttempts() {
+        return questionAttempts;
+    }
+
+    public void setQuestionAttempts(List<QuestionAttempt> questionAttempts) {
+        this.questionAttempts = questionAttempts;
+    }
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    public DateTime getCreationDate() {
+        return super.getCreationDate();
+    }
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    public DateTime getModificationDate() {
+        return super.getModificationDate();
     }
 }

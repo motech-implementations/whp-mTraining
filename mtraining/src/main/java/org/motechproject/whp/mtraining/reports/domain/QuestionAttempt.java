@@ -6,13 +6,13 @@ import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.mds.annotations.Entity;
 
+import javax.jdo.annotations.Persistent;
+
 @Entity
 public class QuestionAttempt extends MdsEntity {
 
     @Field
-    private QuizAttempt quizAttempt;
-
-    @Field
+    @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier question;
 
     @Field
@@ -30,22 +30,13 @@ public class QuestionAttempt extends MdsEntity {
     @Field
     private Boolean timeOut;
 
-    public QuestionAttempt(QuizAttempt quizAttempt, ContentIdentifier question, String invalidInputs, String selectedOption, Boolean isCorrectAnswer, Boolean invalidAttempt, Boolean timeOut) {
-        this.quizAttempt = quizAttempt;
+    public QuestionAttempt(ContentIdentifier question, String invalidInputs, String selectedOption, Boolean isCorrectAnswer, Boolean invalidAttempt, Boolean timeOut) {
         this.question = question;
         this.invalidInputs = invalidInputs;
         this.selectedOption = selectedOption;
         this.isCorrectAnswer = isCorrectAnswer;
         this.invalidAttempt = invalidAttempt;
         this.timeOut = timeOut;
-    }
-
-    public QuizAttempt getQuizAttempt() {
-        return quizAttempt;
-    }
-
-    public void setQuizAttempt(QuizAttempt quizAttempt) {
-        this.quizAttempt = quizAttempt;
     }
 
     public ContentIdentifier getQuestion() {

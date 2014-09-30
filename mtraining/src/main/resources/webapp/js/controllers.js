@@ -1361,17 +1361,6 @@
             });
     });
 
-    controllers.controller('callLogController', function ($scope) {
-    });
-
-    controllers.controller('coursePublicationController', function ($scope) {
-
-    });
-
-    controllers.controller('bookmarkRequestController', function ($scope) {
-
-    });
-
     controllers.controller('providersController', ['$scope', 'Provider', function ($scope, Provider) {
 
         $scope.getLocations = function() {

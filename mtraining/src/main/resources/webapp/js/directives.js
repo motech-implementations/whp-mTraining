@@ -1211,4 +1211,184 @@
             };
         });
 
+
+        directives.directive('quizAttemptsGrid', function($http) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    var elem = angular.element(element), filters;
+
+                    elem.jqGrid({
+                        url: '../mtraining/web-api/quizAttempts',
+                        datatype: 'json',
+                        jsonReader:{
+                            repeatitems:false,
+                            root: function (obj) {
+                                return obj;
+                            }
+                        },
+                        prmNames: {
+                            sort: 'sortColumn',
+                            order: 'sortDirection'
+                        },
+                        shrinkToFit: true,
+                        forceFit: true,
+                        autowidth: true,
+                        rownumbers: true,
+                        rowNum: 10,
+                        rowList: [10, 20, 50],
+                        colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.score'),
+                         scope.msg('mtraining.isPassed'), scope.msg('mtraining.incompleteAttempt'), scope.msg('mtraining.course'), scope.msg('mtraining.moduleWhp'),
+                         scope.msg('mtraining.chapter'), scope.msg('mtraining.quiz'), scope.msg('mtraining.dateCreated')],
+                        colModel: [{
+                           name: 'rowId',
+                           index: 'rowId',
+                           hidden: true,
+                           key: true
+                        }, {
+                           name: 'id',
+                           index: 'id',
+                           align: 'center',
+                           hidden: true,
+                        }, {
+                            name: 'callerId',
+                            index: 'callerId',
+                            align: 'center',
+                            width: 90
+                        }, {
+                            name: 'remedyId',
+                            index: 'remedyId',
+                            align: 'center',
+                            width: 70
+                        }, {
+                            name: 'score',
+                            index: 'score',
+                            align: 'center',
+                            width: 40
+                        }, {
+                            name: 'isPassed',
+                            index: 'isPassed',
+                            align: 'center',
+                            width: 40
+                        }, {
+                            name: 'incompleteAttempt',
+                            index: 'incompleteAttempt',
+                            align: 'center',
+                            width: 40
+                        },{
+                            name: 'courseIdentifier.contentId',
+                            index: 'course',
+                            align: 'center',
+                            width: 70,
+                            hidden: true
+                        },{
+                            name: 'moduleIdentifier.contentId',
+                            index: 'module',
+                            align: 'center',
+                            width: 70,
+                            hidden: true
+                        },{
+                            name: 'chapterIdentifier.contentId',
+                            index: 'chapter',
+                            align: 'center',
+                            width: 70,
+                            hidden: true
+                        },{
+                            name: 'quizIdentifier.contentId',
+                            index: 'quiz',
+                            align: 'center',
+                            width: 70,
+                            hidden: true
+                        },{
+                            name: 'creationDate',
+                            index: 'creationDate',
+                            align: 'center',
+                            width: 70
+                        }],
+                        pager: '#' + attrs.quizAttemptsGrid,
+                        width: '100%',
+                        height: 'auto',
+                        sortname: 'creationDate',
+                        sortorder: 'desc',
+                        viewrecords: true,
+                        subGrid: true,
+                        subGridOptions: {
+                            "plusicon" : "ui-icon-triangle-1-e",
+                            "minusicon" : "ui-icon-triangle-1-s",
+                            "openicon" : "ui-icon-arrowreturn-1-e",
+                            "reloadOnExpand" : false,
+                            "selectOnExpand" : true
+                        },
+                        subGridRowExpanded: function(subgrid_id, row_id) {
+                            var subgrid_table_id, pager_id;
+                            subgrid_table_id = subgrid_id+"_t";
+                            pager_id = "p_"+subgrid_table_id;
+                            $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class=''></table>");
+                            var rowData = $('#quizAttemptListTable').jqGrid('getRowData', row_id);
+                            console.log(rowData);
+                            var data = [ {
+                                "responseMessage": rowData.responseMessage,
+                                "course": rowData['courseIdentifier.contentId'],
+                                "module": rowData['moduleIdentifier.contentId'],
+                                "chapter": rowData['chapterIdentifier.contentId'],
+                                "quiz": rowData['quizIdentifier.contentId']
+                            } ];
+
+                            jQuery("#"+subgrid_table_id).jqGrid({
+                                datatype: "local",
+                                data: data,
+                                colNames: [scope.msg('mtraining.course'), scope.msg('mtraining.moduleWhp'),
+                                scope.msg('mtraining.chapter'), scope.msg('mtraining.quiz')],
+                                colModel: [
+                                    {
+                                        name: 'course',
+                                        index: 'course',
+                                        align: 'center',
+                                        width: 120
+                                    },{
+                                        name: 'module',
+                                        index: 'module',
+                                        align: 'center',
+                                        width: 120
+                                    },{
+                                        name: 'chapter',
+                                        index: 'chapter',
+                                        align: 'center',
+                                        width: 120
+                                    },{
+                                        name: 'quiz',
+                                        index: 'quiz',
+                                        align: 'center',
+                                        width: 120
+                                    }
+                                ],
+                                rowNum:1,
+                                pager: pager_id,
+                                sortname: 'quiz',
+                                sortorder: "asc",
+                                height: '100%'
+                            });
+                            jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:false,add:false,del:false});
+                            $('.ui-subgrid td').css({'word-wrap':'break-word', 'white-space':'normal'});
+
+                        },
+                        loadonce: true,
+                        gridview: true,
+                        loadComplete : function(array) {
+                            $('.ui-jqgrid-htable').addClass('table-lightblue');
+                            $('.ui-jqgrid-btable').addClass("table-lightblue");
+                            if (elem.getGridParam('datatype') === "json") {
+                                setTimeout(function () {
+                                   elem.trigger("reloadGrid");
+                                }, 10);
+                            }
+                        },
+                        gridComplete: function () {
+                          elem.jqGrid('setGridWidth', '100%');
+                        }
+                    });
+                }
+            };
+        });
+
 }());

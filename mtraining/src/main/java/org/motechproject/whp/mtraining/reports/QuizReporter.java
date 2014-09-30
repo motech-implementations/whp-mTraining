@@ -3,10 +3,8 @@ package org.motechproject.whp.mtraining.reports;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
-import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.builder.BuilderHelper;
 import org.motechproject.whp.mtraining.builder.FlagBuilder;
-import org.motechproject.whp.mtraining.constants.CourseStatus;
 import org.motechproject.whp.mtraining.domain.ContentIdentifier;
 import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
@@ -18,7 +16,7 @@ import org.motechproject.whp.mtraining.reports.domain.QuizAttempt;
 import org.motechproject.whp.mtraining.service.CourseProgressService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.FlagService;
-import org.motechproject.whp.mtraining.service.QuestionAttemptService;
+import org.motechproject.whp.mtraining.service.QuizAttemptService;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.MotechResponse;
 import org.motechproject.whp.mtraining.web.domain.QuestionRequest;
@@ -51,7 +49,7 @@ public class QuizReporter {
     private FlagService flagService;
 
     @Autowired
-    private QuestionAttemptService questionAttemptService;
+    private QuizAttemptService quizAttemptService;
 
     @Autowired
     private FlagBuilder flagBuilder;
@@ -110,12 +108,11 @@ public class QuizReporter {
         List<QuestionAttempt> questionHistories = new ArrayList<>();
         for (QuestionResultDto questionResultDto : quizResult.getQuestionResultDtos()) {
             QuestionRequest questionRequest = (QuestionRequest) findContentByContentId(quizReportRequest.getQuestionRequests(), questionResultDto.getQuestionIdentifier().getContentId());
-            questionHistories.add(new QuestionAttempt(quizAttempt, questionResultDto.getQuestionIdentifier(),
+            questionHistories.add(new QuestionAttempt(questionResultDto.getQuestionIdentifier(),
                     StringUtils.join(questionRequest.getInvalidInputs(), ';'), questionRequest.getSelectedOption(), questionResultDto.isCorrect(), questionRequest.getInvalidAttempt(), questionRequest.getTimeOut()));
         }
-        for (QuestionAttempt questionAttempt : questionHistories) {
-            questionAttemptService.createQuestionAttempt(questionAttempt);
-        }
+        quizAttempt.setQuestionAttempts(questionHistories);
+        quizAttemptService.createQuizAttempt(quizAttempt);
     }
 
     private void updateBookmark(String callerId, QuizResultSheetDto quizResult, QuizReportRequest quizReportRequest) {

@@ -223,4 +223,15 @@
         </property>
     </bean>
 
+    <bean id="quizAttemptService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.mockito.Mockito" factory-method="mock">
+                <constructor-arg value="org.motechproject.whp.mtraining.service.QuizAttemptService"/>
+            </bean>
+        </property>
+        <property name="proxyInterfaces">
+            <value>org.motechproject.whp.mtraining.service.QuizAttemptService</value>
+        </property>
+    </bean>
+
 </beans>

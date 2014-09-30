@@ -71,8 +71,8 @@
     <osgi:service id="courseProgressServiceOsgi" ref="courseProgressService"
                   interface="org.motechproject.whp.mtraining.service.CourseProgressService" />
 
-    <osgi:service id="questionAttemptServiceOsgi" ref="questionAttemptService"
-                  interface="org.motechproject.whp.mtraining.service.QuestionAttemptService" />
+    <osgi:service id="quizAttemptServiceOsgi" ref="quizAttemptService"
+                  interface="org.motechproject.whp.mtraining.service.QuizAttemptService" />
 
     <osgi:service id="questionOsgi" ref="questionService"
                   interface="org.motechproject.whp.mtraining.service.QuestionService" />
@@ -112,6 +112,9 @@
 
     <osgi:reference id="courseProgressDataService"
                     interface="org.motechproject.whp.mtraining.repository.CourseProgressDataService" />
+
+    <osgi:reference id="quizAttemptDataService"
+                    interface="org.motechproject.whp.mtraining.repository.QuizAttemptDataService" />
 
     <osgi:reference id="questionAttemptDataService"
                     interface="org.motechproject.whp.mtraining.repository.QuestionAttemptDataService" />
