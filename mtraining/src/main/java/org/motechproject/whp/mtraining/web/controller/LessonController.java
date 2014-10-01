@@ -1,13 +1,16 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.mtraining.service.MTrainingService;
-import org.motechproject.whp.mtraining.domain.ParentType;
 import org.motechproject.whp.mtraining.dto.LessonDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -45,7 +48,7 @@ public class LessonController {
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public void updateLesson(@RequestBody LessonDto lesson) {
-        dtoFactoryService.createOrUpdateFromDto(lesson);
+        dtoFactoryService.updateCourseDto(lesson);
     }
 
     @RequestMapping(value = "/lesson/{lessonId}", method = RequestMethod.DELETE)

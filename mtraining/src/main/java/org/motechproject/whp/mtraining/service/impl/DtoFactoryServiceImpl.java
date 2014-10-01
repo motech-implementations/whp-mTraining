@@ -536,6 +536,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     private void updateCourseUnitMetadataFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseUnitMetadataDto.getId());
+
             populateCourseUnitMetadataFields(coursePlan, courseUnitMetadataDto);
             if (((CoursePlanDto) courseUnitMetadataDto).getLocation() != null) {
                 Location location = locationService.getLocationById(((CoursePlanDto) courseUnitMetadataDto).getLocation().getId());
@@ -632,6 +633,22 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             return dto;
         }
         return null;
+    }
+
+    public void updateCourseDto(CourseUnitMetadataDto dto) {
+        Set<ManyToManyRelation> allRelations = new LinkedHashSet<>();
+        CourseUnitMetadataDto courseUnitMetadataDto = getDtoById(dto.getId());
+        String externalId = courseUnitMetadataDto.getExternalId();
+        createOrUpdateFromDto(dto);
+        if (externalId != null && !externalId.equals(dto.getExternalId())) {
+            List<ManyToManyRelation> relations = manyToManyRelationService.getRelationsByChildId(dto.getId());
+            if (relations == null || relations.size() == 0) {
+                increaseVersionsByChildId(dto.getId(), dto);
+            } else {
+                allRelations.addAll(manyToManyRelationService.getRelationsByChildId(dto.getId()));
+            }
+            increaseVersionsByRelations(allRelations);
+        }
     }
 
     @Override

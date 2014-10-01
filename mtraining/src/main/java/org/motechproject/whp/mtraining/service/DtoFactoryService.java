@@ -1,10 +1,17 @@
 package org.motechproject.whp.mtraining.service;
 
 import org.motechproject.mtraining.domain.CourseUnitMetadata;
-import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.mtraining.domain.Question;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
-import org.motechproject.whp.mtraining.dto.*;
+import org.motechproject.whp.mtraining.dto.ChapterDto;
+import org.motechproject.whp.mtraining.dto.CoursePlanDto;
+import org.motechproject.whp.mtraining.dto.CourseUnitMetadataDto;
+import org.motechproject.whp.mtraining.dto.LessonDto;
+import org.motechproject.whp.mtraining.dto.ModuleDto;
+import org.motechproject.whp.mtraining.dto.QuestionDto;
+import org.motechproject.whp.mtraining.dto.QuizAnswerSheetDto;
+import org.motechproject.whp.mtraining.dto.QuizDto;
+import org.motechproject.whp.mtraining.dto.QuizResultSheetDto;
 
 import java.util.List;
 import java.util.Map;
@@ -55,6 +62,8 @@ public interface DtoFactoryService {
     QuizDto getQuizDtoByUuid(UUID uuid);
 
     void activateCourse(CoursePlanDto course);
+
+    void updateCourseDto(CourseUnitMetadataDto courseUnitMetadataDto);
 
     void updateStates(Map<String, String> stateMap);
 

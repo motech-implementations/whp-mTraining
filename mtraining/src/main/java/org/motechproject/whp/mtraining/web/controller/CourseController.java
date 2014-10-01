@@ -1,7 +1,6 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.whp.mtraining.domain.CoursePlan;
-import org.motechproject.whp.mtraining.domain.ParentType;
 import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
@@ -52,7 +51,7 @@ public class CourseController {
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public void updateCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
+        dtoFactoryService.updateCourseDto(coursePlanDto);
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.DELETE)
