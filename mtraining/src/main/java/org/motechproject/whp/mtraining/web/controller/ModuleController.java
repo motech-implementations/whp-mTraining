@@ -57,4 +57,10 @@ public class ModuleController {
         mTrainingService.deleteCourse(moduleId);
     }
 
+    @RequestMapping(value = "/moduleByContentId/{contentId}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ModuleDto getModuleByContentId(@PathVariable String contentId) {
+        return (ModuleDto) dtoFactoryService.getDtoByContentId(contentId, ModuleDto.class);
+    }
+
 }

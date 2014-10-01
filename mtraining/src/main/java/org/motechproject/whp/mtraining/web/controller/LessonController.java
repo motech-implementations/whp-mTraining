@@ -54,5 +54,11 @@ public class LessonController {
         manyToManyRelationService.deleteRelationsById(lessonId);
         mTrainingService.deleteLesson(lessonId);
     }
-
+    
+    @RequestMapping(value = "/lessonByContentId/{contentId}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public LessonDto getLessonByContentId(@PathVariable String contentId) {
+        return (LessonDto) dtoFactoryService.getDtoByContentId(contentId, LessonDto.class);
+    }
+    
 }

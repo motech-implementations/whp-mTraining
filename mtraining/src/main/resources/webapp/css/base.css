@@ -159,3 +159,15 @@ li[state="Inactive"] > a {
 .question-buttons {
     margin-bottom: 8px;
 }
+
+/* jqGrid header word wrap */
+.ui-jqgrid-hbox th.ui-th-column div {
+    white-space: normal !important;
+    height: auto !important;
+    padding: 2px;
+}
+
+/* fix for subgrid scrollbar in google chrome */
+.subgrid-data .ui-jqgrid-bdiv {
+    overflow: hidden;
+}

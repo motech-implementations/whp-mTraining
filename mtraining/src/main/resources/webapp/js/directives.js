@@ -791,8 +791,8 @@
                         index: 'publishedToIvr',
                         align: 'center',
                         width: 50,
-                        formatter: function (cellvalue, options, rowObject) {
-                            return (cellvalue == true) ? 'Success' : 'Failure';
+                        formatter: function (cellValue, options, rowObject) {
+                            return (cellValue == true) ? 'Success' : 'Failure';
                         }
                     }, {
                         name: 'responseCode',
@@ -928,12 +928,12 @@
                         name: 'callerId',
                         index: 'callerId',
                         align: 'center',
-                        width: 90
+                        width: 60
                     }, {
                         name: 'remediId',
                         index: 'remediId',
                         align: 'center',
-                        width: 70
+                        width: 60
                     }, {
                         name: 'requestType',
                         index: 'requestType',
@@ -948,18 +948,18 @@
                         name: 'responseMessage',
                         index: 'responseMessage',
                         align: 'center',
-                        width: 80
+                        width: 70
                     },{
                         name: 'courseStartTime',
                         index: 'courseStartTime',
                         align: 'center',
-                        width: 70,
+                        width: 60,
                         formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
                     },{
                         name: 'timeLeftToCompleteCourseInHrs',
                         index: 'timeLeftToCompleteCourseInHrs',
                         align: 'center',
-                        width: 40
+                        width: 50
                     },{
                         name: 'bookmarkReport.courseIdentifier.contentId',
                         index: 'course',
@@ -994,12 +994,13 @@
                         name: 'courseStatus',
                         index: 'courseStatus',
                         align: 'center',
-                        width: 70
+                        width: 40
                     },{
                         name: 'creationDate',
                         index: 'creationDate',
                         align: 'center',
-                        width: 70
+                        width: 60,
+                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'},
                     }, {
                         name: 'modificationDate',
                         index: 'modificationDate',
@@ -1028,14 +1029,21 @@
                         pager_id = "p_"+subgrid_table_id;
                         $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class=''></table>");
                         var rowData = $('#bookmarkRequestListTable').jqGrid('getRowData', row_id);
-                        console.log(rowData);
+                        $.ajaxSetup({
+                            async: false
+                        });
                         var data = [ {
                             "responseMessage": rowData.responseMessage,
-                            "course": rowData['bookmarkReport.courseIdentifier.contentId'],
-                            "module": rowData['bookmarkReport.moduleIdentifier.contentId'],
-                            "chapter": rowData['bookmarkReport.chapterIdentifier.contentId'],
-                            "message": rowData['bookmarkReport.messageIdentifier.contentId'],
-                            "quiz": rowData['bookmarkReport.quizIdentifier.contentId']
+                            "course": (rowData['bookmarkReport.courseIdentifier.contentId'].length == 0) ? "" :
+                                 $.getJSON("../mtraining/web-api/courseByContentId/" + rowData['bookmarkReport.courseIdentifier.contentId']).responseJSON.name,
+                            "module": (rowData['bookmarkReport.moduleIdentifier.contentId'].length == 0) ? "" :
+                                 $.getJSON("../mtraining/web-api/moduleByContentId/" + rowData['bookmarkReport.moduleIdentifier.contentId']).responseJSON.name,
+                            "chapter": (rowData['bookmarkReport.chapterIdentifier.contentId'].length == 0) ? "" :
+                                 $.getJSON("../mtraining/web-api/chapterByContentId/" + rowData['bookmarkReport.chapterIdentifier.contentId']).responseJSON.name,
+                            "message": (rowData['bookmarkReport.messageIdentifier.contentId'].length == 0) ? "" :
+                                 $.getJSON("../mtraining/web-api/lessonByContentId/" + rowData['bookmarkReport.messageIdentifier.contentId']).responseJSON.name,
+                            "quiz": (rowData['bookmarkReport.quizIdentifier.contentId'].length == 0) ? "" :
+                                $.getJSON("../mtraining/web-api/quizByContentId/" + rowData['bookmarkReport.quizIdentifier.contentId']).responseJSON.name,
                         } ];
 
                         jQuery("#"+subgrid_table_id).jqGrid({
@@ -1048,7 +1056,7 @@
                                     name: 'responseMessage',
                                     index: 'responseMessage',
                                     align: 'center',
-                                    width: 280
+                                    width: 250
                                 },{
                                     name: 'course',
                                     index: 'course',
@@ -1106,6 +1114,10 @@
     });
 
         directives.directive('callLogGrid', function($http) {
+            var idsToNames = [];
+            $.ajaxSetup({
+                async: false
+            });
             return {
                 restrict: 'A',
                 link: function(scope, element, attrs) {
@@ -1131,8 +1143,8 @@
                         rowNum: 10,
                         rowList: [10, 20, 50],
                         colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.course'),
-                        scope.msg('mtraining.callLogRecordType'), scope.msg('mtraining.startTime'), scope.msg('mtraining.endTime'), scope.msg('mtraining.status'),
-                        scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                        scope.msg('mtraining.callLogRecordType'), scope.msg('mtraining.startTime'), scope.msg('mtraining.endTime'),
+                        scope.msg('mtraining.status'), scope.msg('mtraining.dateCreated')],
                         colModel: [{
                            name: 'rowId',
                            index: 'rowId',
@@ -1147,7 +1159,7 @@
                             name: 'callerId',
                             index: 'callerId',
                             align: 'center',
-                            width: 90
+                            width: 70
                         }, {
                             name: 'remedyId',
                             index: 'remedyId',
@@ -1157,7 +1169,20 @@
                             name: 'courseId',
                             index: 'courseId',
                             align: 'center',
-                            width: 90
+                            width: 80,
+                            formatter: function (cellValue, options, rowObject) {
+                                if (cellValue.length > 0) {
+                                    for(var i = 0; i < idsToNames.length; i++) {
+                                        if (idsToNames[i].id == cellValue) {
+                                            return idsToNames[i].name;
+                                        }
+                                    }
+                                    var name = $.getJSON("../mtraining/web-api/courseByContentId/" + cellValue).responseJSON.name;
+                                    idsToNames.push({"id": cellValue, "name": name});
+                                    return name;
+                                }
+                                return "";
+                            }
                         }, {
                             name: 'callLogRecordType',
                             index: 'callLogRecordType',
@@ -1167,12 +1192,12 @@
                             name: 'startTime',
                             index: 'startTime',
                             align: 'center',
-                            width: 70,
+                            width: 80,
                         },{
                             name: 'endTime',
                             index: 'endTime',
                             align: 'center',
-                            width: 70,
+                            width: 80,
                         },{
                             name: 'status',
                             index: 'status',
@@ -1182,19 +1207,13 @@
                             name: 'creationDate',
                             index: 'creationDate',
                             align: 'center',
-                            width: 70,
-                        },{
-                            name: 'modificationDate',
-                            index: 'modificationDate',
-                            align: 'center',
-                            width: 50,
                             formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'},
-                            hidden: true,
+                            width: 60
                         }],
-                        pager: '#' + attrs.bookmarkRequestsGrid,
+                        pager: '#' + attrs.callLogGrid,
                         width: '100%',
                         height: 'auto',
-                        sortname: 'modificationDate',
+                        sortname: 'creationDate',
                         sortorder: 'desc',
                         viewrecords: true,
                         loadonce: true,
@@ -1244,7 +1263,7 @@
                         rowList: [10, 20, 50],
                         colNames: ['rowId', 'id', scope.msg('mtraining.callerId'), scope.msg('mtraining.remediId'), scope.msg('mtraining.score'),
                          scope.msg('mtraining.isPassed'), scope.msg('mtraining.incompleteAttempt'), scope.msg('mtraining.course'), scope.msg('mtraining.moduleWhp'),
-                         scope.msg('mtraining.chapter'), scope.msg('mtraining.quiz'), scope.msg('mtraining.dateCreated')],
+                         scope.msg('mtraining.chapter'), scope.msg('mtraining.quiz'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                         colModel: [{
                            name: 'rowId',
                            index: 'rowId',
@@ -1274,12 +1293,18 @@
                             name: 'isPassed',
                             index: 'isPassed',
                             align: 'center',
-                            width: 40
+                            width: 40,
+                            formatter: function (cellValue, options, rowObject) {
+                                return (cellValue == true) ? 'Success' : 'Failure';
+                            }
                         }, {
                             name: 'incompleteAttempt',
                             index: 'incompleteAttempt',
                             align: 'center',
-                            width: 40
+                            width: 40,
+                            formatter: function (cellValue, options, rowObject) {
+                                return (cellValue == true) ? 'Yes' : 'No';
+                            }
                         },{
                             name: 'courseIdentifier.contentId',
                             index: 'course',
@@ -1309,11 +1334,17 @@
                             index: 'creationDate',
                             align: 'center',
                             width: 70
+                        },{
+                            name: 'modificationDate',
+                            index: 'modificationDate',
+                            align: 'center',
+                            width: 70,
+                            hidden: true
                         }],
                         pager: '#' + attrs.quizAttemptsGrid,
                         width: '100%',
                         height: 'auto',
-                        sortname: 'creationDate',
+                        sortname: 'modificationDate',
                         sortorder: 'desc',
                         viewrecords: true,
                         subGrid: true,
@@ -1330,13 +1361,19 @@
                             pager_id = "p_"+subgrid_table_id;
                             $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class=''></table>");
                             var rowData = $('#quizAttemptListTable').jqGrid('getRowData', row_id);
-                            console.log(rowData);
+                            $.ajaxSetup({
+                                async: false
+                            });
                             var data = [ {
                                 "responseMessage": rowData.responseMessage,
-                                "course": rowData['courseIdentifier.contentId'],
-                                "module": rowData['moduleIdentifier.contentId'],
-                                "chapter": rowData['chapterIdentifier.contentId'],
-                                "quiz": rowData['quizIdentifier.contentId']
+                                "course": (rowData['courseIdentifier.contentId'].length == 0) ? "" :
+                                     $.getJSON("../mtraining/web-api/courseByContentId/" + rowData['courseIdentifier.contentId']).responseJSON.name,
+                                "module": (rowData['moduleIdentifier.contentId'].length == 0) ? "" :
+                                     $.getJSON("../mtraining/web-api/moduleByContentId/" + rowData['moduleIdentifier.contentId']).responseJSON.name,
+                                "chapter": (rowData['chapterIdentifier.contentId'].length == 0) ? "" :
+                                     $.getJSON("../mtraining/web-api/chapterByContentId/" + rowData['chapterIdentifier.contentId']).responseJSON.name,
+                                "quiz": (rowData['quizIdentifier.contentId'].length == 0) ? "" :
+                                     $.getJSON("../mtraining/web-api/quizByContentId/" + rowData['quizIdentifier.contentId']).responseJSON.name,
                             } ];
 
                             jQuery("#"+subgrid_table_id).jqGrid({
@@ -1349,22 +1386,22 @@
                                         name: 'course',
                                         index: 'course',
                                         align: 'center',
-                                        width: 120
+                                        width: 180
                                     },{
                                         name: 'module',
                                         index: 'module',
                                         align: 'center',
-                                        width: 120
+                                        width: 180
                                     },{
                                         name: 'chapter',
                                         index: 'chapter',
                                         align: 'center',
-                                        width: 120
+                                        width: 180
                                     },{
                                         name: 'quiz',
                                         index: 'quiz',
                                         align: 'center',
-                                        width: 120
+                                        width: 180
                                     }
                                 ],
                                 rowNum:1,

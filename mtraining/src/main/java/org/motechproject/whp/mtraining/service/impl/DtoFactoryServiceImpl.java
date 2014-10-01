@@ -765,6 +765,13 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                     return chapterDto;
                 }
             }
+        } else if (type == LessonDto.class) {
+            List<LessonDto> lessonDtos = getAllLessonDtos();
+            for (LessonDto lessonDto : lessonDtos) {
+                if (lessonDto.getContentId().toString().equals(contentId)) {
+                    return lessonDto;
+                }
+            }
         } else if (type == QuizDto.class) {
             List<QuizDto> quizDtos = getAllQuizDtos();
             for (QuizDto quizDto : quizDtos) {

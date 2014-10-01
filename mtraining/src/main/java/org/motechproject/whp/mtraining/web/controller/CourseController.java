@@ -63,4 +63,10 @@ public class CourseController {
         coursePlanService.deleteCoursePlan(coursePlan);
     }
 
+    @RequestMapping(value = "/courseByContentId/{contentId}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public CoursePlanDto getCourseByContentId(@PathVariable String contentId) {
+        return (CoursePlanDto) dtoFactoryService.getDtoByContentId(contentId, CoursePlanDto.class);
+    }
+
 }

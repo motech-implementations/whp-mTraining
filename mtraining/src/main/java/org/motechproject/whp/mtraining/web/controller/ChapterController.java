@@ -57,4 +57,10 @@ public class ChapterController {
         mTrainingService.deleteChapter(chapterId);
     }
 
+    @RequestMapping(value = "/chapterByContentId/{contentId}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ChapterDto getChapterByContentId(@PathVariable String contentId) {
+        return (ChapterDto) dtoFactoryService.getDtoByContentId(contentId, ChapterDto.class);
+    }
+
 }

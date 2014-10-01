@@ -165,4 +165,10 @@ public class QuizController {
         }
     }
 
+    @RequestMapping(value = "/quizByContentId/{contentId}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public QuizDto getQuizByContentId(@PathVariable String contentId) {
+        return (QuizDto) dtoFactoryService.getDtoByContentId(contentId, QuizDto.class);
+    }
+
 }

@@ -101,7 +101,7 @@ public class CallLog extends MdsEntity {
 
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
-    public DateTime getModificationDate() {
-        return super.getModificationDate();
+    public DateTime getCreationDate() {
+        return super.getCreationDate();
     }
 }
