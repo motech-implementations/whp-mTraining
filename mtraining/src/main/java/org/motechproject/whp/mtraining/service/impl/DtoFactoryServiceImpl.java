@@ -8,6 +8,7 @@ import org.motechproject.whp.mtraining.dto.*;
 import org.motechproject.whp.mtraining.exception.InvalidQuestionException;
 import org.motechproject.whp.mtraining.exception.InvalidQuizException;
 import org.motechproject.whp.mtraining.service.ContentOperationService;
+import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.LocationService;
@@ -26,6 +27,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Autowired
     CoursePlanService coursePlanService;
+
+    @Autowired
+    CourseConfigurationService courseConfigurationService;
 
     @Autowired
     MTrainingService mTrainingService;
@@ -189,8 +193,14 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Override
     public List<CoursePlanDto> getAllCoursePlanDtos() {
-        List<?> allCourses = coursePlanService.getAllCoursePlans();
-        return (List<CoursePlanDto>) getDtos(allCourses);
+        List<CoursePlanDto> courses = (List<CoursePlanDto>)getDtos(coursePlanService.getAllCoursePlans());
+
+        for (CoursePlanDto coursePlan : courses) {
+            CourseConfiguration configuration = courseConfigurationService.getCourseConfigurationByCourseId(coursePlan.getId());
+            coursePlan.setDuration(configuration.getCourseDuration());
+        }
+
+        return courses;
     }
 
     @Override
@@ -219,7 +229,10 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Override
     public CoursePlanDto getCoursePlanDtoById(long courseId) {
-        return (CoursePlanDto) getDto(coursePlanService.getCoursePlanById(courseId));
+        CoursePlanDto coursePlanDto = (CoursePlanDto) getDto(coursePlanService.getCoursePlanById(courseId));
+        CourseConfiguration courseConfiguration = courseConfigurationService.getCourseConfigurationByCourseId(courseId);
+        coursePlanDto.setDuration(courseConfiguration.getCourseDuration());
+        return coursePlanDto;
     }
 
     @Override
@@ -468,13 +481,17 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                     contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(),
                             UUID.randomUUID(), courseUnitMetadataDto.getVersion());
 
-            if (((CoursePlanDto) courseUnitMetadataDto).getLocation()!=null) {
+            if (((CoursePlanDto) courseUnitMetadataDto).getLocation() != null) {
                 Location location = locationService.getLocationById(((CoursePlanDto) courseUnitMetadataDto).getLocation().getId());
                 coursePlan.setLocation(location);
             }
 
-
             coursePlanService.createCoursePlan(coursePlan);
+
+            Integer duration = (((CoursePlanDto) courseUnitMetadataDto).getDuration() != null) ?
+                    ((CoursePlanDto) courseUnitMetadataDto).getDuration() : 365;
+            CourseConfiguration courseConfiguration = new CourseConfiguration(coursePlan.getId(), duration, coursePlan.getLocation());
+            courseConfigurationService.createCourseConfiguration(courseConfiguration);
 
         } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = new Course(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
@@ -520,11 +537,17 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(coursePlan, courseUnitMetadataDto);
-            if (((CoursePlanDto) courseUnitMetadataDto).getLocation()!=null) {
+            if (((CoursePlanDto) courseUnitMetadataDto).getLocation() != null) {
                 Location location = locationService.getLocationById(((CoursePlanDto) courseUnitMetadataDto).getLocation().getId());
                 coursePlan.setLocation(location);
             }
-        coursePlanService.updateCoursePlan(coursePlan);
+            coursePlanService.updateCoursePlan(coursePlan);
+
+            Integer duration = (((CoursePlanDto) courseUnitMetadataDto).getDuration() != null) ?
+                ((CoursePlanDto) courseUnitMetadataDto).getDuration() : 365;
+            CourseConfiguration courseConfiguration = courseConfigurationService.getCourseConfigurationByCourseId(coursePlan.getId());
+            courseConfiguration.setCourseDuration(duration);
+            courseConfigurationService.updateCourseConfiguration(courseConfiguration);
         } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = mTrainingService.getCourseById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(module, courseUnitMetadataDto);

@@ -82,7 +82,7 @@ public class BookmarksBundleIT {
 
         String courseName = String.format("CS002-%s", UUID.randomUUID());
         course002 = mTrainingService.getCourseById(createCourse(courseName).getId());
-        courseConfigService.createCourseConfiguration(new CourseConfiguration(course002.getName(), 60, new Location("block", "district", "state")));
+        courseConfigService.createCourseConfiguration(new CourseConfiguration(course002.getId(), 60, new Location("block", "district", "state")));
 
         removeAllProviders();
         activeProvider = addProvider("remediId1", 22222L, WORKING_PROVIDER);

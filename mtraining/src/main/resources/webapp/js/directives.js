@@ -47,7 +47,7 @@
                     rowNum: 10,
                     rowList: [10, 20, 50],
                     colNames: ['rowId', 'id', scope.msg('mtraining.courseName'), scope.msg('mtraining.courseLocation'), scope.msg('mtraining.description'), scope.msg('mtraining.status'),
-                        scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                        scope.msg('mtraining.filename'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated'), scope.msg('mtraining.duration')],
                     colModel: [{
                        name: 'rowId',
                        index: 'rowId',
@@ -98,6 +98,11 @@
                         align: 'center',
                         width: 70,
                         formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
+                    }, {
+                        name: 'duration',
+                        index: 'duration',
+                        align: 'center',
+                        width: 60
                     }],
                     pager: '#' + attrs.coursesGrid,
                     width: '100%',

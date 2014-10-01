@@ -47,6 +47,6 @@ public class CourseConfigurationServiceImpl implements CourseConfigurationServic
 
     @Override
     public CourseConfiguration getCourseConfigurationByCourseId(long id) {
-        return courseConfigurationDataService.findCourseConfigurationById(id);
+        return courseConfigurationDataService.findCourseConfigurationByCourseId(id);
     }
 }

@@ -13,7 +13,7 @@ import org.motechproject.mtraining.domain.MdsEntity;
 @Entity
 public class CourseConfiguration extends MdsEntity {
 
-    private String courseName;
+    private Long courseId;
 
     private Integer courseDuration;
 
@@ -22,14 +22,18 @@ public class CourseConfiguration extends MdsEntity {
     public CourseConfiguration() {
     }
 
-    public CourseConfiguration(String courseName, Integer courseDuration, Location location) {
-        this.courseName = courseName;
+    public CourseConfiguration(Long courseId, Integer courseDuration, Location location) {
+        this.courseId = courseId;
         this.courseDuration = courseDuration;
         this.location = location;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
     public Integer getCourseDuration() {
@@ -38,5 +42,9 @@ public class CourseConfiguration extends MdsEntity {
 
     public Location getLocation() {
         return location;
+    }
+
+    public void setCourseDuration(Integer courseDuration) {
+        this.courseDuration = courseDuration;
     }
 }

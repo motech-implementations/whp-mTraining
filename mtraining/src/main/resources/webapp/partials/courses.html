@@ -42,6 +42,12 @@
                 <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="fetchingLocations"/>
             </div>
             <div class="form-group">
+                <label class="col-md-4 control-label" for="duration">{{msg('mtraining.duration')}}</label>
+                <div class="col-md-4">
+                    <input id="duration" name="duration" class="form-control input-xlarge-fluid" type="number" min="0" ng-model="course.duration">
+                </div>
+            </div>
+            <div class="form-group">
                 <div class="col-md-8 pull-right">
                     <button id="saveButton" ng-show="creatingCourse" name="saveButton" class="btn btn-primary" ng-click="saveCourse()">{{msg('mtraining.save')}}</button>
                     <button id="updateButton" ng-show="updatingCourse" name="updateButton" class="btn btn-warning" ng-click="updateCourse()">{{msg('mtraining.update')}}</button>

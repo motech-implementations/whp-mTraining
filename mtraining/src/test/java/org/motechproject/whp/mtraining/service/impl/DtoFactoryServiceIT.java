@@ -114,7 +114,7 @@ public class DtoFactoryServiceIT extends BasePaxIT {
         List<CoursePlan> coursePlans;
         CoursePlan coursePlan;
         CoursePlanDto coursePlanDto = new CoursePlanDto(0, COURSE_PLAN_NAME, DESCRIPTION, CourseUnitState.Inactive, FILENAME,
-                ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null);
+                ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null, null);
 
         dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
         coursePlan = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);

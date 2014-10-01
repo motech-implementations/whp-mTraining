@@ -19,6 +19,9 @@ public interface CourseConfigurationDataService extends MotechDataService<Course
     CourseConfiguration findCourseConfigurationById(@LookupField(name = "id") long id);
 
     @Lookup
+    CourseConfiguration findCourseConfigurationByCourseId(@LookupField(name = "courseId") long id);
+
+    @Lookup
     List<CourseConfiguration> findCourseConfigurationByCourseName(@LookupField(name = "courseName") String courseName);
 
 }
