@@ -195,11 +195,6 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     public List<CoursePlanDto> getAllCoursePlanDtos() {
         List<CoursePlanDto> courses = (List<CoursePlanDto>)getDtos(coursePlanService.getAllCoursePlans());
 
-        for (CoursePlanDto coursePlan : courses) {
-            CourseConfiguration configuration = courseConfigurationService.getCourseConfigurationByCourseId(coursePlan.getId());
-            coursePlan.setDuration(configuration.getCourseDuration());
-        }
-
         return courses;
     }
 
@@ -315,6 +310,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         coursePlanDto.setContentId(contentOperationService.getUuidFromJsonString(coursePlan.getContent()));
         coursePlanDto.setLocation(coursePlan.getLocation());
         contentOperationService.getMetadataFromContent(coursePlanDto, coursePlan.getContent());
+        CourseConfiguration configuration = courseConfigurationService.getCourseConfigurationByCourseId(coursePlan.getId());
+        if (configuration == null) {
+            configuration = createCourseConfiguration(coursePlanDto);
+        }
+        coursePlanDto.setDuration(configuration.getCourseDuration());
 
         return coursePlanDto;
     }
@@ -473,6 +473,12 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return questionObject;
     }
 
+    private CourseConfiguration createCourseConfiguration(CoursePlanDto coursePlan) {
+        Integer duration = (coursePlan.getDuration() != null) ? coursePlan.getDuration() : 365;
+        CourseConfiguration courseConfiguration = new CourseConfiguration(coursePlan.getId(), duration, coursePlan.getLocation());
+        return courseConfigurationService.createCourseConfiguration(courseConfiguration);
+    }
+
     private void createCourseUnitMetadataFromDto(CourseUnitMetadataDto courseUnitMetadataDto) {
         if (courseUnitMetadataDto instanceof CoursePlanDto) {
             CoursePlan coursePlan = new CoursePlan(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
@@ -486,12 +492,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                 coursePlan.setLocation(location);
             }
 
-            coursePlanService.createCoursePlan(coursePlan);
-
-            Integer duration = (((CoursePlanDto) courseUnitMetadataDto).getDuration() != null) ?
-                    ((CoursePlanDto) courseUnitMetadataDto).getDuration() : 365;
-            CourseConfiguration courseConfiguration = new CourseConfiguration(coursePlan.getId(), duration, coursePlan.getLocation());
-            courseConfigurationService.createCourseConfiguration(courseConfiguration);
+            coursePlan = coursePlanService.createCoursePlan(coursePlan);
+            courseUnitMetadataDto.setId(coursePlan.getId());
+            createCourseConfiguration((CoursePlanDto) courseUnitMetadataDto);
 
         } else if (courseUnitMetadataDto instanceof ModuleDto) {
             Course module = new Course(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),

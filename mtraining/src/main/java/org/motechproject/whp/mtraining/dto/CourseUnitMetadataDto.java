@@ -38,6 +38,8 @@ public class CourseUnitMetadataDto {
     @JsonView({PublishCourseView.class})
     private int version;
 
+    private Integer duration;
+
     public CourseUnitMetadataDto() {
     }
 
@@ -134,5 +136,13 @@ public class CourseUnitMetadataDto {
 
     public void increaseVersion() {
         version++;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 }

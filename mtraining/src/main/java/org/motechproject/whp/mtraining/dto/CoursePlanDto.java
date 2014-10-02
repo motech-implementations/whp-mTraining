@@ -19,8 +19,6 @@ public class CoursePlanDto extends CourseUnitMetadataDto {
 
     private Location location;
 
-    private Integer duration;
-
     public CoursePlanDto() {
     }
 
@@ -30,7 +28,7 @@ public class CoursePlanDto extends CourseUnitMetadataDto {
         super(id, name, description, state, filename, creationDate, modificationDate);
         this.modules = modules;
         this.location = location;
-        this.duration = (duration == null) ? 365 : duration;
+        super.setDuration((duration == null) ? 365 : duration);
     }
 
     public CoursePlanDto(Integer id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate,
@@ -38,12 +36,12 @@ public class CoursePlanDto extends CourseUnitMetadataDto {
         super(id, name, state, creationDate, modificationDate);
         this.modules = modules;
         this.location = location;
-        this.duration = (duration == null) ? 365 : duration;
+        super.setDuration((duration == null) ? 365 : duration);
     }
 
     public CoursePlanDto(long id, String name, CourseUnitState state, DateTime creationDate, DateTime modificationDate) {
         super(id, name, state, creationDate, modificationDate);
-        duration = 365;
+        super.setDuration(365);
     }
 
     public List<ModuleDto> getModules() {
@@ -60,13 +58,5 @@ public class CoursePlanDto extends CourseUnitMetadataDto {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
     }
 }
