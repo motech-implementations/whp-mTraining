@@ -639,18 +639,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     public void updateCourseDto(CourseUnitMetadataDto dto) {
-        Set<ManyToManyRelation> allRelations = new LinkedHashSet<>();
         CourseUnitMetadataDto courseUnitMetadataDto = getDtoById(dto.getId());
         String externalId = courseUnitMetadataDto.getExternalId();
         createOrUpdateFromDto(dto);
         if (externalId != null && !externalId.equals(dto.getExternalId())) {
-            List<ManyToManyRelation> relations = manyToManyRelationService.getRelationsByChildId(dto.getId());
-            if (relations == null || relations.size() == 0) {
-                increaseVersionsByChildId(dto.getId(), dto);
-            } else {
-                allRelations.addAll(manyToManyRelationService.getRelationsByChildId(dto.getId()));
-            }
-            increaseVersionsByRelations(allRelations);
+            increaseVersionsByChildId(dto.getId(), dto);
         }
     }
 
