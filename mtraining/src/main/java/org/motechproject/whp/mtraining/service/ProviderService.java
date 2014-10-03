@@ -11,6 +11,8 @@ public interface ProviderService {
 
     Provider updateProvider(Provider provider);
 
+    Provider updateProviderbyRemediId(Provider provider);
+
     void deleteProvider(Provider provider);
 
     List<Provider> getAllProviders();

@@ -24,5 +24,5 @@ public interface ProviderDataService extends MotechDataService<Provider> {
     List<Provider> findProviderByCallerId(@LookupField(name = "callerId") Long callerId);
 
     @Lookup
-    List<Provider> findProviderByRemediId(@LookupField(name = "remediId") String remediId);
+    Provider findProviderByRemediId(@LookupField(name = "remediId") String remediId);
 }

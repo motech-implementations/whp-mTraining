@@ -42,6 +42,12 @@ public class ProviderController {
         providerService.updateProvider(provider);
     }
 
+    @RequestMapping(value = "/provider/remediid/{remediId}", method = RequestMethod.PUT, consumes = "application/json")
+    @ResponseBody
+    public void updateProviderMappedbyRemediId(@RequestBody Provider provider) {
+        providerService.updateProviderbyRemediId(provider);
+    }
+
     @RequestMapping(value = "/provider/{providerId}", method = RequestMethod.DELETE)
     @ResponseBody
     public void removeProvider(@PathVariable long providerId) {

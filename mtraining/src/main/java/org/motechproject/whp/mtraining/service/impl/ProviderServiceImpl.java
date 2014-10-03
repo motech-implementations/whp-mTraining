@@ -43,6 +43,15 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
+    public Provider updateProviderbyRemediId(Provider provider) {
+        Provider providerToUpdate = getProviderByRemediId(provider.getRemediId());
+        providerToUpdate.setCallerId(provider.getCallerId());
+        providerToUpdate.setProviderStatus(provider.getProviderStatus());
+        providerToUpdate.setLocation(getLocationFromDatabase(provider.getLocation()));
+        return providerDataService.update(providerToUpdate);
+    }
+
+    @Override
     public void deleteProvider(Provider provider) {
         providerDataService.delete(provider);
     }
@@ -60,8 +69,7 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public Provider getProviderByRemediId(String remediId) {
-        List<Provider> providers = providerDataService.findProviderByRemediId(remediId);
-        return (providers.size() > 0) ? providers.get(0) : null;
+        return providerDataService.findProviderByRemediId(remediId);
     }
 
     @Override
