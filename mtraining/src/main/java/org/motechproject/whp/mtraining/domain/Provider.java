@@ -27,6 +27,7 @@ public class Provider extends MdsEntity {
     private ProviderStatus providerStatus;
 
     @Field
+    @Unique
     private String remediId;
 
     public Provider(String remediId, Long callerId, ProviderStatus providerStatus, Location location) {
