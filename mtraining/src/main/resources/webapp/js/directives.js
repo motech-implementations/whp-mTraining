@@ -651,7 +651,7 @@
                     if (!cellValue){
                         return '';
                     }
-                    return cellValue.state + " - " + cellValue.district + " - " + cellValue.block;
+                    return cellValue.state;
                 }
             }
         };

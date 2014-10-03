@@ -30,7 +30,6 @@ public class ProviderImportService {
     public void importProviders(List<ProviderCsvRequest> providerCsvRequests) {
         for (ProviderCsvRequest providerCsvRequest : providerCsvRequests) {
             Provider provider = createProvider(providerCsvRequest);
-            createNewStateLocation(providerCsvRequest.getState());
 
             if (providerService.getProviderById(provider.getId()) == null) {
                 providerService.createProvider(provider);
@@ -41,21 +40,20 @@ public class ProviderImportService {
     }
 
     private Provider createProvider(ProviderCsvRequest providerCsvRequest) {
-        Location location = locationService.getBlockByName(providerCsvRequest.getBlock());
+        Location location = createNewStateLocation(providerCsvRequest.getState());
         if (location == null) {
-            location = new Location(providerCsvRequest.getBlock(), providerCsvRequest.getDistrict(), providerCsvRequest.getState());
-            locationService.createLocation(location);
+            location = locationService.getStateByName(providerCsvRequest.getState());
         }
-
         return new Provider(providerCsvRequest.getRemedi_id(), Long.valueOf(providerCsvRequest.getPrimary_contact()),
                 from(providerCsvRequest.getProviderstatus()),
                 location);
     }
 
-    private void createNewStateLocation (String stateName) {
+    private Location createNewStateLocation (String stateName) {
         if (!locationService.doesStateExist(stateName)){
-            locationService.createLocation(new Location(null, null, stateName));
+            return locationService.createLocation(new Location(null, null, stateName));
         }
+        return null;
     }
 }
 

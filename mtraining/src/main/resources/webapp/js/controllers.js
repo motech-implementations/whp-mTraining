@@ -1365,7 +1365,7 @@
 
         $scope.getLocations = function() {
             $scope.fetchingLocations = true;
-            $.getJSON('../mtraining/web-api/blockLocations', function(data) {
+            $.getJSON('../mtraining/web-api/stateLocations', function(data) {
                 $scope.locations = data;
                 $scope.fetchingLocations = false;
                 $scope.$apply();
