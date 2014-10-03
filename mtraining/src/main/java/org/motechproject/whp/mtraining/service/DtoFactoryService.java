@@ -75,4 +75,6 @@ public interface DtoFactoryService {
 
     ChapterDto getChapterDtoWithQuiz(long chapterId);
 
+    void setCoursePublished(long courseId, Boolean isPublished);
+
 }

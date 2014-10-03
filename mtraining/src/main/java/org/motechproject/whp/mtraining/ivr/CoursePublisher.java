@@ -60,6 +60,8 @@ public class CoursePublisher {
             } else {
                 ivrResponse = retryPublishing(courseId);
             }
+        } else if (ivrResponse.isSuccess()) {
+            dtoFactoryService.setCoursePublished(courseId, true);
         }
 
         try {

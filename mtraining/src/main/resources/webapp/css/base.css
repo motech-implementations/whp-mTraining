@@ -126,8 +126,29 @@ li[state="Inactive"] > a {
     color: #C0C0C0 !important;
 }
 
-.ui-jqgrid .ui-jqgrid-btable {
-    table-layout: auto;
+li[published="true"] > a {
+    background-color: lightyellow;
+}
+
+li[published="true"] > a.jstree-hovered {
+    background: repeating-linear-gradient(
+      45deg,
+      #e7f4f9,
+      #e7f4f9 10px,
+      lightyellow 10px,
+      lightyellow 20px
+    );
+
+}
+
+li[published="true"] > a.jstree-clicked {
+    background: repeating-linear-gradient(
+      45deg,
+      #beebff,
+      #beebff 10px,
+      lightyellow 10px,
+      lightyellow 20px
+    );
 }
 
 .ui-jqgrid .ui-jqgrid-htable {

@@ -19,6 +19,8 @@ public class CoursePlanDto extends CourseUnitMetadataDto {
 
     private Location location;
 
+    private boolean isPublished;
+
     public CoursePlanDto() {
     }
 
@@ -58,5 +60,13 @@ public class CoursePlanDto extends CourseUnitMetadataDto {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public boolean isPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(boolean isPublished) {
+        this.isPublished = isPublished;
     }
 }

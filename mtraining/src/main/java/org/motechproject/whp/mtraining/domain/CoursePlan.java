@@ -17,6 +17,9 @@ public class CoursePlan extends CourseUnitMetadata {
     @Field
     private Location location;
 
+    @Field
+    private boolean isPublished;
+
     public CoursePlan(String name, CourseUnitState state, String content) {
         this(name, state, content, null);
     }
@@ -40,6 +43,14 @@ public class CoursePlan extends CourseUnitMetadata {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public boolean isPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(boolean isPublished) {
+        this.isPublished = isPublished;
     }
 
 }

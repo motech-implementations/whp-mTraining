@@ -42,6 +42,7 @@
         });
 
         initTree();
+         $('.table-lightblue-nohover').removeClass('.table-lightblue');
          $('.draggable').sortable({
             connectWith: '.droppable',
             receive: receiveEventHandler
@@ -57,7 +58,7 @@
                     var len = parent.children.length;
                     for(var j = 0; j < len; j++) {
                         var child = $scope.nodeProperties[parent.children[j]];
-                        createNode(child.id, child.name, idx, parent.level + 1, child.type, child.state, child.version);
+                        createNode(child.id, child.name, idx, parent.level + 1, child.type, child.state, child.version, child.published);
                         $scope.jstree.create_node(idx, $scope.treeData[$scope.iterator], 'last', false, false);
                         populateChildren($scope.iterator, child.type);
                     }
@@ -104,7 +105,7 @@
                                     var node = $scope.jstree.get_node(i);
                                     if (node.parent && $scope.nodeProperties[node.parent].id == $scope.nodeProperties[parent.id].id) {
                                         $scope.jstree.delete_node(i);
-                                        createNode(item.id, item.name, node.parent, parent.level + 1, type, item.state, item.version);
+                                        createNode(item.id, item.name, node.parent, parent.level + 1, type, item.state, item.version, false);
                                         $scope.nodeProperties[i] = [];
                                         $scope.jstree.create_node(node.parent, $scope.treeData[$scope.iterator], 'last', false, false);
                                     }
@@ -120,7 +121,7 @@
                 // create nodes
                 for(var i = 1; i < $scope.nodeProperties.length; i++) {
                      if ($scope.nodeProperties[i].id == $scope.nodeProperties[parent.id].id) {
-                        createNode(item.id, item.name, i, parent.level + 1, type, item.state, item.version);
+                        createNode(item.id, item.name, i, parent.level + 1, type, item.state, item.version, false);
                         $scope.jstree.create_node(i, $scope.treeData[$scope.iterator], 'last', false, false);
                         populateChildren($scope.iterator, type)
                     }
@@ -247,6 +248,7 @@
                     // internal server error - 500; ok - 800; missing files - 1001; network failure - 1002
                     var code = response.responseCode;
                     if (code == 800) {
+                        initTree();
                         $scope.alertMessage = $scope.msg('mtraining.publishedCourse');
                     } else if (code == 1001) {
                         $("#errorMessage").text($scope.msg('mtraining.error.missingFiles') + ": " + response.responseMessage);
@@ -312,7 +314,7 @@
             return true;
         }
 
-        function createNode(id, text, parent, level, type, state, version) {
+        function createNode(id, text, parent, level, type, state, version, published) {
             $scope.iterator++;
             $scope.treeData[$scope.iterator] = {
                 "id" : $scope.iterator,
@@ -323,7 +325,7 @@
                         disabled : false,
                         selected : false
                     },
-                li_attr : {"state": state},
+                li_attr : {"state": state, "published": published},
                 a_attr : {},
                 "level" : level,
                 "type" : type,
@@ -333,7 +335,8 @@
                 name: text,
                 type: type,
                 state: state,
-                version: version
+                version: version,
+                published: published
             }
          }
 
@@ -413,7 +416,8 @@
                 onNodeChanged(data.parent);
                 onNodeChanged(data.old_parent);
                 createNode($scope.nodeProperties[node.id].id, $scope.nodeProperties[node.id].name, node.parent,
-                        node.original.level, $scope.nodeProperties[node.id].type, $scope.nodeProperties[node.id].state, $scope.nodeProperties[node.id].version);
+                        node.original.level, $scope.nodeProperties[node.id].type, $scope.nodeProperties[node.id].state,
+                        $scope.nodeProperties[node.id].version, $scope.nodeProperties[node.id]);
                 $scope.nodeProperties[node.id] = $scope.nodeProperties[$scope.iterator];
                 $scope.iterator--;
             });
@@ -490,7 +494,7 @@
                 } else {
                     type = "message";
                 }
-                createNode(item.id, item.name, par, level, type, item.state, item.version);
+                createNode(item.id, item.name, par, level, type, item.state, item.version, item.published);
 
                 var child_table = item.modules || item.chapters || item.messages || [];
                 var quiz = item.quiz;

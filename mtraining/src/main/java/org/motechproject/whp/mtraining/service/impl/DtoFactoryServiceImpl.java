@@ -309,6 +309,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                 coursePlan.getCreationDate(), coursePlan.getModificationDate());
         coursePlanDto.setContentId(contentOperationService.getUuidFromJsonString(coursePlan.getContent()));
         coursePlanDto.setLocation(coursePlan.getLocation());
+        coursePlanDto.setPublished(coursePlan.isPublished());
         contentOperationService.getMetadataFromContent(coursePlanDto, coursePlan.getContent());
         CourseConfiguration configuration = courseConfigurationService.getCourseConfigurationByCourseId(coursePlan.getId());
         if (configuration == null) {
@@ -688,6 +689,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             if (relation.getParentType() == ParentType.CoursePlan) {
                 parent = getCoursePlanDtoById(parentId);
                 child = getModuleDtoById(childId);
+                setCoursePublished(parent.getId(), false);
             } else if (relation.getParentType() == ParentType.Course) {
                 parent = getModuleDtoById(parentId);
                 child = getChapterDtoById(childId);
@@ -794,6 +796,12 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             }
         }
         return null;
+    }
+
+    public void setCoursePublished(long courseId, Boolean isPublished) {
+        CoursePlan coursePlan = coursePlanService.getCoursePlanById(courseId);
+        coursePlan.setPublished(isPublished);
+        coursePlanService.updateCoursePlan(coursePlan);
     }
 
 }
