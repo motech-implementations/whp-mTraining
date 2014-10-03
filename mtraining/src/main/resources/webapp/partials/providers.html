@@ -42,7 +42,7 @@
                 <div class="col-md-4">
                     <select id="location" class="form-control input-xlarge-fluid" ng-model="selectedLocation">
                         <option></option>
-                        <option ng-repeat="location in locations" value="{{$index}}">{{location.state}} - {{location.district}} - {{location.block}}</option>
+                        <option ng-repeat="location in locations" value="{{$index}}">{{location.state}}</option>
                     </select>
                 </div>
                 <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="fetchingLocations"/>
