@@ -28,4 +28,6 @@ public interface LocationService {
     List<Location> getBlockLocations();
 
     List<Location> getStateLocations();
+
+    List<Location> getUnusedStateLocations();
 }

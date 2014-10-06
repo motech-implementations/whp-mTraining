@@ -1,7 +1,6 @@
 package org.motechproject.whp.mtraining.domain;
 
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonFilter;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import org.motechproject.mds.annotations.Entity;

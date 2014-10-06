@@ -33,6 +33,12 @@ public class LocationController {
         return locationService.getStateLocations();
     }
 
+    @RequestMapping("/unusedStateLocations")
+    @ResponseBody
+    public List<Location> getUnusedStateLocations() {
+        return locationService.getUnusedStateLocations();
+    }
+
     @RequestMapping("/locations")
     @ResponseBody
     public List<Location> getLocations() {
