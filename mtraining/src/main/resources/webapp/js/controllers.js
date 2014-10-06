@@ -537,11 +537,11 @@
                     results: function (data, page) {
 			            var results = [];
 
-			            if ($scope.course !== undefined && $scope.course.location !== undefined) {
+			            if ($scope.course && $scope.course.location) {
 			                data.push($scope.course.location);
 			            }
 
-			            $.each(data, function(index, item){
+			            $.each(data, function(index, item) {
 				            results.push({
 				                id: item.id,
 				                text: item.state
@@ -559,7 +559,11 @@
                 }
             });
             $("#location").on("change", function(e) {
-                $scope.course.location = $scope.getLocationById(e.val);
+                if (e.val && e.val.length > 0)  {
+                    $scope.course.location = $scope.getLocationById(e.val);
+                } else {
+                    $scope.course.location = null;
+                }
             });
         }
 
