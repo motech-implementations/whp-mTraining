@@ -9,7 +9,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <motech.version>0.24-SNAPSHOT</motech.version>
+        <motech.version>0.24</motech.version>
         <yui.compress.dir>${project.build.directory}/yui-compress/</yui.compress.dir>
         <postgres.host>localhost</postgres.host>
         <postgres.port>5432</postgres.port>
