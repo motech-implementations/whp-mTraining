@@ -189,6 +189,6 @@ li[published="true"] > a.jstree-clicked {
 }
 
 /* fix for subgrid scrollbar in google chrome */
-.subgrid-data .ui-jqgrid-bdiv {
+.subgrid-data, .ui-jqgrid-view .ui-jqgrid-bdiv {
     overflow: hidden;
 }
