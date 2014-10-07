@@ -146,7 +146,7 @@ public class QuizController {
         Provider provider = providerService.getProviderByCallerId(quizReportRequest.getCallerId());
         if (provider == null)
             return new ResponseEntity<MotechResponse>(basicResponse.withResponse(ResponseStatus.UNKNOWN_PROVIDER), HttpStatus.OK);
-        return new ResponseEntity<MotechResponse>(quizReporter.processAndLogQuiz(String.valueOf(provider.getCallerId()), quizReportRequest), HttpStatus.OK);
+        return new ResponseEntity<MotechResponse>(quizReporter.processAndLogQuiz(String.valueOf(provider.getCallerId()), String.valueOf(provider.getRemediId()), quizReportRequest), HttpStatus.OK);
     }
 
     public String toJsonString(Object obj, String[] ignorableFieldNames) {

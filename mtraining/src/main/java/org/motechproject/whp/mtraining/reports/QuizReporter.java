@@ -56,14 +56,14 @@ public class QuizReporter {
 
     private Logger LOGGER = LoggerFactory.getLogger(QuizReporter.class);
 
-    public MotechResponse processAndLogQuiz(String callerId, QuizReportRequest quizReportRequest) {
+    public MotechResponse processAndLogQuiz(String callerId, String remediId, QuizReportRequest quizReportRequest) {
         QuizResultSheetDto quizResult;
         ValidationError error = validateQuizReportRequest(quizReportRequest);
         if (error != null)
             return new BasicResponse(quizReportRequest.getCallerId(), quizReportRequest.getSessionId(), quizReportRequest.getUniqueId(), statusFor(error.getErrorCode()));
         try {
             quizResult = dtoFactoryService.gradeQuiz(toQuizAnswerSheetDto(callerId, quizReportRequest));
-            logQuizResult(callerId, quizReportRequest, quizResult);
+            logQuizResult(callerId, remediId, quizReportRequest, quizResult);
         } catch (InvalidQuestionException ex) {
             return new BasicResponse(quizReportRequest.getCallerId(), quizReportRequest.getSessionId(), quizReportRequest.getUniqueId(), ResponseStatus.INVALID_QUESTION);
         } catch (InvalidQuizException ex) {
@@ -100,7 +100,7 @@ public class QuizReporter {
 
     }
 
-    private void logQuizResult(String callerId, QuizReportRequest quizReportRequest, QuizResultSheetDto quizResult) {
+    private void logQuizResult(String callerId, String remediId, QuizReportRequest quizReportRequest, QuizResultSheetDto quizResult) {
         QuizAttempt quizAttempt = new QuizAttempt(callerId, quizReportRequest.getCallerId(), quizReportRequest.getUniqueId(),
                 quizReportRequest.getSessionId(), quizReportRequest.getCourse(), quizReportRequest.getModule(),
                 quizReportRequest.getChapter(), quizReportRequest.getQuiz(), DateTime.parse(quizReportRequest.getStartTime()), DateTime.parse(quizReportRequest.getEndTime()),
