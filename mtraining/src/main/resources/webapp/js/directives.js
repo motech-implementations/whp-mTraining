@@ -5,6 +5,15 @@
 
     var directives = angular.module('mtraining.directives', []);
 
+    // get json attribute safely
+    function getAttr(obj, attrName) {
+        if (obj != null) {
+            return obj[attrName];
+        } else {
+            return null;
+        }
+    }
+
     directives.directive('fileModel', function ($parse) {
         return {
             restrict: 'A',
@@ -1024,15 +1033,15 @@
                         var data = [ {
                             "responseMessage": rowData.responseMessage,
                             "course": (rowData['bookmarkReport.courseIdentifier.contentId'].length == 0) ? "" :
-                                 $.getJSON("../mtraining/web-api/courseByContentId/" + rowData['bookmarkReport.courseIdentifier.contentId']).responseJSON.name,
+                                 getAttr($.getJSON("../mtraining/web-api/courseByContentId/" + rowData['bookmarkReport.courseIdentifier.contentId']).responseJSON, 'name'),
                             "module": (rowData['bookmarkReport.moduleIdentifier.contentId'].length == 0) ? "" :
-                                 $.getJSON("../mtraining/web-api/moduleByContentId/" + rowData['bookmarkReport.moduleIdentifier.contentId']).responseJSON.name,
+                                 getAttr($.getJSON("../mtraining/web-api/moduleByContentId/" + rowData['bookmarkReport.moduleIdentifier.contentId']).responseJSON, 'name'),
                             "chapter": (rowData['bookmarkReport.chapterIdentifier.contentId'].length == 0) ? "" :
-                                 $.getJSON("../mtraining/web-api/chapterByContentId/" + rowData['bookmarkReport.chapterIdentifier.contentId']).responseJSON.name,
+                                 getAttr($.getJSON("../mtraining/web-api/chapterByContentId/" + rowData['bookmarkReport.chapterIdentifier.contentId']).responseJSON, 'name'),
                             "message": (rowData['bookmarkReport.messageIdentifier.contentId'].length == 0) ? "" :
-                                 $.getJSON("../mtraining/web-api/lessonByContentId/" + rowData['bookmarkReport.messageIdentifier.contentId']).responseJSON.name,
+                                 getAttr($.getJSON("../mtraining/web-api/lessonByContentId/" + rowData['bookmarkReport.messageIdentifier.contentId']).responseJSON, 'name'),
                             "quiz": (rowData['bookmarkReport.quizIdentifier.contentId'].length == 0) ? "" :
-                                $.getJSON("../mtraining/web-api/quizByContentId/" + rowData['bookmarkReport.quizIdentifier.contentId']).responseJSON.name,
+                                 getAttr($.getJSON("../mtraining/web-api/quizByContentId/" + rowData['bookmarkReport.quizIdentifier.contentId']).responseJSON.name, 'name')
                         } ];
 
                         jQuery("#"+subgrid_table_id).jqGrid({
@@ -1166,7 +1175,7 @@
                                             return idsToNames[i].name;
                                         }
                                     }
-                                    var name = $.getJSON("../mtraining/web-api/courseByContentId/" + cellValue).responseJSON.name;
+                                    var name = getAttr($.getJSON("../mtraining/web-api/courseByContentId/" + cellValue).responseJSON, 'name');
                                     idsToNames.push({"id": cellValue, "name": name});
                                     return name;
                                 }
@@ -1356,13 +1365,13 @@
                             var data = [ {
                                 "responseMessage": rowData.responseMessage,
                                 "course": (rowData['courseIdentifier.contentId'].length == 0) ? "" :
-                                     $.getJSON("../mtraining/web-api/courseByContentId/" + rowData['courseIdentifier.contentId']).responseJSON.name,
+                                     getAttr($.getJSON("../mtraining/web-api/courseByContentId/" + rowData['courseIdentifier.contentId']).responseJSON, 'name'),
                                 "module": (rowData['moduleIdentifier.contentId'].length == 0) ? "" :
-                                     $.getJSON("../mtraining/web-api/moduleByContentId/" + rowData['moduleIdentifier.contentId']).responseJSON.name,
+                                     getAttr($.getJSON("../mtraining/web-api/moduleByContentId/" + rowData['moduleIdentifier.contentId']).responseJSON, 'name'),
                                 "chapter": (rowData['chapterIdentifier.contentId'].length == 0) ? "" :
-                                     $.getJSON("../mtraining/web-api/chapterByContentId/" + rowData['chapterIdentifier.contentId']).responseJSON.name,
+                                     getAttr($.getJSON("../mtraining/web-api/chapterByContentId/" + rowData['chapterIdentifier.contentId']).responseJSON, 'name'),
                                 "quiz": (rowData['quizIdentifier.contentId'].length == 0) ? "" :
-                                     $.getJSON("../mtraining/web-api/quizByContentId/" + rowData['quizIdentifier.contentId']).responseJSON.name,
+                                     getAttr($.getJSON("../mtraining/web-api/quizByContentId/" + rowData['quizIdentifier.contentId']).responseJSON, 'name')
                             } ];
 
                             jQuery("#"+subgrid_table_id).jqGrid({
