@@ -1043,6 +1043,9 @@
                             "quiz": (rowData['bookmarkReport.quizIdentifier.contentId'].length == 0) ? "" :
                                  getAttr($.getJSON("../mtraining/web-api/quizByContentId/" + rowData['bookmarkReport.quizIdentifier.contentId']).responseJSON.name, 'name')
                         } ];
+                        $.ajaxSetup({
+                            async: true
+                        });
 
                         jQuery("#"+subgrid_table_id).jqGrid({
                             datatype: "local",
@@ -1113,9 +1116,6 @@
 
         directives.directive('callLogGrid', function($http) {
             var idsToNames = [];
-            $.ajaxSetup({
-                async: false
-            });
             return {
                 restrict: 'A',
                 link: function(scope, element, attrs) {
@@ -1175,7 +1175,13 @@
                                             return idsToNames[i].name;
                                         }
                                     }
+                                    $.ajaxSetup({
+                                        async: false
+                                    });
                                     var name = getAttr($.getJSON("../mtraining/web-api/courseByContentId/" + cellValue).responseJSON, 'name');
+                                    $.ajaxSetup({
+                                        async: true
+                                    });
                                     idsToNames.push({"id": cellValue, "name": name});
                                     return name;
                                 }
@@ -1373,6 +1379,9 @@
                                 "quiz": (rowData['quizIdentifier.contentId'].length == 0) ? "" :
                                      getAttr($.getJSON("../mtraining/web-api/quizByContentId/" + rowData['quizIdentifier.contentId']).responseJSON, 'name')
                             } ];
+                            $.ajaxSetup({
+                                async: true
+                            });
 
                             jQuery("#"+subgrid_table_id).jqGrid({
                                 datatype: "local",
