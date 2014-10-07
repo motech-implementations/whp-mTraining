@@ -9,6 +9,8 @@ import org.motechproject.mtraining.domain.MdsEntity;
 import org.motechproject.whp.mtraining.util.CustomDateDeserializer;
 import org.motechproject.whp.mtraining.util.CustomDateSerializer;
 
+import javax.jdo.annotations.Unique;
+
 @Entity
 public class Location extends MdsEntity {
 
@@ -22,6 +24,7 @@ public class Location extends MdsEntity {
     @Field
     private String district;
 
+    @Unique
     @Field(required=true)
     private String state;
 
