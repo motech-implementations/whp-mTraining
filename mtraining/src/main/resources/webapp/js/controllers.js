@@ -541,12 +541,14 @@
 			                data.push($scope.course.location);
 			            }
 
-			            $.each(data, function(index, item) {
-				            results.push({
-				                id: item.id,
-				                text: item.state
-				            });
-			            });
+                        $.each(data, function(index, item){
+                            if (item != null) {
+                                results.push({
+                                    id: item.id,
+                                    text: item.state
+                                });
+                            }
+                        });
 
 			            $scope.locations = data;
 			            return {
