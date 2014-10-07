@@ -6,6 +6,7 @@ import org.motechproject.mtraining.domain.Course;
 import org.motechproject.mtraining.domain.CourseUnitMetadata;
 import org.motechproject.mtraining.domain.CourseUnitState;
 
+import javax.jdo.annotations.Unique;
 import java.util.List;
 
 @Entity
@@ -15,6 +16,7 @@ public class CoursePlan extends CourseUnitMetadata {
     private List<Course> courses;
 
     @Field
+    @Unique
     private Location location;
 
     @Field
