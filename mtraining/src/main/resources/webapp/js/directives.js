@@ -683,8 +683,7 @@
                     rownumbers: true,
                     rowNum: 10,
                     rowList: [10, 20, 50],
-                    colNames: ['rowId', 'id', scope.msg('mtraining.state'), scope.msg('mtraining.district'), scope.msg('mtraining.block'),
-                        scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                    colNames: ['rowId', 'id', scope.msg('mtraining.state'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
                     colModel: [{
                        name: 'rowId',
                        index: 'rowId',
@@ -701,16 +700,6 @@
                         align: 'center',
                         width: 160
                     }, {
-                        name: 'district',
-                        index: 'district',
-                        align: 'center',
-                        width: 160
-                    }, {
-                        name: 'block',
-                        index: 'block',
-                        align: 'center',
-                        width: 160
-                    },{
                         name: 'creationDate',
                         index: 'creationDate',
                         align: 'center',

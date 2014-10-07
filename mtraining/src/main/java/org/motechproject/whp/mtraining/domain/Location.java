@@ -55,9 +55,9 @@ public class Location extends MdsEntity {
 
     public int getLevel() {
         if (level == null) {
-            if (block == null && district == null) {
+            if ((block == null || block.isEmpty()) && (district == null || district.isEmpty())) {
                 this.level = STATE_LEVEL;
-            } else if (block == null) {
+            } else if (block == null || block.isEmpty()) {
                 this.level = DISTRICT_LEVEL;
             } else {
                 this.level = BLOCK_LEVEL;
