@@ -1588,9 +1588,15 @@
             if (!$scope.location.state) {
                 $scope.errorState = $scope.msg('mtraining.field.required', $scope.msg('mtraining.state'));
                 return false;
-            } else {
-                return true;
             }
+            var data = $("#locationsListTable").jqGrid('getGridParam','data');
+            for(var i = 0; i < data.length; i++) {
+                if (data[i].state == $scope.location.state) {
+                    $scope.errorState = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.state'));
+                    return false;
+                }
+            }
+            return true;
         }
 
         $scope.clearLocation();
