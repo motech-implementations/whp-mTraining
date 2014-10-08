@@ -3,10 +3,16 @@ package org.motechproject.whp.mtraining.validator;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.mtraining.domain.*;
+import org.motechproject.whp.mtraining.dto.*;
+import org.motechproject.whp.mtraining.service.CoursePlanService;
+import org.motechproject.whp.mtraining.service.impl.ContentOperationServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 * Validator for validating fields which represent the course structure:
@@ -17,80 +23,33 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CourseStructureValidator {
-    private static Logger logger = LoggerFactory.getLogger(CourseStructureValidator.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
 
     @Autowired
     private MTrainingService mTrainingService;
 
-    public CourseStructureValidationResponse validateQuiz(Quiz quiz) {
-        CourseStructureValidationResponse validationResponse = new CourseStructureValidationResponse();
-        if (quiz == null) {
-            validationResponse.addError("Quiz should not be null");
-            return validationResponse;
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Validating Quiz"));
-        }
-        if (quiz.getQuestions().size() == 0) {
-            validationResponse.addError("No of questions should not be 0 for a quiz");
-        }
-        if (mTrainingService.getQuizById(quiz.getId()) == null){
-            validationResponse.addError("Quiz does not exist for given Id: " + quiz.getId());
-        }
-        return validationResponse;
-    }
+    @Autowired
+    private CoursePlanService coursePlanService;
 
-    public CourseStructureValidationResponse validateLesson(Lesson lesson) {
-        CourseStructureValidationResponse validationResponse = new CourseStructureValidationResponse();
-        if (lesson == null) {
-            validationResponse.addError("Lesson should not be null");
-            return validationResponse;
+    public boolean isPresentInDb(CourseUnitMetadataDto courseUnitMetadataDto) {
+        CourseUnitMetadata existing = null;
+        List<CourseUnitMetadata> courseUnitMetadataList = new ArrayList<>();
+        String nodeName = courseUnitMetadataDto.getName();
+        if (courseUnitMetadataDto instanceof CoursePlanDto) {
+            existing = coursePlanService.getCoursePlanByName(nodeName);
+        } else if (courseUnitMetadataDto instanceof ModuleDto) {
+            courseUnitMetadataList.addAll(mTrainingService.getCourseByName(nodeName));
+        } else if (courseUnitMetadataDto instanceof ChapterDto) {
+            courseUnitMetadataList.addAll(mTrainingService.getChapterByName(nodeName));
+        } else if (courseUnitMetadataDto instanceof LessonDto) {
+            courseUnitMetadataList.addAll(mTrainingService.getLessonByName(nodeName));
+        } else if (courseUnitMetadataDto instanceof QuizDto) {
+            courseUnitMetadataList.addAll(mTrainingService.getQuizByName(nodeName));
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Validating Lesson: %s", lesson.getName()));
+        if ((existing != null && existing.getId() != courseUnitMetadataDto.getId()) || (!courseUnitMetadataList.isEmpty() && courseUnitMetadataList.get(0).getId() != courseUnitMetadataDto.getId())) {
+            LOG.error("element of that name exists in the database");
+            return false;
         }
-        validateName(lesson.getName(), validationResponse, "Lesson name should not be blank");
-        if (mTrainingService.getLessonById(lesson.getId()) == null){
-            validationResponse.addError("Lesson does not exist for given Id: " + lesson.getId());
-        }
-        return validationResponse;
-    }
-
-    public CourseStructureValidationResponse validateChapter(Chapter chapter) {
-        CourseStructureValidationResponse validationResponse = new CourseStructureValidationResponse();
-        if (chapter == null) {
-            validationResponse.addError("Chapter should not be null");
-            return validationResponse;
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Validating Chapter: %s", chapter.getName()));
-        }
-        validateName(chapter.getName(), validationResponse, "Chapter name should not be blank");
-        if (mTrainingService.getChapterById(chapter.getId()) == null){
-            validationResponse.addError("Chapter does not exist for given Id: " + chapter.getId());
-        }
-        return validationResponse;
-    }
-
-    public CourseStructureValidationResponse validateCourse(Course course) {
-        CourseStructureValidationResponse validationResponse = new CourseStructureValidationResponse();
-        if (course == null) {
-            validationResponse.addError("Course should not be null");
-            return validationResponse;
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Validating Course: %s", course.getName()));
-        }
-        validateName(course.getName(), validationResponse, "Course name should not be blank");
-        if (mTrainingService.getCourseById(course.getId()) == null){
-            validationResponse.addError("Course does not exist for given Id: " + course.getId());
-        }
-        return validationResponse;
-    }
-
-    private void validateName(String chapterName, CourseStructureValidationResponse validationResponse, String errorMessage) {
-        if (StringUtils.isBlank(chapterName)) {
-            validationResponse.addError(errorMessage);
-        }
+        return true;
     }
 }
