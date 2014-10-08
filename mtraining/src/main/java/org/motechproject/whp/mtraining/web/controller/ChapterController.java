@@ -4,7 +4,7 @@ import org.motechproject.mtraining.service.MTrainingService;
 import org.motechproject.whp.mtraining.dto.ChapterDto;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
-import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
+import org.motechproject.whp.mtraining.validator.CourseUnitMetadataValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class ChapterController {
     ManyToManyRelationService manyToManyRelationService;
 
     @Autowired
-    CourseStructureValidator courseStructureValidator;
+    CourseUnitMetadataValidator courseUnitMetadataValidator;
 
     @RequestMapping("/chapters")
     @ResponseBody
@@ -50,21 +50,21 @@ public class ChapterController {
     @RequestMapping(value = "/chapter", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<HttpStatus> createChapterDto(@RequestBody ChapterDto chapter) {
-        if (courseStructureValidator.isPresentInDb(chapter)) {
+        if (courseUnitMetadataValidator.isPresentInDb(chapter)) {
             dtoFactoryService.createOrUpdateFromDto(chapter);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public  ResponseEntity<HttpStatus> updateChapterDto(@RequestBody ChapterDto chapter) {
-        if (courseStructureValidator.isPresentInDb(chapter)) {
+        if (courseUnitMetadataValidator.isPresentInDb(chapter)) {
         	dtoFactoryService.updateCourseDto(chapter);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping(value = "/chapter/{chapterId}", method = RequestMethod.DELETE)

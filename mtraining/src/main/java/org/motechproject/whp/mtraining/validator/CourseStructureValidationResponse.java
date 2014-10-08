@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Validation response used by the {@link CourseStructureValidator} to represent the validation status and the errors
+ * Validation response used by the {@link CourseUnitMetadataValidator} to represent the validation status and the errors
  */
 public class CourseStructureValidationResponse {
     private boolean isValid;

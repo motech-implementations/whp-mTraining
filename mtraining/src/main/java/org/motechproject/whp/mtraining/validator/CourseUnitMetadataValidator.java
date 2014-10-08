@@ -22,7 +22,7 @@ import java.util.List;
 */
 
 @Component
-public class CourseStructureValidator {
+public class CourseUnitMetadataValidator {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
 
     @Autowired

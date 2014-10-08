@@ -6,7 +6,7 @@ import org.motechproject.whp.mtraining.dto.CoursePlanDto;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
-import org.motechproject.whp.mtraining.validator.CourseStructureValidator;
+import org.motechproject.whp.mtraining.validator.CourseUnitMetadataValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,7 +34,7 @@ public class CourseController {
     ManyToManyRelationService manyToManyRelationService;
 
     @Autowired
-    CourseStructureValidator courseStructureValidator;
+    CourseUnitMetadataValidator courseUnitMetadataValidator;
 
     @RequestMapping("/courses")
     @ResponseBody
@@ -51,21 +51,21 @@ public class CourseController {
     @RequestMapping(value = "/course", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<HttpStatus> createCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        if (courseStructureValidator.isPresentInDb(coursePlanDto)) {
+        if (courseUnitMetadataValidator.isPresentInDb(coursePlanDto)) {
             dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<HttpStatus> updateCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        if (courseStructureValidator.isPresentInDb(coursePlanDto)) {
+        if (courseUnitMetadataValidator.isPresentInDb(coursePlanDto)) {
             dtoFactoryService.updateCourseDto(coursePlanDto);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.DELETE)

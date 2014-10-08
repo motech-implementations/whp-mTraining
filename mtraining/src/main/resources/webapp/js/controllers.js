@@ -573,6 +573,7 @@
             $scope.creatingCourse = false;
             $scope.updatingCourse = false;
             $scope.savingCourse = false;
+            $scope.location = null;
             $scope.createCourse();
             $scope.getLocations();
         }
@@ -593,7 +594,6 @@
         });
 
         $scope.createCourse = function() {
-            $scope.alertMessage = undefined;
             $scope.errorName = undefined;
             $scope.creatingCourse = true;
             $scope.course = new Course();
@@ -601,21 +601,18 @@
         }
 
         $scope.saveCourse = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingCourse = true;
             $scope.course.state = 'Inactive';
-            var tmpCourse = {};
-            jQuery.extend(tmpCourse, $scope.course);
             $scope.course.$save(function() {
-                $scope.alertMessage = $scope.msg('mtraining.createdCourse');
                 $scope.clearCourse();
+                $scope.alertMessage = $scope.msg('mtraining.createdCourse');
                 $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.courseName'));
-                    $scope.course = tmpCourse;
                 }
                 $scope.savingCourse = false;
                 $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -623,22 +620,18 @@
         }
 
         $scope.updateCourse = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingCourse = true;
             $scope.getLocationFromLocations();
-            var tmpCourse = {};
-            jQuery.extend(tmpCourse, $scope.course);
             $scope.course.$update({ id:$scope.course.id }, function() {
-                $scope.alertMessage = $scope.msg('mtraining.updatedCourse');
-                $scope.location = null;
 				$scope.clearCourse();
+                $scope.alertMessage = $scope.msg('mtraining.updatedCourse');
                 $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.courseName'));
-                    $scope.course = tmpCourse;
                 }
                 $scope.savingCourse = false;
                 $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -735,22 +728,19 @@
         }
 
         $scope.saveModule = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingModule = true;
             $scope.module.state = 'Inactive';
             $scope.module.parentIds = $scope.selectedCourses;
-            var tmpModule = {};
-            jQuery.extend(tmpModule, $scope.module);
             $scope.module.$save(function() {
-                $scope.alertMessage = $scope.msg('mtraining.createdModule');
                 $scope.clearModule();
+                $scope.alertMessage = $scope.msg('mtraining.createdModule');
                 $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.moduleName'));
-                    $scope.module = tmpModule;
                 }
                 $scope.savingModule = false;
                 $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -758,21 +748,18 @@
         }
 
         $scope.updateModule = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingModule = true;
             $scope.module.parentIds = $scope.selectedCourses;
-            var tmpModule = {};
-            jQuery.extend(tmpModule, $scope.module);
             $scope.module.$update({ id:$scope.module.id }, function () {
-                $scope.alertMessage = $scope.msg('mtraining.updatedModule');
                 $scope.clearModule();
+                $scope.alertMessage = $scope.msg('mtraining.updatedModule');
                 $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.moduleName'));
-                    $scope.module = tmpModule;
                 }
                 $scope.savingModule = false;
                 $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -913,23 +900,20 @@
         }
 
         $scope.saveChapter = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingChapter = true;
             $scope.chapter.state = 'Inactive';
             $scope.chapter.parentIds = $scope.selectedModules;
-            var tmpChapter = {};
-            jQuery.extend(tmpChapter, $scope.chapter);
             $scope.chapter.$save(function() {
-                $scope.alertMessage = $scope.msg('mtraining.createdChapter');
                 $scope.getQuizFromQuizzes();
                 $scope.clearChapter();
+                $scope.alertMessage = $scope.msg('mtraining.createdChapter');
                 $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.chapterName'));
-                    $scope.chapter = tmpChapter;
                 }
                 $scope.savingChapter = false;
                 $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -937,22 +921,19 @@
         }
 
         $scope.updateChapter = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingChapter = true;
             $scope.chapter.parentIds = $scope.selectedModules;
-            var tmpChapter = {};
-            jQuery.extend(tmpChapter, $scope.chapter);
             $scope.chapter.$update({ id:$scope.chapter.id }, function () {
-                $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
                 $scope.getQuizFromQuizzes();
                 $scope.clearChapter();
+                $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
                 $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.chapterName'));
-                    $scope.chapter = tmpChapter;
                 }
                 $scope.savingChapter = false;
                 $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -1054,22 +1035,19 @@
         }
 
         $scope.saveMessage = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingMessage = true;
             $scope.message.state = 'Inactive';
             $scope.message.parentIds = $scope.selectedChapters;
-            var tmpMessage = {};
-            jQuery.extend(tmpMessage, $scope.message);
             $scope.message.$save(function() {
-                $scope.alertMessage = $scope.msg('mtraining.createdMessage');
                 $scope.clearMessage();
+                $scope.alertMessage = $scope.msg('mtraining.createdMessage');
                 $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.messageName'));
-                    $scope.message = tmpMessage;
                 }
                 $scope.savingMessage = false;
                 $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -1077,21 +1055,18 @@
         }
 
         $scope.updateMessage = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingMessage = true;
             $scope.message.parentIds = $scope.selectedChapters;
-            var tmpMessage = {};
-            jQuery.extend(tmpMessage, $scope.message);
             $scope.message.$update({ id:$scope.message.id }, function () {
-                $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
                 $scope.clearMessage();
+                $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
                 $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.messageName'));
-                    $scope.message = tmpMessage;
                 }
                 $scope.savingMessage = false;
                 $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -1226,21 +1201,18 @@
 
         $scope.saveQuiz = function() {
             $scope.alertMessage = undefined;
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingQuiz = true;
             $scope.quiz.state = 'Inactive';
-            var tmpQuiz = {};
-            jQuery.extend(tmpQuiz, $scope.quiz);
             $scope.quiz.$save(function() {
-                $scope.alertMessage = $scope.msg('mtraining.createdQuiz');
                 $scope.clearQuiz();
+                $scope.alertMessage = $scope.msg('mtraining.createdQuiz');
                 $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.quizName'));
-                    $scope.quiz = tmpQuiz;
                 }
                 $scope.savingQuiz = false;
                 $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -1249,20 +1221,17 @@
 
         $scope.updateQuiz = function() {
             $scope.alertMessage = undefined;
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingQuiz = true;
-            var tmpQuiz = {};
-            jQuery.extend(tmpQuiz, $scope.quiz);
             $scope.quiz.$update({ id:$scope.quiz.id }, function () {
-                $scope.alertMessage = $scope.msg('mtraining.updatedQuiz');
                 $scope.clearQuiz();
+                $scope.alertMessage = $scope.msg('mtraining.updatedQuiz');
                 $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 406) {
+                if (response.status == 500) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.quizName'));
-                    $scope.quiz = tmpQuiz;
                 }
                 $scope.savingQuiz = false;
                 $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -1552,13 +1521,14 @@
         }
 
         $scope.saveProvider = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingProvider = true;
             $scope.getLocationFromLocations();
             $scope.provider.$save(function(c) {
                 // c => saved provider object
+                $scope.clearProvider();
                 $scope.alertMessage = $scope.msg('mtraining.createdProvider');
                 $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             });
@@ -1566,7 +1536,7 @@
         }
 
         $scope.updateProvider = function() {
-            if (!$scope.validate()){
+            if (!$scope.validate()) {
                 return;
             }
             $scope.savingProvider = true;
