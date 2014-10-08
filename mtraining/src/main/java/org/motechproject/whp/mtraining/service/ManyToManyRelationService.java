@@ -32,6 +32,8 @@ public interface ManyToManyRelationService {
 
     void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId);
 
+    void updateRelationsForChild(List<ManyToManyRelation> relations, long childId);
+
     // CoursePlan - Course
     List<Course> getCoursesByParentId(long parentId);
 

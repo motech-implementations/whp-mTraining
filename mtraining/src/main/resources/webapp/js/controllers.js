@@ -365,7 +365,7 @@
             });
         };
 
-        function renderTree () {
+        function renderTree() {
             $('#jstree').jstree({
                 "plugins" : ["state", "dnd", "search", "types"],
                 "core" : {

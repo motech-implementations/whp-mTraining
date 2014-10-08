@@ -170,21 +170,19 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
         return null;
     }
 
-    private List<ManyToManyRelation> getRelationsForParent(long id) {
+    private List<ManyToManyRelation> getAllRelationsForParent(long id) {
         List<ManyToManyRelation> relations = relationDataService.findRelations(null, id, null);
         for(int i = 0; i < relations.size(); i++) {
             if (relations.get(i).getParentType() != ParentType.Chapter) {
-                relations.addAll(getRelationsForParent(relations.get(i).getChildId()));
+                relations.addAll(getAllRelationsForParent(relations.get(i).getChildId()));
             }
         }
         return relations;
     }
 
-    @Override
-    public void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId) {
+    private Set<ManyToManyRelation> updateRelations(List<ManyToManyRelation> relations, List<ManyToManyRelation> existingRelations) {
         relations = new ArrayList<>(new LinkedHashSet<>(relations));
         Set<ManyToManyRelation> updatedRelations = new LinkedHashSet<>();
-        List<ManyToManyRelation> existingRelations = getRelationsForParent(courseId);
 
         for (ManyToManyRelation relation : existingRelations) {
             if (!relations.contains(relation)) {
@@ -198,7 +196,23 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
                 updatedRelations.add(relation);
             }
         }
-        dtoFactoryService.increaseVersionsByRelations(updatedRelations);
+        return updatedRelations;
+    }
+
+    @Override
+    public void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId) {
+        List<ManyToManyRelation> existingRelations = getAllRelationsForParent(courseId);
+        dtoFactoryService.increaseVersionsByRelations(updateRelations(relations, existingRelations));
+    }
+
+    @Override
+    public void updateRelationsForChild(List<ManyToManyRelation> relations, long childId) {
+        if (childId > 0) {
+            List<ManyToManyRelation> existingRelations = relationDataService.findRelations(null, null, childId);
+            updateRelations(relations, existingRelations);
+        } else {
+            updateRelations(relations, null);
+        }
     }
 
 }
