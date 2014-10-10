@@ -13,6 +13,7 @@ import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.LocationService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
+import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.service.QuestionService;
 import org.motechproject.whp.mtraining.util.ActiveContentPredicate;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
     @Autowired
     QuestionService questionService;
+
+    @Autowired
+    ProviderService providerService;
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DtoFactoryServiceImpl.class);
 
@@ -671,6 +675,8 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             for (QuestionDto question : questions) {
                 question.setVersion(question.getVersion() + 1);
             }
+        } else if (dto instanceof CoursePlanDto) {
+            providerService.resetCourseProgresses(dto.getContentId().toString());
         }
         createOrUpdateFromDto(dto);
     }

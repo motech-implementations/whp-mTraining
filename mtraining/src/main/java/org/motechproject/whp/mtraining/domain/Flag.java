@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.mds.annotations.Cascade;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mtraining.domain.MdsEntity;
@@ -31,26 +32,31 @@ public class Flag extends MdsEntity {
     private String externalId;
 
     @Field
+    @Cascade(delete = false)
     @JsonProperty("course")
     @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier courseIdentifier;
 
     @Field
+    @Cascade(delete = false)
     @JsonProperty("module")
     @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier moduleIdentifier;
 
     @Field
+    @Cascade(delete = false)
     @JsonProperty("chapter")
     @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier chapterIdentifier;
 
     @Field
+    @Cascade(delete = false)
     @JsonProperty("message")
     @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier lessonIdentifier;
 
     @Field
+    @Cascade(delete = false)
     @JsonProperty("quiz")
     @Persistent(defaultFetchGroup = "true")
     private ContentIdentifier quizIdentifier;

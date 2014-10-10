@@ -24,4 +24,6 @@ public interface ProviderService {
     Provider getProviderByRemediId(String remediId);
 
     ResponseStatus validateProvider(Long callerId);
+
+    void resetCourseProgresses(String contentId);
 }

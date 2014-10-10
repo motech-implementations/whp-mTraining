@@ -1,8 +1,12 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.motechproject.whp.mtraining.domain.CourseProgress;
+import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.repository.ProviderDataService;
+import org.motechproject.whp.mtraining.service.CourseProgressService;
+import org.motechproject.whp.mtraining.service.FlagService;
 import org.motechproject.whp.mtraining.service.LocationService;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.web.domain.ProviderStatus;
@@ -25,6 +29,12 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Autowired
     private LocationService locationService;
+
+    @Autowired
+    private CourseProgressService courseProgressService;
+
+    @Autowired
+    private FlagService flagService;
 
     @Override
     public Provider createProvider(Provider provider) {
@@ -75,6 +85,19 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public List<Provider> getAllProviders() {
         return providerDataService.retrieveAll();
+    }
+
+    @Override
+    public void resetCourseProgresses(String contentId) {
+        for (Provider provider : getAllProviders()) {
+            CourseProgress courseProgress = courseProgressService.getCourseProgressForProvider(provider.getCallerId());
+            if (courseProgress != null && courseProgress.getFlag() != null) {
+                Flag flag = flagService.getFlagById(courseProgress.getFlag().getId());
+                if (flag.getCourseIdentifier() != null && flag.getCourseIdentifier().getContentId().equals(contentId)) {
+                    courseProgressService.deleteCourseProgress(courseProgress);
+                }
+            }
+        }
     }
 
     public ResponseStatus validateProvider(Long callerId) {

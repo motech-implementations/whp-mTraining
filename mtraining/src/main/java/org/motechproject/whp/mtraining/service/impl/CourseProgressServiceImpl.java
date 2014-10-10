@@ -132,6 +132,11 @@ public class CourseProgressServiceImpl implements CourseProgressService {
     return courseProgress;
     }
 
+    @Override
+    public void deleteCourseProgress(CourseProgress courseProgress) {
+        courseProgressDataService.delete(courseProgress);
+    }
+
     private void setTimeLeftToCompleteCourse(long courseId, CourseProgress courseProgress) {
         CourseConfiguration courseConfig = courseConfigurationService.getCourseConfigurationByCourseId(courseId);
         if (courseConfig == null) {

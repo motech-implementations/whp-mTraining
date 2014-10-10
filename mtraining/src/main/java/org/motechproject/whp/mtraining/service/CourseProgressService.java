@@ -14,5 +14,7 @@ public interface CourseProgressService {
 
     CourseProgress getCourseProgress(Provider provider);
 
+    void deleteCourseProgress(CourseProgress courseProgress);
+
     void markCourseAsComplete(long callerId, String startTime, String externalId);
 }
