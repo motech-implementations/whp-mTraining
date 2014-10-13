@@ -29,5 +29,6 @@ public interface LocationService {
 
     List<Location> getStateLocations();
 
-    List<Location> getUnusedStateLocations();
+    List<Location> getUnusedLocationsByCourse();
+
 }

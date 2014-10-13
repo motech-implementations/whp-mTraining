@@ -82,6 +82,11 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
+    public Provider getProviderByLocation(Long id) {
+        return providerDataService.findProviderByLocationId(id);
+    }
+
+    @Override
     public List<Provider> getAllProviders() {
         return providerDataService.retrieveAll();
     }

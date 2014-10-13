@@ -25,4 +25,8 @@ public interface ProviderDataService extends MotechDataService<Provider> {
 
     @Lookup
     Provider findProviderByRemediId(@LookupField(name = "remediId") String remediId);
+
+    @Lookup
+    Provider findProviderByLocationId(@LookupField(name = "location") long id);
+
 }

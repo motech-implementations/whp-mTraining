@@ -23,6 +23,8 @@ public interface ProviderService {
 
     Provider getProviderByRemediId(String remediId);
 
+    Provider getProviderByLocation(Long id);
+
     ResponseStatus validateProvider(Long callerId);
 
     void resetCourseProgresses(String contentId);

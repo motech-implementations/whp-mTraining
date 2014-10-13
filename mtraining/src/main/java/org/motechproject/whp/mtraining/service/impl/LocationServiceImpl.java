@@ -2,8 +2,10 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.repository.LocationDataService;
+import org.motechproject.whp.mtraining.repository.ProviderDataService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
 import org.motechproject.whp.mtraining.service.LocationService;
+import org.motechproject.whp.mtraining.service.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Autowired
     private LocationDataService locationDataService;
+
+    @Autowired
+    private ProviderService providerService;
 
     @Override
     public Location createLocation(Location location) {
@@ -70,10 +75,10 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public List<Location> getUnusedStateLocations() {
+    public List<Location> getUnusedLocationsByCourse() {
         List<Location> locations = new LinkedList<>();
 
-        for (Location location : locationDataService.retrieveLocationsByLevel(Location.STATE_LEVEL)) {
+        for (Location location : locationDataService.retrieveAll()) {
             if (coursePlanService.getCoursePlanByLocation(location.getId()) == null) {
                 locations.add(location);
             }
@@ -81,4 +86,5 @@ public class LocationServiceImpl implements LocationService {
 
         return locations;
     }
+
 }

@@ -19,6 +19,15 @@
         });
     };
 
+    // get json attribute safely
+    function getAttr(obj, attrName) {
+        if (obj != null) {
+            return obj[attrName];
+        } else {
+            return null;
+        }
+    }
+
     function safeApply($scope) {
          if (!$scope.$$phase) {
              $scope.$digest();
@@ -527,7 +536,7 @@
                 allowClear: true,
                 placeholder: "Select a location",
                 ajax: {
-                    url: "../mtraining/web-api/unusedStateLocations",
+                    url: "../mtraining/web-api/unusedLocationsByCourse",
                     dataType: "json",
                     data: function (term, page) {
                         return {
@@ -576,17 +585,20 @@
             $scope.location = null;
             $scope.createCourse();
             $scope.getLocations();
+            $("#location").select2('data', null);
         }
 
         $scope.$on('courseClick', function(event, courseId) {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
             $scope.course = Course.get({ id: courseId }, function () {
-                if ($scope.course.location) {
+                 if ($scope.course.location) {
                     $("#location").select2('data', {
-                        id: $scope.course.location.id,
-                        text: $scope.course.location.state
+                        id: getAttr($scope.course.location, "id"),
+                        text: getAttr($scope.course.location, "state")
                     });
+                } else {
+                    $("#location").select2('data', null);
                 }
             });
             $scope.updatingCourse = true;
@@ -1458,16 +1470,67 @@
 
     controllers.controller('providersController', ['$scope', 'Provider', function ($scope, Provider) {
 
+        $scope.getLocationById = function (id) {
+            if ($scope.locations !== undefined) {
+                for (var i = 0, len = $scope.locations.length; i < len; i++) {
+                    if ($scope.locations[i].id == id) {
+                        return $scope.locations[i];
+                    }
+                }
+            }
+            return undefined;
+        }
+
         $scope.getLocations = function() {
-            $scope.fetchingLocations = true;
-            $.getJSON('../mtraining/web-api/stateLocations', function(data) {
-                $scope.locations = data;
-                $scope.fetchingLocations = false;
-                $scope.$apply();
-                $("#location").select2({
-                    allowClear: true,
-                    placeholder: "Select a location"
-                    });
+            $("#location").select2({
+                allowClear: true,
+                placeholder: "Select a location",
+                ajax: {
+                    url: "../mtraining/web-api/locations",
+                    dataType: "json",
+                    data: function (term, page) {
+                        return {
+                            q: term
+                        };
+                    },
+                    results: function (data, page) {
+                        var results = [];
+
+                        if ($scope.provider && $scope.provider.location)
+                        console.log($.grep(data, function(location) {
+                                                                    console.log(location.id, $scope.provider.location.id);
+                                                                    return location.id == $scope.provider.location.id; }));
+
+                        if ($scope.provider && $scope.provider.location && $.grep(data, function(location) {
+                                return location.id == $scope.provider.location.id; }).length == 0) {
+                            data.push($scope.provider.location);
+                        }
+
+                        $.each(data, function(index, item){
+                            if (item != null) {
+                                results.push({
+                                    id: item.id,
+                                    text: item.state
+                                });
+                            }
+                        });
+
+                        $scope.locations = data;
+                        return {
+                            results: results
+                        };
+                    },
+                    text: function (item) {
+                       return item.state;
+                    }
+                }
+            });
+            $("#location").on("change", function(e) {
+                if (e.val && e.val.length > 0)  {
+                    $scope.provider.location = $scope.getLocationById(e.val);
+                } else {
+                    $scope.provider.location = null;
+                }
             });
         }
 
@@ -1475,14 +1538,9 @@
             $scope.creatingProvider = false;
             $scope.updatingProvider = false;
             $scope.savingProvider = false;
-            $scope.selectedLocation = undefined;
             $scope.createProvider();
             $scope.getLocations();
-        }
-
-        $scope.getLocationFromLocations = function () {
-            var idx = $scope.selectedLocation;
-            $scope.provider.location = $scope.locations[idx];
+            $("#location").select2('data', null);
         }
 
         $scope.$on('providerClick', function(event, providerId, remediId, callerId) {
@@ -1492,16 +1550,14 @@
             $scope.errorStatus = undefined;
             $scope.provider = Provider.get({ id: providerId }, function () {
                 if ($scope.provider.location) {
-                    var result = $.grep($scope.locations, function(e) {
-                        return e.id == $scope.provider.location.id;
+                    $("#location").select2('data', {
+                        id: getAttr($scope.provider.location, "id"),
+                        text: getAttr($scope.provider.location, "state")
                     });
-                    var idx = $scope.locations.indexOf(result[0]);
-                    $scope.selectedLocation = idx;
                 }
                 else {
-                    $scope.selectedLocation = undefined;
+                    $("#location").select2('data', null);
                 }
-                $("#location").select2('val', $scope.selectedLocation);
             });
             $scope.oldRemediId = remediId;
             $scope.oldCallerId = callerId;
@@ -1524,7 +1580,6 @@
                 return;
             }
             $scope.savingProvider = true;
-            $scope.getLocationFromLocations();
             $scope.provider.$save(function() {
                 $scope.clearProvider();
                 $scope.alertMessage = $scope.msg('mtraining.createdProvider');
@@ -1547,11 +1602,9 @@
                 return;
             }
             $scope.savingProvider = true;
-            $scope.getLocationFromLocations();
             $scope.provider.$update({ id:$scope.provider.id }, function () {
                 $scope.clearProvider();
                 $scope.alertMessage = $scope.msg('mtraining.updatedProvider');
-                $scope.location = null;
                 $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
                 $scope.savingProvider = false;

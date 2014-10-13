@@ -40,10 +40,10 @@ public class LocationController {
         return locationService.getStateLocations();
     }
 
-    @RequestMapping("/unusedStateLocations")
+    @RequestMapping("/unusedLocationsByCourse")
     @ResponseBody
-    public List<Location> getUnusedStateLocations() {
-        return locationService.getUnusedStateLocations();
+    public List<Location> getUnusedLocationsByCourse() {
+        return locationService.getUnusedLocationsByCourse();
     }
 
     @RequestMapping("/locations")

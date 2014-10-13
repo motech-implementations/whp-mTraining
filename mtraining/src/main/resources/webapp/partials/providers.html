@@ -40,12 +40,8 @@
             <div class="form-group">
                 <label class="col-md-4 control-label" for="location">{{msg('mtraining.location')}}</label>
                 <div class="col-md-4">
-                    <select id="location" class="form-control input-xlarge-fluid" ng-model="selectedLocation">
-                        <option></option>
-                        <option ng-repeat="location in locations" value="{{$index}}">{{location.state}}</option>
-                    </select>
+                    <input id="location" type="hidden" class="form-control input-xlarge-fluid"/>
                 </div>
-                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="fetchingLocations"/>
             </div>
 
             <div class="form-group">
