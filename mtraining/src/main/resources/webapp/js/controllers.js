@@ -1526,13 +1526,21 @@
             }
             $scope.savingProvider = true;
             $scope.getLocationFromLocations();
-            $scope.provider.$save(function(c) {
-                // c => saved provider object
+            $scope.provider.$save(function() {
                 $scope.clearProvider();
                 $scope.alertMessage = $scope.msg('mtraining.createdProvider');
                 $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+            }, function(response) {
+                $scope.savingProvider = false;
+                $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+                if (response.status == 409) {
+                    if (response.data.indexOf("WHP_MTRAINING_PROVIDER_U3") > -1) {
+                        $scope.errorCallerId = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.callerId'));
+                    } else {
+                        $scope.errorRemediId = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.remediId'))
+                    }
+                }
             });
-            $scope.clearProvider();
         }
 
         $scope.updateProvider = function() {
@@ -1541,13 +1549,22 @@
             }
             $scope.savingProvider = true;
             $scope.getLocationFromLocations();
-            $scope.provider.$update({ id:$scope.provider.id }, function (c) {
-                // c => updated provider object
+            $scope.provider.$update({ id:$scope.provider.id }, function () {
+                $scope.clearProvider();
                 $scope.alertMessage = $scope.msg('mtraining.updatedProvider');
                 $scope.location = null;
                 $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+            }, function(response) {
+                $scope.savingProvider = false;
+                $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+                if (response.status == 409) {
+                    if (response.data.indexOf("WHP_MTRAINING_PROVIDER_U3") > -1) {
+                        $scope.errorCallerId = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.callerId'));
+                    } else {
+                        $scope.errorRemediId = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.remediId'))
+                    }
+                }
             });
-            $scope.clearProvider();
         }
 
         $scope.deleteProvider = function() {
@@ -1637,12 +1654,17 @@
                 return;
             }
             $scope.savingLocation = true;
-            $scope.location.$save(function(c) {
-                // c => saved location object
+            $scope.location.$save(function() {
+                $scope.clearLocation();
                 $scope.alertMessage = $scope.msg('mtraining.createdLocation');
                 $("#locationsListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+            }, function(response) {
+                $scope.savingLocation = false;
+                $("#locationsListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
+                if (response.status == 409) {
+                    $scope.errorState = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.state'));
+                }
             });
-            $scope.clearLocation();
         }
 
         $scope.validate = function() {

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.isInvalid;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.NOT_WORKING_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.OK;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.UNKNOWN_PROVIDER;

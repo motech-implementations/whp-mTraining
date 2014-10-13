@@ -3,10 +3,15 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.service.ProviderService;
+import org.motechproject.whp.mtraining.service.impl.ContentOperationServiceImpl;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jdo.JDOException;
 import java.util.List;
 
 /**
@@ -14,6 +19,8 @@ import java.util.List;
  */
 @Controller
 public class ProviderController {
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
 
     @Autowired
     ProviderService providerService;
@@ -32,20 +39,38 @@ public class ProviderController {
 
     @RequestMapping(value = "/provider", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createProvider(@RequestBody Provider provider) {
-        providerService.createProvider(provider);
+    public ResponseEntity<String> createProvider(@RequestBody Provider provider) {
+        try {
+            providerService.createProvider(provider);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (JDOException e) {
+            LOG.warn(e.getNestedExceptions()[0].getMessage());
+            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     @RequestMapping(value = "/provider/{providerId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public void updateProvider(@RequestBody Provider provider) {
-        providerService.updateProvider(provider);
+    public ResponseEntity<String> updateProvider(@RequestBody Provider provider) {
+        try {
+            providerService.updateProvider(provider);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (JDOException e) {
+            LOG.warn(e.getNestedExceptions()[0].getMessage());
+            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     @RequestMapping(value = "/provider/remediid/{remediId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public void updateProviderMappedbyRemediId(@RequestBody Provider provider) {
-        providerService.updateProviderbyRemediId(provider);
+    public ResponseEntity<String> updateProviderMappedbyRemediId(@RequestBody Provider provider) {
+        try {
+            providerService.updateProviderbyRemediId(provider);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (JDOException e) {
+            LOG.warn(e.getNestedExceptions()[0].getMessage());
+            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     @RequestMapping(value = "/provider/{providerId}", method = RequestMethod.DELETE)

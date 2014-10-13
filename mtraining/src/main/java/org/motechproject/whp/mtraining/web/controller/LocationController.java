@@ -2,7 +2,11 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.service.LocationService;
+import org.motechproject.whp.mtraining.service.impl.ContentOperationServiceImpl;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.jdo.JDOException;
 import java.util.List;
 
 /**
@@ -17,6 +22,8 @@ import java.util.List;
  */
 @Controller
 public class LocationController {
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
 
     @Autowired
     LocationService locationService;
@@ -53,14 +60,26 @@ public class LocationController {
 
     @RequestMapping(value = "/location", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createLocation(@RequestBody Location location) {
-        locationService.createLocation(location);
+    public ResponseEntity<String> createLocation(@RequestBody Location location) {
+        try {
+            locationService.createLocation(location);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (JDOException e) {
+            LOG.warn(e.getNestedExceptions()[0].getMessage());
+            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     @RequestMapping(value = "/location/{locationId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public void updateLocation(@RequestBody Location location) {
-        locationService.updateLocation(location);
+    public ResponseEntity<String> updateLocation(@RequestBody Location location) {
+        try {
+            locationService.updateLocation(location);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (JDOException e) {
+            LOG.warn(e.getNestedExceptions()[0].getMessage());
+            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     @RequestMapping(value = "/location/{locationId}", method = RequestMethod.DELETE)
