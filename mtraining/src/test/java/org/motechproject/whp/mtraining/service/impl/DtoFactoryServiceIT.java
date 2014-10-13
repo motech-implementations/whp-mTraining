@@ -29,7 +29,6 @@ import org.ops4j.pax.exam.spi.reactors.PerSuite;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -65,13 +64,8 @@ public class DtoFactoryServiceIT extends BasePaxIT {
     private final String FILENAME = "some short filename";
     private final String NEW_FILENAME = "new filename";
 
-    private String content;
-    private String newContent;
-
     @Before
     public void setup() {
-        content = contentOperationService.codeIntoContent(FILENAME, DESCRIPTION, UUID.randomUUID(), 0);
-        newContent = contentOperationService.codeIntoContent(NEW_FILENAME, NEW_DESCRIPTION, UUID.randomUUID(), 0);
         deleteFromDatabase();
     }
 
@@ -87,7 +81,9 @@ public class DtoFactoryServiceIT extends BasePaxIT {
     @After
     public void deleteFromDatabase() {
         CoursePlan coursePlan = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
+        if (coursePlan != null) {
             coursePlanService.deleteCoursePlan(coursePlan);
+        }
 
         List<Course> courses = mTrainingService.getCourseByName(COURSE_NAME);
         for (Course course : courses) {
@@ -111,13 +107,12 @@ public class DtoFactoryServiceIT extends BasePaxIT {
     }
 
     private void shouldCreateAndUpdateCoursePlanFromCoursePlanDto() {
-        List<CoursePlan> coursePlans;
-        CoursePlan coursePlan;
+        CoursePlanDto newCoursePlanDto = new CoursePlanDto();
         CoursePlanDto coursePlanDto = new CoursePlanDto(0, COURSE_PLAN_NAME, DESCRIPTION, CourseUnitState.Inactive, FILENAME,
                 ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null, null);
 
         dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
-        coursePlan = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
+        CoursePlan coursePlan = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
 
         coursePlanDto.setId(coursePlan.getId());
         coursePlanDto.setDescription(NEW_DESCRIPTION);
@@ -125,20 +120,24 @@ public class DtoFactoryServiceIT extends BasePaxIT {
 
         dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
         coursePlan = coursePlanService.getCoursePlanByName(COURSE_PLAN_NAME);
-        assertEquals(coursePlan.getContent(), newContent);
+        contentOperationService.getMetadataFromContent(newCoursePlanDto, coursePlan.getContent());
+        assertEquals(newCoursePlanDto.getDescription(), NEW_DESCRIPTION);
+        assertEquals(newCoursePlanDto.getExternalId(), NEW_FILENAME);
     }
 
     private void shouldCreateAndUpdateCourseFromModuleDto() {
         List<Course> courses;
-        Course course;
+        ModuleDto newModuleDto = new ModuleDto();
         ModuleDto moduleDto = new ModuleDto(0, COURSE_NAME, DESCRIPTION, CourseUnitState.Inactive, FILENAME,
                 ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null);
 
         dtoFactoryService.createOrUpdateFromDto(moduleDto);
         courses = mTrainingService.getCourseByName(COURSE_NAME);
         assertEquals(courses.size(), 1);
-        course = courses.get(0);
-        assertEquals(course.getContent(), content);
+        Course course = courses.get(0);
+        contentOperationService.getMetadataFromContent(newModuleDto, course.getContent());
+        assertEquals(newModuleDto.getDescription(), DESCRIPTION);
+        assertEquals(newModuleDto.getExternalId(), FILENAME);
 
         moduleDto.setId(course.getId());
         moduleDto.setDescription(NEW_DESCRIPTION);
@@ -148,20 +147,24 @@ public class DtoFactoryServiceIT extends BasePaxIT {
         courses = mTrainingService.getCourseByName(COURSE_NAME);
         assertEquals(courses.size(), 1);
         course = courses.get(0);
-        assertEquals(course.getContent(), newContent);
+        contentOperationService.getMetadataFromContent(newModuleDto, course.getContent());
+        assertEquals(newModuleDto.getDescription(), NEW_DESCRIPTION);
+        assertEquals(newModuleDto.getExternalId(), NEW_FILENAME);
     }
 
     private void shouldCreateAndUpdateChapterFromChapterDto() {
         List<Chapter> chapters;
-        Chapter chapter;
+        ChapterDto newChapterDto = new ChapterDto();
         ChapterDto chapterDto = new ChapterDto(0, CHAPTER_NAME, DESCRIPTION, CourseUnitState.Inactive, FILENAME,
                 ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null, null);
 
         dtoFactoryService.createOrUpdateFromDto(chapterDto);
         chapters = mTrainingService.getChapterByName(CHAPTER_NAME);
         assertEquals(chapters.size(), 1);
-        chapter = chapters.get(0);
-        assertEquals(chapter.getContent(), content);
+        Chapter chapter = chapters.get(0);
+        contentOperationService.getMetadataFromContent(newChapterDto, chapter.getContent());
+        assertEquals(newChapterDto.getDescription(), DESCRIPTION);
+        assertEquals(newChapterDto.getExternalId(), FILENAME);
 
         chapterDto.setId(chapter.getId());
         chapterDto.setDescription(NEW_DESCRIPTION);
@@ -171,20 +174,24 @@ public class DtoFactoryServiceIT extends BasePaxIT {
         chapters = mTrainingService.getChapterByName(CHAPTER_NAME);
         assertEquals(chapters.size(), 1);
         chapter = chapters.get(0);
-        assertEquals(chapter.getContent(), newContent);
+        contentOperationService.getMetadataFromContent(newChapterDto, chapter.getContent());
+        assertEquals(newChapterDto.getDescription(), NEW_DESCRIPTION);
+        assertEquals(newChapterDto.getExternalId(), NEW_FILENAME);
     }
 
     private void shouldCreateAndUpdateLessonFromLessonDto() {
         List<Lesson> lessons;
-        Lesson lesson;
+        LessonDto newLessonDto = new LessonDto();
         LessonDto lessonDto = new LessonDto(0, LESSON_NAME, DESCRIPTION, CourseUnitState.Inactive, FILENAME,
                 ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null);
 
         dtoFactoryService.createOrUpdateFromDto(lessonDto);
         lessons = mTrainingService.getLessonByName(LESSON_NAME);
         assertEquals(lessons.size(), 1);
-        lesson = lessons.get(0);
-        assertEquals(lesson.getContent(), content);
+        Lesson lesson = lessons.get(0);
+        contentOperationService.getMetadataFromContent(newLessonDto, lesson.getContent());
+        assertEquals(newLessonDto.getDescription(), DESCRIPTION);
+        assertEquals(newLessonDto.getExternalId(), FILENAME);
 
         lessonDto.setId(lesson.getId());
         lessonDto.setDescription(NEW_DESCRIPTION);
@@ -194,29 +201,32 @@ public class DtoFactoryServiceIT extends BasePaxIT {
         lessons = mTrainingService.getLessonByName(LESSON_NAME);
         assertEquals(lessons.size(), 1);
         lesson = lessons.get(0);
-        assertEquals(lesson.getContent(), newContent);
+        contentOperationService.getMetadataFromContent(newLessonDto, lesson.getContent());
+        assertEquals(newLessonDto.getDescription(), NEW_DESCRIPTION);
+        assertEquals(newLessonDto.getExternalId(), NEW_FILENAME);
     }
 
     private void shouldCreateAndUpdateQuizFromQuizDto() {
         List<Quiz> quizzes;
-        Quiz quiz;
+        QuizDto newQuizDto = new QuizDto();
         QuizDto quizDto = new QuizDto(0, QUIZ_NAME, DESCRIPTION, CourseUnitState.Inactive,
                 ISODateTimeUtil.nowInTimeZoneUTC(), ISODateTimeUtil.nowInTimeZoneUTC(), null, null);
 
         dtoFactoryService.createOrUpdateFromDto(quizDto);
         quizzes = mTrainingService.getQuizByName(QUIZ_NAME);
         assertEquals(quizzes.size(), 1);
-        quiz = quizzes.get(0);
-        assertEquals(quiz.getContent(), content);
+        Quiz quiz = quizzes.get(0);
+        contentOperationService.getMetadataFromContent(newQuizDto, quiz.getContent());
+        assertEquals(newQuizDto.getDescription(), DESCRIPTION);
 
         quizDto.setId(quiz.getId());
         quizDto.setDescription(NEW_DESCRIPTION);
-        quizDto.setExternalId(NEW_FILENAME);
 
         dtoFactoryService.createOrUpdateFromDto(quizDto);
         quizzes = mTrainingService.getQuizByName(QUIZ_NAME);
         assertEquals(quizzes.size(), 1);
         quiz = quizzes.get(0);
-        assertEquals(quiz.getContent(), newContent);
+        contentOperationService.getMetadataFromContent(newQuizDto, quiz.getContent());
+        assertEquals(newQuizDto.getDescription(), NEW_DESCRIPTION);
     }
 }
