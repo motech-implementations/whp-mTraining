@@ -611,7 +611,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.createdCourse');
                 $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.courseName'));
                 }
                 $scope.savingCourse = false;
@@ -624,13 +624,12 @@
                 return;
             }
             $scope.savingCourse = true;
-            $scope.getLocationFromLocations();
             $scope.course.$update({ id:$scope.course.id }, function() {
 				$scope.clearCourse();
                 $scope.alertMessage = $scope.msg('mtraining.updatedCourse');
                 $("#coursesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.courseName'));
                 }
                 $scope.savingCourse = false;
@@ -739,7 +738,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.createdModule');
                 $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.moduleName'));
                 }
                 $scope.savingModule = false;
@@ -758,7 +757,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.updatedModule');
                 $("#modulesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.moduleName'));
                 }
                 $scope.savingModule = false;
@@ -912,7 +911,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.createdChapter');
                 $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.chapterName'));
                 }
                 $scope.savingChapter = false;
@@ -932,7 +931,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
                 $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.chapterName'));
                 }
                 $scope.savingChapter = false;
@@ -1046,7 +1045,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.createdMessage');
                 $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.messageName'));
                 }
                 $scope.savingMessage = false;
@@ -1065,7 +1064,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.updatedMessage');
                 $("#messagesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.messageName'));
                 }
                 $scope.savingMessage = false;
@@ -1211,7 +1210,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.createdQuiz');
                 $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.quizName'));
                 }
                 $scope.savingQuiz = false;
@@ -1230,7 +1229,7 @@
                 $scope.alertMessage = $scope.msg('mtraining.updatedQuiz');
                 $("#quizzesListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
             }, function(response) {
-                if (response.status == 500) {
+                if (response.status == 409) {
                     $scope.errorName = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.quizName'));
                 }
                 $scope.savingQuiz = false;

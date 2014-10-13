@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.web.controller;
 
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.motechproject.whp.mtraining.domain.CoursePlan;
 import org.motechproject.whp.mtraining.dto.CoursePlanDto;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -25,16 +27,19 @@ import java.util.List;
 public class CourseController {
 
     @Autowired
-    CoursePlanService coursePlanService;
+    private CoursePlanService coursePlanService;
 
     @Autowired
-    DtoFactoryService dtoFactoryService;
+    private DtoFactoryService dtoFactoryService;
 
     @Autowired
-    ManyToManyRelationService manyToManyRelationService;
+    private ManyToManyRelationService manyToManyRelationService;
 
     @Autowired
-    CourseUnitMetadataValidator courseUnitMetadataValidator;
+    private CourseUnitMetadataValidator courseUnitMetadataValidator;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping("/courses")
     @ResponseBody
@@ -50,22 +55,25 @@ public class CourseController {
 
     @RequestMapping(value = "/course", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<HttpStatus> createCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        if (courseUnitMetadataValidator.isPresentInDb(coursePlanDto)) {
+    public ResponseEntity<String> createCourse(@RequestBody CoursePlanDto coursePlanDto) {
+        if (!courseUnitMetadataValidator.isPresentInDb(coursePlanDto)) {
             dtoFactoryService.createOrUpdateFromDto(coursePlanDto);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",
+                new String[] {coursePlanDto.getName()}, null), HttpStatus.CONFLICT);
+
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<HttpStatus> updateCourse(@RequestBody CoursePlanDto coursePlanDto) {
-        if (courseUnitMetadataValidator.isPresentInDb(coursePlanDto)) {
+    public ResponseEntity<String> updateCourse(@RequestBody CoursePlanDto coursePlanDto) {
+        if (!courseUnitMetadataValidator.isPresentInDb(coursePlanDto)) {
             dtoFactoryService.updateCourseDto(coursePlanDto);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",
+                new String[] {coursePlanDto.getName()}, null), HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/course/{courseId}", method = RequestMethod.DELETE)

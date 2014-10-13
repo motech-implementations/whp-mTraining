@@ -6,6 +6,7 @@ import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.motechproject.whp.mtraining.validator.CourseUnitMetadataValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,9 @@ public class ModuleController {
     @Autowired
     CourseUnitMetadataValidator courseUnitMetadataValidator;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping("/modules")
     @ResponseBody
     public List<ModuleDto> getAllModules() {
@@ -49,22 +53,24 @@ public class ModuleController {
 
     @RequestMapping(value = "/module", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<HttpStatus> createModule(@RequestBody ModuleDto module) {
-        if (courseUnitMetadataValidator.isPresentInDb(module)) {
+    public ResponseEntity<String> createModule(@RequestBody ModuleDto module) {
+        if (!courseUnitMetadataValidator.isPresentInDb(module)) {
             dtoFactoryService.createOrUpdateFromDto(module);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",
+                new String[] {module.getName()}, null), HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<HttpStatus> updateModule(@RequestBody ModuleDto module) {
-        if (courseUnitMetadataValidator.isPresentInDb(module)) {
+    public ResponseEntity<String> updateModule(@RequestBody ModuleDto module) {
+        if (!courseUnitMetadataValidator.isPresentInDb(module)) {
         	dtoFactoryService.updateCourseDto(module);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",
+                new String[] {module.getName()}, null), HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/module/{moduleId}", method = RequestMethod.DELETE)

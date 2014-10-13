@@ -46,10 +46,11 @@ public class CourseUnitMetadataValidator {
         } else if (courseUnitMetadataDto instanceof QuizDto) {
             courseUnitMetadataList.addAll(mTrainingService.getQuizByName(nodeName));
         }
-        if ((existing != null && existing.getId() != courseUnitMetadataDto.getId()) || (!courseUnitMetadataList.isEmpty() && courseUnitMetadataList.get(0).getId() != courseUnitMetadataDto.getId())) {
+        if ((existing != null && existing.getId() != courseUnitMetadataDto.getId()) || (!courseUnitMetadataList.isEmpty()
+                && courseUnitMetadataList.get(0).getId() != courseUnitMetadataDto.getId())) {
             LOG.error("element of that name exists in the database");
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 }

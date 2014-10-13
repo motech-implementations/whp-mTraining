@@ -26,6 +26,7 @@ import org.motechproject.whp.mtraining.web.domain.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -65,6 +66,9 @@ public class QuizController {
     @Autowired
     QuizReporter quizReporter;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping("/quizzes")
     @ResponseBody
     public List<QuizDto> getAllQuizzes() {
@@ -79,22 +83,24 @@ public class QuizController {
 
     @RequestMapping(value = "/quiz-api", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<HttpStatus> createQuiz(@RequestBody QuizDto quiz) {
-        if (courseUnitMetadataValidator.isPresentInDb(quiz)) {
+    public ResponseEntity<String> createQuiz(@RequestBody QuizDto quiz) {
+        if (!courseUnitMetadataValidator.isPresentInDb(quiz)) {
             dtoFactoryService.createOrUpdateFromDto(quiz);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",
+                new String[] {quiz.getName()}, null), HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/quiz-api/{quizId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<HttpStatus> updateQuiz(@RequestBody QuizDto quiz) {
-        if (courseUnitMetadataValidator.isPresentInDb(quiz)) {
+    public ResponseEntity<String> updateQuiz(@RequestBody QuizDto quiz) {
+        if (!courseUnitMetadataValidator.isPresentInDb(quiz)) {
             dtoFactoryService.createOrUpdateFromDto(quiz);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",
+                new String[] {quiz.getName()}, null), HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/quiz-api/{quizId}", method = RequestMethod.DELETE)
