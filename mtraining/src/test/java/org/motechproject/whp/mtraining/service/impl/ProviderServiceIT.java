@@ -2,6 +2,7 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.testing.osgi.BasePaxIT;
@@ -30,31 +31,37 @@ public class ProviderServiceIT extends BasePaxIT {
     @Inject
     private ProviderService providerService;
 
+    @After
+    public void setup() {
+        Provider provider = providerService.getProviderByRemediId("IntegrationTestRemediId");
+        if (provider != null) {
+            providerService.deleteProvider(provider);
+        }
+    }
+
     @Test
     public void shouldAddProvider() {
-        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
-
+        Provider provider = new Provider("IntegrationTestRemediId", 76465465L, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
         Long id = providerService.createProvider(provider).getId();
-
         provider = providerService.getProviderById(id);
-        assertThat(provider.getRemediId(), Is.is("remediId"));
+
+        assertThat(provider.getRemediId(), Is.is("IntegrationTestRemediId"));
     }
 
     @Test
     public void shouldDeleteProvider() {
-        Provider provider = new Provider("remediId", 654654l, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
-        providerService.createProvider(provider).getId();
-        provider = providerService.getAllProviders().get(0);
+        Provider provider = new Provider("IntegrationTestRemediId", 76465465L, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        Long id = providerService.createProvider(provider).getId();
+        provider = providerService.getProviderById(id);
         assertNotNull(provider);
-        Long id = provider.getId();
         providerService.deleteProvider(provider);
+
         assertNull(providerService.getProviderById(id));
     }
 
     @Test
     public void shouldMarkCallerAsUnidentifiedIfCallerIdNotRegistered() {
         long callerId = 76465465L;
-
         ResponseStatus responseStatus = providerService.validateProvider(callerId);
 
         assertEquals(responseStatus.getCode(), UNKNOWN_PROVIDER.getCode());
@@ -62,10 +69,9 @@ public class ProviderServiceIT extends BasePaxIT {
 
     @Test
     public void shouldMarkErrorIfProviderIsNotValid() {
-        long callerId = 76465464L;
-        Provider provider = new Provider("remediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, new Location("block", "district", "state"));
+        long callerId = 76465465L;
+        Provider provider = new Provider("IntegrationTestRemediId", callerId, ProviderStatus.NOT_WORKING_PROVIDER, new Location("block", "district", "state"));
         providerService.createProvider(provider);
-
         ResponseStatus response = providerService.validateProvider(callerId);
 
         assertEquals(response, NOT_WORKING_PROVIDER);
@@ -73,32 +79,29 @@ public class ProviderServiceIT extends BasePaxIT {
 
     @Test
     public void shouldAddAndRetrieveAProvider() {
-        String remediId = "remedix";
-        Provider provider = new Provider(remediId, 717777L, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
-
-        providerService.updateProvider(provider);
-
+        String remediId = "IntegrationTestRemediId";
+        Provider provider = new Provider(remediId, 76465465L, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        providerService.createProvider(provider);
         Provider savedProvider = providerService.getProviderByRemediId(remediId);
+
         assertThat(savedProvider, IsNull.notNullValue());
-        assertThat(savedProvider.getCallerId(), Is.is(717777L));
+        assertThat(savedProvider.getCallerId(), Is.is(76465465L));
     }
 
     @Test
     public void shouldUpdateAndRetrieveAProvider() {
-        long callerId = 7657667L;
+        long callerId = 76465465L;
         long callerIdNew = 7653333L;
-        String remediId = "remediId";
+        String remediId = "IntegrationTestRemediId";
 
-        Provider oldProvider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
-        providerService.createProvider(oldProvider);
-
-        Provider newProvider = new Provider(remediId, callerIdNew, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
-        providerService.createProvider(newProvider);
+        Provider provider = new Provider(remediId, callerId, ProviderStatus.WORKING_PROVIDER, new Location("block", "district", "state"));
+        provider = providerService.createProvider(provider);
+        provider.setCallerId(callerIdNew);
+        providerService.updateProvider(provider);
 
         Provider savedProvider = providerService.getProviderByCallerId(callerIdNew);
         assertThat(savedProvider, IsNull.notNullValue());
         assertThat(savedProvider.getRemediId(), Is.is(remediId));
         assertThat(savedProvider.getCallerId(), Is.is(callerIdNew));
     }
-
 }
