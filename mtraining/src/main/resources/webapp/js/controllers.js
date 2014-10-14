@@ -34,6 +34,13 @@
          }
      }
 
+     function validateNumberInput(e) {
+        var c = e.charCode;
+        if ((!e.ctrlKey || c != 97) && ((c < 48 && c > 31) || c > 57)) {
+            e.preventDefault();
+        }
+     }
+
     controllers.controller('treeViewController', function ($scope, Chapter, Quiz) {
         $scope.alertMessage = undefined;
 
@@ -531,6 +538,8 @@
             return undefined;
         }
 
+        $("#duration").bind('keypress', validateNumberInput);
+
         $scope.getLocations = function() {
             $("#location").select2({
                 allowClear: true,
@@ -582,7 +591,7 @@
             $scope.creatingCourse = false;
             $scope.updatingCourse = false;
             $scope.savingCourse = false;
-            $scope.location = null;
+            $("#location").select2('data', null);
             $scope.createCourse();
             $scope.getLocations();
             $("#location").select2('data', null);
@@ -663,7 +672,7 @@
         }
 
         $scope.validate = function() {
-            if (!$scope.course.name){
+            if (!$scope.course.name) {
                 $scope.alertMessage = undefined;
                 $scope.errorName = $scope.msg('mtraining.field.required', $scope.msg('mtraining.courseName'));
                 return false;
@@ -1133,6 +1142,9 @@
 
     controllers.controller('quizzesController', ['$scope', 'Quiz', function ($scope, Quiz) {
 
+        $("#passPercentage").bind('keypress', validateNumberInput);
+        $("#noOfQuestionsToBePlayed").bind('keypress', validateNumberInput);
+
         $scope.$on('quizClick', function(event, quizId) {
             $scope.alertMessage = undefined;
             $scope.errorName = undefined;
@@ -1470,6 +1482,8 @@
 
     controllers.controller('providersController', ['$scope', 'Provider', function ($scope, Provider) {
 
+        $("#callerId").bind('keypress', validateNumberInput);
+
         $scope.getLocationById = function (id) {
             if ($scope.locations !== undefined) {
                 for (var i = 0, len = $scope.locations.length; i < len; i++) {
@@ -1495,11 +1509,6 @@
                     },
                     results: function (data, page) {
                         var results = [];
-
-                        if ($scope.provider && $scope.provider.location)
-                        console.log($.grep(data, function(location) {
-                                                                    console.log(location.id, $scope.provider.location.id);
-                                                                    return location.id == $scope.provider.location.id; }));
 
                         if ($scope.provider && $scope.provider.location && $.grep(data, function(location) {
                                 return location.id == $scope.provider.location.id; }).length == 0) {
