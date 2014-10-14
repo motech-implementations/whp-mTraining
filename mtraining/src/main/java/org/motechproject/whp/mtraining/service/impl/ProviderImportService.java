@@ -23,8 +23,9 @@ public class ProviderImportService {
 
     public ProviderImportService() {}
 
-    public ProviderImportService(ProviderService providerService) {
+    public ProviderImportService(ProviderService providerService, LocationService locationService) {
         this.providerService = providerService;
+        this.locationService = locationService;
     }
 
     public void importProviders(List<ProviderCsvRequest> providerCsvRequests) {
@@ -51,7 +52,7 @@ public class ProviderImportService {
 
     private Location createNewStateLocation (String stateName) {
         if (!locationService.doesStateExist(stateName)){
-            return locationService.createLocation(new Location(null, null, stateName));
+            return locationService.createLocation(new Location(stateName));
         }
         return null;
     }

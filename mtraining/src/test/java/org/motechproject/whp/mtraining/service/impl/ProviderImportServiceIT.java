@@ -1,5 +1,7 @@
 package org.motechproject.whp.mtraining.service.impl;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -9,6 +11,7 @@ import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory
 import org.motechproject.whp.mtraining.csv.request.ProviderCsvRequest;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
+import org.motechproject.whp.mtraining.service.LocationService;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -31,14 +34,26 @@ public class ProviderImportServiceIT extends BasePaxIT {
     @Inject
     private ProviderService providerService;
 
+    @Inject
+    private LocationService locationService;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    @Before
+    @After
+    public void deleteFromDatabase(){
+        Provider provider = providerService.getProviderByRemediId("IntegrationTestRemediId");
+        if (provider != null) {
+            providerService.deleteProvider(provider);
+        }
+    }
+
     @Test
     public void shouldAddOrUpdateToProvidersWhenImporting() {
-        ProviderImportService providerImportService = new ProviderImportService(providerService);
-        String remediId = "RemediX";
-        String primaryContactNumber = "9898989898";
+        ProviderImportService providerImportService = new ProviderImportService(providerService, locationService);
+        String remediId = "IntegrationTestRemediId";
+        String primaryContactNumber = "76465465";
         String providerStatus = WORKING_PROVIDER.getStatus();
         String state = "state";
         String block = "block";
@@ -55,8 +70,8 @@ public class ProviderImportServiceIT extends BasePaxIT {
 
         assertNotNull(providerLocation);
         assertEquals(providerLocation.getState(), state);
-        assertEquals(providerLocation.getBlock(), block);
-        assertEquals(providerLocation.getDistrict(), district);
+        assertEquals(providerLocation.getBlock(), null);
+        assertEquals(providerLocation.getDistrict(), null);
     }
 
 }
