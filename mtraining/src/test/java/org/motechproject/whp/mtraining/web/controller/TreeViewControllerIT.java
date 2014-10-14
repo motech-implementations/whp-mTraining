@@ -39,7 +39,7 @@ public class TreeViewControllerIT {
         assertNotNull(resourceAsStream);
         byte[] postContent = IOUtils.toByteArray(resourceAsStream);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/updateRelations").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(MockMvcRequestBuilders.post("/updateRelations/1").contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .body(postContent)
         ).andExpect(status().isOk());
