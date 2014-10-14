@@ -2,7 +2,7 @@ package org.motechproject.whp.mtraining.web.controller;
 
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.service.LocationService;
-import org.motechproject.whp.mtraining.service.impl.ContentOperationServiceImpl;
+import org.motechproject.whp.mtraining.util.ExceptionUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.jdo.JDOException;
+import javax.jdo.JDODataStoreException;
 import java.util.List;
 
 /**
@@ -23,7 +23,7 @@ import java.util.List;
 @Controller
 public class LocationController {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(LocationController.class);
 
     @Autowired
     LocationService locationService;
@@ -64,9 +64,10 @@ public class LocationController {
         try {
             locationService.createLocation(location);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (JDOException e) {
-            LOG.warn(e.getNestedExceptions()[0].getMessage());
-            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        } catch (JDODataStoreException e) {
+            String message = ExceptionUtil.getConstraintViolationMessage(e);
+            LOG.info(message);
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
         }
     }
 
@@ -76,9 +77,10 @@ public class LocationController {
         try {
             locationService.updateLocation(location);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (JDOException e) {
-            LOG.warn(e.getNestedExceptions()[0].getMessage());
-            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        } catch (JDODataStoreException e) {
+            String message = ExceptionUtil.getConstraintViolationMessage(e);
+            LOG.info(message);
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
         }
     }
 

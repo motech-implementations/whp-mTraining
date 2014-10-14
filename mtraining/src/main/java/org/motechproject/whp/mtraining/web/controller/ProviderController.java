@@ -1,10 +1,9 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.service.ProviderService;
-import org.motechproject.whp.mtraining.service.impl.ContentOperationServiceImpl;
+import org.motechproject.whp.mtraining.util.ExceptionUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,7 @@ import java.util.List;
 @Controller
 public class ProviderController {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ContentOperationServiceImpl.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ProviderController.class);
 
     @Autowired
     ProviderService providerService;
@@ -45,7 +44,9 @@ public class ProviderController {
             providerService.createProvider(provider);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (JDODataStoreException e) {
-            return new ResponseEntity<>(getConstraintViolationMessage(e), HttpStatus.CONFLICT);
+            String message = ExceptionUtil.getConstraintViolationMessage(e);
+            LOG.info(message);
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
         }
     }
 
@@ -56,7 +57,9 @@ public class ProviderController {
             providerService.updateProvider(provider);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (JDODataStoreException e) {
-            return new ResponseEntity<>(getConstraintViolationMessage(e), HttpStatus.CONFLICT);
+            String message = ExceptionUtil.getConstraintViolationMessage(e);
+            LOG.info(message);
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
         }
     }
 
@@ -67,7 +70,9 @@ public class ProviderController {
             providerService.updateProviderbyRemediId(provider);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (JDODataStoreException e) {
-            return new ResponseEntity<>(getConstraintViolationMessage(e), HttpStatus.CONFLICT);
+            String message = ExceptionUtil.getConstraintViolationMessage(e);
+            LOG.info(message);
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
         }
     }
 
@@ -76,16 +81,6 @@ public class ProviderController {
     public void removeProvider(@PathVariable long providerId) {
         Provider provider = providerService.getProviderById(providerId);
         providerService.deleteProvider(provider);
-    }
-
-    private String getConstraintViolationMessage(JDODataStoreException e) {
-        for (Throwable t : e.getNestedExceptions()) {
-            if (t.getClass().equals(MySQLIntegrityConstraintViolationException.class)) {
-                LOG.info(t.getMessage());
-                return t.getMessage();
-            }
-        }
-        return e.getMessage();
     }
 
 }
