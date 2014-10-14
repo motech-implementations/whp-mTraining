@@ -21,6 +21,7 @@ import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.security.service.MotechUserService;
 import org.motechproject.whp.mtraining.csv.request.CourseCsvRequest;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
+import org.motechproject.whp.mtraining.service.ManyToManyRelationService;
 import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
@@ -47,12 +48,15 @@ public class CourseImportServiceIT extends BasePaxIT {
     private CourseConfigurationService courseConfigService;
     @Inject
     private ContentOperationService contentOperationService;
+    @Inject
+    private ManyToManyRelationService manyToManyRelationService;
 
     private CourseImportService courseImportService;
 
     @Before
     public void before() {
-        courseImportService = new CourseImportService(coursePlanService, courseConfigService, motechUserService, contentOperationService);
+        courseImportService = new CourseImportService(coursePlanService, courseConfigService, motechUserService, 
+                contentOperationService, mTrainingService, manyToManyRelationService);
         deleteFromDatabase();
     }
 
@@ -71,7 +75,9 @@ public class CourseImportServiceIT extends BasePaxIT {
                 new CourseCsvRequest("CourseImportServiceIT lesson5", "lesson", CourseUnitState.Inactive, "CourseImportServiceIT chapter2", "lesson5 description", "filename4")
         );
 
+        courseImportService.importCourseStructure(requests);
         CoursePlan coursePlan = coursePlanService.getCoursePlanByName("CourseImportServiceIT coursePlan");
+        coursePlan.setCourses(manyToManyRelationService.getCoursesByParentId(coursePlan.getId()));
 
         assertCoursePlanDetails(coursePlan);
     }
@@ -79,7 +85,9 @@ public class CourseImportServiceIT extends BasePaxIT {
     @After
     public void deleteFromDatabase(){
         CoursePlan coursePlan = coursePlanService.getCoursePlanByName("CourseImportServiceIT coursePlan");
-        coursePlanService.deleteCoursePlan(coursePlan);
+        if (coursePlan != null) {
+            coursePlanService.deleteCoursePlan(coursePlan);
+        }
 
         List<Course> courses = mTrainingService.getCourseByName("CourseImportServiceIT course1");
         courses.addAll(mTrainingService.getCourseByName("CourseImportServiceIT course2"));
@@ -116,6 +124,9 @@ public class CourseImportServiceIT extends BasePaxIT {
     private void assertCourse(Course course1, Course course2) {
         assertCourseDetails(course1, "CourseImportServiceIT course1", "courseFileName", "course description");
         assertCourseDetails(course2, "CourseImportServiceIT course2", "course2FileName", "course2 description");
+        course1.setChapters(manyToManyRelationService.getChaptersByParentId(course1.getId()));
+        course2.setChapters(manyToManyRelationService.getChaptersByParentId(course2.getId()));
+
         assertChapter(course1.getChapters(), course2.getChapters());
     }
 
@@ -131,6 +142,9 @@ public class CourseImportServiceIT extends BasePaxIT {
     private void assertChapter(List<Chapter> chapterList1, List<Chapter> chapterList2) {
         assertChapterDetails(chapterList1, "CourseImportServiceIT chapter1", "chapter1FileName", "chapter1 description");
         assertChapterDetails(chapterList2, "CourseImportServiceIT chapter2", "chapter2FileName", "chapter2 description");
+        chapterList1.get(0).setLessons(manyToManyRelationService.getLessonsByParentId(chapterList1.get(0).getId()));
+        chapterList2.get(0).setLessons(manyToManyRelationService.getLessonsByParentId(chapterList2.get(0).getId()));
+
         assertLesson(chapterList1.get(0).getLessons(), chapterList2.get(0).getLessons());
     }
 

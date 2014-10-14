@@ -59,11 +59,14 @@ public class CourseImportService {
     public CourseImportService() { }
 
     public CourseImportService(CoursePlanService coursePlanService, CourseConfigurationService courseConfigurationService,
-                               MotechUserService motechUserService, ContentOperationService contentOperationService) {
+                               MotechUserService motechUserService, ContentOperationService contentOperationService,
+                               MTrainingService mTrainingService, ManyToManyRelationService manyToManyRelationService) {
         this.coursePlanService = coursePlanService;
         this.courseConfigurationService = courseConfigurationService;
         this.motechUserService = motechUserService;
         this.contentOperationService = contentOperationService;
+        this.mTrainingService = mTrainingService;
+        this.manyToManyRelationService = manyToManyRelationService;
     }
 
     public void importCourseConfig(List<CourseConfigurationRequest> requests) {
