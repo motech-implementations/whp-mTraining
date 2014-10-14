@@ -17,7 +17,7 @@ public class Provider extends MdsEntity {
 
     // primary contact number
     @Field
-    @Unique
+    @Unique(name = "CALLER_ID_CONSTRAINT")
     private Long callerId;
 
     @Field
@@ -27,7 +27,7 @@ public class Provider extends MdsEntity {
     private ProviderStatus providerStatus;
 
     @Field
-    @Unique
+    @Unique(name = "REMEDI_ID_CONSTRAINT")
     private String remediId;
 
     public Provider(String remediId, Long callerId, ProviderStatus providerStatus, Location location) {

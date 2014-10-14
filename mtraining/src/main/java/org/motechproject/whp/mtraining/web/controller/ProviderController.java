@@ -1,6 +1,7 @@
 package org.motechproject.whp.mtraining.web.controller;
 
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.service.ProviderService;
 import org.motechproject.whp.mtraining.service.impl.ContentOperationServiceImpl;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.jdo.JDOException;
+import javax.jdo.JDODataStoreException;
 import java.util.List;
 
 /**
@@ -43,9 +44,8 @@ public class ProviderController {
         try {
             providerService.createProvider(provider);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (JDOException e) {
-            LOG.warn(e.getNestedExceptions()[0].getMessage());
-            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        } catch (JDODataStoreException e) {
+            return new ResponseEntity<>(getConstraintViolationMessage(e), HttpStatus.CONFLICT);
         }
     }
 
@@ -55,21 +55,19 @@ public class ProviderController {
         try {
             providerService.updateProvider(provider);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (JDOException e) {
-            LOG.warn(e.getNestedExceptions()[0].getMessage());
-            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        } catch (JDODataStoreException e) {
+            return new ResponseEntity<>(getConstraintViolationMessage(e), HttpStatus.CONFLICT);
         }
     }
 
     @RequestMapping(value = "/provider/remediid/{remediId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<String> updateProviderMappedbyRemediId(@RequestBody Provider provider) {
+    public ResponseEntity<String> updateProviderMappedByRemediId(@RequestBody Provider provider) {
         try {
             providerService.updateProviderbyRemediId(provider);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (JDOException e) {
-            LOG.warn(e.getNestedExceptions()[0].getMessage());
-            return new ResponseEntity<>(e.getNestedExceptions()[0].getMessage(), HttpStatus.CONFLICT);
+        } catch (JDODataStoreException e) {
+            return new ResponseEntity<>(getConstraintViolationMessage(e), HttpStatus.CONFLICT);
         }
     }
 
@@ -79,4 +77,15 @@ public class ProviderController {
         Provider provider = providerService.getProviderById(providerId);
         providerService.deleteProvider(provider);
     }
+
+    private String getConstraintViolationMessage(JDODataStoreException e) {
+        for (Throwable t : e.getNestedExceptions()) {
+            if (t.getClass().equals(MySQLIntegrityConstraintViolationException.class)) {
+                LOG.info(t.getMessage());
+                return t.getMessage();
+            }
+        }
+        return e.getMessage();
+    }
+
 }

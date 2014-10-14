@@ -1292,11 +1292,11 @@
             else {
                 $scope.errorPercentage = undefined;
             }
-            if($("#noOfQuestionsToBePlayed").val()>$scope.quiz.questions.length){
+            if ($("#noOfQuestionsToBePlayed").val() > $scope.quiz.questions.length) {
                 $scope.errorNoOfQuestions = $scope.msg('mtraining.set.NoOfQuestions', $scope.quiz.questions.length);
             }
-            else{
-            $scope.errorNoOfQuestions = undefined;
+            else {
+                $scope.errorNoOfQuestions = undefined;
             }
 
             if (!$scope.errorName && !$scope.errorPercentage && !$scope.errorNoOfQuestions) {
@@ -1588,7 +1588,7 @@
                 $scope.savingProvider = false;
                 $("#providersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
                 if (response.status == 409) {
-                    if (response.data.indexOf("WHP_MTRAINING_PROVIDER_U3") > -1) {
+                    if (response.data.indexOf("CALLER_ID_CONSTRAINT") != -1) {
                         $scope.errorCallerId = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.callerId'));
                     } else {
                         $scope.errorRemediId = $scope.msg('mtraining.field.unique', $scope.msg('mtraining.remediId'))
