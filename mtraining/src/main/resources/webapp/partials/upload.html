@@ -33,22 +33,22 @@
         </div>
     </div>
 
-    <div class="box-header providerUpload">UPLOAD COURSE CONFIGURATION</div>
-    <div class="box-content gutter-border">
-        <div class="row btnContainer">
-            <form role="form" class="form-inline">
-                <div class="form-group col-xs-offset-1 col-lg-5">
-                    <input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"
-                           file-model="multipartFile"/>
-                </div>
-                <div class="form-group">
-                    <input type="button" class="form-control btn btn-default" value="Upload Course Configuration"
-                           ng-click="uploadCourseConfig()" ng-disabled="uploadingCourseConfig || !multipartFile"/>
-                </div>
-                <img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingCourseConfig"/>
-            </form>
-        </div>
-    </div>
+    <!--<div class="box-header providerUpload">UPLOAD COURSE CONFIGURATION</div>-->
+    <!--<div class="box-content gutter-border">-->
+        <!--<div class="row btnContainer">-->
+            <!--<form role="form" class="form-inline">-->
+                <!--<div class="form-group col-xs-offset-1 col-lg-5">-->
+                    <!--<input class="btn btn-default btn-file col-lg-5 chooseFileBtn" type="file"-->
+                           <!--file-model="multipartFile"/>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<input type="button" class="form-control btn btn-default" value="Upload Course Configuration"-->
+                           <!--ng-click="uploadCourseConfig()" ng-disabled="uploadingCourseConfig || !multipartFile"/>-->
+                <!--</div>-->
+                <!--<img src="../mtraining/images/spinner.gif" class="mtrain-spinner" ng-show="uploadingCourseConfig"/>-->
+            <!--</form>-->
+        <!--</div>-->
+    <!--</div>-->
 
     <div class="response" ng-hide="multipartFile">
         <div ng-show="response.status=='SUCCESS'">
