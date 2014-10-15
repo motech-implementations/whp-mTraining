@@ -875,6 +875,19 @@
                 $scope.chapter.quiz = $scope.quizzes[idx];
             } else {
                 $scope.chapter.quiz = null;
+                var chapterId = $scope.chapter.id;
+                for(var i = 0; i < $scope.quizzes.length; i++) {
+                    idx = i;
+                    var quiz = $scope.quizzes[i];
+                    if (chapterId && $.inArray(chapterId, quiz.parentIds) != -1) {
+                        quiz = Quiz.get({ id: quiz.id }, function() {
+                            quiz.parentIds = [];
+                            quiz.$update({ id: quiz.id }, function() {
+                                $scope.quizzes[idx] = quiz;
+                            });
+                        });
+                    }
+                }
             }
         }
 
