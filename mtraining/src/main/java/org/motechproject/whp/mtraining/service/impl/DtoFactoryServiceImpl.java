@@ -552,6 +552,8 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             if (((CoursePlanDto) courseUnitMetadataDto).getLocation() != null) {
                 Location location = locationService.getLocationById(((CoursePlanDto) courseUnitMetadataDto).getLocation().getId());
                 coursePlan.setLocation(location);
+            } else {
+                coursePlan.setLocation(null);
             }
             coursePlanService.updateCoursePlan(coursePlan);
 
