@@ -98,6 +98,9 @@ public class ProviderServiceImpl implements ProviderService {
             if (courseProgress != null && courseProgress.getFlag() != null) {
                 Flag flag = flagService.getFlagById(courseProgress.getFlag().getId());
                 if (flag.getCourseIdentifier() != null && flag.getCourseIdentifier().getContentId().equals(contentId)) {
+                    courseProgress.setFlag(null);
+                    courseProgressService.updateCourseProgress(courseProgress);
+                    flagService.deleteFlag(flag.getId());
                     courseProgressService.deleteCourseProgress(courseProgress);
                 }
             }
