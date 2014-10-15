@@ -202,13 +202,17 @@
                     allRelations.push({"courseId": courseId, "relations": relations});
                 }
             });
-            $.postJSON('../mtraining/web-api/updateStates', $scope.stateMap, function() {
+            $.postJSON('../mtraining/web-api/updateStates', $scope.stateMap, function(updatedIds) {
                 if (allRelations.length > 0) {
                     for(var i = 0; i < allRelations.length; i++) {
                         var courseId = allRelations[i].courseId;
                         var relations = allRelations[i].relations;
                         var successes = 0;
-                        $.postJSON('../mtraining/web-api/updateRelations/' + courseId, relations, function() {
+                        var data = {
+                            "relations": relations,
+                            "updatedIds": updatedIds
+                        }
+                        $.postJSON('../mtraining/web-api/updateRelations/' + courseId, data, function() {
                             successes++;
                             if (successes == allRelations.length) {
                                 $scope.savingRelations = false;

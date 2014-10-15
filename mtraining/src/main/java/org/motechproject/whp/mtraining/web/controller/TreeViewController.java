@@ -1,5 +1,8 @@
 package org.motechproject.whp.mtraining.web.controller;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.motechproject.mtraining.domain.CourseUnitState;
 import org.motechproject.whp.mtraining.domain.ManyToManyRelation;
 import org.motechproject.whp.mtraining.dto.CoursePlanDto;
@@ -46,15 +49,19 @@ public class TreeViewController {
     @Transactional
     @RequestMapping(value = "/updateRelations/{courseId}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void updateRelations(@RequestBody ManyToManyRelation[] relations, @PathVariable long courseId) {
-        manyToManyRelationService.updateRelationsForCourse(Arrays.asList(relations), courseId);
+    public void updateRelations(@RequestBody String jsonString, @PathVariable long courseId) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(jsonString);
+        List<ManyToManyRelation> relations = mapper.convertValue(node.get("relations"), new TypeReference<List<ManyToManyRelation>>(){});
+        List<Long> updatedIds = mapper.convertValue(node.get("updatedIds"), new TypeReference<List<Long>>(){});
+        manyToManyRelationService.updateRelationsForCourse(relations, courseId, updatedIds);
     }
 
     @Transactional
     @RequestMapping(value = "/updateStates", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void updateAllStates(@RequestBody Map<String, String> stateMap) {
-        dtoFactoryService.updateStates(stateMap);
+    public List<Long> updateAllStates(@RequestBody Map<String, String> stateMap) {
+        return dtoFactoryService.updateStates(stateMap);
     }
 
     @RequestMapping(value = "/publish/{courseId}", method = RequestMethod.GET, produces = "application/json")

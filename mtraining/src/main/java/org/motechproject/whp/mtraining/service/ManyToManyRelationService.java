@@ -30,7 +30,7 @@ public interface ManyToManyRelationService {
 
     void deleteRelationsById(Long id);
 
-    void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId);
+    void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId, List<Long> updatedIds);
 
     void updateRelationsForChild(List<ManyToManyRelation> relations, long childId);
 

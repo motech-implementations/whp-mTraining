@@ -657,8 +657,9 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
-    public void updateStates(Map<String, String> stateMap) {
+    public List<Long> updateStates(Map<String, String> stateMap) {
         Set<ManyToManyRelation> allRelations = new LinkedHashSet<>();
+        List<Long> updatedIds = new ArrayList<Long>();
         for (Map.Entry<String, String> entry : stateMap.entrySet()) {
             long id = Long.valueOf(entry.getKey());
             CourseUnitState state = CourseUnitState.valueOf(entry.getValue());
@@ -667,12 +668,13 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             createOrUpdateFromDto(dto);
             List<ManyToManyRelation> relations = manyToManyRelationService.getRelationsByChildId(id);
             if (relations == null || relations.size() == 0) {
-                increaseVersionsByChildId(id, dto);
+                updatedIds.addAll(increaseVersionsByChildId(id, dto));
             } else {
                 allRelations.addAll(manyToManyRelationService.getRelationsByChildId(id));
             }
         }
-        increaseVersionsByRelations(allRelations);
+        updatedIds.addAll(increaseVersionsByRelations(allRelations));
+        return updatedIds;
     }
 
     private void increaseVersion(CourseUnitMetadataDto dto) {
@@ -689,8 +691,12 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     }
 
     @Override
-    public void increaseVersionsByRelations(Set<ManyToManyRelation> relations) {
-        List<Long> updatedIds = new ArrayList<>();
+    public List<Long> increaseVersionsByRelations(Set<ManyToManyRelation> relations) {
+        return increaseVersionsByRelations(relations, new ArrayList<Long>());
+    }
+
+    @Override
+    public List<Long> increaseVersionsByRelations(Set<ManyToManyRelation> relations, List<Long> updatedIds) {
         for (ManyToManyRelation relation : relations) {
             long parentId = relation.getParentId();
             long childId = relation.getChildId();
@@ -721,18 +727,20 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                 }
             }
             if (child != null && !updatedIds.contains(childId)) {
-                increaseVersion(child);
                 updatedIds.add(childId);
+                increaseVersion(child);
             }
         }
+        return updatedIds;
     }
 
-    private void increaseVersionsByChildId(Long id, CourseUnitMetadataDto dto) {
+    private List<Long> increaseVersionsByChildId(Long id, CourseUnitMetadataDto dto) {
         List<ManyToManyRelation> relations = manyToManyRelationService.getRelationsByChildId(id);
         if (relations.size() == 0 && dto != null) {
             increaseVersion(dto);
+            return Arrays.asList(dto.getId());
         } else {
-            increaseVersionsByRelations(new LinkedHashSet<ManyToManyRelation>(relations));
+            return increaseVersionsByRelations(new LinkedHashSet<ManyToManyRelation>(relations));
         }
     }
 

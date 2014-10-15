@@ -65,9 +65,11 @@ public interface DtoFactoryService {
 
     void updateCourseDto(CourseUnitMetadataDto courseUnitMetadataDto);
 
-    void updateStates(Map<String, String> stateMap);
+    List<Long> updateStates(Map<String, String> stateMap);
 
-    void increaseVersionsByRelations(Set<ManyToManyRelation> relation);
+    List<Long> increaseVersionsByRelations(Set<ManyToManyRelation> relations);
+
+    List<Long> increaseVersionsByRelations(Set<ManyToManyRelation> relations, List<Long> updatedIds);
 
     QuizResultSheetDto gradeQuiz(QuizAnswerSheetDto quizAnswerSheetDto);
 

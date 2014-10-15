@@ -200,9 +200,9 @@ public class ManyToManyRelationServiceImpl implements ManyToManyRelationService 
     }
 
     @Override
-    public void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId) {
+    public void updateRelationsForCourse(List<ManyToManyRelation> relations, long courseId, List<Long> updatedIds) {
         List<ManyToManyRelation> existingRelations = getAllRelationsForParent(courseId);
-        dtoFactoryService.increaseVersionsByRelations(updateRelations(relations, existingRelations));
+        dtoFactoryService.increaseVersionsByRelations(updateRelations(relations, existingRelations), updatedIds);
     }
 
     @Override
