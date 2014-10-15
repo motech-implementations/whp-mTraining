@@ -514,13 +514,14 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
                     contentOperationService.codeIntoContent(courseUnitMetadataDto.getExternalId(), courseUnitMetadataDto.getDescription(),
                             UUID.randomUUID(), courseUnitMetadataDto.getVersion()));
 
-            if (((ChapterDto) courseUnitMetadataDto).getQuiz() != null) {
-                Quiz quiz = mTrainingService.getQuizById(((ChapterDto) courseUnitMetadataDto).getQuiz().getId());
-                chapter.setQuiz(quiz);
-            }
-
             chapter = mTrainingService.createChapter(chapter);
+            if (((ChapterDto) courseUnitMetadataDto).getQuiz() != null) {
+                QuizDto quiz = getQuizDtoById(((ChapterDto) courseUnitMetadataDto).getQuiz().getId());
+                quiz.setParentIds(new HashSet<Long>(Arrays.asList(chapter.getId())));
+                updateCourseUnitMetadataFromDto(quiz);
+            }
             updateRelations(chapter, courseUnitMetadataDto);
+            courseUnitMetadataDto.setId(chapter.getId());
 
         } else if (courseUnitMetadataDto instanceof LessonDto) {
             Lesson lesson = new Lesson(courseUnitMetadataDto.getName(), courseUnitMetadataDto.getState(),
@@ -538,6 +539,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
 
             quiz = mTrainingService.createQuiz(quiz);
             updateRelations(quiz, courseUnitMetadataDto);
+
         }
     }
 
@@ -569,6 +571,11 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             Chapter chapter = mTrainingService.getChapterById(courseUnitMetadataDto.getId());
             populateCourseUnitMetadataFields(chapter, courseUnitMetadataDto);
             mTrainingService.updateChapter(chapter);
+            if (((ChapterDto) courseUnitMetadataDto).getQuiz() != null) {
+                QuizDto quiz = getQuizDtoById(((ChapterDto) courseUnitMetadataDto).getQuiz().getId());
+                quiz.setParentIds(new HashSet<Long>(Arrays.asList(chapter.getId())));
+                updateCourseUnitMetadataFromDto(quiz);
+            }
             updateRelations(chapter, courseUnitMetadataDto);
 
         } else if (courseUnitMetadataDto instanceof LessonDto) {

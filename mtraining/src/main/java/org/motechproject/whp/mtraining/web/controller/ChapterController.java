@@ -53,10 +53,10 @@ public class ChapterController {
 
     @RequestMapping(value = "/chapter", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<String> createChapterDto(@RequestBody ChapterDto chapter) {
+    public ResponseEntity<?> createChapterDto(@RequestBody ChapterDto chapter) {
         if (!courseUnitMetadataValidator.isPresentInDb(chapter)) {
             dtoFactoryService.createOrUpdateFromDto(chapter);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(chapter, HttpStatus.OK);
         }
         return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",
                 new String[] {chapter.getName()}, null), HttpStatus.CONFLICT);

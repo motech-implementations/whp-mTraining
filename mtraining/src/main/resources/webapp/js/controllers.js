@@ -869,18 +869,13 @@
             $scope.getQuizzes();
         }
 
-        $scope.getQuizFromQuizzes = function () {
+        $scope.setQuiz = function() {
             var idx = $scope.selectedQuiz;
-            if (!idx) {
-                return;
+            if (idx && idx >= 0) {
+                $scope.chapter.quiz = $scope.quizzes[idx];
+            } else {
+                $scope.chapter.quiz = null;
             }
-            var chapterId = $scope.chapter.id;
-            var quiz = Quiz.get({ id: $scope.quizzes[idx].id }, function() {
-                quiz.parentIds = [chapterId];
-                quiz.$update({ id: quiz.id }, function() {
-                    $scope.quizzes[idx] = quiz;
-                });
-            });
         }
 
         $scope.$on('chapterClick', function(event, chapterId) {
@@ -926,8 +921,8 @@
             $scope.savingChapter = true;
             $scope.chapter.state = 'Inactive';
             $scope.chapter.parentIds = $scope.selectedModules;
+            $scope.setQuiz();
             $scope.chapter.$save(function() {
-                $scope.getQuizFromQuizzes();
                 $scope.clearChapter();
                 $scope.alertMessage = $scope.msg('mtraining.createdChapter');
                 $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
@@ -946,8 +941,8 @@
             }
             $scope.savingChapter = true;
             $scope.chapter.parentIds = $scope.selectedModules;
+            $scope.setQuiz();
             $scope.chapter.$update({ id:$scope.chapter.id }, function () {
-                $scope.getQuizFromQuizzes();
                 $scope.clearChapter();
                 $scope.alertMessage = $scope.msg('mtraining.updatedChapter');
                 $("#chaptersListTable").setGridParam({datatype:'json', page:1}).trigger('reloadGrid');
