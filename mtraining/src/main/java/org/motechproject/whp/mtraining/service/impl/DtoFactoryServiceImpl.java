@@ -555,6 +555,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             } else {
                 coursePlan.setLocation(null);
             }
+            coursePlan.setPublished(((CoursePlanDto) courseUnitMetadataDto).isPublished());
             coursePlanService.updateCoursePlan(coursePlan);
 
             Integer duration = (((CoursePlanDto) courseUnitMetadataDto).getDuration() != null) ?
@@ -688,6 +689,7 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
             }
         } else if (dto instanceof CoursePlanDto) {
             providerService.resetCourseProgresses(dto.getContentId().toString());
+            ((CoursePlanDto) dto).setPublished(false);
         }
         createOrUpdateFromDto(dto);
     }
