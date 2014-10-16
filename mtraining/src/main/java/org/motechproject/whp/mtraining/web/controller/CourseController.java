@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -69,7 +68,7 @@ public class CourseController {
     @ResponseBody
     public ResponseEntity<String> updateCourse(@RequestBody CoursePlanDto coursePlanDto) {
         if (!courseUnitMetadataValidator.isPresentInDb(coursePlanDto)) {
-            dtoFactoryService.updateCourseDto(coursePlanDto);
+            dtoFactoryService.updateCourseUnitMetadataDto(coursePlanDto);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",

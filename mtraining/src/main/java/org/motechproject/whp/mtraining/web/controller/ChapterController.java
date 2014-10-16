@@ -66,7 +66,7 @@ public class ChapterController {
     @ResponseBody
     public  ResponseEntity<String> updateChapterDto(@RequestBody ChapterDto chapter) {
         if (!courseUnitMetadataValidator.isPresentInDb(chapter)) {
-        	dtoFactoryService.updateCourseDto(chapter);
+            dtoFactoryService.updateCourseUnitMetadataDto(chapter);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",

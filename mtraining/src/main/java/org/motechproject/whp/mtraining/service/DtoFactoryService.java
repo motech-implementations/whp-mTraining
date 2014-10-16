@@ -63,7 +63,7 @@ public interface DtoFactoryService {
 
     void activateCourse(CoursePlanDto course);
 
-    void updateCourseDto(CourseUnitMetadataDto courseUnitMetadataDto);
+    void updateCourseUnitMetadataDto(CourseUnitMetadataDto courseUnitMetadataDto);
 
     List<Long> updateStates(Map<String, String> stateMap);
 

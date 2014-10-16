@@ -652,12 +652,26 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         return null;
     }
 
-    public void updateCourseDto(CourseUnitMetadataDto dto) {
+    public void updateCourseUnitMetadataDto(CourseUnitMetadataDto dto) {
         CourseUnitMetadataDto courseUnitMetadataDto = getDtoById(dto.getId());
         String externalId = courseUnitMetadataDto.getExternalId();
         createOrUpdateFromDto(dto);
-        if (externalId != null && !externalId.equals(dto.getExternalId())) {
-            increaseVersionsByChildId(dto.getId(), dto);
+        if (dto instanceof CoursePlanDto) {
+            String old_state = "", state = "";
+            if (((CoursePlanDto)(courseUnitMetadataDto)).getLocation() != null) {
+                old_state = ((CoursePlanDto)(courseUnitMetadataDto)).getLocation().getState();
+            }
+            if (((CoursePlanDto)(dto)).getLocation() != null) {
+                state = ((CoursePlanDto)(dto)).getLocation().getState();
+            }
+            //check if changed externalId, name or location
+            if ((externalId != null && !externalId.equals(dto.getExternalId())) ||
+                    !courseUnitMetadataDto.getName().equals(dto.getName()) ||
+                    !old_state.equals(state)) {
+                increaseVersionsByChildId(dto.getId(), dto);
+            }
+        } else if (externalId != null && !externalId.equals(dto.getExternalId())) {
+                increaseVersionsByChildId(dto.getId(), dto);
         }
     }
 

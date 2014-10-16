@@ -66,7 +66,7 @@ public class LessonController {
     @ResponseBody
     public ResponseEntity<String> updateLesson(@RequestBody LessonDto lesson) {
         if (!courseUnitMetadataValidator.isPresentInDb(lesson)) {
-        	dtoFactoryService.updateCourseDto(lesson);
+            dtoFactoryService.updateCourseUnitMetadataDto(lesson);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<String>(messageSource.getMessage("mtraining.error.unitNotUnique",
