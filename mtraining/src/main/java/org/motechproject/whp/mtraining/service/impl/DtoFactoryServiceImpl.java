@@ -229,8 +229,10 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
     @Override
     public CoursePlanDto getCoursePlanDtoById(long courseId) {
         CoursePlanDto coursePlanDto = (CoursePlanDto) getDto(coursePlanService.getCoursePlanById(courseId));
-        CourseConfiguration courseConfiguration = courseConfigurationService.getCourseConfigurationByCourseId(courseId);
-        coursePlanDto.setDuration(courseConfiguration.getCourseDuration());
+        if (coursePlanDto != null) {
+            CourseConfiguration courseConfiguration = courseConfigurationService.getCourseConfigurationByCourseId(courseId);
+            coursePlanDto.setDuration(courseConfiguration.getCourseDuration());
+        }
         return coursePlanDto;
     }
 

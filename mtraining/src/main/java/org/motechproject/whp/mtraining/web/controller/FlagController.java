@@ -13,6 +13,7 @@ import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.domain.Provider;
 import org.motechproject.whp.mtraining.domain.views.PropertyFilterMixIn;
+import org.motechproject.whp.mtraining.exception.CourseNotPublishedException;
 import org.motechproject.whp.mtraining.exception.InvalidBookmarkException;
 import org.motechproject.whp.mtraining.exception.MTrainingException;
 import org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType;
@@ -47,6 +48,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.GET;
 import static org.motechproject.whp.mtraining.reports.domain.BookmarkRequestType.POST;
 import static org.motechproject.whp.mtraining.web.domain.ProviderStatus.isInvalid;
+import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.COURSE_NOT_PUBLISHED;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.INVALID_FLAG;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.LOCATION_NOT_ASSOCIATED_WITH_PROVIDER;
 import static org.motechproject.whp.mtraining.web.domain.ResponseStatus.NOT_WORKING_PROVIDER;
@@ -123,7 +125,12 @@ public class FlagController {
         if (provider.getLocation() == null) {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, LOCATION_NOT_ASSOCIATED_WITH_PROVIDER).getBody();
         }
-        CourseProgress courseProgress = courseProgressService.getCourseProgress(provider);
+        CourseProgress courseProgress = null;
+        try {
+            courseProgress = courseProgressService.getCourseProgress(provider);
+        } catch (CourseNotPublishedException ex) {
+            return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, COURSE_NOT_PUBLISHED).getBody();
+        }
 
         if (courseProgress == null) {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, ResponseStatus.COURSE_NOT_FOUND).getBody();
@@ -177,6 +184,8 @@ public class FlagController {
             }
         } catch (InvalidBookmarkException ex) {
             return responseAfterLogging(callerId, uniqueId, sessionId, remediId, POST, INVALID_FLAG);
+        } catch (CourseNotPublishedException ex) {
+            return responseAfterLogging(callerId, uniqueId, courseProgressPostRequest.getSessionId(), remediId, GET, COURSE_NOT_PUBLISHED);
         }
         Flag flagForReport = flagService.getFlagById(savedCourseProgress.getFlag().getId());
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, sessionId,

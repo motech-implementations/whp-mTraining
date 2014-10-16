@@ -11,6 +11,7 @@ import org.motechproject.whp.mtraining.domain.CourseProgress;
 import org.motechproject.whp.mtraining.domain.Flag;
 import org.motechproject.whp.mtraining.domain.Location;
 import org.motechproject.whp.mtraining.domain.Provider;
+import org.motechproject.whp.mtraining.exception.CourseNotPublishedException;
 import org.motechproject.whp.mtraining.repository.CourseProgressDataService;
 import org.motechproject.whp.mtraining.service.CourseConfigurationService;
 import org.motechproject.whp.mtraining.service.CoursePlanService;
@@ -108,7 +109,7 @@ public class CourseProgressServiceImpl implements CourseProgressService {
     }
 
     @Override
-    public CourseProgress getCourseProgress(Provider provider) {
+    public CourseProgress getCourseProgress(Provider provider) throws CourseNotPublishedException {
         long callerId = provider.getCallerId();
         CourseProgress courseProgress = getCourseProgressForProvider(provider.getCallerId());
 
@@ -124,12 +125,14 @@ public class CourseProgressServiceImpl implements CourseProgressService {
             CoursePlan coursePlan = coursePlanService.getCoursePlanByLocation(stateLocation.getId());
             if (coursePlan == null) {
                 return null;
+            } else if (!coursePlan.isPublished()) {
+                throw new CourseNotPublishedException();
             }
             courseIdentifier.setUnitId(coursePlan.getId());
             courseProgress = getInitialCourseProgressForProvider(callerId, courseIdentifier);
             courseProgress = createCourseProgress(courseProgress);
-    }
-    return courseProgress;
+        }
+        return courseProgress;
     }
 
     @Override
