@@ -657,17 +657,17 @@ public class DtoFactoryServiceImpl implements DtoFactoryService {
         String externalId = courseUnitMetadataDto.getExternalId();
         createOrUpdateFromDto(dto);
         if (dto instanceof CoursePlanDto) {
-            String old_state = "", state = "";
-            if (((CoursePlanDto)(courseUnitMetadataDto)).getLocation() != null) {
-                old_state = ((CoursePlanDto)(courseUnitMetadataDto)).getLocation().getState();
+            String oldState = "", state = "";
+            if (((CoursePlanDto)courseUnitMetadataDto).getLocation() != null) {
+                oldState = ((CoursePlanDto)courseUnitMetadataDto).getLocation().getState();
             }
-            if (((CoursePlanDto)(dto)).getLocation() != null) {
-                state = ((CoursePlanDto)(dto)).getLocation().getState();
+            if (((CoursePlanDto)dto).getLocation() != null) {
+                state = ((CoursePlanDto)dto).getLocation().getState();
             }
             //check if changed externalId, name or location
             if ((externalId != null && !externalId.equals(dto.getExternalId())) ||
                     !courseUnitMetadataDto.getName().equals(dto.getName()) ||
-                    !old_state.equals(state)) {
+                    !oldState.equals(state)) {
                 increaseVersionsByChildId(dto.getId(), dto);
             }
         } else if (externalId != null && !externalId.equals(dto.getExternalId())) {
