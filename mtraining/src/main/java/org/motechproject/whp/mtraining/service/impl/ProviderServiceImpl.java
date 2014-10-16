@@ -52,12 +52,17 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
-    public Provider updateProviderbyRemediId(Provider provider) {
-        Provider providerToUpdate = getProviderByRemediId(provider.getRemediId());
-        providerToUpdate.setCallerId(provider.getCallerId());
-        providerToUpdate.setProviderStatus(provider.getProviderStatus());
-        providerToUpdate.setLocation(getLocationFromDatabase(provider.getLocation()));
-        return providerDataService.update(providerToUpdate);
+    public Provider updateProviderbyRemediId(String remediId, Provider provider) {
+        Provider providerToUpdate = getProviderByRemediId(remediId);
+        if (providerToUpdate != null) {
+            providerToUpdate.setCallerId(provider.getCallerId());
+            providerToUpdate.setProviderStatus(provider.getProviderStatus());
+            providerToUpdate.setRemediId(provider.getRemediId());
+            providerToUpdate.setLocation(getLocationFromDatabase(provider.getLocation()));
+            return providerDataService.update(providerToUpdate);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -118,7 +123,12 @@ public class ProviderServiceImpl implements ProviderService {
 
     private Location getLocationFromDatabase(Location location) {
         if (location != null) {
-            return locationService.getLocationById(location.getId());
+            Location locationInDb = (location.getId() > 0) ? locationService.getLocationById(location.getId()) :
+                    locationService.getLocationByState(location.getState());
+            if (locationInDb == null) {
+                return locationService.createLocation(location);
+            }
+            return locationInDb;
         }
         return null;
     }

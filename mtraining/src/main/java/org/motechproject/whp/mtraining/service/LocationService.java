@@ -31,4 +31,6 @@ public interface LocationService {
 
     List<Location> getUnusedLocationsByCourse();
 
+    Location getLocationByState(String state);
+
 }

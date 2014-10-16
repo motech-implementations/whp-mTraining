@@ -65,10 +65,14 @@ public class ProviderController {
 
     @RequestMapping(value = "/provider/remediid/{remediId}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<String> updateProviderMappedByRemediId(@RequestBody Provider provider) {
+    public ResponseEntity<String> updateProviderMappedByRemediId(@RequestBody Provider provider, @PathVariable String remediId) {
         try {
-            providerService.updateProviderbyRemediId(provider);
-            return new ResponseEntity<>(HttpStatus.OK);
+            provider = providerService.updateProviderbyRemediId(remediId, provider);
+            if (provider != null) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         } catch (JDODataStoreException e) {
             String message = ExceptionUtil.getConstraintViolationMessage(e);
             LOG.info(message);

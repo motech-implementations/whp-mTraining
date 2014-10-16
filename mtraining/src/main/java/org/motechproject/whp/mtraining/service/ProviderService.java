@@ -11,7 +11,7 @@ public interface ProviderService {
 
     Provider updateProvider(Provider provider);
 
-    Provider updateProviderbyRemediId(Provider provider);
+    Provider updateProviderbyRemediId(String remediId, Provider provider);
 
     void deleteProvider(Provider provider);
 

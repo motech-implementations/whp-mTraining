@@ -87,4 +87,9 @@ public class LocationServiceImpl implements LocationService {
         return locations;
     }
 
+    @Override
+    public Location getLocationByState(String state) {
+        return locationDataService.findStateByName(state, null);
+    }
+
 }
