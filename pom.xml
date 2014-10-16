@@ -12,5 +12,10 @@
         <module>mtraining</module>
     </modules>
 
+    <scm>
+        <connection>scm:git:https://github.com/motech-implementations/whp-mTraining.git</connection>
+        <developerConnection>scm:git:https://github.com/motech-implementations/whp-mTraining.git</developerConnection>
+    </scm>
+
 
 </project>
