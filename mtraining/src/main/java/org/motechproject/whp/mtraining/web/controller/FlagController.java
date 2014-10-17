@@ -135,7 +135,7 @@ public class FlagController {
         if (courseProgress == null) {
             return responseAfterLogging(callerId, uniqueId, currentSessionId, remediId, GET, ResponseStatus.COURSE_NOT_FOUND).getBody();
         }
-        Flag flagForReport = flagService.getFlagById(courseProgress.getFlag().getId());
+        Flag flagForReport = courseProgress.getFlag();
         bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(provider.getRemediId(), callerId, uniqueId, currentSessionId, OK, GET,
                 courseProgress.getCourseStartTime(), courseProgress.getTimeLeftToCompleteCourse(), courseProgress.getCourseStatus(), new BookmarkReport(flagForReport)));
         String[] ignorableFieldNames = {"id", "creationDate", "modificationDate", "creator", "owner", "modifiedBy", "level"};

@@ -88,13 +88,12 @@ public class CourseProgressServiceImpl implements CourseProgressService {
     private CourseProgress getInitialCourseProgressForProvider(long callerId, ContentIdentifier courseIdentifier) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm:ss.SSS");
         Flag flag = flagService.getInitialFlag(callerId, courseIdentifier);
-        flag = flagService.createFlag(flag);
         flag.setDateModified(dateTimeFormatter.withZone(DateTimeZone.UTC).print(flag.getCreationDate()));
-        flag = flagService.updateFlag(flag);
         CourseProgress courseProgress = new CourseProgress(callerId, null, flag, 0, CourseStatus.STARTED.getValue());
         setTimeLeftToCompleteCourse(flag.getCourseIdentifier().getUnitId(), courseProgress);
         return courseProgress;
     }
+
     @Override
     public void markCourseAsComplete(long callerId, String startTime, String externalId) {
         List<CourseProgress> courseProgresses = courseProgressDataService.findCourseProgressesByCallerId(callerId);
@@ -130,7 +129,6 @@ public class CourseProgressServiceImpl implements CourseProgressService {
             }
             courseIdentifier.setUnitId(coursePlan.getId());
             courseProgress = getInitialCourseProgressForProvider(callerId, courseIdentifier);
-            courseProgress = createCourseProgress(courseProgress);
         }
         return courseProgress;
     }

@@ -43,7 +43,7 @@ public class BookmarkReport extends MdsEntity {
         this.chapterIdentifier = flag.getChapterIdentifier();
         this.messageIdentifier = flag.getLessonIdentifier();
         this.quizIdentifier = flag.getQuizIdentifier();
-        this.dateModified = flag.getModificationDate();
+        this.dateModified = (flag.getModificationDate() == null) ? DateTime.now() : flag.getModificationDate();
     }
 
     public ContentIdentifier getCourseIdentifier() {
