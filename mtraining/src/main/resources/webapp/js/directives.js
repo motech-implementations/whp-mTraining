@@ -692,7 +692,7 @@
                     rownumbers: true,
                     rowNum: 10,
                     rowList: [10, 20, 50],
-                    colNames: ['rowId', 'id', scope.msg('mtraining.state'), scope.msg('mtraining.dateCreated'), scope.msg('mtraining.lastUpdated')],
+                    colNames: ['rowId', 'id', scope.msg('mtraining.locationName'), scope.msg('mtraining.dateCreated')],
                     colModel: [{
                        name: 'rowId',
                        index: 'rowId',
@@ -711,12 +711,6 @@
                     }, {
                         name: 'creationDate',
                         index: 'creationDate',
-                        align: 'center',
-                        width: 70,
-                        formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
-                    }, {
-                        name: 'modificationDate',
-                        index: 'modificationDate',
                         align: 'center',
                         width: 70,
                         formatter:'date', formatoptions: {srcformat: 'Y-m-d H:i:s', newformat:'Y/m/d'}
