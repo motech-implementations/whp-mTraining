@@ -132,10 +132,14 @@ public class QuizController {
             QuizDto quiz = dtoFactoryService.getQuizDtoByUuid(quizId);
             List<ContentIdentifier> questionsForQuiz = new ArrayList<>();
             if (quiz != null) {
-                for (QuestionDto question : quiz.getQuestions()) {
+
+                List<QuestionDto> questionDtos = quiz.getQuestions();
+                Collections.shuffle(questionDtos);
+
+                for (int i = 0 ; i < quiz.getNoOfQuestionsToBePlayed() ; i++) {
+                    QuestionDto question = questionDtos.get(i);
                     questionsForQuiz.add(new ContentIdentifier(question.getId(), question.getContentId(), quiz.getVersion()));
                 }
-                Collections.shuffle(questionsForQuiz);
             }
             else {
                 LOGGER.error(String.format("No quiz found for quizId %s and version %s", quizId, quizVersion));
