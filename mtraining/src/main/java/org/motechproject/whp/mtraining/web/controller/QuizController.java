@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -134,6 +135,7 @@ public class QuizController {
                 for (QuestionDto question : quiz.getQuestions()) {
                     questionsForQuiz.add(new ContentIdentifier(question.getId(), question.getContentId(), quiz.getVersion()));
                 }
+                Collections.shuffle(questionsForQuiz);
             }
             else {
                 LOGGER.error(String.format("No quiz found for quizId %s and version %s", quizId, quizVersion));
