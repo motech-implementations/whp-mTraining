@@ -26,16 +26,24 @@
             <li ng-class="active('#/mtraining/upload')"><a  ng-href="#/mtraining/upload">{{msg('mtraining.upload')}}</a></li>
             <li ng-class="active('#/mtraining/providers')"><a  ng-href="#/mtraining/providers">{{msg('mtraining.providers')}}</a></li>
             <li ng-class="active('#/mtraining/locations')"><a  ng-href="#/mtraining/locations">{{msg('mtraining.locations')}}</a></li>
-            <li ng-class="active('#/mtraining/errorLog')||active('#/mtraining/callLog')||active('#/mtraining/coursePublication')||active('#/mtraining/bookmarkRequest')||active('#/mtraining/quizAttempt')">
+            <li ng-class="active('#/mtraining/errorLog')||active('#/mtraining/callLog')||active('#/mtraining/coursePublication')||active('#/mtraining/bookmarkRequest')||active('#/mtraining/quizAttempt')||active('#/mtraining/trainingStatusReport')||active('#/mtraining/wiseStatusReport')||active('#/mtraining/statusDetailedReport')">
                 <a ng-href="#/mtraining/coursePublication">{{msg('mtraining.admin')}}</a>
             </li>
         </ul>
-        <ul class="nav nav-tabs tasks " ng-show="active('#/mtraining/errorLog')||active('#/mtraining/callLog')||active('#/mtraining/coursePublication')||active('#/mtraining/bookmarkRequest')||active('#/mtraining/quizAttempt')">
+        <ul class="nav nav-tabs tasks " ng-show="active('#/mtraining/errorLog')||active('#/mtraining/callLog')||active('#/mtraining/coursePublication')||active('#/mtraining/bookmarkRequest')||active('#/mtraining/quizAttempt')||active('#/mtraining/trainingStatusReport')||active('#/mtraining/wiseStatusReport')||active('#/mtraining/statusDetailedReport')">
             <li ng-class="active('#/mtraining/coursePublication')"><a  ng-href="#/mtraining/coursePublication">{{msg('mtraining.coursePublication')}}</a></li>
             <li ng-class="active('#/mtraining/bookmarkRequest')"><a  ng-href="#/mtraining/bookmarkRequest">{{msg('mtraining.bookmark.requests')}}</a></li>
             <li ng-class="active('#/mtraining/quizAttempt')"><a  ng-href="#/mtraining/quizAttempt">{{msg('mtraining.quiz.attempts')}}</a></li>
             <li ng-class="active('#/mtraining/callLog')"><a  ng-href="#/mtraining/callLog">{{msg('mtraining.callLog')}}</a></li>
+            <li ng-class="active('#/mtraining/trainingStatusReport')||active('#/mtraining/wiseStatusReport')||active('#/mtraining/statusDetailedReport')">
+                <a  ng-href="#/mtraining/trainingStatusReport">{{msg('mtraining.reports')}}</a>
+            </li>
             <li ng-class="active('#/mtraining/errorLog')"><a  ng-href="#/mtraining/errorLog">{{msg('mtraining.errorLog')}}</a></li>
+        </ul>
+        <ul class="nav nav-tabs tasks " ng-show="active('#/mtraining/trainingStatusReport')||active('#/mtraining/wiseStatusReport')||active('#/mtraining/statusDetailedReport')">
+            <li ng-class="active('#/mtraining/trainingStatusReport')"><a  ng-href="#/mtraining/trainingStatusReport">{{msg('mtraining.trainingStatusReport')}}</a></li>
+            <li ng-class="active('#/mtraining/wiseStatusReport')"><a  ng-href="#/mtraining/wiseStatusReport">{{msg('mtraining.wiseStatusReport')}}</a></li>
+            <li ng-class="active('#/mtraining/statusDetailedReport')"><a  ng-href="#/mtraining/statusDetailedReport">{{msg('mtraining.statusDetailedReport')}}</a></li>
         </ul>
     </div>
 

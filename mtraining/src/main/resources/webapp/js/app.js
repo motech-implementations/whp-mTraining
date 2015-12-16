@@ -43,6 +43,15 @@
                 controller: 'locationsController'
               }).when('/mtraining/quizAttempt', {
                 templateUrl: '../mtraining/partials/quizAttempt.html'
+              }).when('/mtraining/trainingStatusReport', {
+                templateUrl: '../mtraining/partials/trainingStatusReport.html',
+                controller: 'reportsController'
+              }).when('/mtraining/wiseStatusReport', {
+                templateUrl: '../mtraining/partials/wiseStatusReport.html',
+                controller: 'reportsController'
+              }).when('/mtraining/statusDetailedReport', {
+                templateUrl: '../mtraining/partials/statusDetailedReport.html',
+                controller: 'reportsController'
               });
     });
 
