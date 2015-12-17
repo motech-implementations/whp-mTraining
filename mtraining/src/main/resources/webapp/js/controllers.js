@@ -1758,4 +1758,8 @@
         $scope.clearLocation();
     }]);
 
+    controllers.controller('reportsController', function ($scope) {
+
+    });
+
 }());
