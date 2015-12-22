@@ -1437,4 +1437,78 @@
         };
     });
 
+    directives.directive('trainingStatusReportGrid', function($http) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element), filters;
+
+                elem.jqGrid({
+                    url: '../mtraining/web-api/trainingStatusReports',
+                    datatype: 'json',
+                    jsonReader:{
+                        repeatitems:false,
+                        root: function (obj) {
+                            return obj;
+                        }
+                    },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
+                    shrinkToFit: true,
+                    forceFit: true,
+                    autowidth: true,
+                    rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
+                    colNames: ['rowId', scope.msg('mtraining.trainingStatusReport.district'), scope.msg('mtraining.trainingStatusReport.providerRegistered'),
+                               scope.msg('mtraining.trainingStatusReport.providerCompletedCourse'), scope.msg('mtraining.trainingStatusReport.providerInCourse')],
+                    colModel: [{
+                       name: 'rowId',
+                       index: 'rowId',
+                       hidden: true,
+                       key: true
+                    }, {
+                       name: 'district',
+                       index: 'district',
+                       align: 'center'
+                    }, {
+                        name: 'providerRegistered',
+                        index: 'providerRegistered',
+                        align: 'center'
+                    }, {
+                        name: 'providerCompletedCourse',
+                        index: 'providerCompletedCourse',
+                        align: 'center'
+                    }, {
+                        name: 'providerInCourse',
+                        index: 'providerInCourse',
+                        align: 'center'
+                    }],
+                    pager: '#' + attrs.trainingStatusReportGrid,
+                    width: '100%',
+                    height: 'auto',
+                    sortname: 'district',
+                    sortorder: 'asc',
+                    viewrecords: true,
+                    loadonce: true,
+                    gridview: true,
+                    loadComplete : function(array) {
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
+                        $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
+                    },
+                    gridComplete: function () {
+                      elem.jqGrid('setGridWidth', '100%');
+                    }
+                });
+            }
+        };
+    });
+
 }());
