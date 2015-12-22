@@ -123,6 +123,8 @@
                     interface="org.motechproject.whp.mtraining.repository.QuestionDataService" />
 
 
+    <osgi:service id="reportServiceOsgi" ref="reportService" interface="org.motechproject.whp.mtraining.service.ReportService" />
+
     <!--Mail Configuration-->
 
     <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
