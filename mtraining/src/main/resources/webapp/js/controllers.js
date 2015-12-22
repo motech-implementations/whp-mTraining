@@ -1758,8 +1758,31 @@
         $scope.clearLocation();
     }]);
 
-    controllers.controller('reportsController', function ($scope) {
+    controllers.controller('reportsController', function ($scope, $http) {
 
+        function exportReport(reportType, exportFormat) {
+            var url = '../mtraining/web-api/export' + reportType + '?outputFormat=' + exportFormat;
+
+            $http.get(url)
+                .success(function() {
+                    window.location.replace(url);
+                })
+                .error(function(response) {
+                    jAlert($scope.msg('mtraining.exportReport.error', response), $scope.msg('mtraining.error'));
+                });
+        }
+
+        $scope.exportTrainingStatusReport = function(exportFormat) {
+            exportReport('TrainingStatusReport', exportFormat);
+        }
+
+        $scope.exportProviderWiseStatusReport = function(exportFormat) {
+            exportReport('ProviderWiseStatusReport', exportFormat);
+        }
+
+        $scope.exportProviderStatusDetailedReport = function(exportFormat) {
+            exportReport('ProviderStatusDetailedReport', exportFormat);
+        }
     });
 
 }());
