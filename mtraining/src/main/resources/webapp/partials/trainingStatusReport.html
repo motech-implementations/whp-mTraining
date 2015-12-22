@@ -2,6 +2,17 @@
 
     <legend>{{msg('mtraining.trainingStatusReport')}}</legend>
 
+    <div>
+        <button ng-click="exportTrainingStatusReport('pdf')" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-export"></span>
+            {{msg('mtraining.button.export.pdf')}}
+        </button>
+        <button ng-click="exportTrainingStatusReport('xls')" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-export"></span>
+            {{msg('mtraining.button.export.xls')}}
+        </button>
+    </div>
+
     <div id="outsideTrainingStatusReportTable" class="overrideJqgridTable margin-before2">
         <table id="trainingStatusReportTable" training-status-report-grid="pageTrainingStatusReportTable"></table>
         <div id="pageTrainingStatusReportTable"></div>

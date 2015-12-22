@@ -2,4 +2,15 @@
 
     <legend>{{msg('mtraining.statusDetailedReport')}}</legend>
 
+    <div>
+        <button ng-click="exportProviderStatusDetailedReport('pdf')" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-export"></span>
+            {{msg('mtraining.button.export.pdf')}}
+        </button>
+        <button ng-click="exportProviderStatusDetailedReport('xls')" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-export"></span>
+            {{msg('mtraining.button.export.xls')}}
+        </button>
+    </div>
+
 </div>
