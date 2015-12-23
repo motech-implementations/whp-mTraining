@@ -1,8 +1,24 @@
 (function () {
     'use strict';
 
+    if(!$('#chartJs').length) {
+        var s = document.createElement("script");
+        s.id = "chartJs";
+        s.type = "text/javascript";
+        s.src = "../mtraining/js/Chart.js";
+        $("head").append(s);
+    };
+
+    if(!$('#angularChartJs').length) {
+        var s = document.createElement("script");
+        s.id = "angularChartJs";
+        s.type = "text/javascript";
+        s.src = "../mtraining/js/angular-chart.js";
+        $("head").append(s);
+    };
+
     var mtraining = angular.module('mtraining', ['motech-dashboard', 'mtraining.controllers', 'mtraining.directives' ,'mtraining.treeviewlib',
-        'ngRoute', 'ngResource', 'mtraining.services']);
+        'ngRoute', 'ngResource', 'mtraining.services', 'chart.js']);
 
     mtraining.config(function ($routeProvider) {
         $routeProvider.when('/mtraining/treeView', {

@@ -1759,6 +1759,9 @@
     }]);
 
     controllers.controller('reportsController', function ($scope, $http) {
+        $scope.labels = [];
+        $scope.series = [];
+        $scope.data = [];
 
         function exportReport(reportType, exportFormat) {
             var url = '../mtraining/web-api/export' + reportType + '?outputFormat=' + exportFormat;
@@ -1783,6 +1786,22 @@
         $scope.exportProviderStatusDetailedReport = function(exportFormat) {
             exportReport('ProviderStatusDetailedReport', exportFormat);
         }
+
+        $scope.createTrainingStatusReportChart = function(array) {
+            $scope.series = [$scope.msg('mtraining.trainingStatusReport.providerRegistered'),
+                             $scope.msg('mtraining.trainingStatusReport.providerCompletedCourse'),
+                             $scope.msg('mtraining.trainingStatusReport.providerInCourse')];
+
+            $scope.data = [[], [], []];
+
+            for (var i = 0; i < array.length; i++) {
+                $scope.data[0][i] = array[i].providerRegistered;
+                $scope.data[1][i] = array[i].providerCompletedCourse;
+                $scope.data[2][i] = array[i].providerInCourse;
+                $scope.labels[i] = array[i].district;
+            }
+        }
+
     });
 
 }());

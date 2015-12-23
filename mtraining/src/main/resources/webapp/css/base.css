@@ -1,5 +1,6 @@
 @import url("select2-bootstrap.css");
 @import url("style.min.css");
+@import url("angular-chart.css");
 
 main, .providerUpload, .response {
     margin-top: 20px;
