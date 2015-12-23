@@ -2,7 +2,9 @@
 
     <legend>{{msg('mtraining.trainingStatusReport')}}</legend>
 
-    <div>
+    <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-series="series" chart-legend="true" height="100"></canvas>
+
+    <div class="margin-before2">
         <button ng-click="exportTrainingStatusReport('pdf')" type="button" class="btn btn-default">
             <span class="glyphicon glyphicon-export"></span>
             {{msg('mtraining.button.export.pdf')}}

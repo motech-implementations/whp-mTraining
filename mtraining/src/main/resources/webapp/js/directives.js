@@ -1437,7 +1437,7 @@
         };
     });
 
-    directives.directive('trainingStatusReportGrid', function($http) {
+    directives.directive('trainingStatusReportGrid', function($http, $timeout) {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -1502,6 +1502,9 @@
                                elem.trigger("reloadGrid");
                             }, 10);
                         }
+                        $timeout(function() {
+                            scope.createTrainingStatusReportChart(array);
+                        });
                     },
                     gridComplete: function () {
                       elem.jqGrid('setGridWidth', '100%');
