@@ -1514,4 +1514,74 @@
         };
     });
 
+    directives.directive('wiseStatusReportGrid', function($http) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element), filters;
+
+                elem.jqGrid({
+                    url: '../mtraining/web-api/wiseStatusReports',
+                    datatype: 'json',
+                    jsonReader:{
+                        repeatitems:false,
+                        root: function (obj) {
+                            return obj;
+                        }
+                    },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
+                    shrinkToFit: true,
+                    forceFit: true,
+                    autowidth: true,
+                    rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
+                    colNames: ['rowId', scope.msg('mtraining.wiseStatusReport.providerId'), scope.msg('mtraining.wiseStatusReport.trainingStartDate'),
+                               scope.msg('mtraining.wiseStatusReport.trainingEndDate')],
+                    colModel: [{
+                       name: 'rowId',
+                       index: 'rowId',
+                       hidden: true,
+                       key: true
+                    }, {
+                       name: 'providerId',
+                       index: 'providerId',
+                       align: 'center'
+                    }, {
+                        name: 'trainingStartDate',
+                        index: 'trainingStartDate',
+                        align: 'center'
+                    }, {
+                        name: 'trainingEndDate',
+                        index: 'trainingEndDate',
+                        align: 'center'
+                    }],
+                    pager: '#' + attrs.wiseStatusReportGrid,
+                    width: '100%',
+                    height: 'auto',
+                    sortname: 'district',
+                    sortorder: 'asc',
+                    viewrecords: true,
+                    loadonce: true,
+                    gridview: true,
+                    loadComplete : function(array) {
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
+                        $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
+                    },
+                    gridComplete: function () {
+                      elem.jqGrid('setGridWidth', '100%');
+                    }
+                });
+            }
+        };
+    });
+
 }());

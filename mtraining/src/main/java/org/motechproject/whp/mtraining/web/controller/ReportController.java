@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.web.controller;
 
+import org.motechproject.whp.mtraining.dto.ProviderWiseStatusReportDto;
 import org.motechproject.whp.mtraining.dto.TrainingStatusReportDto;
 import org.motechproject.whp.mtraining.service.ReportService;
 import org.motechproject.whp.mtraining.util.ExcelTableWriter;
@@ -39,6 +40,12 @@ public class ReportController {
     @ResponseBody
     public List<TrainingStatusReportDto> getAllTrainingStatusReports() {
         return reportService.getAllTrainingStatusReports();
+    }
+
+    @RequestMapping("/wiseStatusReports")
+    @ResponseBody
+    public List<ProviderWiseStatusReportDto> getAllWiseStatusReports() {
+        return reportService.getAllWiseStatusReports();
     }
 
     @RequestMapping(value = "/exportTrainingStatusReport", method = RequestMethod.GET)
