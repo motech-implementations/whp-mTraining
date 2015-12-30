@@ -1584,4 +1584,83 @@
         };
     });
 
+    directives.directive('statusDetailedReportGrid', function($http) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element), filters;
+
+                elem.jqGrid({
+                    url: '../mtraining/web-api/statusDetailedReports',
+                    datatype: 'json',
+                    jsonReader:{
+                        repeatitems:false,
+                        root: function (obj) {
+                            return obj;
+                        }
+                    },
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
+                    shrinkToFit: true,
+                    forceFit: true,
+                    autowidth: true,
+                    rownumbers: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 50],
+                    colNames: ['rowId', scope.msg('mtraining.statusDetailedReport.providerId'), scope.msg('mtraining.statusDetailedReport.trainingStartDate'),
+                               scope.msg('mtraining.statusDetailedReport.currentStatus'), scope.msg('mtraining.statusDetailedReport.courseLocation'),
+                               scope.msg('mtraining.statusDetailedReport.timeSinceInCurrentLocation')],
+                    colModel: [{
+                       name: 'rowId',
+                       index: 'rowId',
+                       hidden: true,
+                       key: true
+                    }, {
+                       name: 'providerId',
+                       index: 'providerId',
+                       align: 'center'
+                    }, {
+                        name: 'trainingStartDate',
+                        index: 'trainingStartDate',
+                        align: 'center'
+                    }, {
+                        name: 'currentStatus',
+                        index: 'currentStatus',
+                        align: 'center'
+                    }, {
+                        name: 'courseLocation',
+                        index: 'courseLocation',
+                        align: 'center'
+                    }, {
+                        name: 'timeSinceInCurrentLocation',
+                        index: 'timeSinceInCurrentLocation',
+                        align: 'center'
+                    }],
+                    pager: '#' + attrs.statusDetailedReportGrid,
+                    width: '100%',
+                    height: 'auto',
+                    sortname: 'district',
+                    sortorder: 'asc',
+                    viewrecords: true,
+                    loadonce: true,
+                    gridview: true,
+                    loadComplete : function(array) {
+                        $('.ui-jqgrid-htable').addClass('table-lightblue');
+                        $('.ui-jqgrid-btable').addClass("table-lightblue");
+                        if (elem.getGridParam('datatype') === "json") {
+                            setTimeout(function () {
+                               elem.trigger("reloadGrid");
+                            }, 10);
+                        }
+                    },
+                    gridComplete: function () {
+                      elem.jqGrid('setGridWidth', '100%');
+                    }
+                });
+            }
+        };
+    });
+
 }());
