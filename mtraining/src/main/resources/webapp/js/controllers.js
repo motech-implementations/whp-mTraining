@@ -1798,7 +1798,11 @@
                 $scope.data[0][i] = array[i].providerRegistered;
                 $scope.data[1][i] = array[i].providerCompletedCourse;
                 $scope.data[2][i] = array[i].providerInCourse;
-                $scope.labels[i] = array[i].district;
+                var label = array[i].district;
+                if (label === undefined || label === null) {
+                    label = "";
+                }
+                $scope.labels[i] = label;
             }
         }
 
