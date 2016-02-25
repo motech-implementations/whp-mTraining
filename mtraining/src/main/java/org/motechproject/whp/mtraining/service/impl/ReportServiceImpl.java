@@ -2,18 +2,23 @@ package org.motechproject.whp.mtraining.service.impl;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.joda.time.DateTime;
 import org.motechproject.mds.query.QueryExecution;
 import org.motechproject.mds.util.InstanceSecurityRestriction;
+import org.motechproject.whp.mtraining.domain.CourseProgress;
+import org.motechproject.whp.mtraining.dto.ProviderWiseStatusReportDto;
 import org.motechproject.whp.mtraining.dto.TrainingStatusReportDto;
 import org.motechproject.whp.mtraining.exception.DataExportException;
 import org.motechproject.whp.mtraining.repository.CourseProgressDataService;
 import org.motechproject.whp.mtraining.service.ReportService;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.util.TableWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.jdo.Query;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +35,14 @@ public class ReportServiceImpl implements ReportService {
             put("Provider Registered",      "providerRegistered");
             put("Provider Completed Course","providerCompletedCourse");
             put("Provider In Course",       "providerInCourse");
+        }
+    };
+
+    private static final Map<String, String> WISE_STATUS_REPORT_HEADER_MAP = new LinkedHashMap<String, String>() {
+        {
+            put("Provider Id",          "providerId");
+            put("Training Start Date",  "trainingStartDate");
+            put("Training End Date",    "trainingEndDate");
         }
     };
 
@@ -57,6 +70,21 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public List<ProviderWiseStatusReportDto> getAllWiseStatusReports() {
+        List<CourseProgress> courseProgressList = courseProgressDataService.retrieveAll();
+        List<ProviderWiseStatusReportDto> wiseStatusReportDtoList = new ArrayList<>();
+
+        for (CourseProgress progress : courseProgressList) {
+            DateTime trainingStartDate = ISODateTimeUtil.parseWithTimeZoneUTC(progress.getCourseStartTime());
+            DateTime trainingEndDate = ISODateTimeUtil.parseWithTimeZoneUTC(progress.getCourseEndTime());
+
+            wiseStatusReportDtoList.add(new ProviderWiseStatusReportDto(progress.getCallerId(), trainingStartDate, trainingEndDate));
+        }
+
+        return wiseStatusReportDtoList;
+    }
+
+    @Override
     public void exportTrainingStatusReport(TableWriter tableWriter) throws IOException {
         List<TrainingStatusReportDto> trainingStatusReportDtoList = getAllTrainingStatusReports();
         exportReport(tableWriter, TRAINING_STATUS_REPORT_HEADER_MAP, trainingStatusReportDtoList);
@@ -64,7 +92,8 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public void exportProviderWiseStatusReport(TableWriter tableWriter) throws IOException {
-
+        List<ProviderWiseStatusReportDto> wiseStatusReportDtoList = getAllWiseStatusReports();
+        exportReport(tableWriter, WISE_STATUS_REPORT_HEADER_MAP, wiseStatusReportDtoList);
     }
 
     @Override

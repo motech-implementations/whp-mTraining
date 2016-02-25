@@ -1,5 +1,6 @@
 package org.motechproject.whp.mtraining.web.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.map.ser.FilterProvider;
@@ -23,6 +24,7 @@ import org.motechproject.whp.mtraining.service.CoursePublicationAttemptService;
 import org.motechproject.whp.mtraining.service.DtoFactoryService;
 import org.motechproject.whp.mtraining.service.FlagService;
 import org.motechproject.whp.mtraining.service.ProviderService;
+import org.motechproject.whp.mtraining.util.ISODateTimeUtil;
 import org.motechproject.whp.mtraining.web.Sessions;
 import org.motechproject.whp.mtraining.web.domain.BasicResponse;
 import org.motechproject.whp.mtraining.web.domain.CourseProgressGetRequest;
@@ -171,8 +173,12 @@ public class FlagController {
         CourseProgress savedCourseProgress = null;
         try {
             CourseProgress actualCourseProgress = courseProgressService.getCourseProgress(provider);
+            String courseEndTime = calculateCourseEndTime(actualCourseProgress, courseProgress);
             if (actualCourseProgress == null) {
                 courseProgress.setCallerId(provider.getCallerId());
+                if (courseEndTime != null) {
+                    courseProgress.setCourseEndTime(courseEndTime);
+                }
                 savedCourseProgress = courseProgressService.createCourseProgress(courseProgress);
             } else {
                 actualCourseProgress.setCourseStartTime(courseProgress.getCourseStartTime());
@@ -180,6 +186,9 @@ public class FlagController {
                 actualCourseProgress.setFlag(courseProgress.getFlag());
                 actualCourseProgress.setTimeLeftToCompleteCourse(courseProgress.getTimeLeftToCompleteCourse());
                 actualCourseProgress.setCallerId(provider.getCallerId());
+                if (courseEndTime != null) {
+                    actualCourseProgress.setCourseEndTime(courseEndTime);
+                }
                 savedCourseProgress = courseProgressService.updateCourseProgress(actualCourseProgress);
             }
         } catch (InvalidBookmarkException ex) {
@@ -211,4 +220,16 @@ public class FlagController {
         return bookmarkRequestService.createBookmarkRequest(new BookmarkRequest(callerId, uniqueId, currentSessionId, remediId, status, requestType));
     }
 
+    private String calculateCourseEndTime(CourseProgress oldProgress, CourseProgress newProgress) {
+        if (!CourseStatus.CLOSED.getValue().equalsIgnoreCase(newProgress.getCourseStatus()) && !CourseStatus.COMPLETED.getValue().equalsIgnoreCase(newProgress.getCourseStatus())) {
+            return null;
+        }
+        if (oldProgress == null || CourseStatus.STARTED.getValue().equalsIgnoreCase(oldProgress.getCourseStatus()) || CourseStatus.ONGOING.getValue().equalsIgnoreCase(oldProgress.getCourseStatus())) {
+            if (newProgress.getFlag() != null && StringUtils.isNotBlank(newProgress.getFlag().getDateModified())) {
+                return newProgress.getFlag().getDateModified();
+            }
+            return ISODateTimeUtil.nowAsStringInTimeZoneUTC();
+        }
+        return null;
+    }
 }
