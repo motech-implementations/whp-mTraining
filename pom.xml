@@ -13,6 +13,7 @@
     </modules>
 
     <scm>
+        <url>https://github.com/motech-implementations/whp-mTraining</url>
         <connection>scm:git:https://github.com/motech-implementations/whp-mTraining.git</connection>
         <developerConnection>scm:git:https://github.com/motech-implementations/whp-mTraining.git</developerConnection>
     </scm>
@@ -32,5 +33,16 @@
         </snapshotRepository>
     </distributionManagement>
 
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <preparationGoals>clean install</preparationGoals>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
