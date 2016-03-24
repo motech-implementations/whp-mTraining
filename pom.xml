@@ -4,7 +4,7 @@
 
     <groupId>org.motechproject</groupId>
     <artifactId>mTraining</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -15,7 +15,7 @@
         <url>https://github.com/motech-implementations/whp-mTraining</url>
         <connection>scm:git:https://github.com/motech-implementations/whp-mTraining.git</connection>
         <developerConnection>scm:git:https://github.com/motech-implementations/whp-mTraining.git</developerConnection>
-      <tag>mTraining-1.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>
